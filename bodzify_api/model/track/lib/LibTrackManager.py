@@ -3,8 +3,6 @@ import os
 import tempfile
 from typing import TYPE_CHECKING, Any
 
-import requests
-from django.core.files.base import File as DjangoFile
 from django.db import transaction
 from django.db.models import F, QuerySet
 from django.utils import timezone
@@ -18,13 +16,11 @@ from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
 from bodzify_api.model.user.User import User
-from bodzify_api.serializer.model.lib_track.input.extract.Fields import Fields as ExtractFields
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.serializer.model.lib_track.input.schema.Fields import Fields as SchemaFields
-from bodzify_api.utils import audio_metadata, data_transformer, utils
+from bodzify_api.utils import audio_metadata, data_transformer
 from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
 from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
-from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
 
 from .Fields import Fields
 
@@ -85,24 +81,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 user=instance.user, playlist=genreless_criteria_playlist, lib_track=instance)
             genreless_criteria_playlist.last_track_list_update_date = update_date
             genreless_criteria_playlist.save(update_fields=[PlayListFields.LAST_TRACK_LIST_UPDATE_DATE])
-
-    def _get_generated_title_from_data(self, file: DjangoFile, data: dict):
-        filename = os.path.basename(file.name).rsplit('.', 1)[0]
-        filename = filename.rstrip()
-        filename_without_expressions_to_exclude = data_transformer.remove_substrings_from_string(
-            string_a=filename, substrings=settings.LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE)
-        if SchemaFields.FORCE_TITLE_GENERATION in data:
-            force_title_generation = data[SchemaFields.FORCE_TITLE_GENERATION]
-        else:
-            force_title_generation = False
-
-        if len(filename_without_expressions_to_exclude) > settings.LIB_TRACK_FILENAME_LEN_MAX or force_title_generation:
-            title = settings.LIB_TRACK_GENERATED_TITLE_PREFIXE + \
-                utils.generate_short_uu(
-                    settings.LIB_TRACK_GENERATED_TITLE_LENGTH - len(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE))
-        else:
-            title = filename_without_expressions_to_exclude
-        return title
 
     def _get_schema_data_from_file(self, file, user: User):
         try:
@@ -183,30 +161,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             artists = []
         model_data[Fields.ARTISTS] = artists
 
-    def _get_track_filename_with_extension(self, mine_track_url: str, **kwargs):
-        file_extension = utils.get_file_extension_from_url(mine_track_url)
-        is_filename_randomly_generated = False
-        if Fields.TITLE in kwargs:
-            title = kwargs[Fields.TITLE]
-            if SchemaFields.ARTISTS_NAMES in kwargs:
-                artists_names_list = kwargs[SchemaFields.ARTISTS_NAMES]
-                artists_names = ", ".join(artists_names_list)
-                if artists_names is None or artists_names == "":
-                    filename_without_extension = title
-                else:
-                    filename_without_extension = artists_names + " - " + title
-            else:
-                filename_without_extension = title
-            filename_with_extension = filename_without_extension + "." + file_extension
-        else:
-            filename_with_extension = utils.get_substring_after_last_slash(mine_track_url)
-            if len(filename_with_extension) > settings.LIB_TRACK_FILENAME_LEN_MAX:
-                filename_without_extension = utils.generate_short_uu(
-                    settings.LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH - len(file_extension) - 1)
-                filename_with_extension = filename_without_extension + "." + file_extension
-                is_filename_randomly_generated = True
-        return filename_with_extension, is_filename_randomly_generated
-
     def _get_model_data_from_creation_schema_data(self, creation_schema_data: dict[str, str]) -> dict:
         model_data = dict()
 
@@ -256,9 +210,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             elif key in schema_data_from_file:
                 schema_data[key] = schema_data_from_file[key]
 
-        if SchemaFields.TITLE not in schema_data:
-            schema_data[Fields.TITLE] = self._get_generated_title_from_data(file=file, data=kwargs)
-
         data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=schema_data)
         return schema_data
 
@@ -267,11 +218,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         model_data = self._get_model_data_from_creation_schema_data(schema_data)
         model_data[Fields.TRACK_FILE] = schema_data[SchemaFields.TRACK_FILE_PUBLIC]
         return model_data
-
-    def _get_post_data_from_extract_data(self, **kwargs):
-        post_data = kwargs.copy()
-        del post_data[ExtractFields.URL]
-        return post_data
 
     def download_to_temp_file(self, streamed_response):
         """Download a streamed response to a temporary file and return the path."""
@@ -284,13 +230,16 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 extension = '.wav'
             elif 'audio/flac' in content_type:
                 extension = '.flac'
+            else:
+                raise AppValidationException(
+                    field_name=Fields.TRACK_FILE_PUBLIC,
+                    message="The file format is not supported",
+                    field_validation_error_code=FieldValidationErrorCode.INVALID_EXTENSION)
         elif streamed_response.url:
             url_extension = os.path.splitext(streamed_response.url)[1].lower()
             if url_extension in ['.mp3', '.wav', '.flac']:
                 extension = url_extension
-
-        temp_dir = settings.FILE_UPLOAD_TEMP_DIR
-        fd, temp_path = tempfile.mkstemp(suffix=extension, dir=temp_dir if temp_dir else None)
+        fd, temp_path = tempfile.mkstemp(suffix=extension, dir=settings.MEDIA_ROOT)
 
         try:
             with os.fdopen(fd, 'wb') as temp_file:
@@ -304,21 +253,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             if os.path.exists(temp_path):
                 os.unlink(temp_path)
             raise e
-
-    def _get_model_data_from_extract_data(self, **kwargs):
-        mine_track_url = kwargs[ExtractFields.URL]
-        _, is_filename_randomly_generated = \
-            self._get_track_filename_with_extension(mine_track_url=mine_track_url, **kwargs)
-
-        # stream=True makes it more effective for large files.
-        track_file_streamed = requests.get(mine_track_url, stream=True)
-        temp_file_path = self.download_to_temp_file(track_file_streamed)
-
-        post_data = self._get_post_data_from_extract_data(**kwargs)
-        post_data[PostFields.TRACK_FILE_PUBLIC] = temp_file_path
-        force_title_generation_str = str(is_filename_randomly_generated)
-        post_data[PostFields.FORCE_TITLE_GENERATION] = force_title_generation_str
-        return self._get_model_data_from_post_data(**post_data)
 
     def _get_model_data_from_update_data(self, update_data: dict[str, str]):
         schema_data = self._get_schema_data_from_update_data(update_data=update_data)
@@ -340,16 +274,11 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         self._add_to_genre_playlists(instance=instance, genre_limit=common_genre)
         self._remove_from_genre_playlists(instance=instance, old_genre=old_genre, genre_limit=common_genre)
 
-    def create(self, creation_type: str, **kwargs) -> 'LibraryTrack':
+    def create(self, **kwargs) -> 'LibraryTrack':
         from ..file.TrackFile import TrackFile
 
         model_data: dict
-        if creation_type == LibTrackCreationType.POST:
-            model_data = self._get_model_data_from_post_data(**kwargs)
-        elif creation_type == LibTrackCreationType.EXTRACT:
-            model_data = self._get_model_data_from_extract_data(**kwargs)
-        else:
-            raise NotImplementedError(f"Creation type {creation_type} is not implemented")
+        model_data = self._get_model_data_from_post_data(**kwargs)
 
         artists = model_data.pop(Fields.ARTISTS, None)
         track_file_model_data = dict()

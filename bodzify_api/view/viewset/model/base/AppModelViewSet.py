@@ -38,8 +38,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     create_serializer_class: Type[Serializer] | None = None
     update_serializer_class: Type[Serializer] | None = None
 
-    def __init__(self,
-                 model_class: Type[T],
+    def __init__(self, model_class: Type[T],
                  filterset_class: Type[AppFilterSet] = AppFilterSet,
                  simple_serializer_class: Type[ModelSerializer] | None = None,
                  detailed_serializer_class: Type[ModelSerializer] | None = None,
@@ -60,11 +59,6 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             raise ImproperlyConfigured(f"Serializer {serializer_type.class_name} not defined in viewset")
         return serializer
 
-    def _get_create_serializer_class(self) -> Type[Serializer]:
-        if self.create_serializer_class:
-            return self.create_serializer_class
-        raise ImproperlyConfigured("Create serializer class not defined in viewset")
-
     def _get_validated_data(self, serializer: Union[Serializer, ModelSerializer, BaseSerializer]) -> dict[str, Any]:
         serializer.is_valid(raise_exception=True)
         validated_data_dict = getattr(serializer, 'validated_data', {})
@@ -79,7 +73,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def _create_instance(
             self, request: Request, create_data: dict[str, Any], creation_type: str | None) -> T:
-        serializer_class = self._get_create_serializer_class()
+        serializer_class = self._require_serializer(SerializerType.CREATE)
         serializer = serializer_class(data=create_data, context={'request': request})
         validated_data = self._get_validated_data(serializer)
 
@@ -159,7 +153,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         if self.action == 'retrieve':
             return self._require_serializer(SerializerType.DETAILED)
         elif self.action == 'create':
-            return self._get_create_serializer_class()
+            return self._require_serializer(SerializerType.CREATE)
         elif self.action in ['update', 'partial_update']:
             return self._require_serializer(SerializerType.UPDATE)
         raise NotImplementedError(f"Action {self.action} not defined in viewset")

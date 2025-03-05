@@ -1,14 +1,11 @@
-from typing import Type
 
 from django.db import transaction
 from drf_spectacular.types import OpenApiTypes  # type: ignore
 from drf_spectacular.utils import OpenApiParameter, extend_schema  # type: ignore
 from rest_framework.decorators import action
-from rest_framework.serializers import Serializer
 
 from bodzify_api.filtering.set.lib_track.Fields import Fields as FilterFields
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.model.lib_track.input.extract.extract import LibTrackExtractSerializer
 from bodzify_api.serializer.model.lib_track.input.post.post import LibTrackPostSerializer
 from bodzify_api.serializer.model.lib_track.input.put.put import LibTrackPutSerializer
 from bodzify_api.serializer.model.lib_track.output.detailed import LibTrackDetailedSerializer
@@ -26,20 +23,9 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
                          filterset_class=LibTrackFilterSet,
                          simple_serializer_class=LibTrackWithoutAlbumPlaylistGenreSerializer,
                          detailed_serializer_class=LibTrackDetailedSerializer,
+                         create_serializer_class=LibTrackPostSerializer,
                          update_serializer_class=LibTrackPutSerializer,
                          **kwargs)
-
-    def _get_create_serializer_class(self):
-        if self.action == 'create':
-            return LibTrackPostSerializer
-        elif self.action == 'extract':
-            return LibTrackExtractSerializer
-        raise NotImplementedError(f"No serializer defined for action {self.action}")
-
-    def get_serializer_class(self) -> Type[Serializer]:
-        if self.action == 'extract':
-            return LibTrackExtractSerializer
-        return super().get_serializer_class()
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
@@ -48,50 +34,36 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
 
     @transaction.atomic
     @extend_schema(request=LibTrackPostSerializer, responses=LibTrackDetailedSerializer, description=("""
-        Create a track with metadata by uploading a file:
-            - if the file has no metadata 'title', it is set with the file's name without the extension (with an 
-            random identifier if another track has the same filename);
-            - some media players allow to edit tags (e.g the title, the artist's name, the rating etc.). In some cases, 
+        Create a track with metadata by uploading or a file or downloading it from another source:
+            # Uploading a file:
+                - if the file has no metadata 'title', it is set with the file's name without the extension (with an 
+                random identifier if another track has the same filename);
+            # Downloading a file:
+                It is done by providing an URL and metadata (title, artist's name, album's name, album's artists' names,
+                genre's name, rating, releasedOn, language etc.).
+                    
+                The downloaded track's filename will be set as follow:
+                    - if the "artist_name" and "title" fields are provided, the filename will be set to 
+                    "artist_name - title.extension";
+                    - else if only the title is provided, the filename will be set to "title.extension";
+                    - else if the title and the artist name are set in the metadata of the track, the filename will be set 
+                    to "artist name - title.extension";
+                    - else if only the title is set in the metadata, the filename will be set to "title.extension";
+                    - else if the length filename of the downloaded track plus de length of the extension s smaller than 
+                    100, the filename will be set to "filename.extension";
+                    - else the filename will be set to "random string.extension".
+            # File's metadata:
+                - some media players allow to edit tags (e.g the title, the artist's name, the rating etc.). In some cases, 
             the tag isn't store in the file's metadata but in the database of the player. In these cases, the tag won't 
             be imported into the app and will be set to null (= no value). It is the case for:
-                - iTunes' tracks' rating;
-                - Windows Media Player's wav and flac files tags;
-                - Winamp's wav files rating;
-                - Traktor's wav files tags;
+                    - iTunes' tracks' rating;
+                    - Windows Media Player's wav and flac files tags;
+                    - Winamp's wav files rating;
+                    - Traktor's wav files tags;
         """)
                    )
     def create(self, request, *args, **kwargs):
         return self._handle_post(request=request, creation_type=LibTrackCreationType.POST)
-
-    @transaction.atomic
-    @extend_schema(request=LibTrackExtractSerializer,
-                   responses=LibTrackDetailedSerializer,
-                   description=("""
-            Download a track from the given url to the app. 
-            It is done by providing an URL and metadata:
-                - "title";
-                - "artist_name";
-                - "album_name";
-                - "album_artists_name_string";
-                - "genre_name";
-                - "rating";
-                - "releasedOn";
-                - "language";
-                
-            The downloaded track's filename will be set as follow:
-                - if the "artist_name" and "title" fields are provided, the filename will be set to 
-                "artist_name - title.extension";
-                - else if only the title is provided, the filename will be set to "title.extension";
-                - else if the title and the artist name are set in the metadata of the track, the filename will be set 
-                to "artist name - title.extension";
-                - else if only the title is set in the metadata, the filename will be set to "title.extension";
-                - else if the length filename of the downloaded track plus de length of the extension s smaller than 
-                100, the filename will be set to "filename.extension";
-                - else the filename will be set to "random string.extension".
-            """))
-    @action(detail=False, methods=['post'])
-    def extract(self, request, *args, **kwargs):
-        return self._handle_post(request, creation_type=LibTrackCreationType.EXTRACT)
 
     @extend_schema(parameters=[
         OpenApiParameter(name=FilterFields.TITLE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
