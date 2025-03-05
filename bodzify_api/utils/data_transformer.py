@@ -80,9 +80,9 @@ def update_dict_converting_str_to_int_value_if_set(key: str, data_dict: dict):
         data_dict[key] = rating
 
 
-def update_dict1_with_key_if_set_in_dict2(key: str, dict1: dict, dict: dict):
-    if key in dict:
-        value = dict[key]
+def update_dict1_with_key_if_set_in_dict2(key: str, dict1: dict, dict2: dict):
+    if key in dict2:
+        value = dict2[key]
         if value == "":
             value = None
         dict1[key] = value
@@ -90,7 +90,7 @@ def update_dict1_with_key_if_set_in_dict2(key: str, dict1: dict, dict: dict):
 
 def override_dict1_with_dict2_values_for_each_key_in_dict2(dict1: dict, dict2: dict, keys: list[str]):
     for key in keys:
-        update_dict1_with_key_if_set_in_dict2(key=key, dict1=dict1, dict=dict2)
+        update_dict1_with_key_if_set_in_dict2(key=key, dict1=dict1, dict2=dict2)
 
 
 def merge_two_dicts(dict1, dict2):

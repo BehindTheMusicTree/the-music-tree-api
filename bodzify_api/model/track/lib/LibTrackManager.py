@@ -1,15 +1,10 @@
 
-import os
-import tempfile
 from typing import TYPE_CHECKING, Any
 
 from django.db import transaction
 from django.db.models import F, QuerySet
 from django.utils import timezone
 
-from bodzify_api import settings
-from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.Fields import Fields as PlayListFields
@@ -121,7 +116,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                     Fields.RATING,
                     Fields.LANGUAGE,
                     Fields.ARCHIVED]:
-            data_transformer.update_dict1_with_key_if_set_in_dict2(key=key, dict1=model_data, dict=kwargs)
+            data_transformer.update_dict1_with_key_if_set_in_dict2(key=key, dict1=model_data, dict2=kwargs)
 
         self._update_model_data_with_artists_if_names_in_schema_data_otherwise_empty_list(
             model_data=model_data, schema_data=kwargs)
@@ -139,41 +134,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         model_data = self._get_model_data_from_post_schema_data(**kwargs)
         model_data[Fields.TRACK_FILE] = kwargs[SchemaFields.TRACK_FILE_PUBLIC]
         return model_data
-
-    def download_to_temp_file(self, streamed_response):
-        """Download a streamed response to a temporary file and return the path."""
-        # Try to get extension from content type or URL
-        content_type = streamed_response.headers.get('content-type', '')
-        if content_type:
-            if 'audio/mpeg' in content_type or 'audio/mp3' in content_type:
-                extension = '.mp3'
-            elif 'audio/wav' in content_type:
-                extension = '.wav'
-            elif 'audio/flac' in content_type:
-                extension = '.flac'
-            else:
-                raise AppValidationException(
-                    field_name=Fields.TRACK_FILE_PUBLIC,
-                    message="The file format is not supported",
-                    field_validation_error_code=FieldValidationErrorCode.INVALID_EXTENSION)
-        elif streamed_response.url:
-            url_extension = os.path.splitext(streamed_response.url)[1].lower()
-            if url_extension in ['.mp3', '.wav', '.flac']:
-                extension = url_extension
-        fd, temp_path = tempfile.mkstemp(suffix=extension, dir=settings.MEDIA_ROOT)
-
-        try:
-            with os.fdopen(fd, 'wb') as temp_file:
-                # Stream content in chunks to avoid memory issues with large files
-                for chunk in streamed_response.iter_content(chunk_size=8192):
-                    if chunk:
-                        temp_file.write(chunk)
-            return temp_path
-        except Exception as e:
-            # Clean up on error
-            if os.path.exists(temp_path):
-                os.unlink(temp_path)
-            raise e
 
     def _get_model_data_from_update_data(self, update_data: dict[str, str]):
         schema_data = self._get_schema_data_from_update_data(update_data=update_data)
