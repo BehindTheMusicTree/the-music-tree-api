@@ -1,10 +1,9 @@
-import json
 
 from django.http import HttpResponse
 from rest_framework.test import APIClient
 
 from bodzify_api.utils import data_transformer
-from bodzify_api.utils.json_utils import UUIDJSONEncoder
+from bodzify_api.utils.json_utils import transform_uuids
 
 
 class AppApiClient(APIClient):
@@ -51,8 +50,9 @@ class AppApiClient(APIClient):
                 data_url_encoded = data
             else:
                 data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
+
                 if format != 'multipart':
-                    data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
+                    data_url_encoded = transform_uuids(data_url_encoded)
 
             if not content_type and not format:
                 content_type = 'application/json'
@@ -76,7 +76,7 @@ class AppApiClient(APIClient):
             else:
                 data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
                 if format != 'multipart':
-                    data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
+                    data_url_encoded = transform_uuids(data_url_encoded)
             if not content_type:
                 content_type = 'application/json'
 
@@ -95,7 +95,7 @@ class AppApiClient(APIClient):
         if data:
             data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
             if format != 'multipart':
-                data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
+                data_url_encoded = transform_uuids(data_url_encoded)
                 if not content_type:
                     content_type = 'application/json'
 
