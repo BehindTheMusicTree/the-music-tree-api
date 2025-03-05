@@ -13,8 +13,26 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 0
 
+    def test_max_id3v1_small_file_then_ok(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V1_SMALL_MP3)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.artists.count() == 1
+        artist = self.saved_object.artists.first()
+        assert artist
+        assert artist.name == 'a' * settings.ARTIST_NAME_LEN_MAX_ID3V1
+
+    def test_max_id3v1_big_file_then_ok(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V1_BIG_MP3)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.artists.count() == 1
+        artist = self.saved_object.artists.first()
+        assert artist
+        assert artist.name == 'a' * settings.ARTIST_NAME_LEN_MAX_ID3V1
+
     def test_long_id3v2_then_truncated(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V2_SHORT_MP3)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V2_SMALL_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 1
@@ -24,7 +42,7 @@ class TestCase(LibTrackTestCase):
         assert artist.name == 'a' * settings.ARTIST_NAME_LEN_MAX
 
     def test_long_riff_then_truncated(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_RIFF_SHORT_WAV)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_RIFF_SMALL_WAV)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 1
@@ -34,7 +52,7 @@ class TestCase(LibTrackTestCase):
         assert artist.name == 'a' * settings.ARTIST_NAME_LEN_MAX
 
     def test_long_vorbis_then_truncated(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_VORBIS_SHORT_FLAC)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_VORBIS_SMALL_FLAC)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 1
@@ -42,15 +60,6 @@ class TestCase(LibTrackTestCase):
         assert artist
         assert len(artist.name) == settings.ARTIST_NAME_LEN_MAX
         assert artist.name == 'a' * settings.ARTIST_NAME_LEN_MAX
-
-    def test_max_id3v1_then_ok(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V1_SHORT_MP3)
-
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.artists.count() == 1
-        artist = self.saved_object.artists.first()
-        assert artist
-        assert artist.name == 'a' * settings.ARTIST_NAME_LEN_MAX_ID3V1
 
     def test_3_separated_by_antislash_then_ok(self):
         response = self._post_lib_track(TestLibTrackFilename.ARTISTS_ONE_TWO_THREE_ANTISLASH_ID3V2)
