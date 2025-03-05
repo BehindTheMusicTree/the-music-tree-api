@@ -113,13 +113,17 @@ class TrackFileField(AppField):
                 self.fail('null')
             return None
 
-        if isinstance(data, UploadedFile):
-            return self.file_field.to_internal_value(data)
-
         if isinstance(data, str):
             validated_url = self.url_field.to_internal_value(data)
             downloaded_file = self._download_file_from_url(validated_url)
-            return self.file_field.to_internal_value(downloaded_file)
+            # Run validators on downloaded file before returning
+            self.file_field.run_validators(downloaded_file)
+            return downloaded_file
+
+        if isinstance(data, UploadedFile):
+            # Run validators on uploaded file before returning
+            self.file_field.run_validators(data)
+            return data
 
         self.fail('invalid', detail='Field must be either a valid audio file or URL.')
 
