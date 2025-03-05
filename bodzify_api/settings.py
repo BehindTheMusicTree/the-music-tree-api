@@ -626,7 +626,8 @@ def setup_django_constants():
         'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
         'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
         'DEFAULT_VERSION': 'v1',
-        'ALLOWED_VERSIONS': 'v1'
+        'ALLOWED_VERSIONS': 'v1',
+        'EXCEPTION_HANDLER': 'bodzify_api.view.error.custom_exception_handler.custom_exception_handler'
     }
 
     global SPECTACULAR_SETTINGS

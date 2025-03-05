@@ -31,7 +31,7 @@ class ErrorResponse:
         return [str(field) for field in fields]
 
     @staticmethod
-    def _create_error_response(
+    def create_error_response(
         error_detail: dict[str, Any], api_error_code: ApiErrorCode = ApiErrorCode.VALIDATION_INVALID_INPUT
     ) -> JsonResponse:
         http_status = ErrorResponseFields.ERROR_TO_HTTP_STATUS.get(api_error_code, status.HTTP_400_BAD_REQUEST)
@@ -100,7 +100,7 @@ class ErrorResponse:
                 ErrorResponseFields.DefaultFieldValidationValues.DbIntegrityError.MESSAGE,
             ErrorResponseFields.FieldErrors.CODE: ApiErrorCode.SYSTEM_INTERNAL_ERROR
         }
-        return ErrorResponse._create_error_response(
+        return ErrorResponse.create_error_response(
             error_detail=error_detail,
             api_error_code=ApiErrorCode.SYSTEM_INTERNAL_ERROR
         )
@@ -111,7 +111,7 @@ class ErrorResponse:
             ErrorResponseFields.FieldErrors.MESSAGE: str(exception),
             ErrorResponseFields.FieldErrors.CODE: ApiErrorCode.SYSTEM_INTERNAL_ERROR
         }
-        return ErrorResponse._create_error_response(
+        return ErrorResponse.create_error_response(
             error_detail=error_detail, api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT)
 
     @staticmethod
@@ -130,7 +130,7 @@ class ErrorResponse:
                     for field, error_detail in exception.errors.items()
                 }
             }
-            return ErrorResponse._create_error_response(
+            return ErrorResponse.create_error_response(
                 error_detail=formatted_error,
                 api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
             )
@@ -139,7 +139,7 @@ class ErrorResponse:
 
             # If it's already a dict with a message, use it directly
             if isinstance(error_detail, dict) and ErrorResponseFields.MESSAGE in error_detail:
-                return ErrorResponse._create_error_response(
+                return ErrorResponse.create_error_response(
                     error_detail=error_detail,
                     api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
                 )
@@ -147,13 +147,13 @@ class ErrorResponse:
             # If it's a dict with field errors
             if isinstance(error_detail, dict):
                 formatted_error = ErrorResponse._format_from_drf_validation_error_detail(error_detail)
-                return ErrorResponse._create_error_response(
+                return ErrorResponse.create_error_response(
                     error_detail=formatted_error,
                     api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
                 )
 
             # For any other case, wrap it in a standard format
-            return ErrorResponse._create_error_response(
+            return ErrorResponse.create_error_response(
                 {ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],
                  ErrorResponseFields.FIELD_ERRORS: error_detail
                  if isinstance(error_detail, dict) else {ErrorResponseFields.DETAILS: error_detail}},
@@ -172,7 +172,7 @@ class ErrorResponse:
                         }] for field, msgs in exception.message_dict.items()
                     }
                 }
-                return ErrorResponse._create_error_response(
+                return ErrorResponse.create_error_response(
                     error_detail=formatted_error,
                     api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
                 )
@@ -189,7 +189,7 @@ class ErrorResponse:
                         }]
                     }
                 }
-                return ErrorResponse._create_error_response(
+                return ErrorResponse.create_error_response(
                     error_detail=formatted_error,
                     api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
                 )
@@ -199,7 +199,7 @@ class ErrorResponse:
             ErrorResponseFields.MESSAGE: str(exception),
             ErrorResponseFields.CODE: ApiErrorCode.VALIDATION_INVALID_INPUT.name.lower()
         }
-        return ErrorResponse._create_error_response(
+        return ErrorResponse.create_error_response(
             error_detail=error_detail,
             api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
         )
