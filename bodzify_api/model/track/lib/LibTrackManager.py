@@ -16,11 +16,8 @@ from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
 from bodzify_api.model.user.User import User
-from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.serializer.model.lib_track.input.schema.Fields import Fields as SchemaFields
-from bodzify_api.utils import audio_metadata, data_transformer
-from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
-from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
+from bodzify_api.utils import data_transformer
 
 from .Fields import Fields
 
@@ -82,55 +79,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             genreless_criteria_playlist.last_track_list_update_date = update_date
             genreless_criteria_playlist.save(update_fields=[PlayListFields.LAST_TRACK_LIST_UPDATE_DATE])
 
-    def _get_schema_data_from_file(self, file, user: User):
-        try:
-            app_merged_metadata_dict = audio_metadata.get_merged_app_metadata(
-                file=file, normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
-        except FileCorruptedError as exc:
-            raise AppValidationException(
-                field_name=Fields.TRACK_FILE_PUBLIC,
-                message=str(exc),
-                field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
-
-        schema_data_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(
-            data_dict=app_merged_metadata_dict,
-            keys=[AppMetadataKey.TITLE,
-                  AppMetadataKey.ARTISTS_NAMES,
-                  AppMetadataKey.ALBUM_NAME,
-                  AppMetadataKey.ALBUM_ARTISTS_NAMES,
-                  AppMetadataKey.GENRE_NAME,
-                  AppMetadataKey.RATING,
-                  AppMetadataKey.LANGUAGE])
-
-        metadata_max_lengths_with_type = {
-            AppMetadataKey.TITLE: settings.LIB_TRACK_TITLE_LEN_MAX,
-            AppMetadataKey.ARTISTS_NAMES: settings.ARTISTS_NAMES_LEN_MAX,
-            AppMetadataKey.ALBUM_NAME: settings.ALBUM_NAME_LEN_MAX,
-            AppMetadataKey.ALBUM_ARTISTS_NAMES: settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX,
-            AppMetadataKey.GENRE_NAME: settings.CRITERIA_NAME_LEN_MAX,
-            AppMetadataKey.LANGUAGE: settings.LANGUAGE_LEN_MAX,
-        }
-        for key, max_length in metadata_max_lengths_with_type.items():
-            metadata_value = schema_data_with_potential_none.get(key)
-            if metadata_value:
-                if key.get_optional_type() == list[str]:
-                    truncated_values = []
-                    for value in metadata_value:
-                        truncated_values.append(value[:max_length])
-                    schema_data_with_potential_none[key] = truncated_values
-                else:
-                    schema_data_with_potential_none[key] = schema_data_with_potential_none[key][:max_length]
-
-        genre_name = schema_data_with_potential_none.get(AppMetadataKey.GENRE_NAME)
-        if genre_name:
-            from bodzify_api.model.criteria.children.genre.Genre import Genre
-            schema_data_with_potential_none[Fields.GENRE] = Genre.objects.get_or_create(user=user, name=genre_name)[0]
-
-        schema_data_clean = data_transformer.remove_none_or_empty_key_from_dict(schema_data_with_potential_none)
-        schema_data_clean[SchemaFields.TRACK_FILE_PUBLIC] = file
-
-        return schema_data_clean
-
     def _update_model_data_with_album_if_name_in_schema_data(self, model_data: dict, schema_data: dict):
         from bodzify_api.model.album.Album import Album
         if SchemaFields.ALBUM_NAME in schema_data:
@@ -161,7 +109,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             artists = []
         model_data[Fields.ARTISTS] = artists
 
-    def _get_model_data_from_creation_schema_data(self, creation_schema_data: dict[str, str]) -> dict:
+    def _get_model_data_from_post_schema_data(self, **kwargs) -> dict:
         model_data = dict()
 
         for key in [Fields.USER,
@@ -173,12 +121,12 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                     Fields.RATING,
                     Fields.LANGUAGE,
                     Fields.ARCHIVED]:
-            data_transformer.update_dict1_with_key_if_set_in_dict2(key=key, dict1=model_data, dict=creation_schema_data)
+            data_transformer.update_dict1_with_key_if_set_in_dict2(key=key, dict1=model_data, dict=kwargs)
 
         self._update_model_data_with_artists_if_names_in_schema_data_otherwise_empty_list(
-            model_data=model_data, schema_data=creation_schema_data)
+            model_data=model_data, schema_data=kwargs)
         self._update_model_data_with_album_if_name_in_schema_data(
-            model_data=model_data, schema_data=creation_schema_data)
+            model_data=model_data, schema_data=kwargs)
 
         return model_data
 
@@ -187,36 +135,9 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=schema_data)
         return schema_data
 
-    def _get_schema_data_from_post_data(self, **kwargs) -> dict[str, Any]:
-        file = kwargs[PostFields.TRACK_FILE_PUBLIC]
-        schema_data_from_file = self._get_schema_data_from_file(file=file, user=kwargs[Fields.USER])
-
-        schema_data = schema_data_from_file.copy()
-        keys = [Fields.USER,
-                SchemaFields.TRACK_FILE_PUBLIC,
-                SchemaFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
-                SchemaFields.TITLE,
-                SchemaFields.ALBUM_NAME,
-                SchemaFields.TRACK_NUMBER,
-                SchemaFields.GENRE,
-                SchemaFields.RATING,
-                SchemaFields.LANGUAGE]
-        data_transformer.override_dict1_with_dict2_values_for_each_key_in_dict2(
-            dict1=schema_data, dict2=kwargs, keys=keys)
-
-        for key in [SchemaFields.ARTISTS_NAMES, SchemaFields.ALBUM_ARTISTS_NAMES]:
-            if key in kwargs:
-                schema_data[key] = kwargs[key]
-            elif key in schema_data_from_file:
-                schema_data[key] = schema_data_from_file[key]
-
-        data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=schema_data)
-        return schema_data
-
     def _get_model_data_from_post_data(self, **kwargs) -> dict[str, Any]:
-        schema_data = self._get_schema_data_from_post_data(**kwargs)
-        model_data = self._get_model_data_from_creation_schema_data(schema_data)
-        model_data[Fields.TRACK_FILE] = schema_data[SchemaFields.TRACK_FILE_PUBLIC]
+        model_data = self._get_model_data_from_post_schema_data(**kwargs)
+        model_data[Fields.TRACK_FILE] = kwargs[SchemaFields.TRACK_FILE_PUBLIC]
         return model_data
 
     def download_to_temp_file(self, streamed_response):
@@ -256,7 +177,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
     def _get_model_data_from_update_data(self, update_data: dict[str, str]):
         schema_data = self._get_schema_data_from_update_data(update_data=update_data)
-        return self._get_model_data_from_creation_schema_data(creation_schema_data=schema_data)
+        return self._get_model_data_from_post_schema_data(creation_schema_data=schema_data)
 
     def decrease_position_of_next_tracks_in_old_track_playlists(self, user: User, playlists_with_old_position: list):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
