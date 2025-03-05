@@ -66,7 +66,7 @@ class TestCase(PlaylistTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.result[data_transformer.to_camel_case(
-            PlaylistOutputFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC)] == 3
+            PlaylistOutputFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC)] == 2
 
     def test_archived_count(self):
         genre = self.model_fixture_factory.create_genre(name='rock')
@@ -77,7 +77,7 @@ class TestCase(PlaylistTestCase):
         track_archived_2 = self.model_fixture_factory.create_lib_track_with_file(
             title="Summer2", genre=genre, use_manager_for_genre_playlist_adding=True)
         track_archived_3 = self.model_fixture_factory.create_lib_track_with_file(
-            title="Summer3", genre=genre, use_manager_for_genre_playlist_adding=True)
+            title="Summer3", genre=genre, archived=True, use_manager_for_genre_playlist_adding=True)
 
         for track in [track_archived_1, track_archived_2, track_archived_3]:
             LibraryTrack.objects.update_instance(track, archived=True)
@@ -85,4 +85,4 @@ class TestCase(PlaylistTestCase):
         response = self._retrieve_playlist(genre.criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[data_transformer.to_camel_case(PlaylistOutputFields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC)] == 3
+        assert self.result[data_transformer.to_camel_case(PlaylistOutputFields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC)] == 1
