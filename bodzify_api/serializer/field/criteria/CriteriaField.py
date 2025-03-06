@@ -28,12 +28,10 @@ class CriteriaField(AppField, PrimaryKeyRelatedField):
         # Create validation fields based on enabled input types
         self.char_field = None
         if CriteriaFieldInputType.NAME in input_types:
-            self.char_field = AppCharField(
-                required=self.required,
-                max_length=settings.CRITERIA_NAME_LEN_MAX,
-                allow_blank=self._allow_blank,
-                allow_null=self._allow_null
-            )
+            self.char_field = AppCharField(required=self.required,
+                                           max_length=settings.CRITERIA_NAME_LEN_MAX,
+                                           allow_blank=self._allow_blank,
+                                           allow_null=self._allow_null)
 
         # Initialize UUID validation if enabled
         self.uuid_field = None
