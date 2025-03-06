@@ -10,21 +10,17 @@ from django.dispatch import receiver
 from django.utils.translation import gettext as _
 
 from bodzify_api import settings
-from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
 from bodzify_api.model.field.foreign_key.AppOneToOneField import AppOneToOneField
 from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
 from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording import MusicbrainzRecording
-from bodzify_api.model.musicbrainz_resource.children.recording.MbRecordingLookupResult import (
-    MusicbrainzRecordingLookupResult
-)
-from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MbRecordingMissingCauseCode import (
-    MbRecordingMissingCauseCode
-)
+from bodzify_api.model.musicbrainz_resource.children.recording.MbRecordingLookupResult import MusicbrainzRecordingLookupResult
 from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MbRecordingMissingCause import (
     MbRecordingMissingCause
 )
+from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MbRecordingMissingCauseCode import MbRecordingMissingCauseCode
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from bodzify_api.model.utils import utils as model_utils
@@ -38,12 +34,9 @@ from .Fields import Fields
 from .fingerprinting.FingerprintingResult import FingerprintingResult
 from .fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
 
-if TYPE_CHECKING:
-    from ..lib.LibraryTrack import LibraryTrack
-
 
 class TrackFile(PrivateStandardResource):
-    lib_track = PrivateOneToOneField(
+    lib_track = PrivateOneToOneField(  # type: ignore
         'LibraryTrack', on_delete=models.CASCADE, related_name=LibraryTrackFields.TRACK_FILE)
     file = models.FileField(upload_to=model_utils.get_user_lib_path,
                             storage=PreserveSpacesStorage(),
@@ -66,6 +59,10 @@ class TrackFile(PrivateStandardResource):
     musicbrainz_recording = AppForeignKey(MusicbrainzRecording, on_delete=models.DO_NOTHING, default=None, null=True)
     musicbrainz_recording_missing_cause = AppOneToOneField(
         MbRecordingMissingCause, on_delete=models.DO_NOTHING, null=True)
+
+    if TYPE_CHECKING:
+        from ..lib.LibraryTrack import LibraryTrack
+        lib_track: LibraryTrack
 
     class Meta:
         verbose_name = 'Track File'
@@ -102,27 +99,22 @@ class TrackFile(PrivateStandardResource):
         fingerprinting_result: FingerprintingResult | None = None
 
         if is_audio_meta_analysis_enabled_override == 'true' or settings.AUDIO_META_ANALYSIS_ENABLED:
-            lib_track: LibraryTrack = self.lib_track
             fingerprinting_result = audio_fingerprinter.get_fingerprinting_result(
-                user=self.user, track_file=self.file, title=lib_track.title)
+                user=self.user, track_file=self.file, title=self.lib_track.title)
 
             if fingerprinting_result.is_success:
                 fingerprint = binascii.hexlify(fingerprinting_result.fingerprint)
 
-                if lib_track.track_file_fingerprint_must_be_unique:
+                if self.lib_track.track_file_fingerprint_must_be_unique:
                     existing_track_file = cast(
                         'TrackFile | None',
-                        self.__class__.objects.filter(user=self.user, fingerprint_memory=fingerprint).first()
-                    )
+                        self.__class__.objects.filter(user=self.user, fingerprint_memory=fingerprint).first())
                     if existing_track_file:
                         raise AppValidationException(
                             field_name='file',
-                            message=_('The file "%(current)s" has the same fingerprint as the file "%(existing)s"') % {
-                                'current': self.filename,
-                                'existing': existing_track_file.filename
-                            },
-                            field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_FINGERPRINT_DUPLICATE
-                        )
+                            message=_(f'The file {self.filename} has the same fingerprint as the track "'
+                                      f'{existing_track_file.lib_track.simple_str()}"'),
+                            field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_FINGERPRINT_DUPLICATE)
                 self.fingerprint_memory = fingerprint
             else:
                 self.fingerprint_missing_cause = fingerprinting_result.missing_cause
