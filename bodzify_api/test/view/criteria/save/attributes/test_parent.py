@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.serializer.model.criteria.input.Fields import Fields as Fields
+from bodzify_api.serializer.model.criteria.input.Fields import Fields as CriteriaInputFields
 from bodzify_api.test.utils.field.body_data.type.ForeignKeyBodyDataTestCase import ForeignKeyBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
@@ -10,16 +10,17 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
 
     def test_list_then_400(self):
-        response = self._post_genre(**{Fields.NAME_PUBLIC: "Punk", Fields.PARENT: ["value", "value2"]})
+        response = self._post_genre(**{CriteriaInputFields.NAME_PUBLIC: "Punk",
+                                    CriteriaInputFields.PARENT: ["value", "value2"]})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == Fields.PARENT
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaInputFields.PARENT
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_empty_then_none(self):
-        response = self._post_genre(**{Fields.NAME_PUBLIC: "Punk", Fields.PARENT: ""})
+        response = self._post_genre(**{CriteriaInputFields.NAME_PUBLIC: "Punk", CriteriaInputFields.PARENT: ""})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.parent == None
@@ -27,7 +28,8 @@ class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
     def test_existing_then_ok(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
 
-        response = self._post_genre(**{Fields.NAME_PUBLIC: "Punk", Fields.PARENT: genre_rock.uuid})
+        response = self._post_genre(**{CriteriaInputFields.NAME_PUBLIC: "Punk",
+                                    CriteriaInputFields.PARENT: genre_rock.uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.parent == genre_rock
@@ -35,11 +37,11 @@ class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
     def test_non_existing_then_400(self):
         self.model_fixture_factory.create_genre(name="Rock")
 
-        response = self._post_genre(
-            **{Fields.NAME_PUBLIC: "Punk", Fields.PARENT: "5d63bbee-32ca-47d9-89fe-fd82f18dd183"})
+        response = self._post_genre(**{CriteriaInputFields.NAME_PUBLIC: "Punk",
+                                       CriteriaInputFields.PARENT: "5d63bbee-32ca-47d9-89fe-fd82f18dd183"})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == Fields.PARENT
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaInputFields.PARENT
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.REFERENCE_INVALID

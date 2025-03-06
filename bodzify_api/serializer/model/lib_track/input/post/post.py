@@ -12,7 +12,6 @@ from bodzify_api.serializer.model.lib_track.input.input import LibTrackInputSeri
 from bodzify_api.utils import audio_metadata, data_transformer, utils
 from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
 from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
-from ..schema.Fields import Fields as SchemaFields
 from .Fields import Fields as PostFields
 
 
@@ -57,7 +56,7 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
             title = filename_without_expressions_to_exclude
         return title
 
-    def _get_data_from_file(self, file, user: User):
+    def _get_input_data_from_file(self, file, user: User):
         try:
             app_merged_metadata_dict = audio_metadata.get_merged_app_metadata(
                 file=file, normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
@@ -66,7 +65,7 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
                                          message=str(exc),
                                          field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_CORRUPTED)
 
-        schema_data_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(
+        input_data_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(
             data_dict=app_merged_metadata_dict,
             keys=[AppMetadataKey.TITLE,
                   AppMetadataKey.ARTISTS_NAMES,
@@ -85,37 +84,38 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
             AppMetadataKey.LANGUAGE: settings.LANGUAGE_LEN_MAX,
         }
         for key, max_length in metadata_max_lengths.items():
-            metadata_value = schema_data_with_potential_none.get(key)
+            metadata_value = input_data_with_potential_none.get(key)
             if metadata_value:
                 if key.get_optional_type() == list[str]:
                     truncated_values = []
                     for value in metadata_value:
                         truncated_values.append(value[:max_length])
-                    schema_data_with_potential_none[key] = truncated_values
+                    input_data_with_potential_none[key] = truncated_values
                 else:
-                    schema_data_with_potential_none[key] = schema_data_with_potential_none[key][:max_length]
+                    input_data_with_potential_none[key] = input_data_with_potential_none[key][:max_length]
 
-        genre_name = schema_data_with_potential_none.get(AppMetadataKey.GENRE_NAME)
+        genre_name = input_data_with_potential_none.get(AppMetadataKey.GENRE_NAME)
         if genre_name:
             from bodzify_api.model.criteria.children.genre.Genre import Genre
-            schema_data_with_potential_none[PostFields.GENRE] = Genre.objects.get_or_create(user=user, name=genre_name)[
+            input_data_with_potential_none[PostFields.GENRE] = Genre.objects.get_or_create(user=user, name=genre_name)[
                 0]
 
-        schema_data_clean = data_transformer.remove_none_or_empty_key_from_dict(schema_data_with_potential_none)
-        schema_data_clean[SchemaFields.TRACK_FILE_PUBLIC] = file
+        input_data_clean = data_transformer.remove_none_or_empty_key_from_dict(input_data_with_potential_none)
+        input_data_clean[PostFields.TRACK_FILE_PUBLIC] = file
 
-        return schema_data_clean
+        return input_data_clean
 
     def validate(self, data: dict):
         user = self.context['request'].user
-        data_from_file = self._get_data_from_file(file=data[PostFields.TRACK_FILE_PUBLIC], user=user)
+        file = data.get(PostFields.TRACK_FILE_PUBLIC)
+        data_from_file = self._get_input_data_from_file(file=file, user=user)
         schema_data = data_from_file.copy()
         keys = [PostFields.TRACK_FILE_PUBLIC,
                 PostFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
                 PostFields.TITLE,
-                SchemaFields.ARTISTS_NAMES,
+                PostFields.ARTISTS_NAMES_ARRAY[:2],  # Removes "[]""
                 PostFields.ALBUM_NAME,
-                SchemaFields.ALBUM_ARTISTS_NAMES,
+                PostFields.ALBUM_ARTISTS_NAMES_ARRAY[:2],  # Removes "[]""
                 PostFields.TRACK_NUMBER,
                 PostFields.GENRE,
                 PostFields.RATING,
@@ -125,7 +125,7 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
 
         # If title is not provided, generate it from the file
         if data.get(PostFields.TITLE) in [None, '']:
-            file = cast(DjangoFile, data.get(PostFields.TRACK_FILE_PUBLIC))
+            file = cast(DjangoFile, file)
             if isinstance(file, str):  # URL case
                 # Get filename from URL
                 filename, _ = self._get_track_filename_with_extension(
@@ -134,8 +134,8 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
                     artists_names_array=data.get(PostFields.ARTISTS_NAMES_ARRAY)
                 )
                 # Remove extension to get title
-                data[SchemaFields.TITLE] = os.path.splitext(filename)[0]
+                data[PostFields.TITLE] = os.path.splitext(filename)[0]
             else:  # File upload case
-                data[SchemaFields.TITLE] = self._get_generated_title_from_data(file, data)
+                data[PostFields.TITLE] = self._get_generated_title_from_data(file, data)
 
         return super().validate(data)

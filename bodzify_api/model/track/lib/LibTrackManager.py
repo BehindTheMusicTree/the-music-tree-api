@@ -11,7 +11,7 @@ from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
 from bodzify_api.model.user.User import User
-from bodzify_api.serializer.model.lib_track.input.schema.Fields import Fields as SchemaFields
+from bodzify_api.serializer.model.lib_track.input.Fields import Fields as InputFields
 from bodzify_api.utils import data_transformer
 
 from .Fields import Fields
@@ -74,30 +74,30 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             genreless_criteria_playlist.last_track_list_update_date = update_date
             genreless_criteria_playlist.save(update_fields=[PlayListFields.LAST_TRACK_LIST_UPDATE_DATE])
 
-    def _update_model_data_with_album_if_name_in_schema_data(self, model_data: dict, schema_data: dict):
+    def _update_model_data_with_album_if_name_in_input_data(self, model_data: dict, input_data: dict):
         from bodzify_api.model.album.Album import Album
-        if SchemaFields.ALBUM_NAME in schema_data:
-            album_name = schema_data[SchemaFields.ALBUM_NAME]
+        if InputFields.ALBUM_NAME in input_data:
+            album_name = input_data[InputFields.ALBUM_NAME]
 
             if not album_name:
                 return None
 
             album_artists_names = []
-            if SchemaFields.ALBUM_ARTISTS_NAMES in schema_data:
-                album_artists_names = schema_data[SchemaFields.ALBUM_ARTISTS_NAMES]
+            if InputFields.ALBUM_ARTISTS_NAMES in input_data:
+                album_artists_names = input_data[InputFields.ALBUM_ARTISTS_NAMES]
 
             album = Album.objects.get_album_from_name_and_album_artists_names_after_potential_creations(
-                user=schema_data[Fields.USER], name=album_name, album_artists_names=album_artists_names)
+                user=input_data[Fields.USER], name=album_name, album_artists_names=album_artists_names)
 
             model_data[Fields.ALBUM] = album
 
-    def _update_model_data_with_artists_if_names_in_schema_data_otherwise_empty_list(
-            self, model_data: dict, schema_data: dict) -> None:
-        if SchemaFields.ARTISTS_NAMES in schema_data:
-            artists_names = schema_data[SchemaFields.ARTISTS_NAMES]
+    def _update_model_data_with_artists_if_names_in_input_data_otherwise_empty_list(
+            self, model_data: dict, input_data: dict) -> None:
+        if InputFields.ARTISTS_NAMES in input_data:
+            artists_names = input_data[InputFields.ARTISTS_NAMES]
             if artists_names:
                 artists = Artist.objects.get_artists_list_from_names_after_potential_creation(
-                    user=schema_data[Fields.USER], artists_names=artists_names)
+                    user=input_data[Fields.USER], artists_names=artists_names)
             else:
                 artists = []
         else:
@@ -120,7 +120,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         self._add_to_genre_playlists(instance=instance, genre_limit=common_genre)
         self._remove_from_genre_playlists(instance=instance, old_genre=old_genre, genre_limit=common_genre)
 
-    def _get_model_data_from_input_schema_data(self, **kwargs) -> dict:
+    def _get_model_data_from_input_data(self, **kwargs) -> dict:
         model_data = dict()
         for key in [Fields.USER,
                     Fields.TITLE,
@@ -133,20 +133,20 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=kwargs)
 
-        self._update_model_data_with_artists_if_names_in_schema_data_otherwise_empty_list(
-            model_data=model_data, schema_data=kwargs)
-        self._update_model_data_with_album_if_name_in_schema_data(model_data=model_data, schema_data=kwargs)
+        self._update_model_data_with_artists_if_names_in_input_data_otherwise_empty_list(
+            model_data=model_data, input_data=kwargs)
+        self._update_model_data_with_album_if_name_in_input_data(model_data=model_data, input_data=kwargs)
 
         return model_data
 
     def create(self, **kwargs) -> 'LibraryTrack':
         from ..file.TrackFile import TrackFile
 
-        model_data = self._get_model_data_from_input_schema_data(**kwargs)
+        model_data = self._get_model_data_from_input_data(**kwargs)
 
         artists = model_data.pop(Fields.ARTISTS, None)
         track_file_model_data = dict()
-        track_file_model_data[TrackFileFields.FILE] = model_data.pop(Fields.TRACK_FILE)
+        track_file_model_data[TrackFileFields.FILE] = kwargs[Fields.TRACK_FILE_PUBLIC]
 
         instance: LibraryTrack = super().create(**model_data)
         if artists:
@@ -193,7 +193,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         old_genre = old_instance.genre
         old_artists = old_instance.artists.all()
 
-        model_data = self._get_model_data_from_input_schema_data(**kwargs)
+        model_data = self._get_model_data_from_input_data(**kwargs)
 
         updated_instance: LibraryTrack = super().update_instance(old_instance, **model_data)
 

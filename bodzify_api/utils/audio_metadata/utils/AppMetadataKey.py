@@ -3,18 +3,18 @@ from enum import Enum
 
 from django.core.exceptions import ImproperlyConfigured
 
-from bodzify_api.serializer.model.lib_track.input.schema.Fields import Fields as LibTrackSchemaFields
-from bodzify_api.serializer.model.criteria.input.Fields import Fields as CriteriaSchemaFields
+from bodzify_api.serializer.model.lib_track.input.Fields import Fields as LibTrackInputFields
+from bodzify_api.serializer.model.criteria.input.Fields import Fields as CriteriaInputFields
 
 
 class AppMetadataKey(str, Enum):
-    TITLE = LibTrackSchemaFields.TITLE
-    ARTISTS_NAMES = LibTrackSchemaFields.ARTISTS_NAMES
-    ALBUM_NAME = LibTrackSchemaFields.ALBUM_NAME
-    ALBUM_ARTISTS_NAMES = LibTrackSchemaFields.ALBUM_ARTISTS_NAMES
-    GENRE_NAME = f'{LibTrackSchemaFields.GENRE}_{CriteriaSchemaFields.NAME_PUBLIC}'
-    RATING = LibTrackSchemaFields.RATING
-    LANGUAGE = LibTrackSchemaFields.LANGUAGE
+    TITLE = LibTrackInputFields.TITLE
+    ARTISTS_NAMES = LibTrackInputFields.ARTISTS_NAMES
+    ALBUM_NAME = LibTrackInputFields.ALBUM_NAME
+    ALBUM_ARTISTS_NAMES = LibTrackInputFields.ALBUM_ARTISTS_NAMES
+    GENRE_NAME = f'{LibTrackInputFields.GENRE}_{CriteriaInputFields.NAME_PUBLIC}'
+    RATING = LibTrackInputFields.RATING
+    LANGUAGE = LibTrackInputFields.LANGUAGE
     # RELEASE_DATE = 'release_date'
     # TRACK_NUMBER = 'track_number'
     # BPM = 'bpm'
