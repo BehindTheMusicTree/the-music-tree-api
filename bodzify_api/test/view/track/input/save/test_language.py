@@ -15,6 +15,7 @@ class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
         language = "a" * settings.LANGUAGE_LEN_MAX
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PutFields.LANGUAGE: language})
 
+        assert True
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.language == language
 

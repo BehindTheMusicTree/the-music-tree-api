@@ -14,7 +14,7 @@ class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
 
     def test_longest_then_ok(self):
         genre_name = "a" * settings.CRITERIA_NAME_LEN_MAX
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE_NAME: genre_name})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE: genre_name})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre
@@ -22,16 +22,16 @@ class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
 
     def test_too_long_then_400(self):
         genre_name = "a" * (settings.CRITERIA_NAME_LEN_MAX + 1)
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE_NAME: genre_name})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE: genre_name})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.GENRE_NAME)
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.GENRE)
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG
 
     def test_empty_then_none(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE_NAME: ''})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE: ''})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre == None
@@ -40,7 +40,7 @@ class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
         genre_name = "Kopoe"
         self.model_fixture_factory.create_genre(name=genre_name)
 
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE_NAME: genre_name})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE: genre_name})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre
@@ -48,7 +48,7 @@ class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
 
     def test_not_existing(self):
         genre_name = "hoho"
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE_NAME: genre_name})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE: genre_name})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre
@@ -56,7 +56,7 @@ class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
 
     def test_new_so_parent_none(self):
         genre_name = "Rock"
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE_NAME: genre_name})
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE: genre_name})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre

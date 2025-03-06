@@ -42,7 +42,7 @@ class TestCase(UserTestCase):
         user = self.model_fixture_factory.create_user()
         self._login_as_user(user)
         criteria_name = 'Rock'
-        data = {TrackPostFields.GENRE_NAME: criteria_name}
+        data = {TrackPostFields.GENRE: criteria_name}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
         assert Criteria.objects.filter(user=user, name=criteria_name).count() == 1
         assert response.status_code == status.HTTP_201_CREATED
