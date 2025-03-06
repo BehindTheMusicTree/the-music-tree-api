@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
 from rest_framework.exceptions import ValidationError as DrfValidationError
 from rest_framework_simplejwt.exceptions import InvalidToken
-from rest_framework.exceptions import NotAuthenticated, ParseError, UnsupportedMediaType
+from rest_framework.exceptions import NotAuthenticated, ParseError, UnsupportedMediaType, MethodNotAllowed
 
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.app.AppValidationExceptionFields import AppValidationErrorFields
@@ -239,6 +239,17 @@ class ErrorResponse:
         )
 
     @staticmethod
+    def _from_method_not_allowed_exception(exception: MethodNotAllowed) -> JsonResponse:
+        detail = exception.detail
+        message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+        return ErrorResponse.create_error_response(
+            error_detail={
+                ErrorResponseFields.MESSAGE: message,
+                ErrorResponseFields.CODE: 'method_not_allowed'
+            },
+            api_error_code=ApiErrorCode.VALIDATION_METHOD_NOT_ALLOWED)
+
+    @staticmethod
     def handle_exception(exc: Exception) -> JsonResponse:
         """
         Routes different types of exceptions to their appropriate handlers.
@@ -256,5 +267,7 @@ class ErrorResponse:
             return ErrorResponse._from_content_type_exception(exc)
         elif isinstance(exc, UnsupportedMediaType):
             return ErrorResponse._from_unsupported_media_type_exception(exc)
+        elif isinstance(exc, MethodNotAllowed):
+            return ErrorResponse._from_method_not_allowed_exception(exc)
         else:
             return ErrorResponse._from_unhandled_exception(exc)
