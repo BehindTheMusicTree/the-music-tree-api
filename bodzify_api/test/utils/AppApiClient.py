@@ -1,4 +1,5 @@
 import json
+from typing import Any, Mapping
 
 from django.http import HttpResponse
 from rest_framework.test import APIClient
@@ -23,116 +24,90 @@ class AppApiClient(APIClient):
             handle_response(response)
         return response
 
-    def get(self, path, data: dict | None = None, content_type=None, follow=False, **extra) -> HttpResponse:
-        data_url_encoded = None
-        if data:
-            data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
+    def _get_content_type(self, format: str | None, content_type: str | None) -> str | None:
+        """Determine the appropriate content type based on format and explicit content_type.
 
-        # Set default content type and headers for JSON
+        Args:
+            format: The format of the request ('json', 'multipart', etc.)
+            content_type: Explicitly specified content type
+
+        Returns:
+            The determined content type or None for multipart
+        """
+        if format == 'multipart':
+            return None
         if not content_type:
-            content_type = 'application/json'
-        if content_type == 'application/json' and 'HTTP_ACCEPT' not in extra:
-            extra['HTTP_ACCEPT'] = 'application/json'
+            return 'application/json' if format == 'json' else 'application/x-www-form-urlencoded'
+        return content_type
 
-        # Extract response handler from extra if present
+    def _prepare_data(self, data: dict | str | None, format: str | None) -> Any:
+        """Prepare data for the request based on format and type.
+
+        Args:
+            data: The input data to prepare
+            format: The format of the request ('json', 'multipart', etc.)
+
+        Returns:
+            Prepared data ready for the request
+        """
+        if not data:
+            return None
+
+        if isinstance(data, str):
+            return data
+
+        prepared_data = data_transformer.replace_none_with_empty_string(**data)
+        if format != 'multipart' and isinstance(prepared_data, dict):
+            return json.dumps(prepared_data, cls=UUIDJSONEncoder)
+
+        return prepared_data
+
+    def _prepare_request_kwargs(self, extra: dict, format: str | None, content_type: str | None) -> tuple[dict, Any, str | None]:
+        """Prepare common request keyword arguments.
+
+        Args:
+            extra: Additional request arguments
+            format: The format of the request
+            content_type: The content type for the request
+
+        Returns:
+            Tuple of (prepared extra kwargs, response handler, determined content type)
+        """
+        extra = extra.copy()
+        content_type = self._get_content_type(format, content_type)
+        extra['HTTP_ACCEPT'] = 'application/json'
         handle_response = extra.pop('handle_response', None)
+        return extra, handle_response, content_type
+
+    def get(self, path, data: dict | None = None, content_type=None, follow=False, **extra) -> HttpResponse:
+        if data:
+            # For GET requests, ensure data is a valid query string format
+            data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
+        else:
+            data_url_encoded = None
+            
+        extra, handle_response, content_type = self._prepare_request_kwargs(extra, 'json', content_type)
         response = super().get(path, data_url_encoded, follow, **extra)
         return self._handle_response(response, handle_response)
 
-    def post(self, path,
-             data: dict | str | None = None,
-             format='json',
-             content_type=None,
-             follow=False,
-             **extra) -> HttpResponse:
+    def post(self, path, data: dict | str | None = None, format='json', content_type=None, follow=False, **extra) -> HttpResponse:
+        data_url_encoded = self._prepare_data(data, format)
+        extra, handle_response, content_type = self._prepare_request_kwargs(extra, format, content_type)
 
-        if data and not isinstance(data, str):
-            data = data_transformer.replace_none_with_empty_string(**data)
-        data_url_encoded = None
-        if data:
-            if isinstance(data, str):
-                data_url_encoded = data
-            else:
-                data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
-
-                if format != 'multipart':
-                    if isinstance(data_url_encoded, dict):
-                        data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
-
-        # For multipart, let DRF handle content type
-        if format == 'multipart':
-            content_type = None
-        # Set appropriate content type for other formats
-        elif not content_type:
-            if format == 'json':
-                content_type = 'application/json'
-            else:
-                content_type = 'application/x-www-form-urlencoded'
-
-        # Always request JSON response regardless of content type
-        extra['HTTP_ACCEPT'] = 'application/json'
-
-        # Extract response handler from extra if present
-        handle_response = extra.pop('handle_response', None)
-        response = super().post(
-            path, data_url_encoded, follow=follow, format=format, content_type=content_type, **extra)
+        response = super().post(path, data_url_encoded, follow=follow, format=format, content_type=content_type, **extra)
         return self._handle_response(response, handle_response)
 
-    def put(
-            self, path, data: dict | str | None = None, format=None, content_type=None, follow=False, **extra
-    ) -> HttpResponse:
-        data_url_encoded = None
-        if data:
-            if isinstance(data, str):
-                data_url_encoded = data
-            else:
-                data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
-                if format != 'multipart':
-                    data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
+    def put(self, path, data: dict | str | None = None, format=None, content_type=None, follow=False, **extra) -> HttpResponse:
+        data_url_encoded = self._prepare_data(data, format)
+        extra, handle_response, content_type = self._prepare_request_kwargs(extra, format, content_type)
 
-        # For multipart, let DRF handle content type
-        if format == 'multipart':
-            content_type = None
-        # Set appropriate content type for other formats
-        elif not content_type:
-            if format == 'json':
-                content_type = 'application/json'
-            else:
-                content_type = 'application/x-www-form-urlencoded'
-
-        # Set default headers for JSON content type
-        # Always request JSON response regardless of content type
-        extra['HTTP_ACCEPT'] = 'application/json'
-
-        # Extract response handler from extra if present
-        handle_response = extra.pop('handle_response', None)
         response = super().put(path, data_url_encoded, format, content_type, follow, **extra)
         return self._handle_response(response, handle_response)
 
-    def delete(self, path, data: dict | None = None, format=None, content_type=None, follow=False, **extra
-               ) -> HttpResponse:
-        data_url_encoded = None
-        if data:
-            data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
-            if format != 'multipart':
-                data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
+    def delete(self, path, data: dict | None = None, format=None, content_type=None, follow=False, **extra) -> HttpResponse:
+        data_url_encoded = self._prepare_data(data, format)
+        extra, handle_response, content_type = self._prepare_request_kwargs(extra, format, content_type)
 
-        # For multipart, let DRF handle content type
-        if format == 'multipart':
-            content_type = None
-        # Set appropriate content type for other formats
-        elif not content_type:
-            if format == 'json':
-                content_type = 'application/json'
-            else:
-                content_type = 'application/x-www-form-urlencoded'
-
-        # Set default headers for JSON content type
-        # Always request JSON response regardless of content type
-        extra['HTTP_ACCEPT'] = 'application/json'
-
-        # Extract response handler from extra if present
-        handle_response = extra.pop('handle_response', None)
         response = super().delete(path, data_url_encoded, format, content_type, follow, **extra)
         return self._handle_response(response, handle_response)
 
@@ -153,8 +128,10 @@ class AppApiClient(APIClient):
                     # For non-JSON error responses, create a basic error structure
                     response._json = {
                         'detail': response.content.decode('utf-8')
-                        if hasattr(response.content, 'decode') else str(response.content), 'content_type': content_type,
-                        'status_code': response.status_code}
+                        if hasattr(response.content, 'decode') else str(response.content),
+                        'content_type': content_type,
+                        'status_code': response.status_code
+                    }
             else:
                 # For success responses, maintain strict JSON checking
                 if not content_type.startswith('application/json'):
