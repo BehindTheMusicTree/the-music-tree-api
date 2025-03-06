@@ -529,6 +529,7 @@ def setup_middlewares():
     """Setup Django middleware classes."""
     global MIDDLEWARE
     MIDDLEWARE = [
+        f'{APP_NAME}.middleware.CamelToSnakeMiddleware.CamelToSnakeMiddleware',
         f'{APP_NAME}.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware',
         f'{APP_NAME}.middleware.ContentTypeValidationMiddleware.ContentTypeValidationMiddleware',
         f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',

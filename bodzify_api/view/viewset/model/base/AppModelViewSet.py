@@ -3,7 +3,7 @@ from typing import Any, Generic, Sequence, Type, TypeVar, Union, cast
 from django.core.exceptions import ImproperlyConfigured
 from django.db import IntegrityError
 from django.db.models import QuerySet
-from django.http import FileResponse
+from django.http import FileResponse, JsonResponse
 from rest_framework import status, viewsets
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.exceptions import ValidationError as DrfValidationError
@@ -98,29 +98,22 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         return self.get_paginated_response(data)
 
     def _handle_post(self, request: Request) -> Response:
-        create_data_in_snake_case = data_transformer.form_data_to_snake_case(request.data)
-        instance = self._create_instance(request=request, create_data=create_data_in_snake_case)
+        instance = self._create_instance(request=request, create_data=request.data)
         serializer = self._require_serializer(SerializerType.DETAILED)(instance=instance)
         headers = self.get_success_headers(serializer.data)
         return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def _handle_retrieve(self) -> Response:
-        instance = self.get_object()
-        serializer = self._require_serializer(SerializerType.DETAILED)(instance)
+        serializer = self._require_serializer(SerializerType.DETAILED)(self.get_object())
         return Response(serializer.data)
 
     def _handle_update(self, request: Request) -> Response:
-        instance = self.get_object()
-        update_data_in_snake_case = data_transformer.form_data_to_snake_case(request.data)
-        updated_instance = self._update_instance(request=request,
-                                                 instance=instance,
-                                                 update_data=update_data_in_snake_case)
+        updated_instance = self._update_instance(request=request, instance=self.get_object(), update_data=request.data)
         serializer = self._require_serializer(SerializerType.DETAILED)(instance=updated_instance)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
     def _handle_destroy(self) -> Response:
-        instance = self.get_object()
-        self.model_class.objects.delete_instance(instance)
+        self.model_class.objects.delete_instance(self.get_object())
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def paginate_queryset(self, queryset) -> Union[list[T], QuerySet[T]] | None:
@@ -130,7 +123,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             queryset = self.model_class.objects.filter(id__in=[obj.id for obj in queryset])
         return self.paginator.paginate_queryset(cast(QuerySet[T], queryset), self.request, view=self)
 
-    def handle_exception(self, exc: Exception) -> Response:
+    def handle_exception(self, exc: Exception) -> JsonResponse:
         if isinstance(exc, DrfValidationError):
             converted = AppValidationException.detect_and_convert_from_drf_exception(exc)
             if converted:
@@ -138,7 +131,8 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             return ErrorResponse.from_validation_error(exc)
         elif isinstance(exc, IntegrityError):
             return ErrorResponse.from_unhandled_integrity_error(exc)
-        return super().handle_exception(exc)
+        else:
+            return ErrorResponse.from_unhandled_exception(exc)
 
     def get_object(self) -> T:
         return super().get_object()
