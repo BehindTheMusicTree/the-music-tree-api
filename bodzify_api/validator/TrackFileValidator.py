@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from django.utils.deconstruct import deconstructible
@@ -25,7 +24,6 @@ class TrackFileValidator:
 
     def __call__(self, value, field=None):
         self._validate_extension(value, field)
-        self._validate_filename_length(value, field)
         self._validate_file_size(value, field)
         self._validate_content_type_is_audio_from_magic_bytes_and_content(value, field)
 
@@ -104,24 +102,3 @@ class TrackFileValidator:
                 raise AppValidationException(field_name=self.field_name,
                                              message=message,
                                              field_validation_error_code=FieldValidationErrorCode.INVALID_FILE_TYPE)
-
-    def _validate_filename_length(self, value, field=None):
-        try:
-            filename = os.path.basename(value.file.name)
-        except AttributeError:
-            filename = os.path.basename(value.name)
-
-        if len(filename) > settings.LIB_TRACK_FILENAME_LEN_MAX:
-            message = _('Ensure this filename has at most %(max_length)d characters (it has %(current_length)d).') % {
-                'max_length': settings.LIB_TRACK_FILENAME_LEN_MAX,
-                'current_length': len(filename)
-            }
-            if field and hasattr(field, 'fail'):
-                field.fail(FieldValidationErrorCode.INVALID_FILENAME, message)
-            else:
-                from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
-                raise AppValidationException(
-                    field_name=self.field_name,
-                    message=message,
-                    field_validation_error_code=FieldValidationErrorCode.INVALID_FILENAME
-                )

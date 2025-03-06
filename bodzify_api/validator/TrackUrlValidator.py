@@ -26,13 +26,8 @@ class TrackUrlValidator(BaseValidator):
         if not isinstance(value, str):
             raise ValidationError(_('%(url)s is not a valid URL') % {'url': value})
 
-        # Validate URL format
         self._validate_url_format(value)
-
-        # Validate audio file extension
         self._validate_audio_extension(value)
-
-        # Validate file existence
         self._validate_remote_file_exists(value)
 
     def _validate_url_format(self, value: str):

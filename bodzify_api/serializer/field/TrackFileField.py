@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 import requests
 from django.core.files.uploadedfile import UploadedFile, InMemoryUploadedFile
 
+from bodzify_api import settings
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.field.AppField import AppField
@@ -115,6 +116,9 @@ class TrackFileField(AppField):
 
         if isinstance(data, str):
             validated_url = self.url_field.to_internal_value(data)
+            # I don't know why to_internal_value does not call run_validators automatically
+            self.url_field.run_validators(validated_url)
+
             downloaded_file = self._download_file_from_url(validated_url)
             # Run validators on downloaded file before returning
             self.file_field.run_validators(downloaded_file)
@@ -122,9 +126,12 @@ class TrackFileField(AppField):
 
         if isinstance(data, UploadedFile):
             validated_file = self.file_field.to_internal_value(data)
-
             # I don't know why to_internal_value does not call run_validators automatically
             self.file_field.run_validators(validated_file)
+
+            # Rename file if too long
+            if len(validated_file.name) > settings.LIB_TRACK_FILENAME_LEN_MAX:
+                validated_file.name = validated_file.name[:settings.LIB_TRACK_FILENAME_LEN_MAX]
             return validated_file
 
         self.fail('invalid', detail='Field must be either a valid audio file or URL.')
