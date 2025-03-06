@@ -8,6 +8,7 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework.test import APIClient
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.user.User import User

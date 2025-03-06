@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
 from rest_framework.exceptions import ValidationError as DrfValidationError
 from rest_framework_simplejwt.exceptions import InvalidToken
-from rest_framework.exceptions import NotAuthenticated
+from rest_framework.exceptions import NotAuthenticated, ParseError, UnsupportedMediaType
 
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.app.AppValidationExceptionFields import AppValidationErrorFields
@@ -112,6 +112,26 @@ class ErrorResponse:
         }
         return ErrorResponse.create_error_response(
             error_detail=error_detail, api_error_code=ApiErrorCode.SYSTEM_INTERNAL_ERROR)
+
+    @staticmethod
+    def _from_unsupported_media_type_exception(exception: UnsupportedMediaType) -> JsonResponse:
+        detail = exception.detail
+        message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+        return ErrorResponse.create_error_response(
+            error_detail={
+                ErrorResponseFields.MESSAGE: message,
+                ErrorResponseFields.CODE: 'unsupported_media_type'
+            },
+            api_error_code=ApiErrorCode.VALIDATION_UNSUPPORTED_MEDIA_TYPE)
+
+    @staticmethod
+    def _from_content_type_exception(exception: ParseError) -> JsonResponse:
+        detail = exception.detail
+        message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+        code = detail['code'] if isinstance(detail, dict) and 'code' in detail else exception.default_code
+        return ErrorResponse.create_error_response(
+            error_detail={ErrorResponseFields.MESSAGE: message, ErrorResponseFields.CODE: code},
+            api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT)
 
     @staticmethod
     def _from_unhandled_exception(exception: Exception) -> JsonResponse:
@@ -232,5 +252,9 @@ class ErrorResponse:
             return ErrorResponse._from_unhandled_integrity_error(exc)
         elif isinstance(exc, (InvalidToken, NotAuthenticated)):
             return ErrorResponse._from_invalid_jwt_token(exc)
+        elif isinstance(exc, ParseError):
+            return ErrorResponse._from_content_type_exception(exc)
+        elif isinstance(exc, UnsupportedMediaType):
+            return ErrorResponse._from_unsupported_media_type_exception(exc)
         else:
             return ErrorResponse._from_unhandled_exception(exc)

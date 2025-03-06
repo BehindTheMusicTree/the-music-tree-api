@@ -9,7 +9,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestJsonDuplicateFields(GenreTestCase):
 
-    def test_duplicate_fields_json_post_then_400(self):
+    def test_duplicate_fields_on_json_post_then_400(self):
         raw_json = '{"name": "test", "name": "test2"}'
         response = self.api_client.post(path=reverse(self.list_endpoint),
                                         data=raw_json,

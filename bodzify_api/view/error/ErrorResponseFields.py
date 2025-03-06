@@ -37,6 +37,7 @@ class ErrorResponseFields:
 
         # Validation errors
         ApiErrorCode.VALIDATION_INVALID_INPUT: "One or more fields contain invalid data. Please check the error details for specific validation requirements",
+        ApiErrorCode.VALIDATION_UNSUPPORTED_MEDIA_TYPE: "Unsupported media type. Please check the Content-Type header",
 
         # Resource errors
         ApiErrorCode.RESOURCE_NOT_FOUND: "The requested resource could not be found",
@@ -67,6 +68,7 @@ class ErrorResponseFields:
         status.HTTP_403_FORBIDDEN: "Forbidden",
         status.HTTP_404_NOT_FOUND: "Not Found",
         status.HTTP_409_CONFLICT: "Conflict",
+        status.HTTP_415_UNSUPPORTED_MEDIA_TYPE: "Unsupported Media Type",
         status.HTTP_422_UNPROCESSABLE_ENTITY: "Unprocessable Entity",
         status.HTTP_500_INTERNAL_SERVER_ERROR: "Internal Server Error",
         status.HTTP_501_NOT_IMPLEMENTED: "Not Implemented",
@@ -88,6 +90,7 @@ class ErrorResponseFields:
         ApiErrorCode.VALIDATION_INVALID_FORMAT: status.HTTP_400_BAD_REQUEST,
         ApiErrorCode.VALIDATION_INVALID_UUID: status.HTTP_400_BAD_REQUEST,
         ApiErrorCode.VALIDATION_INTEGRITY_ERROR: status.HTTP_400_BAD_REQUEST,
+        ApiErrorCode.VALIDATION_UNSUPPORTED_MEDIA_TYPE: status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
 
         # Resource errors -> 404/409
         ApiErrorCode.RESOURCE_NOT_FOUND: status.HTTP_404_NOT_FOUND,
