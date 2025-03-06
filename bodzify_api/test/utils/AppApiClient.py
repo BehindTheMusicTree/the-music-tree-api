@@ -41,7 +41,6 @@ class AppApiClient(APIClient):
 
     def post(self, path,
              data: dict | str | None = None,
-             content_type=None,
              follow=False,
              format=None,
              **extra) -> HttpResponse:
@@ -56,16 +55,8 @@ class AppApiClient(APIClient):
                     if isinstance(data_url_encoded, dict):
                         data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
 
-            if not content_type and not format:
-                content_type = 'application/json'
-
-        # Set default headers for JSON content type
-        if content_type == 'application/json' and 'HTTP_ACCEPT' not in extra:
-            extra['HTTP_ACCEPT'] = 'application/json'
-
-        # Extract response handler from extra if present
         handle_response = extra.pop('handle_response', None)
-        response = super().post(path, data_url_encoded, content_type=content_type, follow=follow, format=format, **extra)
+        response = super().post(path, data_url_encoded, follow=follow, format=format, **extra)
         return self._handle_response(response, handle_response)
 
     def put(
