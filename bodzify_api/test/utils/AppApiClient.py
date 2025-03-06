@@ -109,11 +109,16 @@ class AppApiClient(APIClient):
             data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
             if format != 'multipart':
                 data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
-                if not content_type:
-                    content_type = 'application/json'
+
+        if format == 'json':
+            content_type = 'application/json'
+        elif format != 'multipart':  # Don't set content_type for multipart
+            content_type = 'application/x-www-form-urlencoded'
+        else:
+            content_type = None  # Let DRF handle multipart content type
 
         # Set default headers for JSON content type
-        if content_type == 'application/json' and 'HTTP_ACCEPT' not in extra:
+        if 'HTTP_ACCEPT' not in extra:
             extra['HTTP_ACCEPT'] = 'application/json'
 
         # Extract response handler from extra if present
