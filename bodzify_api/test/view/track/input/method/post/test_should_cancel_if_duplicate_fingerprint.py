@@ -21,7 +21,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == Fields.TRACK_FILE_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.DUPLICATE_FINGERPRINT
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.AUDIO_FILE_FINGERPRINT_DUPLICATE
 
     def test_not_duplicate_fingerprint_and_must_cancel_if_duplicate_fingerprint_then_ok(self):
         data = {Fields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE: True}

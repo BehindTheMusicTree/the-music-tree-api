@@ -64,7 +64,7 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
         except FileCorruptedError as exc:
             raise AppValidationException(field_name=PostFields.TRACK_FILE_PUBLIC,
                                          message=str(exc),
-                                         field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
+                                         field_validation_error_code=FieldValidationErrorCode.AUDIO_FILE_CORRUPTED)
 
         schema_data_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(
             data_dict=app_merged_metadata_dict,

@@ -100,13 +100,15 @@ class TrackFileField(AppField):
                                          message='URL request timed out. Please try again.',
                                          field_validation_error_code=FieldValidationErrorCode.URL_REQUEST_FAILED)
         except requests.RequestException as e:
-            raise AppValidationException(field_name=self.get_error_field_name(),
-                                         message=f'Failed to download file: {str(e)}',
-                                         field_validation_error_code=FieldValidationErrorCode.FILE_DOWNLOAD_FAILED)
+            raise AppValidationException(
+                field_name=self.get_error_field_name(),
+                message=f'Failed to download file: {str(e)} ',
+                field_validation_error_code=FieldValidationErrorCode.AUDIO_FILE_DOWNLOAD_FAILED)
         except Exception as e:
-            raise AppValidationException(field_name=self.get_error_field_name(),
-                                         message=f'Unexpected error while downloading file: {str(e)}',
-                                         field_validation_error_code=FieldValidationErrorCode.FILE_DOWNLOAD_FAILED)
+            raise AppValidationException(
+                field_name=self.get_error_field_name(),
+                message=f'Unexpected error while downloading file: {str(e)} ',
+                field_validation_error_code=FieldValidationErrorCode.AUDIO_FILE_DOWNLOAD_FAILED)
 
     def to_internal_value(self, data: Any) -> Any:
         if data in [None, '']:

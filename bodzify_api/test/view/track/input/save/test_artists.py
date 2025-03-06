@@ -55,7 +55,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(malformed_field_name)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.MALFORMED_LIST
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.LIST_MALFORMED
 
     def test_comma_separated_then_only_one_value(self):
         data = {PostFields.ARTISTS_NAMES_ARRAY: "Muse, Kopoe"}
@@ -74,7 +74,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(ExtractFields.ARTISTS_NAMES_ARRAY)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.LIST_VALUE_DUPLICATE
 
     def test_empty_then_none(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3,
@@ -92,7 +92,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(ExtractFields.ARTISTS_NAMES_ARRAY)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.LIST_VALUE_EMPTY
 
     def test_one_existing_then_create_it(self) -> None:
         artist_name = "Kopoe"
@@ -184,7 +184,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(ExtractFields.ARTISTS_NAMES_ARRAY)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.LIST_VALUE_DUPLICATE
 
     def test_multiple_artists_with_empty_names_then_400(self) -> None:
         valid_artist = "ValidArtist"
@@ -195,4 +195,4 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(ExtractFields.ARTISTS_NAMES_ARRAY)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.LIST_VALUE_EMPTY

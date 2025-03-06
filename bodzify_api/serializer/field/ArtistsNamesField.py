@@ -26,7 +26,7 @@ class ArtistsNamesField(AppField, ListField):
                 raise AppValidationException(
                     field_name=self.get_error_field_name(),
                     message='Empty artist names are not allowed when another value is specified',
-                    field_validation_error_code=FieldValidationErrorCode.ARTIST_NAME_EMPTY_IN_LIST
+                    field_validation_error_code=FieldValidationErrorCode.LIST_VALUE_EMPTY
                 )
         else:
             data = [data]
@@ -37,11 +37,9 @@ class ArtistsNamesField(AppField, ListField):
 
         unique_artists = set(data)
         if len(unique_artists) < len(data):
-            raise AppValidationException(
-                field_name=self.get_error_field_name(),
-                message='Duplicate artist names are not allowed',
-                field_validation_error_code=FieldValidationErrorCode.ARTIST_NAMES_DUPLICATE
-            )
+            raise AppValidationException(field_name=self.get_error_field_name(),
+                                         message='Duplicate artist names are not allowed',
+                                         field_validation_error_code=FieldValidationErrorCode.LIST_VALUE_DUPLICATE)
 
         # Convert tuple to list if necessary to match ListField's expected type
         list_data = list(data) if isinstance(data, tuple) else data

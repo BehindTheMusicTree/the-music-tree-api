@@ -18,7 +18,7 @@ class TestJsonDuplicateFields(GenreTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaPostFields.NAME_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FIELD_DUPLICATE
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.DUPLICATE
 
     def test_duplicate_fields_on_json_put_then_400(self):
         genre = self.model_fixture_factory.create_genre(name="rock")
@@ -32,7 +32,7 @@ class TestJsonDuplicateFields(GenreTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaPostFields.NAME_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FIELD_DUPLICATE
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.DUPLICATE
 
     def test_duplicate_fields_on_json_patch_then_400(self):
         # PATCH is not supported

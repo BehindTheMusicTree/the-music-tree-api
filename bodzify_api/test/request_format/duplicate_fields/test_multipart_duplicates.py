@@ -23,7 +23,7 @@ class TestMultipartDuplicateFields(LibTrackTestCase):
 
         # The raised error will be invalid format as the duplicated data in multipart form data will be converted to
         # a list
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_duplicate_fields_on_multipart_put_then_400(self):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Hey Ho")
@@ -38,7 +38,7 @@ class TestMultipartDuplicateFields(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == LibTrackFields.TITLE
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_FORMAT
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_duplicate_fields_on_multipart_patch_then_400(self):
         # PATCH is not supported

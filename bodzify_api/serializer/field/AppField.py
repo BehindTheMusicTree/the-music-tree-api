@@ -17,11 +17,11 @@ class AppField(Field):
         'required': FieldValidationErrorCode.REQUIRED,
         'null': FieldValidationErrorCode.REQUIRED,
         'blank': FieldValidationErrorCode.BLANK,
-        'invalid': FieldValidationErrorCode.INVALID_FORMAT,
-        'invalid_extension': FieldValidationErrorCode.INVALID_EXTENSION,
-        'invalid_choice': FieldValidationErrorCode.INVALID_ENUM,
-        'does_not_exist': FieldValidationErrorCode.INVALID_REFERENCE,
-        'incorrect_type': FieldValidationErrorCode.INVALID_FORMAT,
+        'invalid': FieldValidationErrorCode.FORMAT_INVALID,
+        'invalid_extension': FieldValidationErrorCode.AUDIO_FILE_EXTENSION_INVALID,
+        'invalid_choice': FieldValidationErrorCode.ENUM_INVALID,
+        'does_not_exist': FieldValidationErrorCode.REFERENCE_INVALID,
+        'incorrect_type': FieldValidationErrorCode.FORMAT_INVALID,
         'max_length': FieldValidationErrorCode.STRING_TOO_LONG,
         'min_length': FieldValidationErrorCode.STRING_TOO_SHORT,
         'max_value': FieldValidationErrorCode.RATING_TOO_LARGE,
@@ -31,8 +31,8 @@ class AppField(Field):
     }
 
     invalid_message_validation_error_code_mapping: dict[str, FieldValidationErrorCode] = {
-        'Not a valid string.': FieldValidationErrorCode.INVALID_FORMAT,
-        'Invalid UUID format.': FieldValidationErrorCode.INVALID_FORMAT,
+        'Not a valid string.': FieldValidationErrorCode.FORMAT_INVALID,
+        'Invalid UUID format.': FieldValidationErrorCode.FORMAT_INVALID,
     }
 
     def fail(self, key: str, **kwargs: Any) -> None:
@@ -56,7 +56,7 @@ class AppField(Field):
 
         if key == 'invalid':
             if msg.startswith('Failed to download file:'):
-                code = FieldValidationErrorCode.FILE_DOWNLOAD_FAILED
+                code = FieldValidationErrorCode.AUDIO_FILE_DOWNLOAD_FAILED
             code = self.invalid_message_validation_error_code_mapping.get(msg, FieldValidationErrorCode.DEFAULT)
         else:
             code = self.validation_error_code_mapping.get(key, FieldValidationErrorCode.DEFAULT)

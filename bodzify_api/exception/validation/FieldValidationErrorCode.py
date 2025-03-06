@@ -83,53 +83,51 @@ class FieldValidationErrorCode(str, Enum):
     DEFAULT = 'validation_error'
 
     # Field Content Validation
-    BLANK = 'blank'
-    REQUIRED = 'required'
-    INVALID_FORMAT = 'invalid_format'
-    INVALID_ENUM = 'invalid_enum'
+    FORMAT_INVALID = 'format_invalid'
+    ENUM_INVALID = 'enum_invalid'
     STRING_TOO_LONG = 'string_too_long'
     STRING_TOO_SHORT = 'string_too_short'
-    FIELD_DUPLICATE = 'field_duplicate'
-
-    # Field Structure Validation
-    UNKNOWN_FIELD = 'unknown_field'
-    UNKNOWN_FIELDS = 'unknown_fields'
+    REQUIRED = 'required'
+    BLANK = 'blank'
+    DUPLICATE = 'duplicate'
+    UNKNOWN = 'unknown'
+    UNKNOWN_FIELDS = 'fields_unknown'
 
     # list Validation
     LIST_EXPECTED = 'list_expected'
-    MALFORMED_LIST = 'malformed_list'
+    LIST_MALFORMED = 'list_malformed'
     LIST_EMPTY = 'list_empty'
     LIST_TOO_LONG = 'list_too_long'
     LIST_TOO_SHORT = 'list_too_short'
     LIST_DUPLICATE_ITEMS = 'list_duplicate_items'
     LIST_ITEM_INVALID = 'list_item_invalid'
+    LIST_VALUE_EMPTY = 'list_value_empty'
+    LIST_VALUE_DUPLICATE = 'list_value_duplicate'
 
     # Reference Validation
-    INVALID_REFERENCE = 'invalid_reference'
+    REFERENCE_INVALID = 'reference_invalid'
     SELF_REFERENCE = 'self_reference'
     ANCESTOR_REFERENCE = 'ancestor_reference'
 
     # File Validation
     FILE_TOO_LARGE = 'file_too_large'
     FILE_TOO_SMALL = 'file_too_small'
-    FILE_DOWNLOAD_FAILED = 'file_download_failed'
-    INVALID_FILE_TYPE = 'invalid_file_type'
-    INVALID_FILENAME = 'invalid_filename'
-    INVALID_EXTENSION = 'invalid_extension'
-    FILE_CORRUPTED = 'file_corrupted'
-    DUPLICATE_FINGERPRINT = 'duplicate_fingerprint'
-    METADATA_EXTRACTION_FAILED = 'metadata_extraction_failed'
+
+    # Audio File Validation
+    AUDIO_FILE_DOWNLOAD_FAILED = 'audio_file_download_failed'
+    AUDIO_FILE_TYPE_INVALID = 'audio_file_type_invalid'
+    AUDIO_FILE_EXTENSION_INVALID = 'audio_file_extension_invalid'
+    AUDIO_FILE_CORRUPTED = 'audio_file_corrupted'
+    AUDIO_FILE_FINGERPRINT_DUPLICATE = 'audio_file_fingerprint_duplicate'
 
     # URL Validation
-    INVALID_URL = 'invalid_url'
+    URL_INVALID = 'url_invalid'
     URL_NOT_FOUND = 'url_not_found'
     URL_REQUEST_FAILED = 'url_request_failed'
 
     # Name Validation
     NAME_EMPTY = 'name_empty'
     NAME_DUPLICATE = 'name_duplicate'
-    ARTIST_NAME_EMPTY_IN_LIST = 'artist_name_empty_in_list'
-    ARTIST_NAMES_DUPLICATE = 'artist_names_duplicate'
 
     # Resource Validation
     RESOURCE_NOT_OWNED = 'resource_not_owned'

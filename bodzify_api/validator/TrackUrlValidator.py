@@ -1,10 +1,10 @@
-import requests
 from django.core.exceptions import ValidationError
 from django.core.validators import BaseValidator
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext as _
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 
 
 @deconstructible
@@ -34,21 +34,18 @@ class TrackUrlValidator(BaseValidator):
         if not value.startswith('http'):
             raise ValidationError(
                 _('%(url)s is not a valid URL') % {'url': value},
-                code=str(FieldValidationErrorCode.INVALID_URL),
+                code=str(FieldValidationErrorCode.URL_INVALID),
                 params={'value': value}
             )
 
     def _validate_audio_extension(self, value: str):
         if not any(value.lower().endswith(ext) for ext in self.ALLOWED_AUDIO_EXTENSIONS):
-            raise ValidationError(
-                _('%(url)s is not a valid audio file') % {'url': value},
-                code=str(FieldValidationErrorCode.INVALID_FILE_TYPE),
-                params={'value': value}
-            )
+            raise AppValidationException(field_name=self.field_name,
+                                         error_code=FieldValidationErrorCode.AUDIO_FILE_EXTENSION_INVALID
 
     def _validate_remote_file_exists(self, value: str):
         try:
-            response = requests.get(value, headers={'Range': 'bytes=0-10'}, allow_redirects=True)
+            response=requests.get(value, headers={'Range': 'bytes=0-10'}, allow_redirects=True)
             if response.status_code != 206:
                 raise ValidationError(
                     _('%(url)s does not exist') % {'url': value},

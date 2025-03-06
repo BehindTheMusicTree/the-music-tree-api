@@ -139,5 +139,5 @@ class AppValidationException(DrfValidationError):
 
         # Fallback for unknown format
         return cls(message=str(detail),
-                   field_validation_error_code=FieldValidationErrorCode.INVALID_FORMAT,
+                   field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID,
                    field_name=cls.DEFAULT_FIELD)

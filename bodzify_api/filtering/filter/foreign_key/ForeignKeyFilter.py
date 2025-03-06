@@ -29,7 +29,7 @@ class ForeignKeyFilter(CharFilter, AppFilter):
             raise AppValidationException(
                 field_name=str(self.field_name),
                 message=_('%(value)s is not a valid UUID') % {'value': value},
-                field_validation_error_code=FieldValidationErrorCode.INVALID_FORMAT
+                field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
             )
 
         try:
@@ -39,7 +39,7 @@ class ForeignKeyFilter(CharFilter, AppFilter):
             raise AppValidationException(
                 field_name=str(self.field_name),
                 message=_('%(value)s is not a valid UUID') % {'value': value},
-                field_validation_error_code=FieldValidationErrorCode.INVALID_FORMAT
+                field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
             )
 
         return super().filter(queryset, value)

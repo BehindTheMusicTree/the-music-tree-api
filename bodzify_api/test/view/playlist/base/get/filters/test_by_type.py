@@ -84,4 +84,4 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(FilterSetFields.TYPE_LABEL_PUBLIC)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.INVALID_ENUM
+        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ENUM_INVALID

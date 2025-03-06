@@ -21,7 +21,7 @@ class RatingField(serializers.IntegerField):
             raise AppValidationException(
                 field_name='rating',
                 message='Rating must be an integer',
-                field_validation_error_code=FieldValidationErrorCode.INVALID_FORMAT
+                field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
             )
 
         if value is not None:

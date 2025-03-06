@@ -121,7 +121,7 @@ class TrackFile(PrivateStandardResource):
                                 'current': self.filename,
                                 'existing': existing_track_file.filename
                             },
-                            field_validation_error_code=FieldValidationErrorCode.DUPLICATE_FINGERPRINT
+                            field_validation_error_code=FieldValidationErrorCode.AUDIO_FILE_FINGERPRINT_DUPLICATE
                         )
                 self.fingerprint_memory = fingerprint
             else:
@@ -205,7 +205,7 @@ class TrackFile(PrivateStandardResource):
                         raise AppValidationException(
                             field_name=Fields.FILE,
                             message='The FLAC file appears to be corrupted and cannot be processed.',
-                            field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
+                            field_validation_error_code=FieldValidationErrorCode.AUDIO_FILE_CORRUPTED)
         try:
             duration = audio_metadata.get_duration_in_sec(self.file)
             self.duration_in_sec = duration if duration > 1 else 1
@@ -217,7 +217,7 @@ class TrackFile(PrivateStandardResource):
         except FileCorruptedError as e:
             raise AppValidationException(field_name=Fields.FILE,
                                          message="File corrupted",
-                                         field_validation_error_code=FieldValidationErrorCode.FILE_CORRUPTED)
+                                         field_validation_error_code=FieldValidationErrorCode.AUDIO_FILE_CORRUPTED)
         except Exception:
             raise
 

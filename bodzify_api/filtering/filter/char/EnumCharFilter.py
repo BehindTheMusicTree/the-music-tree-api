@@ -33,7 +33,7 @@ class EnumCharFilter(EmptiableCharFilter):
                         'value': value,
                         'valid_values': ', '.join(self.valid_values)
                     },
-                    field_validation_error_code=FieldValidationErrorCode.INVALID_ENUM
+                    field_validation_error_code=FieldValidationErrorCode.ENUM_INVALID
                 )
 
             # If we have a method defined, use it for filtering
