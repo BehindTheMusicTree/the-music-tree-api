@@ -1,5 +1,4 @@
 from typing import Any, Union
-
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
 from django.http import JsonResponse
@@ -105,7 +104,7 @@ class ErrorResponse:
 
     @staticmethod
     def _from_unhandled_integrity_error(exception: IntegrityError) -> JsonResponse:
-        error_detail = {
+        error_detail: dict[str, Any] = {
             ErrorResponseFields.FieldErrors.MESSAGE:
                 ErrorResponseFields.DefaultFieldValidationValues.DbIntegrityError.MESSAGE,
             ErrorResponseFields.FieldErrors.CODE: ApiErrorCode.SYSTEM_INTERNAL_ERROR
@@ -115,7 +114,7 @@ class ErrorResponse:
 
     @staticmethod
     def _from_unhandled_exception(exception: Exception) -> JsonResponse:
-        error_detail = {
+        error_detail: dict[str, Any] = {
             ErrorResponseFields.FieldErrors.MESSAGE: "An internal error occurred",
             ErrorResponseFields.FieldErrors.CODE: 'internal_error'
         }

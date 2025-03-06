@@ -143,9 +143,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         from ..file.TrackFile import TrackFile
 
         model_data = self._get_model_data_from_input_schema_data(**kwargs)
-        for key in [Fields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
-                    Fields.TRACK_FILE,]:
-            data_transformer.update_dict1_with_key_if_set_in_dict2(key=key, dict1=model_data, dict2=kwargs)
 
         artists = model_data.pop(Fields.ARTISTS, None)
         track_file_model_data = dict()
