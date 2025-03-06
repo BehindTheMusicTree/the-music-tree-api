@@ -104,12 +104,25 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             artists = []
         model_data[Fields.ARTISTS] = artists
 
-    def _get_model_data_from_post_schema_data(self, **kwargs) -> dict:
-        model_data = dict()
+    def _decrease_position_of_next_tracks_in_old_track_playlists(self, user: User, playlists_with_old_position: list):
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        for playlist_uuid, old_position in playlists_with_old_position:
+            lib_track_playlist_rels_to_update = LibTrackPlaylistRel.objects.filter(
+                user=user, playlist=playlist_uuid, position__gt=old_position)
+            lib_track_playlist_rels_to_update.update(position=F(LibTrackPlaylistRelFields.POSITION) - 1)
 
+    def _update_genre_playlists(self, instance: 'LibraryTrack', old_genre: 'Genre | None'):
+        from bodzify_api.model.criteria.children.genre.Genre import Genre
+        common_genre = Genre.objects.get_common_ascendant(
+            instance.genre, old_genre) if old_genre and instance.genre else None
+
+        self._add_to_genre_playlists(instance=instance, genre_limit=common_genre)
+        self._remove_from_genre_playlists(instance=instance, old_genre=old_genre, genre_limit=common_genre)
+
+    def _get_model_data_from_input_schema_data(self, **kwargs) -> dict:
+        model_data = dict()
         for key in [Fields.USER,
-                    Fields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
-                    Fields.TRACK_FILE,
                     Fields.TITLE,
                     Fields.TRACK_NUMBER,
                     Fields.GENRE,
@@ -118,48 +131,21 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                     Fields.ARCHIVED]:
             data_transformer.update_dict1_with_key_if_set_in_dict2(key=key, dict1=model_data, dict2=kwargs)
 
+        data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=kwargs)
+
         self._update_model_data_with_artists_if_names_in_schema_data_otherwise_empty_list(
             model_data=model_data, schema_data=kwargs)
-        self._update_model_data_with_album_if_name_in_schema_data(
-            model_data=model_data, schema_data=kwargs)
+        self._update_model_data_with_album_if_name_in_schema_data(model_data=model_data, schema_data=kwargs)
 
         return model_data
-
-    def _get_schema_data_from_update_data(self, update_data: dict) -> dict:
-        schema_data = update_data.copy()
-        data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=schema_data)
-        return schema_data
-
-    def _get_model_data_from_post_data(self, **kwargs) -> dict[str, Any]:
-        model_data = self._get_model_data_from_post_schema_data(**kwargs)
-        model_data[Fields.TRACK_FILE] = kwargs[SchemaFields.TRACK_FILE_PUBLIC]
-        return model_data
-
-    def _get_model_data_from_update_data(self, update_data: dict[str, str]):
-        schema_data = self._get_schema_data_from_update_data(update_data=update_data)
-        return self._get_model_data_from_post_schema_data(creation_schema_data=schema_data)
-
-    def decrease_position_of_next_tracks_in_old_track_playlists(self, user: User, playlists_with_old_position: list):
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
-        for playlist_uuid, old_position in playlists_with_old_position:
-            lib_track_playlist_rels_to_update = LibTrackPlaylistRel.objects.filter(
-                user=user, playlist=playlist_uuid, position__gt=old_position)
-            lib_track_playlist_rels_to_update.update(position=F(LibTrackPlaylistRelFields.POSITION) - 1)
-
-    def update_genre_playlists(self, instance: 'LibraryTrack', old_genre: 'Genre | None'):
-        from bodzify_api.model.criteria.children.genre.Genre import Genre
-        common_genre = Genre.objects.get_common_ascendant(
-            instance.genre, old_genre) if old_genre and instance.genre else None
-
-        self._add_to_genre_playlists(instance=instance, genre_limit=common_genre)
-        self._remove_from_genre_playlists(instance=instance, old_genre=old_genre, genre_limit=common_genre)
 
     def create(self, **kwargs) -> 'LibraryTrack':
         from ..file.TrackFile import TrackFile
 
-        model_data: dict
-        model_data = self._get_model_data_from_post_data(**kwargs)
+        model_data = self._get_model_data_from_input_schema_data(**kwargs)
+        for key in [Fields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
+                    Fields.TRACK_FILE,]:
+            data_transformer.update_dict1_with_key_if_set_in_dict2(key=key, dict1=model_data, dict2=kwargs)
 
         artists = model_data.pop(Fields.ARTISTS, None)
         track_file_model_data = dict()
@@ -210,11 +196,12 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         old_genre = old_instance.genre
         old_artists = old_instance.artists.all()
 
-        model_data = self._get_model_data_from_update_data(update_data=kwargs)
+        model_data = self._get_model_data_from_input_schema_data(**kwargs)
+
         updated_instance: LibraryTrack = super().update_instance(old_instance, **model_data)
 
         if old_genre != updated_instance.genre:
-            self.update_genre_playlists(updated_instance, old_genre=old_genre)
+            self._update_genre_playlists(updated_instance, old_genre=old_genre)
 
         if old_album and updated_instance.album and old_album != updated_instance.album:
             Album.objects.delete_instance_if_no_track_linked_with_potential_album_artist_deletion(old_album)
@@ -234,7 +221,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         old_playlists_with_positions = instance.playlists_with_positions
         user = instance.user
         self.delete_instance_with_checking_album_and_artists_potential_deletion(instance)
-        self.decrease_position_of_next_tracks_in_old_track_playlists(
+        self._decrease_position_of_next_tracks_in_old_track_playlists(
             user=user, playlists_with_old_position=old_playlists_with_positions)
 
     def delete_instance_with_checking_album_and_artists_potential_deletion(self, instance: 'LibraryTrack'):

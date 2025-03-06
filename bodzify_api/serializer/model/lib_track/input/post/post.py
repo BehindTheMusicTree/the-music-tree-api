@@ -1,6 +1,6 @@
 
 import os
-from typing import Any, cast
+from typing import cast
 from django.core.files.base import File as DjangoFile
 
 from bodzify_api import settings
@@ -106,11 +106,10 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
 
         return schema_data_clean
 
-    def _get_schema_data_from_post_data(self, user: User, **kwargs) -> dict[str, Any]:
-        file = kwargs[PostFields.TRACK_FILE_PUBLIC]
-        schema_data_from_file = self._get_data_from_file(file=file, user=user)
-
-        schema_data = schema_data_from_file.copy()
+    def validate(self, data: dict):
+        user = self.context['request'].user
+        data_from_file = self._get_data_from_file(file=data[PostFields.TRACK_FILE_PUBLIC], user=user)
+        schema_data = data_from_file.copy()
         keys = [PostFields.TRACK_FILE_PUBLIC,
                 PostFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
                 PostFields.TITLE,
@@ -122,13 +121,7 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
                 PostFields.RATING,
                 PostFields.LANGUAGE]
         data_transformer.override_dict1_with_dict2_values_for_each_key_in_dict2(
-            dict1=schema_data, dict2=kwargs, keys=keys)
-
-        return schema_data
-
-    def validate(self, data):
-        user = self.context['request'].user
-        data = self._get_schema_data_from_post_data(user=user, **data)
+            dict1=schema_data, dict2=data, keys=keys)
 
         # If title is not provided, generate it from the file
         if data.get(PostFields.TITLE) in [None, '']:

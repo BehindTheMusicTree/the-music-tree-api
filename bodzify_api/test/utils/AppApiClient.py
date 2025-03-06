@@ -1,11 +1,11 @@
 import json
-from typing import Any, Mapping
+from typing import Any
 
 from django.http import HttpResponse
 from rest_framework.test import APIClient
 
 from bodzify_api.utils import data_transformer
-from bodzify_api.utils.json_utils import UUIDJSONEncoder
+from bodzify_api.utils.json_utils import transform_uuids
 
 
 class AppApiClient(APIClient):
@@ -34,10 +34,8 @@ class AppApiClient(APIClient):
         Returns:
             The determined content type or None for multipart
         """
-        if format == 'multipart':
+        if format in ['multipart', 'json']:
             return None
-        if not content_type:
-            return 'application/json' if format == 'json' else 'application/x-www-form-urlencoded'
         return content_type
 
     def _prepare_data(self, data: dict | str | None, format: str | None) -> Any:
@@ -57,8 +55,8 @@ class AppApiClient(APIClient):
             return data
 
         prepared_data = data_transformer.replace_none_with_empty_string(**data)
-        if format != 'multipart' and isinstance(prepared_data, dict):
-            return json.dumps(prepared_data, cls=UUIDJSONEncoder)
+        if format == 'json' and isinstance(prepared_data, dict):
+            return transform_uuids(prepared_data)  # Only convert UUIDs to strings, let client handle JSON encoding
 
         return prepared_data
 
@@ -85,7 +83,7 @@ class AppApiClient(APIClient):
             data_url_encoded = data_transformer.replace_none_with_empty_string(**data)
         else:
             data_url_encoded = None
-            
+
         extra, handle_response, content_type = self._prepare_request_kwargs(extra, 'json', content_type)
         response = super().get(path, data_url_encoded, follow, **extra)
         return self._handle_response(response, handle_response)
@@ -97,7 +95,7 @@ class AppApiClient(APIClient):
         response = super().post(path, data_url_encoded, follow=follow, format=format, content_type=content_type, **extra)
         return self._handle_response(response, handle_response)
 
-    def put(self, path, data: dict | str | None = None, format=None, content_type=None, follow=False, **extra) -> HttpResponse:
+    def put(self, path, data: dict | str | None = None, format='json', content_type=None, follow=False, **extra) -> HttpResponse:
         data_url_encoded = self._prepare_data(data, format)
         extra, handle_response, content_type = self._prepare_request_kwargs(extra, format, content_type)
 
