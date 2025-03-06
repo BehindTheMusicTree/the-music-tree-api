@@ -87,9 +87,8 @@ class AppSerializer(serializers.Serializer, Generic[T]):
             if field_name in data and is_list_field:
                 raise AppValidationException(
                     field_name=field_name,
-                    message=_(f"list field '{field_name}' must be specified as '{array_field_name}'"),
-                    field_validation_error_code=FieldValidationErrorCode.LIST_MALFORMED
-                )
+                    message=_(f"list field '{field_name} ' must be specified as '{array_field_name} '"),
+                    field_validation_error_code=FieldValidationErrorCode.LIST_MALFORMED)
 
             # Add to known fields without [] suffix
             known_fields.add(field_name)
@@ -106,23 +105,6 @@ class AppSerializer(serializers.Serializer, Generic[T]):
                 unknown_fields.append(field_name)
 
         return known_fields, unknown_fields
-
-    def _collect_list_field_values(self, field_name: str | None, data: dict) -> Any:
-        """
-        Collects values for list fields, handling both array notation and direct values.
-        Args:
-            field_name: The name of the field without [] suffix
-            data: The data dictionary containing the field values
-        Returns:
-            The field value or None if not found
-        """
-        if field_name is None:
-            return None
-
-        array_field_name = f"{field_name}[]"
-        if array_field_name in data:
-            return data[array_field_name]
-        return data.get(field_name)
 
     def _check_duplicate_fields(self, request) -> None:
         if not request:
@@ -142,15 +124,12 @@ class AppSerializer(serializers.Serializer, Generic[T]):
                 duplicates = self._find_duplicate_fields(raw_data)
                 if duplicates:
                     if len(duplicates) == 1:
-                        raise AppValidationException(
-                            field_name=duplicates[0],
-                            message=_("Duplicate field"),
-                            field_validation_error_code=FieldValidationErrorCode.DUPLICATE
-                        )
-                    raise AppValidationException(
-                        field_name=f", ".join(duplicates),
-                        message=_("Multiple duplicate fields"),
-                        field_validation_error_code=FieldValidationErrorCode.DUPLICATE)
+                        raise AppValidationException(field_name=duplicates[0],
+                                                     message=_("Duplicate field"),
+                                                     field_validation_error_code=FieldValidationErrorCode.DUPLICATE)
+                    raise AppValidationException(field_name=f", ".join(duplicates),
+                                                 message=_("Multiple duplicate fields"),
+                                                 field_validation_error_code=FieldValidationErrorCode.DUPLICATE)
             except (UnicodeDecodeError, AttributeError):
                 pass
 
@@ -161,16 +140,12 @@ class AppSerializer(serializers.Serializer, Generic[T]):
             raise exc
         except ValidationError as exc:
             exc_first_detail = str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail)
-            error_code = (
-                FieldValidationErrorCode.REQUIRED
-                if exc_first_detail == "This field is required."
-                else FieldValidationErrorCode.DEFAULT
-            )
-            error = AppValidationException(
-                field_name=field.field_name,
-                message=exc_first_detail or 'Invalid input.',
-                field_validation_error_code=error_code
-            )
+            error_code = (FieldValidationErrorCode.REQUIRED
+                          if exc_first_detail == "This field is required."
+                          else FieldValidationErrorCode.DEFAULT)
+            error = AppValidationException(field_name=field.field_name,
+                                           message=exc_first_detail or 'Invalid input.',
+                                           field_validation_error_code=error_code)
             self._errors = error.detail
             raise error
 
@@ -181,10 +156,8 @@ class AppSerializer(serializers.Serializer, Generic[T]):
             self._errors = exc.detail
             raise
         except ValidationError as exc:
-            error = AppValidationException(
-                message=str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail),
-                field_validation_error_code=FieldValidationErrorCode.DEFAULT
-            )
+            error = AppValidationException(message=str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail),
+                                           field_validation_error_code=FieldValidationErrorCode.DEFAULT)
             self._errors = error.detail
             raise error
 
@@ -223,17 +196,13 @@ class AppSerializer(serializers.Serializer, Generic[T]):
 
             _, unknown_fields = self._collect_known_fields_and_malformed_array_fields_names(data)
             if len(unknown_fields) == 1:
-                raise AppValidationException(
-                    field_name=unknown_fields[0],
-                    message="Unknown field",
-                    field_validation_error_code=FieldValidationErrorCode.UNKNOWN
-                )
+                raise AppValidationException(field_name=unknown_fields[0],
+                                             message="Unknown field",
+                                             field_validation_error_code=FieldValidationErrorCode.UNKNOWN)
             elif len(unknown_fields) > 1:
-                raise AppValidationException(
-                    field_name=", ".join(unknown_fields),
-                    message="Multiple unknown fields",
-                    field_validation_error_code=FieldValidationErrorCode.UNKNOWN
-                )
+                raise AppValidationException(field_name=", ".join(unknown_fields),
+                                             message="Multiple unknown fields",
+                                             field_validation_error_code=FieldValidationErrorCode.UNKNOWN)
 
             self._check_duplicate_fields(self.context.get(self.REQUEST_FIELD))
 
