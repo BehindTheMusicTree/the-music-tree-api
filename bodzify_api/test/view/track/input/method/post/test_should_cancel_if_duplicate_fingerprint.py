@@ -1,3 +1,4 @@
+import pytest
 from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
@@ -7,15 +8,16 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
+@pytest.mark.usefixtures("enable_audio_metadata_analysis")
 class TestCase(LibTrackTestCase):
 
     def test_duplicate_fingerprint_and_must_cancel_if_duplicate_fingerprint_then_bad_request(self):
         data = {Fields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE: True}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(TestLibTrackFilename.RECORDING_KEMAR_FRANCE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
 
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(TestLibTrackFilename.RECORDING_KEMAR_FRANCE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
