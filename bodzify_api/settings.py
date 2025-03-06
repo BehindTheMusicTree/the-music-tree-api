@@ -377,6 +377,7 @@ def setup_app_constants():
     # Set Django's upload size limit to match our max file size
     global DATA_UPLOAD_MAX_MEMORY_SIZE
     DATA_UPLOAD_MAX_MEMORY_SIZE = LIB_TRACK_FILE_SIZE_MAX_IN_MO * 1024 * 1024  # Convert MB to bytes
+
     global LIB_TRACK_FILE_EXTENSIONS
     LIB_TRACK_FILE_EXTENSIONS = ['mp3', 'flac', 'wav']
     global LIB_TRACK_FILE_CONTENT_TYPES
@@ -406,6 +407,7 @@ def setup_app_constants():
     MINE_TRACK_RELEASED_ON_LEN_MAX = 20
     global MINE_TRACK_URL_LEN_MAX
     MINE_TRACK_URL_LEN_MAX = 1000
+
     global ALBUM_NAME_LEN_MAX
     ALBUM_NAME_LEN_MAX = 256
     global ALBUM_NAME_LEN_MAX_ID3V1
