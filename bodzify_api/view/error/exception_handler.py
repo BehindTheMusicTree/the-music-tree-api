@@ -1,4 +1,9 @@
-from django.conf import settings
+
+
+from rest_framework_simplejwt.exceptions import InvalidToken
+from rest_framework.exceptions import NotAuthenticated, ValidationError
+
+from bodzify_api import settings
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 
 
@@ -40,7 +45,7 @@ def custom_exception_handler(exc, context):
         Response object with error details in production,
         None in debug mode to let Django's default handler show the traceback page
     """
-    if settings.DEBUG:
+    if settings.DEBUG and not isinstance(exc, (ValidationError, InvalidToken, NotAuthenticated)):
         # Return None to let Django's default handler show the HTML traceback page
         return None
 
