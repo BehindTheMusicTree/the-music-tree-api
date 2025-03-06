@@ -532,13 +532,13 @@ def setup_middlewares():
         f'{APP_NAME}.middleware.CamelToSnakeMiddleware.CamelToSnakeMiddleware',
         f'{APP_NAME}.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware',
         f'{APP_NAME}.middleware.ContentTypeValidationMiddleware.ContentTypeValidationMiddleware',
+        f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
         f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
         'django.middleware.security.SecurityMiddleware',
         'corsheaders.middleware.CorsMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.common.CommonMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
-        f'{APP_NAME}.middleware.ExceptionHandlerMiddleware.ExceptionHandlerMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware'
@@ -635,6 +635,7 @@ def setup_django_constants():
         'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
         'DEFAULT_VERSION': 'v1',
         'ALLOWED_VERSIONS': 'v1',
+        'EXCEPTION_HANDLER': 'bodzify_api.view.error.exception_handler.custom_exception_handler',
     }
 
     global SPECTACULAR_SETTINGS
