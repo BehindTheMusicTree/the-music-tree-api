@@ -23,7 +23,7 @@ class LibTrackInputSerializer(AppSerializer):
     title = AppCharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX, required=False, allow_blank=True, allow_null=True)
     force_title_generation = serializers.BooleanField(required=False)
     artists_names = ArtistsNamesField(max_length=settings.ARTISTS_NAMES_LEN_MAX, required=False, allow_null=True)
-    album = AppCharField(max_length=settings.ALBUM_NAME_LEN_MAX, required=False, allow_blank=True, allow_null=True)
+    album_name = AppCharField(max_length=settings.ALBUM_NAME_LEN_MAX, required=False, allow_blank=True, allow_null=True)
     album_artists_names = ArtistsNamesField(
         max_length=settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX, required=False, allow_null=True)
     track_number = TrackNumberField()
