@@ -1,5 +1,5 @@
 meta {
-  name: bande | album | album artists jul sch
+  name: | artist muse
   type: http
   seq: 2
 }
@@ -16,11 +16,9 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/utils/lib_track/files/metadata=none.mp3)
-  albumName: bande organisee
-  title: Zumba Cafew
+  artistsNames[]: muse
 }
 
 vars:post-response {
-  albumBandeUuid: res.body.album.uuid
-  trackZumbaUuid: res.body.uuid
+  artistMatUuid: res.body.artists[0].uuid
 }

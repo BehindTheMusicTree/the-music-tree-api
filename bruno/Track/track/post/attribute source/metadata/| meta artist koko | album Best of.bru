@@ -1,7 +1,7 @@
 meta {
-  name: wrong format
+  name: | meta artist koko | album Best of
   type: http
-  seq: 3
+  seq: 1
 }
 
 post {
@@ -15,7 +15,7 @@ headers {
 }
 
 body:multipart-form {
-  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/format=image.jpeg)
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/utils/lib_track/files/tags album artists koko without album.mp3)
 }
 
 vars:post-response {

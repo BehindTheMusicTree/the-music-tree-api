@@ -1,7 +1,7 @@
 meta {
-  name: bande | album | album artists jul sch
+  name: | position in album 1001
   type: http
-  seq: 2
+  seq: 1
 }
 
 post {
@@ -16,11 +16,13 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/utils/lib_track/files/metadata=none.mp3)
-  albumName: bande organisee
-  title: Zumba Cafew
+  positionInAlbum: 1001
+  albumName: album stylax
 }
 
 vars:post-response {
-  albumBandeUuid: res.body.album.uuid
-  trackZumbaUuid: res.body.uuid
+  libTrackHorsesUuid: res.body.uuid
+  genreOutlawUuid: res.body.genre.uuid
+  genreOutlawPlaylistUuid: res.body.playlists[0].uuid
+  title: horses
 }
