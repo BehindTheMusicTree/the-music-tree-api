@@ -47,6 +47,9 @@ class ApiTestCase(TestCase, Generic[T]):
     def _login_as_test_admin(self):
         self._login_as_user(self.test_admin_user)
 
+    def _logout(self):
+        self.api_client.force_authenticate(user=None)
+
     def _set_saved_object_from_response(self, response):
         if not hasattr(self, 'model_class') or self.model_class is None:
             raise NotImplementedError("Test case must define model_class")
@@ -131,6 +134,11 @@ class ApiTestCase(TestCase, Generic[T]):
 
             return self.api_client.post(
                 path=reverse('library-track-list'), data=kwargs, format='multipart', handle_response=self._set_results)
+
+    def _post_lib_track_being_logged_out(self):
+        self._logout()
+        return self.api_client.post(
+            path=reverse('library-track-list'), data={}, format='multipart', handle_response=self._set_results)
 
     def setUp(self, methods_names_to_implement: list[str] | None = None) -> None:
 
