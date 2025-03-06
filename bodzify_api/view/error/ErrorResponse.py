@@ -116,11 +116,11 @@ class ErrorResponse:
     @staticmethod
     def _from_unhandled_exception(exception: Exception) -> JsonResponse:
         error_detail = {
-            ErrorResponseFields.FieldErrors.MESSAGE: str(exception),
-            ErrorResponseFields.FieldErrors.CODE: 'bad_request'
+            ErrorResponseFields.FieldErrors.MESSAGE: "An internal error occurred",
+            ErrorResponseFields.FieldErrors.CODE: 'internal_error'
         }
         return ErrorResponse.create_error_response(
-            error_detail=error_detail, api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT)
+            error_detail=error_detail, api_error_code=ApiErrorCode.SYSTEM_INTERNAL_ERROR)
 
     @staticmethod
     def _from_validation_error(

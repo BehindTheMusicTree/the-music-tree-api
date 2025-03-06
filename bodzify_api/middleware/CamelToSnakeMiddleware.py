@@ -8,8 +8,8 @@ class CamelToSnakeMiddleware:
 
     def __call__(self, request):
         # Convert POST/PUT/PATCH data
-        # if hasattr(request, 'data'):
-        #     request.data = data_transformer.form_data_to_snake_case(request.data)
+        if hasattr(request, 'data'):
+            request.data = data_transformer.form_data_to_snake_case(request.data)
 
         # Convert GET parameters
         if request.GET:
