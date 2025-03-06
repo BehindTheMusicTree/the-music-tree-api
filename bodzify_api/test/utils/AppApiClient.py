@@ -41,8 +41,9 @@ class AppApiClient(APIClient):
 
     def post(self, path,
              data: dict | str | None = None,
-             follow=False,
              format='json',
+             content_type=None,
+             follow=False,
              **extra) -> HttpResponse:
 
         if data and not isinstance(data, str):
@@ -58,15 +59,18 @@ class AppApiClient(APIClient):
                     if isinstance(data_url_encoded, dict):
                         data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
 
-        if format == 'json':
-            content_type = 'application/json'
-        elif format != 'multipart':  # Don't set content_type for multipart
-            content_type = 'application/x-www-form-urlencoded'
-        else:
-            content_type = None  # Let DRF handle multipart content type
+        # For multipart, let DRF handle content type
+        if format == 'multipart':
+            content_type = None
+        # Set appropriate content type for other formats
+        elif not content_type:
+            if format == 'json':
+                content_type = 'application/json'
+            else:
+                content_type = 'application/x-www-form-urlencoded'
 
-        if 'HTTP_ACCEPT' not in extra:
-            extra['HTTP_ACCEPT'] = 'application/json'
+        # Always request JSON response regardless of content type
+        extra['HTTP_ACCEPT'] = 'application/json'
 
         # Extract response handler from extra if present
         handle_response = extra.pop('handle_response', None)
@@ -86,16 +90,19 @@ class AppApiClient(APIClient):
                 if format != 'multipart':
                     data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
 
-        if format == 'json':
-            content_type = 'application/json'
-        elif format != 'multipart':  # Don't set content_type for multipart
-            content_type = 'application/x-www-form-urlencoded'
-        else:
-            content_type = None  # Let DRF handle multipart content type
+        # For multipart, let DRF handle content type
+        if format == 'multipart':
+            content_type = None
+        # Set appropriate content type for other formats
+        elif not content_type:
+            if format == 'json':
+                content_type = 'application/json'
+            else:
+                content_type = 'application/x-www-form-urlencoded'
 
         # Set default headers for JSON content type
-        if 'HTTP_ACCEPT' not in extra:
-            extra['HTTP_ACCEPT'] = 'application/json'
+        # Always request JSON response regardless of content type
+        extra['HTTP_ACCEPT'] = 'application/json'
 
         # Extract response handler from extra if present
         handle_response = extra.pop('handle_response', None)
@@ -110,16 +117,19 @@ class AppApiClient(APIClient):
             if format != 'multipart':
                 data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
 
-        if format == 'json':
-            content_type = 'application/json'
-        elif format != 'multipart':  # Don't set content_type for multipart
-            content_type = 'application/x-www-form-urlencoded'
-        else:
-            content_type = None  # Let DRF handle multipart content type
+        # For multipart, let DRF handle content type
+        if format == 'multipart':
+            content_type = None
+        # Set appropriate content type for other formats
+        elif not content_type:
+            if format == 'json':
+                content_type = 'application/json'
+            else:
+                content_type = 'application/x-www-form-urlencoded'
 
         # Set default headers for JSON content type
-        if 'HTTP_ACCEPT' not in extra:
-            extra['HTTP_ACCEPT'] = 'application/json'
+        # Always request JSON response regardless of content type
+        extra['HTTP_ACCEPT'] = 'application/json'
 
         # Extract response handler from extra if present
         handle_response = extra.pop('handle_response', None)

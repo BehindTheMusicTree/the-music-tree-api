@@ -12,7 +12,7 @@ class ContentTypeValidationMiddleware:
 
     def __call__(self, request: Union[HttpRequest, Request]) -> HttpResponse:
         if request.method in ['POST', 'PUT', 'PATCH']:
-            content_type = request  .content_type or ''
+            content_type = request.content_type or ''
 
             if not content_type:
                 raise UnsupportedMediaType('Content-Type header is required')

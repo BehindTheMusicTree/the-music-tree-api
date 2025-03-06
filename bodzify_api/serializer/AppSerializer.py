@@ -75,7 +75,8 @@ class AppSerializer(serializers.Serializer, Generic[T]):
     def _collect_known_fields_and_malformed_array_fields_names(self, data: dict) -> tuple[set, list]:
         known_fields = set()
         unknown_fields = []
-        updated_data = data.copy()
+        # Use shallow copy to avoid issues with unpicklable objects like file handles
+        updated_data = dict(data)
 
         # First pass: check for malformed arrays and build known fields
         for field_name, field in self.fields.items():
