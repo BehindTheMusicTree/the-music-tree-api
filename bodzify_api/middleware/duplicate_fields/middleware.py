@@ -1,11 +1,12 @@
 import json
 from typing import Any, Union
 
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from rest_framework.request import Request
 
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.view.error.ErrorResponse import ErrorResponse
 from .JsonDuplicateKeyDetectingDecoder import JsonDuplicateKeyDetectingDecoder
 
 
@@ -22,7 +23,16 @@ class DuplicateFieldsMiddleware:
         except json.JSONDecodeError:
             return []
 
-    def __call__(self, request: Union[HttpRequest, Request]) -> HttpResponse:
+    def handle_duplicate_field(self, field_name: str) -> JsonResponse:
+        """Handle duplicate field by creating an AppValidationException and converting it to response."""
+        exception = AppValidationException(
+            field_name=field_name,
+            message='Duplicate field detected.',
+            field_validation_error_code=FieldValidationErrorCode.DUPLICATE
+        )
+        return ErrorResponse._from_validation_error(exception)
+
+    def __call__(self, request: Union[HttpRequest, Request]) -> Union[HttpResponse, JsonResponse]:
         if request.method in ['POST', 'PUT', 'PATCH']:
             content_type = request.content_type or ''
 
@@ -31,12 +41,8 @@ class DuplicateFieldsMiddleware:
                     raw_body = request.body.decode('utf-8')
                     duplicate_fields = self.find_duplicate_fields_in_json(raw_body)
                     if duplicate_fields:
-                        # Raise the validation exception to be handled by ExceptionLoggingMiddleware
-                        raise AppValidationException(
-                            field_name=duplicate_fields[0],
-                            message='Duplicate field detected.',
-                            field_validation_error_code=FieldValidationErrorCode.DUPLICATE
-                        )
+                        # Handle the duplicate field directly instead of raising
+                        return self.handle_duplicate_field(duplicate_fields[0])
                 except UnicodeDecodeError:
                     # Let system errors propagate up to be handled by global error handler
                     raise
@@ -71,11 +77,7 @@ class DuplicateFieldsMiddleware:
                         seen_fields[field_name] = True
 
                 if duplicates:
-                    # Raise the validation exception to be handled by ExceptionLoggingMiddleware
-                    raise AppValidationException(
-                        field_name=duplicates[0],
-                        message='Duplicate field detected.',
-                        field_validation_error_code=FieldValidationErrorCode.DUPLICATE
-                    )
+                    # Handle the duplicate field directly instead of raising
+                    return self.handle_duplicate_field(duplicates[0])
 
         return self.get_response(request)

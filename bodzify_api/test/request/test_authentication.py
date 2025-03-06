@@ -10,4 +10,3 @@ class TestCase(ApiTestCase):
         response = self._post_lib_track_being_logged_out()
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
-        error = response.json()

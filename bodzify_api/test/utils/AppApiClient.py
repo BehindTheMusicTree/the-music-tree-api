@@ -49,7 +49,8 @@ class AppApiClient(APIClient):
             Prepared data ready for the request
         """
         if not data:
-            return None
+            # Initialize empty data for json/multipart to ensure proper content type
+            return {} if format in ['json', 'multipart'] else None
 
         if isinstance(data, str):
             return data
@@ -61,8 +62,7 @@ class AppApiClient(APIClient):
         return prepared_data
 
     def _prepare_request_kwargs(
-            self, extra: dict, format: str | None, content_type: str | None, data: Any = None) -> tuple[
-            dict, Any, str | None, Any]:
+            self, extra: dict, format: str | None, content_type: str | None) -> tuple[dict, Any, str | None]:
         """Prepare common request keyword arguments.
 
         Args:
@@ -82,11 +82,7 @@ class AppApiClient(APIClient):
         extra['HTTP_ACCEPT'] = 'application/json'
         handle_response = extra.pop('handle_response', None)
 
-        # Initialize empty data for json/multipart to ensure proper content type
-        if data is None and format in ['json', 'multipart']:
-            data = {}
-
-        return extra, handle_response, content_type, data
+        return extra, handle_response, content_type
 
     def get(self, path, data: dict | None = None, content_type=None, follow=False, **extra) -> HttpResponse:
         if data:
@@ -95,15 +91,13 @@ class AppApiClient(APIClient):
         else:
             data_url_encoded = None
 
-        extra, handle_response, content_type, _ = self._prepare_request_kwargs(
-            extra, 'json', content_type, data_url_encoded)
+        extra, handle_response, content_type = self._prepare_request_kwargs(extra, 'json', content_type)
         response = super().get(path, data_url_encoded, follow, **extra)
         return self._handle_response(response, handle_response)
 
     def post(self, path, data: dict | str | None = None, format='json', content_type=None, follow=False, **extra) -> HttpResponse:
         data_url_encoded = self._prepare_data(data, format)
-        extra, handle_response, content_type, data_url_encoded = self._prepare_request_kwargs(
-            extra, format, content_type, data_url_encoded)
+        extra, handle_response, content_type = self._prepare_request_kwargs(extra, format, content_type)
 
         response = super().post(path, data_url_encoded, follow=follow,
                                 format=format, content_type=content_type, **extra)
@@ -111,16 +105,14 @@ class AppApiClient(APIClient):
 
     def put(self, path, data: dict | str | None = None, format='json', content_type=None, follow=False, **extra) -> HttpResponse:
         data_url_encoded = self._prepare_data(data, format)
-        extra, handle_response, content_type, data_url_encoded = self._prepare_request_kwargs(
-            extra, format, content_type, data_url_encoded)
+        extra, handle_response, content_type = self._prepare_request_kwargs(extra, format, content_type)
 
         response = super().put(path, data_url_encoded, format, content_type, follow, **extra)
         return self._handle_response(response, handle_response)
 
     def delete(self, path, data: dict | None = None, format=None, content_type=None, follow=False, **extra) -> HttpResponse:
         data_url_encoded = self._prepare_data(data, format)
-        extra, handle_response, content_type, data_url_encoded = self._prepare_request_kwargs(
-            extra, format, content_type, data_url_encoded)
+        extra, handle_response, content_type = self._prepare_request_kwargs(extra, format, content_type)
 
         response = super().delete(path, data_url_encoded, format, content_type, follow, **extra)
         return self._handle_response(response, handle_response)

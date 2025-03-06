@@ -1,3 +1,4 @@
+from django.urls import reverse
 from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
@@ -9,9 +10,12 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 class TestJsonDuplicateFields(GenreTestCase):
 
     def test_duplicate_fields_json_post_then_400(self):
-        raw_json = '{"%s": "test", "%s": "test2"}' \
-            % (CriteriaPostFields.NAME_PUBLIC, CriteriaPostFields.NAME_PUBLIC)
-        response = self._post_genre_with_duplicate_fields(raw_json=raw_json)
+        raw_json = '{"name": "test", "name": "test2"}'
+        response = self.api_client.post(path=reverse(self.list_endpoint),
+                                        data=raw_json,
+                                        format=None,
+                                        content_type='application/json',
+                                        handle_response=self._set_results)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         self._set_bad_request_result(response)
@@ -23,9 +27,12 @@ class TestJsonDuplicateFields(GenreTestCase):
     def test_duplicate_fields_on_json_put_then_400(self):
         genre = self.model_fixture_factory.create_genre(name="rock")
 
-        raw_json = '{"%s": "test", "%s": "test2"}' \
-            % (CriteriaPostFields.NAME_PUBLIC, CriteriaPostFields.NAME_PUBLIC)
-        response = self._put_genre_with_duplicate_fields(genre.uuid, raw_json=raw_json)
+        raw_json = '{"name": "test", "name": "test2"}'
+        response = self.api_client.put(path=reverse(self.detail_endpoint, kwargs={'pk': genre.uuid}),
+                                       data=raw_json,
+                                       format=None,
+                                       content_type='application/json',
+                                       handle_response=self._set_results)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         self._set_bad_request_result(response)
