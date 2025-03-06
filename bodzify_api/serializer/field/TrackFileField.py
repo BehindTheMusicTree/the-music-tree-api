@@ -79,7 +79,7 @@ class TrackFileField(AppField):
                     raise AppValidationException(
                         field_name=self.get_error_field_name(),
                         message='Invalid file extension. Supported formats are: mp3, wav, flac',
-                        field_validation_error_code=FieldValidationErrorCode.INVALID_EXTENSION)
+                        field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_EXTENSION_INVALID)
 
             # Create a BytesIO object to store the file content
             content = BytesIO()
@@ -91,7 +91,7 @@ class TrackFileField(AppField):
             return InMemoryUploadedFile(file=content,
                                         field_name=None,
                                         name=filename,
-                                        content_type=response.headers.get('Content-Type', 'audio/mpeg'),
+                                        content_type=response.headers.get('Content-Type'),
                                         size=len(content.getvalue()),
                                         charset=None,
                                         content_type_extra={})
@@ -103,12 +103,12 @@ class TrackFileField(AppField):
             raise AppValidationException(
                 field_name=self.get_error_field_name(),
                 message=f'Failed to download file: {str(e)} ',
-                field_validation_error_code=FieldValidationErrorCode.AUDIO_FILE_DOWNLOAD_FAILED)
+                field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_DOWNLOAD_FAILED)
         except Exception as e:
             raise AppValidationException(
                 field_name=self.get_error_field_name(),
                 message=f'Unexpected error while downloading file: {str(e)} ',
-                field_validation_error_code=FieldValidationErrorCode.AUDIO_FILE_DOWNLOAD_FAILED)
+                field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_DOWNLOAD_FAILED)
 
     def to_internal_value(self, data: Any) -> Any:
         if data in [None, '']:
@@ -118,18 +118,35 @@ class TrackFileField(AppField):
 
         if isinstance(data, str):
             validated_url = self.url_field.to_internal_value(data)
-            # I don't know why to_internal_value does not call run_validators automatically
-            self.url_field.run_validators(validated_url)
+            try:
+                # I don't know why to_internal_value does not call run_validators automatically
+                self.url_field.run_validators(validated_url)
+            except AppValidationException as e:
+                raise AppValidationException(field_name=self.get_error_field_name(),
+                                             message=e.message,
+                                             field_validation_error_code=e.field_validation_error_code)
 
             downloaded_file = self._download_file_from_url(validated_url)
             # Run validators on downloaded file before returning
-            self.file_field.run_validators(downloaded_file)
+
+            try:
+                self.file_field.run_validators(downloaded_file)
+            except AppValidationException as e:
+                raise AppValidationException(field_name=self.get_error_field_name(),
+                                             message=e.message,
+                                             field_validation_error_code=e.field_validation_error_code)
             return downloaded_file
 
         if isinstance(data, UploadedFile):
             validated_file = self.file_field.to_internal_value(data)
-            # I don't know why to_internal_value does not call run_validators automatically
-            self.file_field.run_validators(validated_file)
+
+            try:
+                # I don't know why to_internal_value does not call run_validators automatically
+                self.file_field.run_validators(validated_file)
+            except AppValidationException as e:
+                raise AppValidationException(field_name=self.get_error_field_name(),
+                                             message=e.message,
+                                             field_validation_error_code=e.field_validation_error_code)
 
             # Rename file if too long
             if len(validated_file.name) > settings.LIB_TRACK_FILENAME_LEN_MAX:

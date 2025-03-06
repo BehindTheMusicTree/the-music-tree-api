@@ -15,11 +15,11 @@ class LibTrackTestCase(ApiTestCase[LibraryTrack]):
     def _post_lib_track_from_url(self, test_lib_track_url: TestLibTrackUrl = TestLibTrackUrl.MP3, **kwargs):
         kwargs[Fields.TRACK_FILE_PUBLIC] = str(test_lib_track_url)
         return self.api_client.post(
-            path=reverse('library-track-list'), data=kwargs, format='json', handle_response=self._set_results)
+            path=reverse('library-track-list'), data=kwargs, handle_response=self._set_results)
 
     def _post_lib_track_without_file(self, **kwargs):
         return self.api_client.post(
-            path=reverse('library-track-list'), data=kwargs, format='json', handle_response=self._set_results)
+            path=reverse('library-track-list'), data=kwargs, handle_response=self._set_results)
 
     def _put_lib_track(self, uuid, **kwargs):
         return self.api_client.put(

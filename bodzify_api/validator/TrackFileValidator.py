@@ -41,11 +41,11 @@ class TrackFileValidator:
             }
 
             if field and hasattr(field, 'fail'):
-                field.fail(FieldValidationErrorCode.AUDIO_FILE_EXTENSION_INVALID, message)
+                field.fail(FieldValidationErrorCode.TRACK_FILE_EXTENSION_INVALID, message)
             else:
                 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
                 raise AppValidationException(
-                    message=message, field_validation_error_code=FieldValidationErrorCode.AUDIO_FILE_EXTENSION_INVALID,
+                    message=message, field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_EXTENSION_INVALID,
                     field_name=self.field_name)
 
     def _validate_file_size(self, file, field=None):
@@ -96,9 +96,9 @@ class TrackFileValidator:
         if error:
             message = 'Invalid file format. Only audio files are allowed.'
             if field and hasattr(field, 'fail'):
-                field.fail(FieldValidationErrorCode.AUDIO_FILE_TYPE_INVALID, message)
+                field.fail(FieldValidationErrorCode.TRACK_FILE_TYPE_INVALID, message)
             else:
                 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
                 raise AppValidationException(
                     field_name=self.field_name, message=message,
-                    field_validation_error_code=FieldValidationErrorCode.AUDIO_FILE_TYPE_INVALID)
+                    field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_TYPE_INVALID)

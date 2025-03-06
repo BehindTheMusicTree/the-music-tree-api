@@ -5,7 +5,7 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
-AUDIO_FILE="$1"
+TRACK_FILE="$1"
 
 # ID3v1 field max lengths
 TITLE_MAX=30
@@ -41,8 +41,8 @@ id3v2 \
     --track "$TRACK" \
     --genre "$GENRE" \
     --id3v1-only \
-    "$AUDIO_FILE"
+    "$TRACK_FILE"
 
 # Verify tags
-id3v2 -l "$AUDIO_FILE"
+id3v2 -l "$TRACK_FILE"
 echo "ID3v1 tags written successfully"

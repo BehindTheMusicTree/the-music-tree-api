@@ -39,11 +39,15 @@ class AppValidationException(DrfValidationError):
     """
     status_code = 400
     error_type = 'app_validation_error'  # Marker to identify our error type after DRF processing
+    message: str
+    field_validation_error_code: FieldValidationErrorCode
 
     def __init__(self, message: str,
                  field_validation_error_code: FieldValidationErrorCode,
                  field_name: str | None = DEFAULT_FIELD):
         self.field = field_name if field_name else self.DEFAULT_FIELD
+        self.message = message
+        self.field_validation_error_code = field_validation_error_code
         error_detail = {
             'message': message,
             'code': field_validation_error_code,

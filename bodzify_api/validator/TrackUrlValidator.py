@@ -36,7 +36,7 @@ class TrackUrlValidator(BaseValidator):
             raise AppValidationException(
                 field_name=self.field_name,
                 message='Invalid audio file extension',
-                field_validation_error_code=FieldValidationErrorCode.AUDIO_FILE_EXTENSION_INVALID)
+                field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_EXTENSION_INVALID)
 
     def _validate_remote_file_exists(self, value: str):
         try:

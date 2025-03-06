@@ -18,7 +18,7 @@ class AppField(Field):
         'null': FieldValidationErrorCode.REQUIRED,
         'blank': FieldValidationErrorCode.BLANK,
         'invalid': FieldValidationErrorCode.FORMAT_INVALID,
-        'invalid_extension': FieldValidationErrorCode.AUDIO_FILE_EXTENSION_INVALID,
+        'invalid_extension': FieldValidationErrorCode.TRACK_FILE_EXTENSION_INVALID,
         'invalid_choice': FieldValidationErrorCode.ENUM_INVALID,
         'does_not_exist': FieldValidationErrorCode.REFERENCE_INVALID,
         'incorrect_type': FieldValidationErrorCode.FORMAT_INVALID,
@@ -56,7 +56,7 @@ class AppField(Field):
 
         if key == 'invalid':
             if msg.startswith('Failed to download file:'):
-                code = FieldValidationErrorCode.AUDIO_FILE_DOWNLOAD_FAILED
+                code = FieldValidationErrorCode.TRACK_FILE_DOWNLOAD_FAILED
             code = self.invalid_message_validation_error_code_mapping.get(msg, FieldValidationErrorCode.DEFAULT)
         else:
             code = self.validation_error_code_mapping.get(key, FieldValidationErrorCode.DEFAULT)

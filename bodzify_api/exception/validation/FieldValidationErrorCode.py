@@ -35,11 +35,11 @@ class FieldValidationErrorCode(str, Enum):
     FILE_TOO_SMALL = 'file_too_small'
 
     # Audio File Validation
-    AUDIO_FILE_DOWNLOAD_FAILED = 'audio_file_download_failed'
-    AUDIO_FILE_TYPE_INVALID = 'audio_file_type_invalid'
-    AUDIO_FILE_EXTENSION_INVALID = 'audio_file_extension_invalid'
-    AUDIO_FILE_CORRUPTED = 'audio_file_corrupted'
-    AUDIO_FILE_FINGERPRINT_DUPLICATE = 'audio_file_fingerprint_duplicate'
+    TRACK_FILE_DOWNLOAD_FAILED = 'track_file_download_failed'
+    TRACK_FILE_TYPE_INVALID = 'track_file_type_invalid'
+    TRACK_FILE_EXTENSION_INVALID = 'track_file_extension_invalid'
+    TRACK_FILE_CORRUPTED = 'track_file_corrupted'
+    TRACK_FILE_FINGERPRINT_DUPLICATE = 'track_file_fingerprint_duplicate'
 
     # URL Validation
     URL_INVALID = 'url_invalid'

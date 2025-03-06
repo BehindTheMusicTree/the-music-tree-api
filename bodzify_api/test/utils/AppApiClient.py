@@ -59,7 +59,7 @@ class AppApiClient(APIClient):
                     if isinstance(data_url_encoded, dict):
                         data_url_encoded = json.dumps(data_url_encoded, cls=UUIDJSONEncoder)
 
-            if not content_type and not format:
+            if (not content_type and not format):
                 content_type = 'application/json'
 
         # Set default headers for JSON content type
