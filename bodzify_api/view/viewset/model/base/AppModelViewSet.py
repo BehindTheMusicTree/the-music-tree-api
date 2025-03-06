@@ -2,7 +2,7 @@ from typing import Any, Generic, Sequence, Type, TypeVar, Union, cast
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import QuerySet
-from django.http import FileResponse, JsonResponse
+from django.http import FileResponse
 from rest_framework import status, viewsets
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.permissions import IsAuthenticated
@@ -15,7 +15,6 @@ from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.private.Fields import Fields as PrivateFields
 from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.utils import data_transformer
-from bodzify_api.view.error.ErrorResponse import ErrorResponse
 from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
 from bodzify_api.view.HttpMethod import HttpMethod
 
@@ -119,9 +118,6 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         if isinstance(queryset, Sequence) and not isinstance(queryset, QuerySet):
             queryset = self.model_class.objects.filter(id__in=[obj.id for obj in queryset])
         return self.paginator.paginate_queryset(cast(QuerySet[T], queryset), self.request, view=self)
-
-    def handle_exception(self, exc: Exception) -> JsonResponse:
-        return ErrorResponse.handle_exception(exc)
 
     def get_object(self) -> T:
         return super().get_object()

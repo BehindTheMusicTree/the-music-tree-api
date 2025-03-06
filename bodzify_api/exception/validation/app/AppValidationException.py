@@ -58,7 +58,7 @@ class AppValidationException(DrfValidationError):
         super().__init__(self.errors)
 
     @classmethod
-    def detect_and_convert_from_drf_exception(cls, exc: DrfValidationError) -> 'AppValidationException | None':
+    def _detect_and_convert_from_drf_exception(cls, exc: DrfValidationError) -> 'AppValidationException | None':
         """
         Detect if a DRF ValidationError was originally an AppValidationException and convert it back.
         Returns:

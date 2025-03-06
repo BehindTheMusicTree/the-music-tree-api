@@ -14,7 +14,7 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track(TestLibTrackFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
         is_reponse_ok = response.status_code == status.HTTP_201_CREATED
         if not is_reponse_ok:
-            print(response.data)  # type: ignore
+            print(self.bad_request_result)
         assert is_reponse_ok
         track_file = self.saved_object.track_file
         assert track_file

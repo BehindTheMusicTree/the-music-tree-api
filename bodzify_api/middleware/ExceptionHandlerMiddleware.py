@@ -1,8 +1,10 @@
 import logging
 import traceback
 
+from bodzify_api.view.error.ErrorResponse import ErrorResponse
 
-class ExceptionLoggingMiddleware:
+
+class ExceptionHandlerMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
@@ -11,6 +13,7 @@ class ExceptionLoggingMiddleware:
         return response
 
     def process_exception(self, request, exception):
+        # Log the exception first
         logger = logging.getLogger('exceptions')
         logger.error(type(exception))
         logger.error(exception)
@@ -19,4 +22,6 @@ class ExceptionLoggingMiddleware:
                 traceback.format_exception(type(exception), exception, exception.__traceback__)))
         else:
             logger.error('No traceback available for this exception')
-        return None
+
+        # Convert the exception to a response
+        return ErrorResponse.handle_exception(exception)

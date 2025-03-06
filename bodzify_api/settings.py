@@ -532,7 +532,7 @@ def setup_middlewares():
         f'{APP_NAME}.middleware.CamelToSnakeMiddleware.CamelToSnakeMiddleware',
         f'{APP_NAME}.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware',
         f'{APP_NAME}.middleware.ContentTypeValidationMiddleware.ContentTypeValidationMiddleware',
-        f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
+        f'{APP_NAME}.middleware.ExceptionHandlerMiddleware.ExceptionHandlerMiddleware',
         f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
         'django.middleware.security.SecurityMiddleware',
         'corsheaders.middleware.CorsMiddleware',
@@ -620,6 +620,11 @@ def setup_django_constants():
         'DEFAULT_RENDERER_CLASSES': (
             'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
         ),
+        'DEFAULT_PARSER_CLASSES': (
+            'djangorestframework_camel_case.parser.CamelCaseJSONParser',
+            'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
+            'djangorestframework_camel_case.parser.CamelCaseFormParser',
+        ),
         'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
         'PAGE_SIZE': 30,
         'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -630,7 +635,6 @@ def setup_django_constants():
         'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
         'DEFAULT_VERSION': 'v1',
         'ALLOWED_VERSIONS': 'v1',
-        'EXCEPTION_HANDLER': 'bodzify_api.view.error.custom_exception_handler.custom_exception_handler'
     }
 
     global SPECTACULAR_SETTINGS

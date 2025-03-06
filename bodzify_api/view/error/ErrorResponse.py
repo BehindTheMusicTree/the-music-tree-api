@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
 from rest_framework.exceptions import ValidationError as DrfValidationError
+from rest_framework_simplejwt.exceptions import InvalidToken
 
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.app.AppValidationExceptionFields import AppValidationErrorFields
@@ -24,21 +25,23 @@ class ErrorResponse:
         Routes different types of exceptions to their appropriate handlers.
         """
         if isinstance(exc, DrfValidationError):
-            converted = AppValidationException.detect_and_convert_from_drf_exception(exc)
+            converted = AppValidationException._detect_and_convert_from_drf_exception(exc)
             if converted:
                 exc = converted
-            return ErrorResponse.from_validation_error(exc)
+            return ErrorResponse._from_validation_error(exc)
         elif isinstance(exc, IntegrityError):
-            return ErrorResponse.from_unhandled_integrity_error(exc)
+            return ErrorResponse._from_unhandled_integrity_error(exc)
+        elif isinstance(exc, InvalidToken):
+            return ErrorResponse._from_invalid_jwt_token(exc)
         else:
-            return ErrorResponse.from_unhandled_exception(exc)
+            return ErrorResponse._from_unhandled_exception(exc)
 
     @staticmethod
     def _get_error_code(error: Any, default_code: str = 'error') -> str:
         if isinstance(error, dict) and 'unknown_fields' in error:
             return str(error['unknown_fields'][DrfValidationErrorFields.CODE])
-        if isinstance(error, DRFErrorDetail) and hasattr(error, 'code') and error.code:
-            return str(error.code)
+        if isinstance(error, DRFErrorDetail):
+            return str(error.code) if hasattr(error, 'code') else default_code
         return default_code
 
     @staticmethod
@@ -108,19 +111,26 @@ class ErrorResponse:
         }
 
     @staticmethod
-    def from_unhandled_integrity_error(exception: IntegrityError) -> JsonResponse:
+    def _from_invalid_jwt_token(exception: InvalidToken) -> JsonResponse:
+        detail = exception.detail
+        message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+        code = detail['code'] if isinstance(detail, dict) and 'code' in detail else exception.default_code
+        return ErrorResponse.create_error_response(
+            error_detail={ErrorResponseFields.MESSAGE: message, ErrorResponseFields.CODE: code},
+            api_error_code=ApiErrorCode.AUTH_INVALID_CREDENTIALS)
+
+    @staticmethod
+    def _from_unhandled_integrity_error(exception: IntegrityError) -> JsonResponse:
         error_detail = {
             ErrorResponseFields.FieldErrors.MESSAGE:
                 ErrorResponseFields.DefaultFieldValidationValues.DbIntegrityError.MESSAGE,
             ErrorResponseFields.FieldErrors.CODE: ApiErrorCode.SYSTEM_INTERNAL_ERROR
         }
         return ErrorResponse.create_error_response(
-            error_detail=error_detail,
-            api_error_code=ApiErrorCode.SYSTEM_INTERNAL_ERROR
-        )
+            error_detail=error_detail, api_error_code=ApiErrorCode.SYSTEM_INTERNAL_ERROR)
 
     @staticmethod
-    def from_unhandled_exception(exception: Exception) -> JsonResponse:
+    def _from_unhandled_exception(exception: Exception) -> JsonResponse:
         error_detail = {
             ErrorResponseFields.FieldErrors.MESSAGE: str(exception),
             ErrorResponseFields.FieldErrors.CODE: ApiErrorCode.SYSTEM_INTERNAL_ERROR
@@ -129,7 +139,7 @@ class ErrorResponse:
             error_detail=error_detail, api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT)
 
     @staticmethod
-    def from_validation_error(
+    def _from_validation_error(
             exception: Union[AppValidationException, DrfValidationError, DjangoValidationError]) -> JsonResponse:
 
         if isinstance(exception, AppValidationException):
