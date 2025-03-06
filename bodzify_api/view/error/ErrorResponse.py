@@ -8,6 +8,7 @@ from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
 from rest_framework.exceptions import ValidationError as DrfValidationError
 from rest_framework_simplejwt.exceptions import InvalidToken
 
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.app.AppValidationExceptionFields import AppValidationErrorFields
 from bodzify_api.exception.validation.DrfValidationErrorFields import DrfValidationErrorFields
@@ -133,7 +134,7 @@ class ErrorResponse:
     def _from_unhandled_exception(exception: Exception) -> JsonResponse:
         error_detail = {
             ErrorResponseFields.FieldErrors.MESSAGE: str(exception),
-            ErrorResponseFields.FieldErrors.CODE: ApiErrorCode.SYSTEM_INTERNAL_ERROR
+            ErrorResponseFields.FieldErrors.CODE: FieldValidationErrorCode.DEFAULT
         }
         return ErrorResponse.create_error_response(
             error_detail=error_detail, api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT)
