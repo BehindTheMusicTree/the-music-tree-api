@@ -122,6 +122,8 @@ class TrackFileField(AppField):
 
         if isinstance(data, UploadedFile):
             validated_file = self.file_field.to_internal_value(data)
+
+            # I don't know why to_internal_value does not call run_validators automatically
             self.file_field.run_validators(validated_file)
             return validated_file
 
