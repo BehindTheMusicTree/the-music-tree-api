@@ -60,22 +60,33 @@ class AppApiClient(APIClient):
 
         return prepared_data
 
-    def _prepare_request_kwargs(self, extra: dict, format: str | None, content_type: str | None) -> tuple[dict, Any, str | None]:
+    def _prepare_request_kwargs(
+            self, extra: dict, format: str | None, content_type: str | None, data: Any = None) -> tuple[
+            dict, Any, str | None, Any]:
         """Prepare common request keyword arguments.
 
         Args:
             extra: Additional request arguments
             format: The format of the request
             content_type: The content type for the request
+            data: The request data to be sent. If None and format is 'json' or 'multipart',
+                 it will be initialized to {} to ensure proper content type headers are set.
+                 This is important because leaving data as None won't set the correct
+                 content type headers for the request.
 
         Returns:
-            Tuple of (prepared extra kwargs, response handler, determined content type)
+            Tuple of (prepared extra kwargs, response handler, determined content type, initialized data)
         """
         extra = extra.copy()
         content_type = self._get_content_type(format, content_type)
         extra['HTTP_ACCEPT'] = 'application/json'
         handle_response = extra.pop('handle_response', None)
-        return extra, handle_response, content_type
+
+        # Initialize empty data for json/multipart to ensure proper content type
+        if data is None and format in ['json', 'multipart']:
+            data = {}
+
+        return extra, handle_response, content_type, data
 
     def get(self, path, data: dict | None = None, content_type=None, follow=False, **extra) -> HttpResponse:
         if data:
@@ -84,27 +95,32 @@ class AppApiClient(APIClient):
         else:
             data_url_encoded = None
 
-        extra, handle_response, content_type = self._prepare_request_kwargs(extra, 'json', content_type)
+        extra, handle_response, content_type, _ = self._prepare_request_kwargs(
+            extra, 'json', content_type, data_url_encoded)
         response = super().get(path, data_url_encoded, follow, **extra)
         return self._handle_response(response, handle_response)
 
     def post(self, path, data: dict | str | None = None, format='json', content_type=None, follow=False, **extra) -> HttpResponse:
         data_url_encoded = self._prepare_data(data, format)
-        extra, handle_response, content_type = self._prepare_request_kwargs(extra, format, content_type)
+        extra, handle_response, content_type, data_url_encoded = self._prepare_request_kwargs(
+            extra, format, content_type, data_url_encoded)
 
-        response = super().post(path, data_url_encoded, follow=follow, format=format, content_type=content_type, **extra)
+        response = super().post(path, data_url_encoded, follow=follow,
+                                format=format, content_type=content_type, **extra)
         return self._handle_response(response, handle_response)
 
     def put(self, path, data: dict | str | None = None, format='json', content_type=None, follow=False, **extra) -> HttpResponse:
         data_url_encoded = self._prepare_data(data, format)
-        extra, handle_response, content_type = self._prepare_request_kwargs(extra, format, content_type)
+        extra, handle_response, content_type, data_url_encoded = self._prepare_request_kwargs(
+            extra, format, content_type, data_url_encoded)
 
         response = super().put(path, data_url_encoded, format, content_type, follow, **extra)
         return self._handle_response(response, handle_response)
 
     def delete(self, path, data: dict | None = None, format=None, content_type=None, follow=False, **extra) -> HttpResponse:
         data_url_encoded = self._prepare_data(data, format)
-        extra, handle_response, content_type = self._prepare_request_kwargs(extra, format, content_type)
+        extra, handle_response, content_type, data_url_encoded = self._prepare_request_kwargs(
+            extra, format, content_type, data_url_encoded)
 
         response = super().delete(path, data_url_encoded, format, content_type, follow, **extra)
         return self._handle_response(response, handle_response)
