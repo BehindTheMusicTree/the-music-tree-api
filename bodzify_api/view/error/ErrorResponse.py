@@ -21,23 +21,6 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 class ErrorResponse:
 
     @staticmethod
-    def handle_exception(exc: Exception) -> JsonResponse:
-        """
-        Routes different types of exceptions to their appropriate handlers.
-        """
-        if isinstance(exc, DrfValidationError):
-            converted = AppValidationException._detect_and_convert_from_drf_exception(exc)
-            if converted:
-                exc = converted
-            return ErrorResponse._from_validation_error(exc)
-        elif isinstance(exc, IntegrityError):
-            return ErrorResponse._from_unhandled_integrity_error(exc)
-        elif isinstance(exc, InvalidToken):
-            return ErrorResponse._from_invalid_jwt_token(exc)
-        else:
-            return ErrorResponse._from_unhandled_exception(exc)
-
-    @staticmethod
     def _get_error_code(error: Any, default_code: str = 'error') -> str:
         if isinstance(error, dict) and 'unknown_fields' in error:
             return str(error['unknown_fields'][DrfValidationErrorFields.CODE])
@@ -147,6 +130,7 @@ class ErrorResponse:
 
             formatted_error = {
                 ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],
+                ErrorResponseFields.CODE: 'invalid_input',
                 ErrorResponseFields.FIELD_ERRORS: {
                     to_camel_case(field): [{
                         ErrorResponseFields.FieldErrors.MESSAGE: error_detail[AppValidationErrorFields.MESSAGE],
@@ -179,9 +163,12 @@ class ErrorResponse:
 
             # For any other case, wrap it in a standard format
             return ErrorResponse.create_error_response(
-                {ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],
-                 ErrorResponseFields.FIELD_ERRORS: error_detail
-                 if isinstance(error_detail, dict) else {ErrorResponseFields.DETAILS: error_detail}},
+                {
+                    ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],
+                    ErrorResponseFields.CODE: 'invalid_input',
+                    ErrorResponseFields.FIELD_ERRORS: error_detail
+                    if isinstance(error_detail, dict) else {ErrorResponseFields.DETAILS: error_detail}
+                },
                 ApiErrorCode.VALIDATION_INVALID_INPUT)
 
         if isinstance(exception, DjangoValidationError):
@@ -189,6 +176,7 @@ class ErrorResponse:
                 # Multiple field errors
                 formatted_error = {
                     ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],
+                    ErrorResponseFields.CODE: 'invalid_input',
                     ErrorResponseFields.FIELD_ERRORS: {
                         to_camel_case(field): [{
                             ErrorResponseFields.FieldErrors.MESSAGE: msgs[0],
@@ -205,6 +193,7 @@ class ErrorResponse:
                 # Single error message
                 formatted_error = {
                     ErrorResponseFields.MESSAGE: ErrorResponseFields.MESSAGES[ApiErrorCode.VALIDATION_INVALID_INPUT],
+                    ErrorResponseFields.CODE: 'invalid_input',
                     ErrorResponseFields.FIELD_ERRORS: {
                         ErrorResponseFields.DETAILS: [{
                             ErrorResponseFields.FieldErrors.MESSAGE:
@@ -228,3 +217,20 @@ class ErrorResponse:
             error_detail=error_detail,
             api_error_code=ApiErrorCode.VALIDATION_INVALID_INPUT
         )
+
+    @staticmethod
+    def handle_exception(exc: Exception) -> JsonResponse:
+        """
+        Routes different types of exceptions to their appropriate handlers.
+        """
+        if isinstance(exc, DrfValidationError):
+            converted = AppValidationException._detect_and_convert_from_drf_exception(exc)
+            if converted:
+                exc = converted
+            return ErrorResponse._from_validation_error(exc)
+        elif isinstance(exc, IntegrityError):
+            return ErrorResponse._from_unhandled_integrity_error(exc)
+        elif isinstance(exc, InvalidToken):
+            return ErrorResponse._from_invalid_jwt_token(exc)
+        else:
+            return ErrorResponse._from_unhandled_exception(exc)
