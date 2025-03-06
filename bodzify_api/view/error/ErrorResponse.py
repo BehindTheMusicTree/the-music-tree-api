@@ -19,6 +19,21 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 class ErrorResponse:
 
     @staticmethod
+    def handle_exception(exc: Exception) -> JsonResponse:
+        """
+        Routes different types of exceptions to their appropriate handlers.
+        """
+        if isinstance(exc, DrfValidationError):
+            converted = AppValidationException.detect_and_convert_from_drf_exception(exc)
+            if converted:
+                exc = converted
+            return ErrorResponse.from_validation_error(exc)
+        elif isinstance(exc, IntegrityError):
+            return ErrorResponse.from_unhandled_integrity_error(exc)
+        else:
+            return ErrorResponse.from_unhandled_exception(exc)
+
+    @staticmethod
     def _get_error_code(error: Any, default_code: str = 'error') -> str:
         if isinstance(error, dict) and 'unknown_fields' in error:
             return str(error['unknown_fields'][DrfValidationErrorFields.CODE])

@@ -1,18 +1,15 @@
 from typing import Any, Generic, Sequence, Type, TypeVar, Union, cast
 
 from django.core.exceptions import ImproperlyConfigured
-from django.db import IntegrityError
 from django.db.models import QuerySet
 from django.http import FileResponse, JsonResponse
 from rest_framework import status, viewsets
 from rest_framework.exceptions import MethodNotAllowed
-from rest_framework.exceptions import ValidationError as DrfValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.serializers import BaseSerializer, ModelSerializer, Serializer
 
-from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.private.Fields import Fields as PrivateFields
@@ -124,15 +121,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         return self.paginator.paginate_queryset(cast(QuerySet[T], queryset), self.request, view=self)
 
     def handle_exception(self, exc: Exception) -> JsonResponse:
-        if isinstance(exc, DrfValidationError):
-            converted = AppValidationException.detect_and_convert_from_drf_exception(exc)
-            if converted:
-                exc = converted
-            return ErrorResponse.from_validation_error(exc)
-        elif isinstance(exc, IntegrityError):
-            return ErrorResponse.from_unhandled_integrity_error(exc)
-        else:
-            return ErrorResponse.from_unhandled_exception(exc)
+        return ErrorResponse.handle_exception(exc)
 
     def get_object(self) -> T:
         return super().get_object()
