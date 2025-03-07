@@ -9,7 +9,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
 
-    def test_list_then_400(self):
+    def test_multi_value_then_400(self):
         response = self._post_genre(**{CriteriaInputFields.NAME_PUBLIC: "Punk",
                                     CriteriaInputFields.PARENT: ["value", "value2"]})
 

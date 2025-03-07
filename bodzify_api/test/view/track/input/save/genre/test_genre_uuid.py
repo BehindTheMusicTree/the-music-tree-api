@@ -34,7 +34,7 @@ class TestCase(ForeignKeyBodyDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre is None
 
-    def test_list_then_400(self):
+    def test_multi_value_then_400(self):
         genre = self.model_fixture_factory.create_genre(name="rock")
 
         response = self._post_lib_track(
