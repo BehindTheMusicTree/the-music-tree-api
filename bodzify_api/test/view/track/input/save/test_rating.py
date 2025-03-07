@@ -12,7 +12,7 @@ from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
 
-    def test_empty_then_none(self):
+    def test_empty_then_ok(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: None})
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -32,14 +32,14 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.rating == rating
 
-    def test_ten(self):
+    def test_largest_then_ok(self):
         rating = 10
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: rating})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.rating == rating
 
-    def test_error_when_above_maximum(self):
+    def test_too_large_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: 11})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -48,7 +48,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
         assert error['code'] == FieldValidationErrorCode.RATING_TOO_LARGE
 
-    def test_error_when_below_minimum(self):
+    def test_negative_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: -1})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -57,8 +57,26 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
         assert error['code'] == FieldValidationErrorCode.RATING_TOO_SMALL
 
-    def test_error_when_not_integer(self):
+    def test_multi_value_then_400(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: [1, 2]})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+
+    def test_float_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: 5.5})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+
+    def test_string_then_400(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: 'five'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
