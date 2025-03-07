@@ -43,8 +43,7 @@ class TestCase(GenreTestCase):
     def test_new_parent_then_update_new_parent_playlist(self):
         genre_punk = self.model_fixture_factory.create_genre(name="Punk")
         track = self.model_fixture_factory.create_lib_track_with_file(
-            title="Punk song", genre=genre_punk,
-            use_manager_for_genre_playlist_adding=True)
+            title="Punk song", genre=genre_punk, use_manager_for_genre_playlist_adding=True)
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: genre_rock.uuid})
@@ -57,8 +56,7 @@ class TestCase(GenreTestCase):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
         track = self.model_fixture_factory.create_lib_track_with_file(
-            title="Rock song", genre=genre_punk,
-            use_manager_for_genre_playlist_adding=True)
+            title="Rock song", genre=genre_punk, use_manager_for_genre_playlist_adding=True)
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: ''})
 
@@ -71,11 +69,9 @@ class TestCase(GenreTestCase):
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
         punk_fr_genre = self.model_fixture_factory.create_genre(name="Punk FR", parent=genre_punk)
         track_punk = self.model_fixture_factory.create_lib_track_with_file(
-            title="Punk song", genre=genre_punk,
-            use_manager_for_genre_playlist_adding=True)
+            title="Punk song", genre=genre_punk, use_manager_for_genre_playlist_adding=True)
         self.model_fixture_factory.create_lib_track_with_file(
-            title="punk fr song", genre=punk_fr_genre,
-            use_manager_for_genre_playlist_adding=True)
+            title="punk fr song", genre=punk_fr_genre, use_manager_for_genre_playlist_adding=True)
 
         response = self._put_genre(uuid=punk_fr_genre.uuid, **{PutFields.PARENT: genre_rock.uuid})
 
