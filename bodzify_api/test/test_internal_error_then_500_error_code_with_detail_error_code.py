@@ -2,6 +2,7 @@
 from unittest.mock import patch
 
 from django.db import IntegrityError
+from django.test import override_settings
 from rest_framework import status
 
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
@@ -11,6 +12,7 @@ from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
 
 class TestCase(LibTrackTestCase):
 
+    @override_settings(DEBUG=False)
     def test_internal_error_then_500_with_response_error_code(self):
         with patch('bodzify_api.model.track.lib.LibraryTrack.LibraryTrack.save') as mock:
             exception_message = "DB Integrity Error"

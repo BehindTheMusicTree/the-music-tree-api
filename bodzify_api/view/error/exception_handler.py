@@ -1,9 +1,9 @@
 
 
+from django.conf import settings
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework.exceptions import NotAuthenticated, ValidationError, MethodNotAllowed
 
-from bodzify_api import settings
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 
 
