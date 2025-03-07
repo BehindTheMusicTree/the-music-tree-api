@@ -22,7 +22,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(artists_list) > 0
         assert artists_list[0].name == artist_name
 
-    def test_too_long_then_400(self):
+    def test_too_large_then_400(self):
         artist_name = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
         data = {ExtractFields.ARTISTS_NAMES_ARRAY: artist_name}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
