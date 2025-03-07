@@ -18,7 +18,7 @@ id3v2 \
 
 ## Id3v2
 ### Read
-mid3v2 -l "files/metadata=max a_id3v2.flac"
+mid3v2 -l "files/metadata=long a_id3v2.flac"
 
 ### Write
 id3v2 --artist "Artist Name" test.flac
