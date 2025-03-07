@@ -2,7 +2,6 @@ from typing import Any
 
 from django.db import transaction
 from rest_framework.permissions import IsAdminUser
-from rest_framework.request import Request
 from rest_framework.response import Response
 
 from bodzify_api.model.user.User import User
@@ -21,19 +20,11 @@ class UserViewSet(AppModelViewSet[User]):
                          is_private_resource=False,
                          **kwargs)
 
-    # @transaction.atomic not needed
-    def create(self, request: Request, *args, **kwargs):
-        return self._handle_post(request)
-
     def list(self, *args: Any, **kwargs: Any) -> Response:
         return self._handle_list()
 
     def retrieve(self, *args, **kwargs):
         return self._handle_retrieve()
-
-    # @transaction.atomic not needed
-    def update(self, request, *args, **kwargs):
-        return self._handle_update(request)
 
     @transaction.atomic
     def destroy(self, *args, **kwargs):

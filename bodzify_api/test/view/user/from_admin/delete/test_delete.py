@@ -10,6 +10,7 @@ from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording impor
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.user.User import User
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as TrackPostFields
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.user.UserTestCase import UserTestCase
 

@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
 from rest_framework.exceptions import ValidationError as DrfValidationError
 from rest_framework_simplejwt.exceptions import InvalidToken
-from rest_framework.exceptions import NotAuthenticated, ParseError, UnsupportedMediaType, MethodNotAllowed
+from rest_framework.exceptions import NotAuthenticated, ParseError, UnsupportedMediaType, MethodNotAllowed, PermissionDenied
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
@@ -234,6 +234,15 @@ class ErrorResponse:
         )
 
     @staticmethod
+    def _from_permission_denied_exception(exception: PermissionDenied) -> JsonResponse:
+        detail = exception.detail
+        message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+        return ErrorResponse.create_error_response(
+            error_detail={'message': message, 'code': 'permission_denied'},
+            api_error_code=ApiErrorCodeNumeric.AUTH_INSUFFICIENT_PERMISSIONS
+        )
+
+    @staticmethod
     def handle_exception(exc: Exception) -> JsonResponse:
         """
         Routes different types of exceptions to their appropriate handlers.
@@ -255,5 +264,7 @@ class ErrorResponse:
             return ErrorResponse._from_method_not_allowed_exception(exc)
         elif isinstance(exc, Http404):
             return ErrorResponse._from_http_404_exception(exc)
+        elif isinstance(exc, PermissionDenied):
+            return ErrorResponse._from_permission_denied_exception(exc)
         else:
             return ErrorResponse._from_unhandled_exception(exc)
