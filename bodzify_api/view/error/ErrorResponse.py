@@ -2,7 +2,7 @@ from typing import Any, Union
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
 from rest_framework.exceptions import ValidationError as DrfValidationError
@@ -226,6 +226,14 @@ class ErrorResponse:
                                                    api_error_code=ApiErrorCodeNumeric.VALIDATION_METHOD_NOT_ALLOWED)
 
     @staticmethod
+    def _from_http_404_exception(exception: Http404) -> JsonResponse:
+        message = str(exception) if str(exception) else 'Resource not found'
+        return ErrorResponse.create_error_response(
+            error_detail={'message': message, 'code': 'not_found'},
+            api_error_code=ApiErrorCodeNumeric.RESOURCE_NOT_FOUND
+        )
+
+    @staticmethod
     def handle_exception(exc: Exception) -> JsonResponse:
         """
         Routes different types of exceptions to their appropriate handlers.
@@ -245,5 +253,7 @@ class ErrorResponse:
             return ErrorResponse._from_unsupported_media_type_exception(exc)
         elif isinstance(exc, MethodNotAllowed):
             return ErrorResponse._from_method_not_allowed_exception(exc)
+        elif isinstance(exc, Http404):
+            return ErrorResponse._from_http_404_exception(exc)
         else:
             return ErrorResponse._from_unhandled_exception(exc)
