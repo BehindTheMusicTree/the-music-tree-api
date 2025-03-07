@@ -23,7 +23,7 @@ class ContentTypeValidationMiddleware:
             if not content_type:
                 return self.handle_error(UnsupportedMediaType('Content-Type header is required'))
 
-            if content_type not in ['application/json', 'multipart/form-data']:
+            if content_type not in ['application/json', 'multipart/form-data', 'application/x-www-form-urlencoded']:
                 return self.handle_error(UnsupportedMediaType(
                     'Unsupported content type. Use application/json for regular requests or '
                     'multipart/form-data for file uploads'))
