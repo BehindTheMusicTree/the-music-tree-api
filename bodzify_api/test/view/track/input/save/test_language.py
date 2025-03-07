@@ -29,8 +29,17 @@ class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PutFields.LANGUAGE
         assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
-    def test_empty_then_none(self):
+    def test_empty_then_ok(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PutFields.LANGUAGE: ""})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.language == None
+
+    def test_multi_value_then_400(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PutFields.LANGUAGE: ['a', 'b']})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == PutFields.LANGUAGE
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
