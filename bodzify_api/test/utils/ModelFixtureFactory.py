@@ -36,7 +36,6 @@ from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.model.user.User import User
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
-from bodzify_api.view.viewset.model.lib_track.LibTrackCreationType import LibTrackCreationType
 
 
 global_settings.DDF_FIELD_FIXTURES['django.db.models.fields.generated.GeneratedField'] = lambda: None  # type: ignore
@@ -134,8 +133,8 @@ class ModelFixtureFactory:
         if use_manager_for_genre_playlist_adding:
             with open(track_file_path_in_lib, 'rb') as f:
                 django_file = File(f, name=os.path.basename(track_file_path_in_lib))
-                model_fields.update({LibraryTrackFields.TRACK_FILE_PUBLIC: django_file})
-                lib_track = LibraryTrack.objects.create(**model_fields, creation_type=LibTrackCreationType.POST)
+                model_fields.update({LibraryTrackFields.TRACK_FILE_INTERNAL: django_file})
+                lib_track = LibraryTrack.objects.create(**model_fields)
         else:
             with transaction.atomic():
                 lib_track = self._create_lib_track(user=user, title=title, **kwargs)
