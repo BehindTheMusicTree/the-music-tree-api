@@ -3,10 +3,10 @@ from uuid import UUID
 from django.urls import reverse
 
 from bodzify_api.model.playlist.children.criteria.genre.GenrePlaylist import GenrePlaylist
-from bodzify_api.test.utils.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
-class GenrePlaylistTestCase(ApiTestCase):
+class GenrePlaylistTestCase(AppTestCase):
     model_class = GenrePlaylist
     saved_object: GenrePlaylist
 

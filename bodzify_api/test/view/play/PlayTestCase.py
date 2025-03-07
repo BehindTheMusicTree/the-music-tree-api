@@ -3,10 +3,10 @@ from uuid import UUID
 from django.urls import reverse
 
 from bodzify_api.model.play.Play import Play
-from bodzify_api.test.utils.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
-class PlayTestCase(ApiTestCase[Play]):
+class PlayTestCase(AppTestCase[Play]):
     model_class = Play
     saved_object: Play
 

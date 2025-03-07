@@ -46,6 +46,9 @@ class UserManager(BaseUserManager):
 
         return self.create_instance(username=username, email=email, password=password, **extra_fields)
 
+    def delete_instance(self, instance: 'User'):
+        instance.delete()
+
 
 @receiver(post_save, sender=settings.APP_NAME + '.User')
 def create_user_criterialess_playlists(sender, instance, created, **kwargs):

@@ -1,9 +1,9 @@
 
 
-from bodzify_api.test.utils.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
-class NullablePositiveIntBodyDataTestCase(ApiTestCase):
+class NullablePositiveIntBodyDataTestCase(AppTestCase):
 
     def setUp(self, methods_names_to_implement: list[str] | None = None) -> None:
         class_methods_names_to_implement = ['test_largest_then_ok',

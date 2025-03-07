@@ -4,10 +4,10 @@ from django.urls import reverse
 
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.serializer.model.criteria.output.Fields import Fields
-from bodzify_api.test.utils.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
-class GenreTestCase(ApiTestCase[Genre]):
+class GenreTestCase(AppTestCase[Genre]):
     saved_object: Genre
     model_class = Genre
 

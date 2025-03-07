@@ -39,10 +39,10 @@ Advantages of array notation:
 Other methods like repeated fields or comma-separated values are not supported and will result in validation errors.
 """
 
-from bodzify_api.test.utils.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
-class NullablelistBodyDataTestCase(ApiTestCase):
+class NullablelistBodyDataTestCase(AppTestCase):
     def setUp(self, methods_names_to_implement: list[str] | None = None) -> None:
         class_methods_names_to_implement = ['test_longest_then_ok',
                                             'test_empty_then_ok',

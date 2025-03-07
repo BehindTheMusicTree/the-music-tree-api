@@ -3,10 +3,10 @@ from uuid import UUID
 from django.urls import reverse
 
 from bodzify_api.model.album.Album import Album
-from bodzify_api.test.utils.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
-class AlbumTestCase(ApiTestCase[Album]):
+class AlbumTestCase(AppTestCase[Album]):
     saved_object: Album
     model_class = Album
 

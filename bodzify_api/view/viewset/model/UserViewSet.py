@@ -37,4 +37,4 @@ class UserViewSet(AppModelViewSet[User]):
 
     @transaction.atomic
     def destroy(self, *args, **kwargs):
-        return self._handle_destroy(*args, **kwargs)
+        return self._handle_destroy()

@@ -24,7 +24,7 @@ from bodzify_api.view.pagination.PaginatedResponseFields import PaginatedRespons
 T = TypeVar('T', bound=models.Model)
 
 
-class ApiTestCase(TestCase, Generic[T]):
+class AppTestCase(TestCase, Generic[T]):
     model_class: Type[T]  # Must be defined in child classes
     saved_object: T  # Must be defined in child classes
 

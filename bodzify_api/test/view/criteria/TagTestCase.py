@@ -4,10 +4,10 @@ from django.urls import reverse
 
 from bodzify_api.model.criteria.children.tag.Tag import Tag
 from bodzify_api.serializer.model.criteria.output.Fields import Fields
-from bodzify_api.test.utils.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
-class TagTestCase(ApiTestCase[Tag]):
+class TagTestCase(AppTestCase[Tag]):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.detail_endpoint = 'tag-detail'

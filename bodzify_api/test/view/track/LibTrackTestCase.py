@@ -3,12 +3,12 @@ from uuid import UUID
 from django.urls import reverse
 
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.test.utils.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.AppTestCase import AppTestCase
 from bodzify_api.test.utils.lib_track.TestLibTrackUrl import TestLibTrackUrl
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields
 
 
-class LibTrackTestCase(ApiTestCase[LibraryTrack]):
+class LibTrackTestCase(AppTestCase[LibraryTrack]):
     model_class = LibraryTrack
     saved_object: LibraryTrack
 

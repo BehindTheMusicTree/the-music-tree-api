@@ -8,10 +8,10 @@ from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilt
     PrivateUniqueResourceFilterSet
 )
 from bodzify_api.model.criteria.children.genre.Genre import Genre
-from bodzify_api.test.utils.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
-class TestPrivateUniqueResourceFilterSet(ApiTestCase):
+class TestPrivateUniqueResourceFilterSet(AppTestCase):
     def setUp(self):
         super().setUp()
         self.now = timezone.now()

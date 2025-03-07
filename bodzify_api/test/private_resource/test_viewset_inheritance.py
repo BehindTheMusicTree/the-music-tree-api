@@ -10,10 +10,10 @@ from bodzify_api.filtering.set.criteria.CriteriaFilterSet import CriteriaFilterS
 from bodzify_api.filtering.set.lib_track.LibTrackFilterSet import LibTrackFilterSet
 from bodzify_api.filtering.set.playlist.PlaylistFilterSet import PlaylistFilterSet
 from bodzify_api.filtering.set.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
-from bodzify_api.test.utils.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
-class TestFilterInheritance(ApiTestCase):
+class TestFilterInheritance(AppTestCase):
     def setUp(self):
         super().setUp()
         self.expected_filters = {

@@ -3,10 +3,10 @@ from uuid import UUID
 from django.urls import reverse
 
 from bodzify_api.model.playlist.children.criteria.tag.TagPlaylist import TagPlaylist
-from bodzify_api.test.utils.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
-class TagPlaylistTestCase(ApiTestCase):
+class TagPlaylistTestCase(AppTestCase):
     model_class = TagPlaylist
     saved_object: TagPlaylist
 

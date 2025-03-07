@@ -1,9 +1,9 @@
 from django.urls import reverse
 
-from bodzify_api.test.utils.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
-class SearchTestCase(ApiTestCase):
+class SearchTestCase(AppTestCase):
     def _search(self, **kwargs):
         return self.api_client.get(path=reverse('search-list'), data=kwargs, handle_response=self._set_results)
 

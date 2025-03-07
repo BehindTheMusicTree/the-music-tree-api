@@ -1,9 +1,9 @@
 
 
-from bodzify_api.test.utils.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
-class FilterTestCase(ApiTestCase):
+class FilterTestCase(AppTestCase):
     filter_field = None
 
     def setUp(self, methods_names_to_implement: list[str] | None = None) -> None:

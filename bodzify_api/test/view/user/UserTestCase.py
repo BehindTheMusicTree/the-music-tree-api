@@ -1,10 +1,10 @@
 from django.urls import reverse
 
 from bodzify_api.model.user.User import User
-from bodzify_api.test.utils.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
-class UserTestCase(ApiTestCase[User]):
+class UserTestCase(AppTestCase[User]):
     def _post_user(self, **kwargs):
         return self.api_client.post(
             path=reverse('user-list'), data=kwargs, content_type='application/json', handle_response=self._set_results)

@@ -2,10 +2,10 @@
 
 from rest_framework import status
 
-from bodzify_api.test.utils.ApiTestCase import ApiTestCase
+from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
-class TestCase(ApiTestCase):
+class TestCase(AppTestCase):
     def test_not_logged_in_then_401(self):
         response = self._post_lib_track_being_logged_out()
 
