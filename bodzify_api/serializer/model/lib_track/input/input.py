@@ -34,7 +34,7 @@ class LibTrackInputSerializer(AppSerializer):
 
     def _update_model_data_with_album_if_name(self, user: User, data: dict):
         from bodzify_api.model.album.Album import Album
-        album_name = data.pop(InputFields.ALBUM_NAME)
+        album_name = data.pop(InputFields.ALBUM_NAME, None)
         if album_name:
             album_artists_names = data.pop(InputFields.ALBUM_ARTISTS_NAMES, [])
 
@@ -44,7 +44,7 @@ class LibTrackInputSerializer(AppSerializer):
             data[ModelFields.ALBUM] = album
 
     def _update_data_with_artists_if_names_otherwise_empty_list(self, user: User, data: dict) -> None:
-        artists_names = data.pop(InputFields.ARTISTS_NAMES)
+        artists_names = data.pop(InputFields.ARTISTS_NAMES, None)
         if artists_names:
             artists = Artist.objects.get_artists_list_from_names_after_potential_creation(
                 user=user, artists_names=artists_names)

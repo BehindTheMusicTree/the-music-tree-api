@@ -41,16 +41,14 @@ class TestMultipartDuplicateFields(LibTrackTestCase):
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_duplicate_fields_on_multipart_patch_then_400(self):
-        # PATCH is not supported
+        # PATCH is not supported yet by the app
         pass
 
     def test_list_fields_allowed_duplicates_on_multipart_then_ok(self):
-        # Test array fields that allow duplicate values
         data = {
             LibTrackFields.TITLE: 'test',
             LibTrackFields.ARTISTS_NAMES_ARRAY: ['artist1', 'artist2', 'artist3']
         }
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
-        # This should succeed as duplicate values in arrays are allowed
         assert response.status_code == status.HTTP_201_CREATED
