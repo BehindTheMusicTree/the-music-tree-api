@@ -6,7 +6,7 @@ from bodzify_api.test.utils.ApiTestCase import ApiTestCase
 class ForeignKeyBodyDataTestCase(ApiTestCase):
 
     def setUp(self, methods_names_to_implement: list[str] | None = None) -> None:
-        class_methods_names_to_implement = ['test_value_then_ok',
+        class_methods_names_to_implement = ['test_existing_then_ok',
                                             'test_empty_then_none',
                                             'test_multi_value_then_400',
                                             'test_non_existing_then_400',

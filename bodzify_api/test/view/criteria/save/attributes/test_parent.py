@@ -34,6 +34,16 @@ class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.parent == genre_rock
 
+    def test_invalid_uuid_then_400(self):
+        response = self._post_genre(**{CriteriaInputFields.NAME_PUBLIC: "Punk",
+                                    CriteriaInputFields.PARENT: "invalid"})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaInputFields.PARENT
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+
     def test_non_existing_then_400(self):
         self.model_fixture_factory.create_genre(name="Rock")
 
