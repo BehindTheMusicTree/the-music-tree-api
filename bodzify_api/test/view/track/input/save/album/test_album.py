@@ -30,7 +30,7 @@ class TestCase(LibTrackTestCase, NullableCharBodyDataTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ALBUM_NAME)
         assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
-    def test_empty_then_none(self):
+    def test_empty_then_ok(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.ALBUM_NAME: ''})
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -53,3 +53,12 @@ class TestCase(LibTrackTestCase, NullableCharBodyDataTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
         assert self.saved_object.album.name == album_name
+
+    def test_multi_value_then_400(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.ALBUM_NAME: ['a', 'b']})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ALBUM_NAME)
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID

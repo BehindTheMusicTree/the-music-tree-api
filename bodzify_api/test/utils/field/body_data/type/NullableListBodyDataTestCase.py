@@ -47,8 +47,9 @@ class NullablelistBodyDataTestCase(ApiTestCase):
         class_methods_names_to_implement = ['test_longest_then_ok',
                                             'test_empty_then_ok',
                                             'test_comma_separated_then_only_one_value',
-                                            'test_one_too_long_then_400',
-                                            'test_values_with_one_empty_then_400',
+                                            'test_one_too_large_then_400',
+                                            'test_multiple_with_one_too_long_then_400',
+                                            'test_multiple_with_one_empty_then_400',
                                             'test_malformed_array_then_400',
                                             'test_duplicate_values_then_400',]
         if methods_names_to_implement:
