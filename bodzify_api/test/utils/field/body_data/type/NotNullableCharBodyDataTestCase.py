@@ -11,4 +11,4 @@ class NotNullableCharBodyDataTestCase(ApiTestCase):
                                             'test_list_then_400',]
         if methods_names_to_implement:
             class_methods_names_to_implement += methods_names_to_implement
-        return super().setUp(methods_names_to_implement)
+        return super().setUp(class_methods_names_to_implement)
