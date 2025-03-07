@@ -3,6 +3,8 @@ from rest_framework import serializers
 from bodzify_api import settings
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.model.artist.Artist import Artist
+from bodzify_api.model.user.User import User
 from bodzify_api.serializer.AppSerializer import AppSerializer
 from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.serializer.field.ArtistsNamesField import ArtistsNamesField
@@ -10,12 +12,9 @@ from bodzify_api.serializer.field.TrackNumberField import TrackNumberField
 from bodzify_api.serializer.field.RatingField import RatingField
 from bodzify_api.serializer.field.criteria.CriteriaFieldInputType import CriteriaFieldInputType
 from bodzify_api.serializer.field.criteria.GenreField import GenreField
-
-from .Fields import Fields
-
-
-ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album artists name is."""
-TRACK_NUMBER_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE = """Album name must be specified if album position is."""
+from bodzify_api.model.track.lib.Fields import Fields as ModelFields
+from bodzify_api.utils import data_transformer
+from .Fields import InputFields
 
 
 class LibTrackInputSerializer(AppSerializer):
@@ -33,29 +32,63 @@ class LibTrackInputSerializer(AppSerializer):
     language = AppCharField(
         max_length=settings.LANGUAGE_LEN_MAX, required=False, allow_blank=True, allow_null=True)
 
+    def _update_model_data_with_album_if_name_in_input_data(self, user: User, model_data: dict, input_data: dict):
+        from bodzify_api.model.album.Album import Album
+        if InputFields.ALBUM_NAME in input_data:
+            album_name = input_data[InputFields.ALBUM_NAME]
+
+            if not album_name:
+                return None
+
+            album_artists_names = []
+            if InputFields.ALBUM_ARTISTS_NAMES in input_data:
+                album_artists_names = input_data[InputFields.ALBUM_ARTISTS_NAMES]
+
+            album = Album.objects.get_album_from_name_and_album_artists_names_after_potential_creations(
+                user=user, name=album_name, album_artists_names=album_artists_names)
+
+            model_data[ModelFields.ALBUM] = album
+
+    def _update_model_data_with_artists_if_names_in_input_data_otherwise_empty_list(
+            self, user: User, model_data: dict, input_data: dict) -> None:
+        if InputFields.ARTISTS_NAMES in input_data:
+            artists_names = input_data[InputFields.ARTISTS_NAMES]
+            if artists_names:
+                artists = Artist.objects.get_artists_list_from_names_after_potential_creation(
+                    user=user, artists_names=artists_names)
+            else:
+                artists = []
+        else:
+            artists = []
+        model_data[ModelFields.ARTISTS] = artists
+
     def validate(self, data):
-        if Fields.ALBUM_ARTISTS_NAMES_ARRAY in data:
-            error_message = None
-            if Fields.ALBUM_NAME not in data:
-                error_message = ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
-            elif data[Fields.ALBUM_NAME] in [None, ""]:
-                error_message = ALBUM_ARTISTS_NAME_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
+        if data.get(InputFields.ALBUM_ARTISTS_NAMES_ARRAY) not in [None, []] \
+                and data.get(InputFields.ALBUM_NAME) in [None, ""]:
+            raise AppValidationException(field_name=InputFields.ALBUM_ARTISTS_NAMES_ARRAY,
+                                         message="Album name must be specified if album artists name is.",
+                                         field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
-            if error_message:
-                raise AppValidationException(field_name=Fields.ALBUM_ARTISTS_NAMES_ARRAY,
-                                             message=error_message,
-                                             field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
+        if data.get(InputFields.TRACK_NUMBER) is not None and data.get(InputFields.ALBUM_NAME) in [None, ""]:
+            AppValidationException(field_name=InputFields.ALBUM_NAME,
+                                   message="Album name must be specified if track position is.",
+                                   field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
+        model_data = dict()
+        for key in [InputFields.TITLE,
+                    InputFields.TRACK_NUMBER,
+                    InputFields.GENRE,
+                    InputFields.RATING,
+                    InputFields.LANGUAGE,
+                    InputFields.ARCHIVED]:
+            data_transformer.update_dict1_with_key_if_set_in_dict2(key=key, dict1=model_data, dict2=data)
 
-        if Fields.TRACK_NUMBER in data:
-            error_message = None
-            if Fields.ALBUM_NAME not in data:
-                error_message = TRACK_NUMBER_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
-            elif data[Fields.ALBUM_NAME] in [None, ""]:
-                error_message = TRACK_NUMBER_SET_BUT_NOT_ALBUM_NAME_ERROR_MESSAGE
+        data_transformer.update_dict_converting_str_to_int_value_if_set(key=ModelFields.RATING, data_dict=model_data)
 
-            if error_message:
-                AppValidationException(field_name=Fields.ALBUM_NAME,
-                                       message=error_message,
-                                       field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
+        user = self.context['request'].user
+        model_data[ModelFields.USER] = user
+
+        self._update_model_data_with_artists_if_names_in_input_data_otherwise_empty_list(
+            user=user, model_data=model_data, input_data=data)
+        self._update_model_data_with_album_if_name_in_input_data(user=user, model_data=model_data, input_data=data)
 
         return super().validate(data)

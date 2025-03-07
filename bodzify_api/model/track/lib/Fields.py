@@ -3,7 +3,7 @@ from bodzify_api.model.trackable_play_count.Fields import Fields as TrackablePla
 
 
 class Fields(PrivateUniqueResourceFields, TrackablePlayCountFields):
-    TRACK_FILE = "track_file"
+    TRACK_FILE_INTERNAL = "track_file"
     TRACK_FILE_PUBLIC = "file"
     TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = "track_file_fingerprint_must_be_unique"
     TITLE = "title"

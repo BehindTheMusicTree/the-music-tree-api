@@ -87,7 +87,7 @@ class LibraryTrack(TrackablePlayCount):
         genre_str = f"{Fields.GENRE}: {self.genre}" if self.genre else f"{Fields.GENRE}: --"
         rating_str = f"{Fields.RATING}: {self.rating}" if self.rating else f"{Fields.RATING}: --"
         language_str = f"{Fields.LANGUAGE}: {self.language}" if self.language else f"{Fields.LANGUAGE}: --"
-        file_str = f"{Fields.TRACK_FILE}: {self.track_file}" if self.track_file else "no track file"
+        file_str = f"{Fields.TRACK_FILE_INTERNAL}: {self.track_file}" if self.track_file else "no track file"
 
         return (f"{self.uuid} | {position_str} | {self.title} by {artists_str} | {album_str} | "
                 f"{genre_str} | {rating_str} | {language_str} | "

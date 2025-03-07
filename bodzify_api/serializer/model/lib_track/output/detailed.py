@@ -11,7 +11,7 @@ from bodzify_api.serializer.model.track_file.output.detailed import FileDetailed
 
 
 class LibTrackDetailedSerializer(serializers.ModelSerializer):
-    file = FileDetailedSerializer(source=ModelFields.TRACK_FILE)
+    file = FileDetailedSerializer(source=ModelFields.TRACK_FILE_INTERNAL)
     artists = ArtistMinimumSerializer(many=True)
     album = AlbumMinimumSerializer()
     genre = CriteriaMinimumSerializer()

@@ -3,7 +3,7 @@ from enum import Enum
 
 from django.core.exceptions import ImproperlyConfigured
 
-from bodzify_api.serializer.model.lib_track.input.Fields import Fields as LibTrackInputFields
+from bodzify_api.serializer.model.lib_track.input.Fields import InputFields as LibTrackInputFields
 from bodzify_api.serializer.model.criteria.input.Fields import Fields as CriteriaInputFields
 
 

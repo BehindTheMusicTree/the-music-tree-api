@@ -57,10 +57,10 @@ def form_data_to_snake_case(form_data: Any) -> dict[str, Any]:
 
 
 def get_copy_of_dict_including_only_specified_keys(data_dict: dict, keys) -> dict[str, Any]:
-    dict2 = data_dict.copy()
-    for key in list(dict2.keys()):
-        if key not in keys:
-            del dict2[key]
+    dict2 = dict()
+    for parameter_key in keys:
+        if parameter_key in data_dict:
+            dict2[parameter_key] = data_dict[parameter_key]
     return dict2
 
 

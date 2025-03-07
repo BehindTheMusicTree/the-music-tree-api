@@ -1,5 +1,5 @@
 
-from ..Fields import Fields as InputFields
+from ..Fields import InputFields as InputFields
 
 
 class Fields:

@@ -3,7 +3,8 @@ from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.track.lib.Fields import Fields as ModelFields
 
 
-class Fields:
+class InputFields:
+    TRACK_FILE_INTERNAL = ModelFields.TRACK_FILE_INTERNAL
     TRACK_FILE_PUBLIC = ModelFields.TRACK_FILE_PUBLIC
     TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = ModelFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
     TITLE = ModelFields.TITLE

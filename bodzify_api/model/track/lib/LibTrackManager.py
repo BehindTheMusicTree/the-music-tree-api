@@ -11,8 +11,7 @@ from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
 from bodzify_api.model.user.User import User
-from bodzify_api.serializer.model.lib_track.input.Fields import Fields as InputFields
-from bodzify_api.utils import data_transformer
+from bodzify_api.serializer.model.lib_track.input.Fields import InputFields as InputFields
 
 from .Fields import Fields
 
@@ -74,36 +73,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             genreless_criteria_playlist.last_track_list_update_date = update_date
             genreless_criteria_playlist.save(update_fields=[PlayListFields.LAST_TRACK_LIST_UPDATE_DATE])
 
-    def _update_model_data_with_album_if_name_in_input_data(self, model_data: dict, input_data: dict):
-        from bodzify_api.model.album.Album import Album
-        if InputFields.ALBUM_NAME in input_data:
-            album_name = input_data[InputFields.ALBUM_NAME]
-
-            if not album_name:
-                return None
-
-            album_artists_names = []
-            if InputFields.ALBUM_ARTISTS_NAMES in input_data:
-                album_artists_names = input_data[InputFields.ALBUM_ARTISTS_NAMES]
-
-            album = Album.objects.get_album_from_name_and_album_artists_names_after_potential_creations(
-                user=input_data[Fields.USER], name=album_name, album_artists_names=album_artists_names)
-
-            model_data[Fields.ALBUM] = album
-
-    def _update_model_data_with_artists_if_names_in_input_data_otherwise_empty_list(
-            self, model_data: dict, input_data: dict) -> None:
-        if InputFields.ARTISTS_NAMES in input_data:
-            artists_names = input_data[InputFields.ARTISTS_NAMES]
-            if artists_names:
-                artists = Artist.objects.get_artists_list_from_names_after_potential_creation(
-                    user=input_data[Fields.USER], artists_names=artists_names)
-            else:
-                artists = []
-        else:
-            artists = []
-        model_data[Fields.ARTISTS] = artists
-
     def _decrease_position_of_next_tracks_in_old_track_playlists(self, user: User, playlists_with_old_position: list):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
@@ -120,35 +89,14 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         self._add_to_genre_playlists(instance=instance, genre_limit=common_genre)
         self._remove_from_genre_playlists(instance=instance, old_genre=old_genre, genre_limit=common_genre)
 
-    def _get_model_data_from_input_data(self, **kwargs) -> dict:
-        model_data = dict()
-        for key in [Fields.USER,
-                    Fields.TITLE,
-                    Fields.TRACK_NUMBER,
-                    Fields.GENRE,
-                    Fields.RATING,
-                    Fields.LANGUAGE,
-                    Fields.ARCHIVED]:
-            data_transformer.update_dict1_with_key_if_set_in_dict2(key=key, dict1=model_data, dict2=kwargs)
-
-        data_transformer.update_dict_converting_str_to_int_value_if_set(key=Fields.RATING, data_dict=kwargs)
-
-        self._update_model_data_with_artists_if_names_in_input_data_otherwise_empty_list(
-            model_data=model_data, input_data=kwargs)
-        self._update_model_data_with_album_if_name_in_input_data(model_data=model_data, input_data=kwargs)
-
-        return model_data
-
     def create(self, **kwargs) -> 'LibraryTrack':
         from ..file.TrackFile import TrackFile
 
-        model_data = self._get_model_data_from_input_data(**kwargs)
-
-        artists = model_data.pop(Fields.ARTISTS, None)
+        artists = kwargs.pop(Fields.ARTISTS, None)
         track_file_model_data = dict()
-        track_file_model_data[TrackFileFields.FILE] = kwargs[Fields.TRACK_FILE_PUBLIC]
+        track_file_model_data[TrackFileFields.FILE] = kwargs.pop(Fields.TRACK_FILE_INTERNAL)
 
-        instance: LibraryTrack = super().create(**model_data)
+        instance: LibraryTrack = super().create(**kwargs)
         if artists:
             instance.artists.set(artists)
 
@@ -193,9 +141,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         old_genre = old_instance.genre
         old_artists = old_instance.artists.all()
 
-        model_data = self._get_model_data_from_input_data(**kwargs)
-
-        updated_instance: LibraryTrack = super().update_instance(old_instance, **model_data)
+        updated_instance: LibraryTrack = super().update_instance(old_instance, **kwargs)
 
         if old_genre != updated_instance.genre:
             self._update_genre_playlists(updated_instance, old_genre=old_genre)

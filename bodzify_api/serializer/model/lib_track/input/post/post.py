@@ -8,6 +8,7 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.model.user.User import User
 from bodzify_api.serializer.field.TrackFileField import TrackFileField
+from bodzify_api.serializer.model.lib_track.input.Fields import InputFields
 from bodzify_api.serializer.model.lib_track.input.input import LibTrackInputSerializer
 from bodzify_api.utils import audio_metadata, data_transformer, utils
 from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
@@ -67,30 +68,28 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
     def _extract_metadata_fields(self, metadata_dict: dict) -> dict:
         return data_transformer.get_copy_of_dict_including_only_specified_keys(
             data_dict=metadata_dict,
-            keys=[AppMetadataKey.TITLE,
-                  AppMetadataKey.ARTISTS_NAMES,
-                  AppMetadataKey.ALBUM_NAME,
-                  AppMetadataKey.ALBUM_ARTISTS_NAMES,
-                  AppMetadataKey.RATING,
-                  AppMetadataKey.LANGUAGE])
+            keys=[InputFields.TITLE,
+                  InputFields.ARTISTS_NAMES,
+                  InputFields.ALBUM_NAME,
+                  InputFields.ALBUM_ARTISTS_NAMES,
+                  InputFields.RATING,
+                  InputFields.LANGUAGE])
 
-    def _handle_genre(self, metadata_dict: dict, user: User) -> dict:
-        genre_name = metadata_dict.get(AppMetadataKey.GENRE_NAME)
+    def _handle_genre(self, input_data: dict, file_metadata: dict, user: User):
+        genre_name = file_metadata.get(AppMetadataKey.GENRE_NAME)
         if genre_name:
             from bodzify_api.model.criteria.children.genre.Genre import Genre
-            metadata_dict[PostFields.GENRE] = \
-                Genre.objects.get_or_create(user=user, name=genre_name)[0]
-        return metadata_dict
+            input_data[PostFields.GENRE] = Genre.objects.get_or_create(user=user, name=genre_name)[0]
 
     def _get_input_data_from_file(self, file, user: User):
-        app_merged_metadata_dict = self._get_metadata_from_file(file)
-        app_merged_metadata_dict = self._truncate_metadata_values(app_merged_metadata_dict)
+        file_metadata = self._get_metadata_from_file(file)
+        file_metadata = self._truncate_metadata_values(file_metadata)
 
-        data_from_file = self._extract_metadata_fields(app_merged_metadata_dict)
-        data_from_file = self._handle_genre(app_merged_metadata_dict, user)
+        input_data = self._extract_metadata_fields(file_metadata)
+        self._handle_genre(user=user, input_data=input_data, file_metadata=file_metadata)
 
-        input_data_clean = data_transformer.remove_none_or_empty_key_from_dict(data_from_file)
-        input_data_clean[PostFields.TRACK_FILE_PUBLIC] = file
+        input_data_clean = data_transformer.remove_none_or_empty_key_from_dict(input_data)
+        input_data_clean[InputFields.TRACK_FILE_INTERNAL] = file
 
         return input_data_clean
 
@@ -98,8 +97,7 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
         user = self.context['request'].user
         file = cast(DjangoFile, data.get(PostFields.TRACK_FILE_PUBLIC))  # Required so not None
         input_data = self._get_input_data_from_file(file=file, user=user)
-        keys = [PostFields.TRACK_FILE_PUBLIC,
-                PostFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
+        keys = [PostFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
                 PostFields.TITLE,
                 PostFields.ARTISTS_NAMES_ARRAY[:2],  # Removes "[]""
                 PostFields.ALBUM_NAME,
@@ -109,6 +107,7 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
                 PostFields.RATING,
                 PostFields.LANGUAGE]
         data_transformer.override_dict1_with_dict2_values_for_each_key_in_dict2(dict1=input_data, dict2=data, keys=keys)
+        input_data[InputFields.TRACK_FILE_INTERNAL] = data[PostFields.TRACK_FILE_PUBLIC]
 
         # If title is not provided, generate it from the file
         if input_data.get(PostFields.TITLE) in [None, '']:

@@ -37,7 +37,7 @@ from .fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMis
 
 class TrackFile(PrivateStandardResource):
     lib_track = PrivateOneToOneField(  # type: ignore
-        'LibraryTrack', on_delete=models.CASCADE, related_name=LibraryTrackFields.TRACK_FILE)
+        'LibraryTrack', on_delete=models.CASCADE, related_name=LibraryTrackFields.TRACK_FILE_INTERNAL)
     file = models.FileField(upload_to=model_utils.get_user_lib_path,
                             storage=PreserveSpacesStorage(),
                             help_text="Only audio formats accepted.",

@@ -2,7 +2,7 @@
 from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.serializer.model.lib_track.input.Fields import Fields as LibTrackInputFields
+from bodzify_api.serializer.model.lib_track.input.Fields import InputFields as LibTrackInputFields
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
