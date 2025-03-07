@@ -15,7 +15,7 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.album.album_artists.count() == 0
 
     def test_long_id3v2_then_truncated(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V2_SMALL_MP3)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_LONG_A_ID3V2_SMALL_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.language
@@ -23,7 +23,7 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.language == 'a' * settings.LANGUAGE_LEN_MAX
 
     def test_long_vorbis_then_truncated(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_VORBIS_SMALL_FLAC)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_LONG_A_VORBIS_SMALL_FLAC)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.language
