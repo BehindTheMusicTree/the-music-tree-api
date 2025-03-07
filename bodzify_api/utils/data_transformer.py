@@ -71,13 +71,13 @@ def remove_none_or_empty_key_from_dict(data_dict: dict):
     return data_dict
 
 
-def update_dict_converting_str_to_int_value_if_set(key: str, data_dict: dict):
-    if key in data_dict:
-        if data_dict[key] is not None and data_dict[key] != '':
-            rating = int(data_dict[key])
+def update_dict_converting_str_to_int_value_if_set(key: str, data: dict):
+    if key in data:
+        if data[key] is not None and data[key] != '':
+            rating = int(data[key])
         else:
             rating = None
-        data_dict[key] = rating
+        data[key] = rating
 
 
 def update_dict1_with_key_if_set_in_dict2(key: str, dict1: dict, dict2: dict):

@@ -18,7 +18,7 @@ class TestJsonDuplicateFields(GenreTestCase):
                                         handle_response=self._set_results)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        self._set_bad_request_result(response)
+        self._set_error_response_result(response)
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaPostFields.NAME_PUBLIC
@@ -35,7 +35,7 @@ class TestJsonDuplicateFields(GenreTestCase):
                                        handle_response=self._set_results)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        self._set_bad_request_result(response)
+        self._set_error_response_result(response)
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaPostFields.NAME_PUBLIC

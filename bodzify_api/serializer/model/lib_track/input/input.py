@@ -32,37 +32,27 @@ class LibTrackInputSerializer(AppSerializer):
     language = AppCharField(
         max_length=settings.LANGUAGE_LEN_MAX, required=False, allow_blank=True, allow_null=True)
 
-    def _update_model_data_with_album_if_name_in_input_data(self, user: User, model_data: dict, input_data: dict):
+    def _update_model_data_with_album_if_name(self, user: User, data: dict):
         from bodzify_api.model.album.Album import Album
-        if InputFields.ALBUM_NAME in input_data:
-            album_name = input_data[InputFields.ALBUM_NAME]
-
-            if not album_name:
-                return None
-
-            album_artists_names = []
-            if InputFields.ALBUM_ARTISTS_NAMES in input_data:
-                album_artists_names = input_data[InputFields.ALBUM_ARTISTS_NAMES]
+        album_name = data.pop(InputFields.ALBUM_NAME)
+        if album_name:
+            album_artists_names = data.pop(InputFields.ALBUM_ARTISTS_NAMES, [])
 
             album = Album.objects.get_album_from_name_and_album_artists_names_after_potential_creations(
                 user=user, name=album_name, album_artists_names=album_artists_names)
 
-            model_data[ModelFields.ALBUM] = album
+            data[ModelFields.ALBUM] = album
 
-    def _update_model_data_with_artists_if_names_in_input_data_otherwise_empty_list(
-            self, user: User, model_data: dict, input_data: dict) -> None:
-        if InputFields.ARTISTS_NAMES in input_data:
-            artists_names = input_data[InputFields.ARTISTS_NAMES]
-            if artists_names:
-                artists = Artist.objects.get_artists_list_from_names_after_potential_creation(
-                    user=user, artists_names=artists_names)
-            else:
-                artists = []
+    def _update_data_with_artists_if_names_otherwise_empty_list(self, user: User, data: dict) -> None:
+        artists_names = data.pop(InputFields.ARTISTS_NAMES)
+        if artists_names:
+            artists = Artist.objects.get_artists_list_from_names_after_potential_creation(
+                user=user, artists_names=artists_names)
         else:
             artists = []
-        model_data[ModelFields.ARTISTS] = artists
+        data[ModelFields.ARTISTS] = artists
 
-    def validate(self, data):
+    def validate(self, data: dict):
         if data.get(InputFields.ALBUM_ARTISTS_NAMES_ARRAY) not in [None, []] \
                 and data.get(InputFields.ALBUM_NAME) in [None, ""]:
             raise AppValidationException(field_name=InputFields.ALBUM_ARTISTS_NAMES_ARRAY,
@@ -73,22 +63,13 @@ class LibTrackInputSerializer(AppSerializer):
             AppValidationException(field_name=InputFields.ALBUM_NAME,
                                    message="Album name must be specified if track position is.",
                                    field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
-        model_data = dict()
-        for key in [InputFields.TITLE,
-                    InputFields.TRACK_NUMBER,
-                    InputFields.GENRE,
-                    InputFields.RATING,
-                    InputFields.LANGUAGE,
-                    InputFields.ARCHIVED]:
-            data_transformer.update_dict1_with_key_if_set_in_dict2(key=key, dict1=model_data, dict2=data)
 
-        data_transformer.update_dict_converting_str_to_int_value_if_set(key=ModelFields.RATING, data_dict=model_data)
+        data_transformer.update_dict_converting_str_to_int_value_if_set(key=ModelFields.RATING, data=data)
 
         user = self.context['request'].user
-        model_data[ModelFields.USER] = user
+        data[ModelFields.USER] = user
 
-        self._update_model_data_with_artists_if_names_in_input_data_otherwise_empty_list(
-            user=user, model_data=model_data, input_data=data)
-        self._update_model_data_with_album_if_name_in_input_data(user=user, model_data=model_data, input_data=data)
+        self._update_data_with_artists_if_names_otherwise_empty_list(user=user, data=data)
+        self._update_model_data_with_album_if_name(user=user, data=data)
 
         return super().validate(data)

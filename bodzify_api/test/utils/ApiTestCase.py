@@ -68,18 +68,18 @@ class ApiTestCase(TestCase, Generic[T]):
             raise NotImplementedError("Test case must define model_class")
 
     def _set_results(self, response):
-        if response.status_code == status.HTTP_400_BAD_REQUEST:
-            self._set_bad_request_result(response)
-        elif response.status_code in [status.HTTP_200_OK, status.HTTP_201_CREATED]:
-            # list endpoints return paginated results
-            if isinstance(response.json(), dict) and PaginatedResponseFields.RESULTS in response.json():
-                self._set_results_attributes(response)
-            else:
-                self._set_single_result(response)
+        if response.status_code in [status.HTTP_200_OK, status.HTTP_201_CREATED]:
+            if response.status_code is not status.HTTP_204_NO_CONTENT:
+                # list endpoints return paginated results
+                if isinstance(response.json(), dict) and PaginatedResponseFields.RESULTS in response.json():
+                    self._set_results_attributes(response)
+                else:
+                    self._set_single_result(response)
+        else:
+            self._set_error_response_result(response)
 
-    def _set_bad_request_result(self, response):
-        """Store bad request result details with field-specific error information.
-
+    def _set_error_response_result(self, response):
+        """
         Handles responses with field errors in the format:
         {
             "code": 2001,
