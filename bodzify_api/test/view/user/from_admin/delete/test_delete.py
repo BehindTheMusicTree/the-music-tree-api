@@ -1,6 +1,5 @@
 import os
 
-import pytest
 from rest_framework import status
 
 from bodzify_api.model.album.Album import Album
@@ -53,20 +52,6 @@ class TestCase(UserTestCase):
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Criteria.objects.filter(user=user, name=criteria_name).count() == 0
-
-    @pytest.mark.usefixtures("enable_audio_metadata_analysis")
-    def test_delete_then_musicbrainz_recording_not_removed(self):
-        user = self.model_fixture_factory.create_user()
-        self._login_as_user(user)
-        response = self._post_lib_track(TestLibTrackFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert MusicbrainzRecording.objects.filter(musicbrainz_id="4a45b00b-273d-40ed-9ecd-42f387f59c22").count() == 1
-
-        self._login_as_test_admin()
-        response = self._delete_user(user.pk)
-
-        assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert MusicbrainzRecording.objects.filter(musicbrainz_id="4a45b00b-273d-40ed-9ecd-42f387f59c22").count() == 1
 
     def test_delete_then_playlist_removed(self):
         user = self.model_fixture_factory.create_user()
@@ -126,3 +111,25 @@ class TestCase(UserTestCase):
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert Artist.objects.filter(user=user, name=artist_name).count() == 0
+
+    def test_delete_then_musicbrainz_recording_not_removed(self):
+        user = self.model_fixture_factory.create_user()
+        self._login_as_user(user)
+        mb_recording_title = "Drown (Massano remix)"
+        mb_recording = self.model_fixture_factory.create_musicbrainz_recording(
+            musicbrainz_id="4a45b00b-273d-40ed-9ecd-42f387f59c22",
+            title=mb_recording_title,
+            musicbrainz_artists=[])
+        track = self.model_fixture_factory.create_lib_track_with_file(
+            user=user, title='Drown',
+            test_lib_track_filename=TestLibTrackFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
+        track.track_file.musicbrainz_recording = mb_recording
+        track.track_file.save()
+
+        assert MusicbrainzRecording.objects.filter(title=mb_recording_title).exists()
+
+        self._login_as_test_admin()
+        response = self._delete_user(user.pk)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert MusicbrainzRecording.objects.filter(musicbrainz_id="4a45b00b-273d-40ed-9ecd-42f387f59c22").count() == 1
