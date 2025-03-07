@@ -15,7 +15,11 @@ class UserViewSet(AppModelViewSet[User]):
     permission_classes = [IsAdminUser]
 
     def __init__(self, **kwargs):
-        super().__init__(model_class=User, detailed_serializer_class=UserDetailedSerializer, **kwargs)
+        super().__init__(model_class=User,
+                         simple_serializer_class=UserDetailedSerializer,
+                         detailed_serializer_class=UserDetailedSerializer,
+                         is_private_resource=False,
+                         **kwargs)
 
     # @transaction.atomic not needed
     def create(self, request: Request, *args, **kwargs):

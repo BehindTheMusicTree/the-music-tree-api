@@ -19,6 +19,9 @@ if TYPE_CHECKING:
 class UserManager(BaseUserManager):
     model: 'User'
 
+    def get_default_ordering(self):
+        return [Fields.USERNAME]
+
     def create_instance(self, **kwargs) -> 'User':
         from bodzify_api.model.user.User import User
         if not kwargs[Fields.EMAIL]:

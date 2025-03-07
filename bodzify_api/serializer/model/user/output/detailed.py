@@ -9,7 +9,7 @@ class UserDetailedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        Fields = [Fields.ID,
+        fields = [Fields.ID,
                   Fields.USERNAME,
                   Fields.EMAIL,
                   Fields.IS_TEST_USER,

@@ -14,7 +14,6 @@ from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
 from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.private.Fields import Fields as PrivateFields
 from bodzify_api.serializer.SerializerType import SerializerType
-from bodzify_api.utils import data_transformer
 from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
 from bodzify_api.view.HttpMethod import HttpMethod
 
@@ -33,6 +32,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     detailed_serializer_class: Type[ModelSerializer] | None = None
     create_serializer_class: Type[Serializer] | None = None
     update_serializer_class: Type[Serializer] | None = None
+    is_private_resource: bool = True
 
     def __init__(self, model_class: Type[T],
                  filterset_class: Type[AppFilterSet] = AppFilterSet,
@@ -40,6 +40,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
                  detailed_serializer_class: Type[ModelSerializer] | None = None,
                  update_serializer_class: Type[Serializer] | None = None,
                  create_serializer_class: Type[Serializer] | None = None,
+                 is_private_resource: bool = True,
                  **kwargs):
         super().__init__(**kwargs)
         self.model_class = model_class
@@ -48,6 +49,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         self.detailed_serializer_class = detailed_serializer_class
         self.update_serializer_class = update_serializer_class
         self.create_serializer_class = create_serializer_class
+        self.is_private_resource = is_private_resource
 
     def _require_serializer(self, serializer_type: SerializerType) -> Type[Union[ModelSerializer, Serializer]]:
         serializer = getattr(self, serializer_type.class_name, None)
@@ -133,11 +135,13 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def get_queryset(self):
         request: Request = cast(Request, self.request)
-        queryset = self.model_class.objects.filter(user=request.user)
+        if self.is_private_resource:
+            queryset = self.model_class.objects.filter(user=request.user)
+        else:
+            queryset = self.model_class.objects.all()
 
         if request.method == HttpMethod.GET and request.query_params:
-            query_params_snake_case = data_transformer.dict_to_snake_case(request.query_params)
-            queryset = self.filterset_class(query_params_snake_case, queryset=queryset).qs
+            queryset = self.filterset_class(request.query_params, queryset=queryset).qs
 
         ordering_fields = cast(BaseModel, self.model_class).objects.get_default_ordering()
         return queryset.order_by(*ordering_fields)
