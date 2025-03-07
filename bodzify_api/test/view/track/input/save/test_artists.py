@@ -122,9 +122,6 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         self.model_fixture_factory.create_artist(name=artist2_name)
 
         data = {PostFields.ARTISTS_NAMES_ARRAY: [artist1_name, artist2_name]}
-        print("\n=== Test Data Debug ===")
-        print("Data being sent:", data)
-        print("PostFields.ARTISTS_NAMES_ARRAY:", PostFields.ARTISTS_NAMES_ARRAY)
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
