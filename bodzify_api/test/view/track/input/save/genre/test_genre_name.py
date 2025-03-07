@@ -20,7 +20,7 @@ class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
         assert self.saved_object.genre
         assert self.saved_object.genre.name == genre_name
 
-    def test_too_long_then_400(self):
+    def test_too_large_then_400(self):
         genre_name = "a" * (settings.CRITERIA_NAME_LEN_MAX + 1)
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE: genre_name})
 
@@ -30,7 +30,7 @@ class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.GENRE)
         assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG
 
-    def test_empty_then_none(self):
+    def test_empty_then_ok(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE: ''})
 
         assert response.status_code == status.HTTP_201_CREATED
