@@ -54,24 +54,6 @@ class User(AbstractUser, BaseModel):
         all_lib_tracks_mixin, _ = AllLibTracksMixin.objects.get_or_create(user=self)
         return all_lib_tracks_mixin
 
-    @property
-    def default_lib_track_file_abs_path(self):
-        return self.lib_abs_path / self.DEFAULT_LIB_TRACK_FILENAME_WITH_EXTENSION
-
-    def _empty_user_library(self):
-        for filename in os.listdir(self.lib_abs_path):
-            filePath = os.path.join(self.lib_abs_path, filename)
-            try:
-                if os.path.isfile(filePath) or os.path.islink(filePath):
-                    os.unlink(filePath)
-                elif os.path.isdir(filePath):
-                    shutil.rmtree(filePath)
-            except Exception as e:
-                print('Failed to delete %s. Reason: %s' % (filePath, e))
-
-    def copy_file_to_lib(self, file_abs_path: Path):
-        shutil.copy(file_abs_path, self.lib_abs_path)
-
     def does_track_filename_exist_in_lib(self, test_lib_track_filename: TestLibTrackFilename):
         return os.path.isfile(Path(self.lib_abs_path) / test_lib_track_filename)
 
