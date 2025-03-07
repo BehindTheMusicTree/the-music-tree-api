@@ -75,27 +75,27 @@ class TestLibTrackFilename(str, Enum):
     GENRE_CODE_ID3V1_ABSTRACT_MP3 = "genre_code_id3v1=Abstract.mp3"
     GENRE_CODE_ID3V1_UNKNOWN_MP3 = "genre_code_id3v1=Unknown.mp3"
 
-    METADATA_MAX_A_ID3V1_BIG_FLAC = "metadata=max a_id3v1_big.flac"
-    METADATA_MAX_A_ID3V1_BIG_MP3 = "metadata=max a_id3v1_big.mp3"
-    METADATA_MAX_A_ID3V1_BIG_WAV = "metadata=max a_id3v1_big.wav"
+    METADATA_LONG_A_ID3V1_BIG_FLAC = "metadata=long a_id3v1_big.flac"
+    METADATA_LONG_A_ID3V1_BIG_MP3 = "metadata=long a_id3v1_big.mp3"
+    METADATA_LONG_A_ID3V1_BIG_WAV = "metadata=long a_id3v1_big.wav"
 
-    METADATA_MAX_A_ID3V1_SMALL_FLAC = "metadata=max a_id3v1_small.flac"
-    METADATA_MAX_A_ID3V1_SMALL_MP3 = "metadata=max a_id3v1_small.mp3"
-    METADATA_MAX_A_ID3V1_SMALL_WAV = "metadata=max a_id3v1_small.wav"
+    METADATA_LONG_A_ID3V1_SMALL_FLAC = "metadata=long a_id3v1_small.flac"
+    METADATA_LONG_A_ID3V1_SMALL_MP3 = "metadata=long a_id3v1_small.mp3"
+    METADATA_LONG_A_ID3V1_SMALL_WAV = "metadata=long a_id3v1_small.wav"
 
-    METADATA_MAX_A_ID3V2_BIG_FLAC = "metadata=max a_id3v2_big.flac"
-    METADATA_MAX_A_ID3V2_BIG_MP3 = "metadata=max a_id3v2_big.mp3"
-    METADATA_MAX_A_ID3V2_BIG_WAV = "metadata=max a_id3v2_big.wav"
+    METADATA_LONG_A_ID3V2_BIG_FLAC = "metadata=long a_id3v2_big.flac"
+    METADATA_LONG_A_ID3V2_BIG_MP3 = "metadata=long a_id3v2_big.mp3"
+    METADATA_LONG_A_ID3V2_BIG_WAV = "metadata=long a_id3v2_big.wav"
 
-    METADATA_MAX_A_ID3V2_SMALL_FLAC = "metadata=max a_id3v2_small.flac"
-    METADATA_MAX_A_ID3V2_SMALL_MP3 = "metadata=max a_id3v2_small.mp3"
-    METADATA_MAX_A_ID3V2_SMALL_WAV = "metadata=max a_id3v2_small.wav"
+    METADATA_LONG_A_ID3V2_SMALL_FLAC = "metadata=long a_id3v2_small.flac"
+    METADATA_LONG_A_ID3V2_SMALL_MP3 = "metadata=long a_id3v2_small.mp3"
+    METADATA_LONG_A_ID3V2_SMALL_WAV = "metadata=long a_id3v2_small.wav"
 
-    METADATA_MAX_A_RIFF_BIG_WAV = "metadata=max a_riff_big.wav"
-    METADATA_MAX_A_RIFF_SMALL_WAV = "metadata=max a_riff_small.wav"
+    METADATA_LONG_A_RIFF_BIG_WAV = "metadata=long a_riff_big.wav"
+    METADATA_LONG_A_RIFF_SMALL_WAV = "metadata=long a_riff_small.wav"
 
-    METADATA_MAX_A_VORBIS_BIG_FLAC = "metadata=max a_vorbis_big.flac"
-    METADATA_MAX_A_VORBIS_SMALL_FLAC = "metadata=max a_vorbis_small.flac"
+    METADATA_LONG_A_VORBIS_BIG_FLAC = "metadata=long a_vorbis_big.flac"
+    METADATA_LONG_A_VORBIS_SMALL_FLAC = "metadata=long a_vorbis_small.flac"
 
     METADATA_NONE_FLAC = "metadata=none.flac"
     METADATA_NONE_MP3 = "metadata=none.mp3"
