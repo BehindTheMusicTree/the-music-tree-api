@@ -16,10 +16,19 @@ class CamelToSnakeMiddleware:
         # Convert multipart form data
         content_type = request.headers.get('Content-Type', '')
         if content_type.startswith('multipart/form-data'):
-            if not hasattr(request, '_post'):
-                request._load_post_and_files()
+            # Access request.POST first to ensure proper parsing of multipart data
+            original_post = request.POST
+
+            # Convert the data using the proper form data transformer
+            snake_case_data = data_transformer.form_data_to_snake_case(original_post)
+
+            # Create a new QueryDict and update it with the transformed data
             request.POST = QueryDict(mutable=True)
-            request.POST.update(data_transformer.form_data_to_snake_case(request._post))
+            for key, value in snake_case_data.items():
+                if isinstance(value, list):
+                    request.POST.setlist(key, value)
+                else:
+                    request.POST[key] = value
 
             # Handle files by creating new MultiValueDict with converted keys
             if request.FILES:
