@@ -13,5 +13,5 @@ Thus the python file object is not available. This test case is to ensure that t
 class TestCase(LibTrackTestCase):
 
     def test_in_memory_then_ok(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V1_SMALL_MP3)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_LONG_A_ID3V1_SMALL_MP3)
         assert response.status_code == status.HTTP_201_CREATED
