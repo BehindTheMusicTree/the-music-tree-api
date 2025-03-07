@@ -10,7 +10,7 @@ class TestCase(LibTrackTestCase):
     def test_album_in_both_then_take_from_data(self):
         data_album_name = "ko"
         data_dict = {PostFields.ALBUM_NAME: data_album_name}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V1_SMALL_MP3, **data_dict)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_LONG_A_ID3V1_SMALL_MP3, **data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         album = self.saved_object.album
@@ -41,7 +41,7 @@ class TestCase(LibTrackTestCase):
             PostFields.ALBUM_NAME: data_album_name,
             PostFields.ALBUM_ARTISTS_NAMES_ARRAY: data_album_artists_str
         }
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_MAX_A_ID3V2_SMALL_MP3, **data_dict)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_LONG_A_ID3V2_SMALL_MP3, **data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED
         album = self.saved_object.album
