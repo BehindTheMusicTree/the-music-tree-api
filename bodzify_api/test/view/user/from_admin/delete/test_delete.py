@@ -3,7 +3,6 @@ import os
 import pytest
 from rest_framework import status
 
-from bodzify_api import settings
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.criteria.Criteria import Criteria
@@ -32,14 +31,13 @@ class TestCase(UserTestCase):
     def test_delete_then_lib_dir_removed(self):
         user = self.model_fixture_factory.create_user()
         self.model_fixture_factory.create_lib_track_with_file(user=user, title='Dr mo')
-        user_lib_abs_path = settings.LIBRARIES_DIR / (settings.USER_LIBRARIES_DIR_NAME_PREFIXE + str(user.pk))
-        assert os.path.exists(user_lib_abs_path)
+        assert os.path.exists(user.lib_abs_path)
 
         self._login_as_test_admin()
         response = self._delete_user(user.pk)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert not os.path.exists(user_lib_abs_path)
+        assert not os.path.exists(user.lib_abs_path)
 
     def test_delete_then_criteria_removed(self):
         user = self.model_fixture_factory.create_user()
