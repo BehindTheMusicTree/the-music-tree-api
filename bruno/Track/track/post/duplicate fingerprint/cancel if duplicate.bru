@@ -6,14 +6,11 @@ meta {
 
 post {
   url: {{BASE_URL}}tracks/
-  body: json
+  body: multipartForm
   auth: inherit
 }
 
-body:json {
-  {
-    "file": "https://cs9-7v4.vkuseraudio.net/s/v1/acmp/i18p_zFWiH7jmzEvvkfhv21apWdJuIW5LJoxoSpJB9lqmTJK0HsSL7ZMerTX11oDXuFyCHXiqBZS5uKvikGDbs6Gcj1pinujYLx4JURjpPwxIIPE_KN414JidBikY2vr290mJGqYNS544KrzQ1v-dqVY2hRtEfeoqwlRhgJQ3KpZMhmV2A.mp3",
-    "title": "hey",
-    "artistsNames[]": "jul"
-  }
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/duration < 1 sec.mp3)
+  track_file_fingerprint_must_be_unique: true
 }

@@ -1,11 +1,11 @@
 meta {
   name: not auth
   type: http
-  seq: 2
+  seq: 3
 }
 
 get {
   url: {{BASE_URL}}tracks/
   body: json
-  auth: inherit
+  auth: none
 }

@@ -6,14 +6,10 @@ meta {
 
 post {
   url: {{BASE_URL}}tracks/
-  body: json
+  body: multipartForm
   auth: inherit
 }
 
-body:json {
-  {
-    "file": "https://lasonotheque.org/UPLOAD/mp3/0001.mp3",
-    "title": "hey",
-    "artistsNames[]": "jul"
-  }
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/kwPD6Zd3y5hQxbyFbNq895XZyFf7ycvJJ0Nf4vK5cFX5vt53fB8670j63Mx2ruMgVZ46B78iqu6vQpJ7hytZLbbv5Q1L6tiP6MfZAFRnidA8RrEKPnCxbNRUkQtdzBub7TW5zn0MuKqX5GzGd51.mp3)
 }

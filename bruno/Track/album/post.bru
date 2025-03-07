@@ -5,14 +5,14 @@ meta {
 }
 
 post {
-  url: {{BASE_URL}}auth/token/
+  url: {{BASE_URL}}albums/
   body: json
-  auth: none
+  auth: inherit
 }
 
 body:json {
   {
-      "username": 
+      "name": "Best of"
   }
 }
 
