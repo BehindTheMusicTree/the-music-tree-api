@@ -19,7 +19,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == LibTrackPostFields.TRACK_FILE_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.TRACK_FILE_CORRUPTED
+        assert error['code'] == FieldValidationErrorCode.TRACK_FILE_CORRUPTED
 
     def test_flac_md5_not_valid_not_because_of_id3v2_metadata_then_corrected(self):
         response = self._post_lib_track(TestLibTrackFilename.FORMAT_MD5_NOT_VALID_NOT_BECAUSE_OF_ID3V2_METADATA_FLAC)

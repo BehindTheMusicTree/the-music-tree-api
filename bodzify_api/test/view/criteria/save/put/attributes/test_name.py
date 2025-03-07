@@ -42,7 +42,7 @@ class TestCase(GenreTestCase, PutBodyDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PutFields.NAME_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK
+        assert error['code'] == FieldValidationErrorCode.BLANK
 
     def test_not_provided_then_unchanged(self):
         genre_name = "Rock"

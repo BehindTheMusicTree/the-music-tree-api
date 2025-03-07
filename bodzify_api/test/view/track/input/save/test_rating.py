@@ -46,7 +46,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.RATING_TOO_LARGE
+        assert error['code'] == FieldValidationErrorCode.RATING_TOO_LARGE
 
     def test_error_when_below_minimum(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: -1})
@@ -55,7 +55,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.RATING_TOO_SMALL
+        assert error['code'] == FieldValidationErrorCode.RATING_TOO_SMALL
 
     def test_error_when_not_integer(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: 5.5})
@@ -64,4 +64,4 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FORMAT_INVALID
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID

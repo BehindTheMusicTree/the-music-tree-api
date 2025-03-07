@@ -30,7 +30,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.TRACK_NUMBER)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.TRACK_NUMBER_TOO_SMALL
+        assert error['code'] == FieldValidationErrorCode.TRACK_NUMBER_TOO_SMALL
 
     def test_one_then_ok(self):
         track_number = 1
@@ -57,7 +57,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.TRACK_NUMBER)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.TRACK_NUMBER_TOO_LARGE
+        assert error['code'] == FieldValidationErrorCode.TRACK_NUMBER_TOO_LARGE
 
     def test_negative_one_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, album_name='album', track_number=-1)
@@ -66,7 +66,7 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.TRACK_NUMBER)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.TRACK_NUMBER_TOO_SMALL
+        assert error['code'] == FieldValidationErrorCode.TRACK_NUMBER_TOO_SMALL
 
     def test_not_integer_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.TRACK_NUMBER: 5.5})
@@ -75,4 +75,4 @@ class TestCase(LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.TRACK_NUMBER)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FORMAT_INVALID
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID

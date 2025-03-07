@@ -28,7 +28,7 @@ class TestCase(GenreTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PutFields.PARENT
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ANCESTOR_REFERENCE
+        assert error['code'] == FieldValidationErrorCode.ANCESTOR_REFERENCE
 
     def test_error_when_parent_is_itself(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
@@ -39,4 +39,4 @@ class TestCase(GenreTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PutFields.PARENT
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.SELF_REFERENCE
+        assert error['code'] == FieldValidationErrorCode.SELF_REFERENCE

@@ -17,7 +17,7 @@ class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaInputFields.PARENT
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FORMAT_INVALID
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_empty_then_none(self):
         response = self._post_genre(**{CriteriaInputFields.NAME_PUBLIC: "Punk", CriteriaInputFields.PARENT: ""})
@@ -44,4 +44,4 @@ class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaInputFields.PARENT
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.REFERENCE_INVALID
+        assert error['code'] == FieldValidationErrorCode.REFERENCE_INVALID

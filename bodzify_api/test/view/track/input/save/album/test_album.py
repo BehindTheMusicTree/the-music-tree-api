@@ -28,7 +28,7 @@ class TestCase(LibTrackTestCase, NullableCharBodyDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ALBUM_NAME)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG
+        assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
     def test_empty_then_none(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.ALBUM_NAME: ''})

@@ -26,7 +26,7 @@ class TestCase(NotNullableCharBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.TITLE
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG
+        assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
     def test_empty_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.TITLE: ""})
@@ -35,7 +35,7 @@ class TestCase(NotNullableCharBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.TITLE
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK
+        assert error['code'] == FieldValidationErrorCode.BLANK
 
     def test_multi_value_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.TITLE: ["a", "b"]})
@@ -44,4 +44,4 @@ class TestCase(NotNullableCharBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.TITLE
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FORMAT_INVALID
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID

@@ -41,7 +41,7 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert to_snake_case(error[ErrorResponseFields.FieldErrors.FIELD]) == FilterSetFields.TYPE_LABEL_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK
+        assert error['code'] == FieldValidationErrorCode.BLANK
 
     def test_value_is_genre_then_results(self):
         rock_criteria_name = "Rock n roll"
@@ -84,4 +84,4 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(FilterSetFields.TYPE_LABEL_PUBLIC)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.ENUM_INVALID
+        assert error['code'] == FieldValidationErrorCode.ENUM_INVALID

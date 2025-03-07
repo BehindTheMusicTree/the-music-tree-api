@@ -16,7 +16,7 @@ class TestCase(AlbumTestCase, NotNullableFreeCharFilterTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == AlbumFields.NAME_PUBLIC
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK
+        assert error['code'] == FieldValidationErrorCode.BLANK
 
     def test_contains_in_another_case_then_results(self):
         album = self.model_fixture_factory.create_album(name="Black")

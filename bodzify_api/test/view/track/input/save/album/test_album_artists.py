@@ -31,7 +31,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.ARTISTS_NAMES_ARRAY
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG
+        assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
     def test_malformed_array_field_name_then_400(self) -> None:
         malformed_field_name = "album_artists_names"
@@ -42,7 +42,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == malformed_field_name
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.LIST_MALFORMED
+        assert error['code'] == FieldValidationErrorCode.LIST_MALFORMED
 
     def test_empty_then_none(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **
@@ -130,7 +130,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.ARTISTS_NAMES_ARRAY
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG
+        assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
     def test_multiple_artists_with_duplicates_then_400(self) -> None:
         artist_name = "DuplicateArtist"
@@ -141,7 +141,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.ARTISTS_NAMES_ARRAY
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.LIST_VALUE_DUPLICATE
+        assert error['code'] == FieldValidationErrorCode.LIST_VALUE_DUPLICATE
 
     def test_multiple_artists_with_empty_names_then_400(self) -> None:
         valid_artist = "ValidArtist"
@@ -152,4 +152,4 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.ARTISTS_NAMES_ARRAY
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.LIST_VALUE_EMPTY
+        assert error['code'] == FieldValidationErrorCode.LIST_VALUE_EMPTY

@@ -3,7 +3,7 @@ from rest_framework import status
 
 from bodzify_api.exception.validation.app.AppValidationExceptionFields import AppValidationErrorFields
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
+from bodzify_api.view.error.ApiErrorCode import ApiErrorCodeNumeric
 
 
 class ErrorResponseFields:
@@ -16,8 +16,8 @@ class ErrorResponseFields:
 
     class FieldErrors:
         FIELD = AppValidationErrorFields.FIELD
-        MESSAGE = AppValidationErrorFields.MESSAGE
-        CODE = AppValidationErrorFields.CODE
+        MESSAGE = 'message'
+        CODE = 'code'
 
     class DefaultFieldValidationValues:
         class DbIntegrityError:
@@ -30,37 +30,37 @@ class ErrorResponseFields:
 
     MESSAGES = {
         # Authentication errors
-        ApiErrorCode.AUTH_INVALID_CREDENTIALS: "Invalid authentication credentials",
-        ApiErrorCode.AUTH_TOKEN_EXPIRED: "Authentication token has expired",
-        ApiErrorCode.AUTH_TOKEN_INVALID: "Invalid authentication token",
-        ApiErrorCode.AUTH_INSUFFICIENT_PERMISSIONS: "Insufficient permissions for this operation",
+        ApiErrorCodeNumeric.AUTH_INVALID_CREDENTIALS: "Invalid authentication credentials",
+        ApiErrorCodeNumeric.AUTH_TOKEN_EXPIRED: "Authentication token has expired",
+        ApiErrorCodeNumeric.AUTH_TOKEN_INVALID: "Invalid authentication token",
+        ApiErrorCodeNumeric.AUTH_INSUFFICIENT_PERMISSIONS: "Insufficient permissions for this operation",
 
         # Validation errors
-        ApiErrorCode.VALIDATION_INVALID_INPUT: "One or more fields contain invalid data. Please check the error details for specific validation requirements",
-        ApiErrorCode.VALIDATION_UNSUPPORTED_MEDIA_TYPE: "Unsupported media type. Please check the Content-Type header",
-        ApiErrorCode.VALIDATION_METHOD_NOT_ALLOWED: "The HTTP method is not allowed for this endpoint",
+        ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT: "One or more fields contain invalid data. Please check the error details for specific validation requirements",
+        ApiErrorCodeNumeric.VALIDATION_UNSUPPORTED_MEDIA_TYPE: "Unsupported media type. Please check the Content-Type header",
+        ApiErrorCodeNumeric.VALIDATION_METHOD_NOT_ALLOWED: "The HTTP method is not allowed for this endpoint",
 
         # Resource errors
-        ApiErrorCode.RESOURCE_NOT_FOUND: "The requested resource could not be found",
-        ApiErrorCode.RESOURCE_ALREADY_EXISTS: "Resource already exists",
-        ApiErrorCode.RESOURCE_FILE_NOT_FOUND: "The requested file could not be found",
-        ApiErrorCode.RESOURCE_INVALID_STATE: "Resource is in an invalid state for this operation",
+        ApiErrorCodeNumeric.RESOURCE_NOT_FOUND: "The requested resource could not be found",
+        ApiErrorCodeNumeric.RESOURCE_ALREADY_EXISTS: "Resource already exists",
+        ApiErrorCodeNumeric.RESOURCE_FILE_NOT_FOUND: "The requested file could not be found",
+        ApiErrorCodeNumeric.RESOURCE_INVALID_STATE: "Resource is in an invalid state for this operation",
 
         # Business errors
-        ApiErrorCode.BUSINESS_INVALID_OPERATION: "The requested operation cannot be performed",
-        ApiErrorCode.BUSINESS_DEPENDENCY_ERROR: "Operation failed due to dependency issues",
-        ApiErrorCode.BUSINESS_LIMIT_EXCEEDED: "Operation limit has been exceeded",
+        ApiErrorCodeNumeric.BUSINESS_INVALID_OPERATION: "The requested operation cannot be performed",
+        ApiErrorCodeNumeric.BUSINESS_DEPENDENCY_ERROR: "Operation failed due to dependency issues",
+        ApiErrorCodeNumeric.BUSINESS_LIMIT_EXCEEDED: "Operation limit has been exceeded",
 
         # External Service errors
-        ApiErrorCode.EXTERNAL_SERVICE_ERROR: "External service encountered an error",
-        ApiErrorCode.EXTERNAL_SERVICE_TIMEOUT: "External service request timed out",
-        ApiErrorCode.EXTERNAL_SERVICE_UNAVAILABLE: "External service is temporarily unavailable",
+        ApiErrorCodeNumeric.EXTERNAL_SERVICE_ERROR: "External service encountered an error",
+        ApiErrorCodeNumeric.EXTERNAL_SERVICE_TIMEOUT: "External service request timed out",
+        ApiErrorCodeNumeric.EXTERNAL_SERVICE_UNAVAILABLE: "External service is temporarily unavailable",
 
         # System errors
-        ApiErrorCode.SYSTEM_INTERNAL_ERROR: "An internal system error occurred",
-        ApiErrorCode.SYSTEM_NOT_IMPLEMENTED: "An internal system error occurred",
-        ApiErrorCode.SYSTEM_SERVICE_UNAVAILABLE: "An internal system error occurred",
-        ApiErrorCode.SYSTEM_SERIALIZER_NOT_DEFINED: "An internal system error occurred",
+        ApiErrorCodeNumeric.SYSTEM_INTERNAL_ERROR: "An internal system error occurred",
+        ApiErrorCodeNumeric.SYSTEM_NOT_IMPLEMENTED: "An internal system error occurred",
+        ApiErrorCodeNumeric.SYSTEM_SERVICE_UNAVAILABLE: "An internal system error occurred",
+        ApiErrorCodeNumeric.SYSTEM_SERIALIZER_NOT_DEFINED: "An internal system error occurred",
     }
 
     STATUS_MESSAGES = {
@@ -81,38 +81,38 @@ class ErrorResponseFields:
 
     ERROR_TO_HTTP_STATUS = {
         # Auth errors -> 401/403
-        ApiErrorCode.AUTH_INVALID_CREDENTIALS: status.HTTP_401_UNAUTHORIZED,
-        ApiErrorCode.AUTH_TOKEN_EXPIRED: status.HTTP_401_UNAUTHORIZED,
-        ApiErrorCode.AUTH_TOKEN_INVALID: status.HTTP_401_UNAUTHORIZED,
-        ApiErrorCode.AUTH_INSUFFICIENT_PERMISSIONS: status.HTTP_403_FORBIDDEN,
+        ApiErrorCodeNumeric.AUTH_INVALID_CREDENTIALS: status.HTTP_401_UNAUTHORIZED,
+        ApiErrorCodeNumeric.AUTH_TOKEN_EXPIRED: status.HTTP_401_UNAUTHORIZED,
+        ApiErrorCodeNumeric.AUTH_TOKEN_INVALID: status.HTTP_401_UNAUTHORIZED,
+        ApiErrorCodeNumeric.AUTH_INSUFFICIENT_PERMISSIONS: status.HTTP_403_FORBIDDEN,
 
         # Validation errors -> 400
-        ApiErrorCode.VALIDATION_INVALID_INPUT: status.HTTP_400_BAD_REQUEST,
-        ApiErrorCode.VALIDATION_MISSING_FIELD: status.HTTP_400_BAD_REQUEST,
-        ApiErrorCode.VALIDATION_INVALID_FORMAT: status.HTTP_400_BAD_REQUEST,
-        ApiErrorCode.VALIDATION_INVALID_UUID: status.HTTP_400_BAD_REQUEST,
-        ApiErrorCode.VALIDATION_INTEGRITY_ERROR: status.HTTP_400_BAD_REQUEST,
-        ApiErrorCode.VALIDATION_UNSUPPORTED_MEDIA_TYPE: status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
-        ApiErrorCode.VALIDATION_METHOD_NOT_ALLOWED: status.HTTP_405_METHOD_NOT_ALLOWED,
+        ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT: status.HTTP_400_BAD_REQUEST,
+        ApiErrorCodeNumeric.VALIDATION_MISSING_FIELD: status.HTTP_400_BAD_REQUEST,
+        ApiErrorCodeNumeric.VALIDATION_INVALID_FORMAT: status.HTTP_400_BAD_REQUEST,
+        ApiErrorCodeNumeric.VALIDATION_INVALID_UUID: status.HTTP_400_BAD_REQUEST,
+        ApiErrorCodeNumeric.VALIDATION_INTEGRITY_ERROR: status.HTTP_400_BAD_REQUEST,
+        ApiErrorCodeNumeric.VALIDATION_UNSUPPORTED_MEDIA_TYPE: status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+        ApiErrorCodeNumeric.VALIDATION_METHOD_NOT_ALLOWED: status.HTTP_405_METHOD_NOT_ALLOWED,
 
         # Resource errors -> 404/409
-        ApiErrorCode.RESOURCE_NOT_FOUND: status.HTTP_404_NOT_FOUND,
-        ApiErrorCode.RESOURCE_ALREADY_EXISTS: status.HTTP_409_CONFLICT,
-        ApiErrorCode.RESOURCE_FILE_NOT_FOUND: status.HTTP_404_NOT_FOUND,
-        ApiErrorCode.RESOURCE_INVALID_STATE: status.HTTP_409_CONFLICT,
+        ApiErrorCodeNumeric.RESOURCE_NOT_FOUND: status.HTTP_404_NOT_FOUND,
+        ApiErrorCodeNumeric.RESOURCE_ALREADY_EXISTS: status.HTTP_409_CONFLICT,
+        ApiErrorCodeNumeric.RESOURCE_FILE_NOT_FOUND: status.HTTP_404_NOT_FOUND,
+        ApiErrorCodeNumeric.RESOURCE_INVALID_STATE: status.HTTP_409_CONFLICT,
 
         # Business Logic errors -> 422
-        ApiErrorCode.BUSINESS_INVALID_OPERATION: status.HTTP_422_UNPROCESSABLE_ENTITY,
-        ApiErrorCode.BUSINESS_DEPENDENCY_ERROR: status.HTTP_422_UNPROCESSABLE_ENTITY,
-        ApiErrorCode.BUSINESS_LIMIT_EXCEEDED: status.HTTP_422_UNPROCESSABLE_ENTITY,
+        ApiErrorCodeNumeric.BUSINESS_INVALID_OPERATION: status.HTTP_422_UNPROCESSABLE_ENTITY,
+        ApiErrorCodeNumeric.BUSINESS_DEPENDENCY_ERROR: status.HTTP_422_UNPROCESSABLE_ENTITY,
+        ApiErrorCodeNumeric.BUSINESS_LIMIT_EXCEEDED: status.HTTP_422_UNPROCESSABLE_ENTITY,
 
         # External Service errors -> 502/504
-        ApiErrorCode.EXTERNAL_SERVICE_ERROR: status.HTTP_502_BAD_GATEWAY,
-        ApiErrorCode.EXTERNAL_SERVICE_TIMEOUT: status.HTTP_504_GATEWAY_TIMEOUT,
-        ApiErrorCode.EXTERNAL_SERVICE_UNAVAILABLE: status.HTTP_503_SERVICE_UNAVAILABLE,
+        ApiErrorCodeNumeric.EXTERNAL_SERVICE_ERROR: status.HTTP_502_BAD_GATEWAY,
+        ApiErrorCodeNumeric.EXTERNAL_SERVICE_TIMEOUT: status.HTTP_504_GATEWAY_TIMEOUT,
+        ApiErrorCodeNumeric.EXTERNAL_SERVICE_UNAVAILABLE: status.HTTP_503_SERVICE_UNAVAILABLE,
 
         # System/Internal errors -> 500
-        ApiErrorCode.SYSTEM_INTERNAL_ERROR: status.HTTP_500_INTERNAL_SERVER_ERROR,
-        ApiErrorCode.SYSTEM_NOT_IMPLEMENTED: status.HTTP_501_NOT_IMPLEMENTED,
-        ApiErrorCode.SYSTEM_SERVICE_UNAVAILABLE: status.HTTP_503_SERVICE_UNAVAILABLE,
+        ApiErrorCodeNumeric.SYSTEM_INTERNAL_ERROR: status.HTTP_500_INTERNAL_SERVER_ERROR,
+        ApiErrorCodeNumeric.SYSTEM_NOT_IMPLEMENTED: status.HTTP_501_NOT_IMPLEMENTED,
+        ApiErrorCodeNumeric.SYSTEM_SERVICE_UNAVAILABLE: status.HTTP_503_SERVICE_UNAVAILABLE,
     }

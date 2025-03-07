@@ -32,7 +32,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG
+        assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
     def test_one_is_max_length_and_another_one_is_one_char_then_ok(self) -> None:
         artist_name = "a" * settings.ARTIST_NAME_LEN_MAX
@@ -54,7 +54,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(malformed_field_name)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.LIST_MALFORMED
+        assert error['code'] == FieldValidationErrorCode.LIST_MALFORMED
 
     def test_comma_separated_then_only_one_value(self):
         data = {PostFields.ARTISTS_NAMES_ARRAY: "Muse, Kopoe"}
@@ -73,7 +73,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.LIST_VALUE_DUPLICATE
+        assert error['code'] == FieldValidationErrorCode.LIST_VALUE_DUPLICATE
 
     def test_empty_then_ok(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3,
@@ -91,7 +91,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.LIST_VALUE_EMPTY
+        assert error['code'] == FieldValidationErrorCode.LIST_VALUE_EMPTY
 
     def test_one_existing_then_create_it(self) -> None:
         artist_name = "Kopoe"
@@ -172,7 +172,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.STRING_TOO_LONG
+        assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
     def test_multiple_artists_with_duplicates_then_400(self) -> None:
         artist_name = "Duplicate Artist"
@@ -183,7 +183,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.LIST_VALUE_DUPLICATE
+        assert error['code'] == FieldValidationErrorCode.LIST_VALUE_DUPLICATE
 
     def test_multiple_artists_with_empty_names_then_400(self) -> None:
         valid_artist = "ValidArtist"
@@ -194,4 +194,4 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.LIST_VALUE_EMPTY
+        assert error['code'] == FieldValidationErrorCode.LIST_VALUE_EMPTY

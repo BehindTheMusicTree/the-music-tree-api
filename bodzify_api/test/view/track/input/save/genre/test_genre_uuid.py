@@ -18,7 +18,7 @@ class TestCase(ForeignKeyBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.GENRE
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.REFERENCE_INVALID
+        assert error['code'] == FieldValidationErrorCode.REFERENCE_INVALID
 
     def test_value_then_ok(self):
         genre = self.model_fixture_factory.create_genre(name="rock")
@@ -44,4 +44,4 @@ class TestCase(ForeignKeyBodyDataTestCase, LibTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.GENRE
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.FORMAT_INVALID
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID

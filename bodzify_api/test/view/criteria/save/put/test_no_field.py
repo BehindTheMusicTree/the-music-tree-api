@@ -17,4 +17,4 @@ class TestCase(GenreTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == AppSerializer.REQUEST_FIELD
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.NO_UPDATES
+        assert error['code'] == FieldValidationErrorCode.NO_UPDATES

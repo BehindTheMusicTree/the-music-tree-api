@@ -20,7 +20,7 @@ class TestCase(GenreTestCase, NotNullableFreeCharFilterTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == ModelFields.NAME
-        assert error[ErrorResponseFields.FieldErrors.CODE] == FieldValidationErrorCode.BLANK
+        assert error['code'] == FieldValidationErrorCode.BLANK
 
     def test_contains_in_another_case_then_results(self):
         genre_rock1 = self.model_fixture_factory.create_genre(name="Rock")

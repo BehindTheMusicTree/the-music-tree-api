@@ -7,7 +7,7 @@ from rest_framework import status
 
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
-from bodzify_api.view.error.ApiErrorCode import ApiErrorCode
+from bodzify_api.view.error.ApiErrorCode import ApiErrorCodeNumeric
 
 
 class TestCase(LibTrackTestCase):
@@ -21,4 +21,4 @@ class TestCase(LibTrackTestCase):
             results = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, title='test')
             assert results.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
             json = results.json()
-            assert json['code'] == ApiErrorCode.SYSTEM_INTERNAL_ERROR
+            assert json['code'] == ApiErrorCodeNumeric.SYSTEM_INTERNAL_ERROR
