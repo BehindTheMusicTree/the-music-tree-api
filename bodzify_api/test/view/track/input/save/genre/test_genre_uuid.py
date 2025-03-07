@@ -20,7 +20,7 @@ class TestCase(ForeignKeyBodyDataTestCase, LibTrackTestCase):
         assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.GENRE
         assert error['code'] == FieldValidationErrorCode.REFERENCE_INVALID
 
-    def test_value_then_ok(self):
+    def test_existing_then_ok(self):
         genre = self.model_fixture_factory.create_genre(name="rock")
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE: genre.uuid})
 
@@ -39,6 +39,16 @@ class TestCase(ForeignKeyBodyDataTestCase, LibTrackTestCase):
 
         response = self._post_lib_track(
             TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE: [genre.uuid, genre.uuid]})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.GENRE
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+
+    def test_invalid_uuid_then_400(self):
+        invalid_uuid = "invalid"
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.GENRE: invalid_uuid})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
