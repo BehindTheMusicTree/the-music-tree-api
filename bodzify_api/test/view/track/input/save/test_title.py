@@ -18,7 +18,7 @@ class TestCase(NotNullableCharBodyDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.title == value
 
-    def test_too_long_then_400(self):
+    def test_too_large_then_400(self):
         value = "a" * (settings.LIB_TRACK_TITLE_LEN_MAX + 1)
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PutFields.TITLE: value})
 
