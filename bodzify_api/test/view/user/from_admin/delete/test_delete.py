@@ -12,6 +12,7 @@ from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording impor
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as TrackPostFields
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.user.UserTestCase import UserTestCase
 
 
@@ -114,7 +115,7 @@ class TestCase(UserTestCase):
         self._login_as_user(user)
         artist_name = 'Adele'
 
-        data = {TrackPostFields.ARTISTS_NAMES: artist_name}
+        data = {TrackPostFields.ARTISTS_NAMES_ARRAY: [artist_name]}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
