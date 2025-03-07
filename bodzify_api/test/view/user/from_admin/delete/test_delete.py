@@ -10,7 +10,6 @@ from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording impor
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.user.User import User
-from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as TrackPostFields
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.user.UserTestCase import UserTestCase
 
@@ -42,10 +41,8 @@ class TestCase(UserTestCase):
         user = self.model_fixture_factory.create_user()
         self._login_as_user(user)
         criteria_name = 'Rock'
-        data = {TrackPostFields.GENRE: criteria_name}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        self.model_fixture_factory.create_genre(user=user, name=criteria_name)
         assert Criteria.objects.filter(user=user, name=criteria_name).count() == 1
-        assert response.status_code == status.HTTP_201_CREATED
 
         self._login_as_test_admin()
         response = self._delete_user(user.pk)
@@ -68,9 +65,8 @@ class TestCase(UserTestCase):
         user = self.model_fixture_factory.create_user()
         self._login_as_user(user)
         title = 'Dr mo'
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{TrackPostFields.TITLE: title})
+        self.model_fixture_factory.create_lib_track_with_file(user=user, title=title)
         assert LibraryTrack.objects.filter(user=user, title=title).count() == 1
-        assert response.status_code == status.HTTP_201_CREATED
 
         self._login_as_test_admin()
         response = self._delete_user(user.pk)
@@ -82,12 +78,10 @@ class TestCase(UserTestCase):
         user = self.model_fixture_factory.create_user()
         self._login_as_user(user)
         album_name = 'Skyfall'
-
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **
-                                        {TrackPostFields.ALBUM_NAME: album_name})
+        album = self.model_fixture_factory.create_album(user=user, name=album_name)
+        self.model_fixture_factory.create_lib_track_with_file(user=user, title='Skyfall', album=album)
 
         assert Album.objects.filter(user=user, name=album_name).count() == 1
-        assert response.status_code == status.HTTP_201_CREATED
 
         self._login_as_test_admin()
         response = self._delete_user(user.pk)
@@ -99,11 +93,10 @@ class TestCase(UserTestCase):
         user = self.model_fixture_factory.create_user()
         self._login_as_user(user)
         artist_name = 'Adele'
+        artist = self.model_fixture_factory.create_artist(name=artist_name, user=user)
 
-        data = {TrackPostFields.ARTISTS_NAMES_ARRAY: [artist_name]}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        self.model_fixture_factory.create_lib_track_with_file(user=user, title='Skyfall', artists=[artist])
 
-        assert response.status_code == status.HTTP_201_CREATED
         assert Artist.objects.filter(user=user, name=artist_name).count() == 1
 
         self._login_as_test_admin()
