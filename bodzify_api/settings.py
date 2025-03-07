@@ -526,12 +526,12 @@ def setup_installed_apps_and_caches():
 
 
 def setup_middlewares():
-    """Setup Django middleware classes."""
+    """Setup Django middleware classes. Top middleware classes are executed first."""
     global MIDDLEWARE
     MIDDLEWARE = [
+        f'{APP_NAME}.middleware.ContentTypeValidationMiddleware.ContentTypeValidationMiddleware',
         f'{APP_NAME}.middleware.CamelToSnakeMiddleware.CamelToSnakeMiddleware',
         f'{APP_NAME}.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware',
-        f'{APP_NAME}.middleware.ContentTypeValidationMiddleware.ContentTypeValidationMiddleware',
         f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
         f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
         'django.middleware.security.SecurityMiddleware',
