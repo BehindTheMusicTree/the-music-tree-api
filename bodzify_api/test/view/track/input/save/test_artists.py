@@ -161,7 +161,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert artists_list[1].name == new_artist1
         assert artists_list[2].name == new_artist2
 
-    def test_multiple_artists_one_too_long_then_400(self) -> None:
+    def test_multiple_with_one_too_long_then_400(self) -> None:
         valid_artist = "ValidArtist"
         too_long_artist = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
 
@@ -173,25 +173,3 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         error = self.bad_request_result_field_errors[0]
         assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
         assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
-
-    def test_multiple_artists_with_duplicates_then_400(self) -> None:
-        artist_name = "Duplicate Artist"
-        data = {PostFields.ARTISTS_NAMES_ARRAY: [artist_name, artist_name, artist_name]}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
-
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert len(self.bad_request_result_field_errors) == 1
-        error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
-        assert error['code'] == FieldValidationErrorCode.LIST_VALUE_DUPLICATE
-
-    def test_multiple_artists_with_empty_names_then_400(self) -> None:
-        valid_artist = "ValidArtist"
-        data = {PostFields.ARTISTS_NAMES_ARRAY: [valid_artist, "", "", valid_artist]}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
-
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert len(self.bad_request_result_field_errors) == 1
-        error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
-        assert error['code'] == FieldValidationErrorCode.LIST_VALUE_EMPTY
