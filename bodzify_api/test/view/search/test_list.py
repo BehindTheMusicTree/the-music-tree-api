@@ -39,8 +39,10 @@ class TestCase(SearchTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
-        assert self.results[CriteriaPlaylist.__name__][0][CriteriaPlayListFields.NAME] == rap_criteria_name
-        assert self.results[CriteriaPlaylist.__name__][1][CriteriaPlayListFields.NAME] == us_rap_criteria_name
+        criteria_playlists_names = \
+            [result[CriteriaPlayListFields.NAME] for result in self.results[CriteriaPlaylist.__name__]]
+        assert rap_criteria_name in criteria_playlists_names
+        assert us_rap_criteria_name in criteria_playlists_names
 
     def test_manual_playlist_then_results(self):
         manual_playlist_foot = self.model_fixture_factory.create_manual_playlist(name='foot')

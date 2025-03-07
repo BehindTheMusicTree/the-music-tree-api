@@ -65,17 +65,7 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
                                          message=str(exc),
                                          field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_CORRUPTED)
 
-        input_data_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(
-            data_dict=app_merged_metadata_dict,
-            keys=[AppMetadataKey.TITLE,
-                  AppMetadataKey.ARTISTS_NAMES,
-                  AppMetadataKey.ALBUM_NAME,
-                  AppMetadataKey.ALBUM_ARTISTS_NAMES,
-                  AppMetadataKey.GENRE_NAME,
-                  AppMetadataKey.RATING,
-                  AppMetadataKey.LANGUAGE])
-
-        metadata_max_lengths = {
+        metadata_str_max_lengths = {
             AppMetadataKey.TITLE: settings.LIB_TRACK_TITLE_LEN_MAX,
             AppMetadataKey.ARTISTS_NAMES: settings.ARTISTS_NAMES_LEN_MAX,
             AppMetadataKey.ALBUM_NAME: settings.ALBUM_NAME_LEN_MAX,
@@ -83,24 +73,33 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
             AppMetadataKey.GENRE_NAME: settings.CRITERIA_NAME_LEN_MAX,
             AppMetadataKey.LANGUAGE: settings.LANGUAGE_LEN_MAX,
         }
-        for key, max_length in metadata_max_lengths.items():
-            metadata_value = input_data_with_potential_none.get(key)
+        for key, max_length in metadata_str_max_lengths.items():
+            metadata_value = cast(str, app_merged_metadata_dict.get(key))
             if metadata_value:
                 if key.get_optional_type() == list[str]:
                     truncated_values = []
                     for value in metadata_value:
                         truncated_values.append(value[:max_length])
-                    input_data_with_potential_none[key] = truncated_values
+                    app_merged_metadata_dict[key] = truncated_values
                 else:
-                    input_data_with_potential_none[key] = input_data_with_potential_none[key][:max_length]
+                    app_merged_metadata_dict[key] = metadata_value[:max_length]
 
-        genre_name = input_data_with_potential_none.get(AppMetadataKey.GENRE_NAME)
+        data_from_file_with_potential_none = data_transformer.get_copy_of_dict_including_only_specified_keys(
+            data_dict=app_merged_metadata_dict,
+            keys=[AppMetadataKey.TITLE,
+                  AppMetadataKey.ARTISTS_NAMES,
+                  AppMetadataKey.ALBUM_NAME,
+                  AppMetadataKey.ALBUM_ARTISTS_NAMES,
+                  AppMetadataKey.RATING,
+                  AppMetadataKey.LANGUAGE])
+
+        genre_name = app_merged_metadata_dict.get(AppMetadataKey.GENRE_NAME)
         if genre_name:
             from bodzify_api.model.criteria.children.genre.Genre import Genre
-            input_data_with_potential_none[PostFields.GENRE] = Genre.objects.get_or_create(user=user, name=genre_name)[
-                0]
+            data_from_file_with_potential_none[PostFields.GENRE] = \
+                Genre.objects.get_or_create(user=user, name=genre_name)[0]
 
-        input_data_clean = data_transformer.remove_none_or_empty_key_from_dict(input_data_with_potential_none)
+        input_data_clean = data_transformer.remove_none_or_empty_key_from_dict(data_from_file_with_potential_none)
         input_data_clean[PostFields.TRACK_FILE_PUBLIC] = file
 
         return input_data_clean
@@ -124,18 +123,18 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
             dict1=schema_data, dict2=data, keys=keys)
 
         # If title is not provided, generate it from the file
-        if data.get(PostFields.TITLE) in [None, '']:
+        if schema_data.get(PostFields.TITLE) in [None, '']:
             file = cast(DjangoFile, file)
             if isinstance(file, str):  # URL case
                 # Get filename from URL
                 filename, _ = self._get_track_filename_with_extension(
                     file,
                     title=data.get(PostFields.TITLE),
-                    artists_names_array=data.get(PostFields.ARTISTS_NAMES_ARRAY)
+                    artists_names_array=schema_data.get(PostFields.ARTISTS_NAMES_ARRAY)
                 )
                 # Remove extension to get title
-                data[PostFields.TITLE] = os.path.splitext(filename)[0]
+                schema_data[PostFields.TITLE] = os.path.splitext(filename)[0]
             else:  # File upload case
-                data[PostFields.TITLE] = self._get_generated_title_from_data(file, data)
+                schema_data[PostFields.TITLE] = self._get_generated_title_from_data(file, schema_data)
 
-        return super().validate(data)
+        return super().validate(schema_data)
