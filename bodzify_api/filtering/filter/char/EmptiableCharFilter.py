@@ -17,8 +17,12 @@ class EmptiableCharFilter(CharFilter, AppFilter):
 
     def filter(self, qs: BaseQuerySet, value):
         if not self.method_name:
-            result = super().filter(qs, value)
-            return result
+            if value == '':
+                lookup = f"{self.field_name}__isnull"
+                return qs.filter(**{lookup: True})
+            else:
+                result = super().filter(qs, value)
+                return result
 
         if hasattr(self, 'parent'):
             parent: AppFilterSet = self.parent  # type: ignore
