@@ -17,9 +17,10 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
     def get_default_ordering(self) -> list[str]:
         return [LibTrackMixinFields.NAME_INTERNAL]
 
-    def get_artists_list_from_names_after_potential_creation(self, user: 'User', artists_names: str) -> list['Artist']:
+    def get_artists_list_from_names_after_potential_creation(
+            self, user: 'User', artists_names: list[str] | None) -> list['Artist']:
         return [self.get_or_create(user=user, name=artist_name)[0] for artist_name in artists_names] \
-            if len(artists_names) > 0 else []
+            if artists_names and len(artists_names) > 0 else []
 
     def delete_instance(self, instance: 'Artist'):
         self.delete_instance_with_albums_and_tracks(instance)
