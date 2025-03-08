@@ -11,7 +11,7 @@ class OptionalEnumCharFilter(EnumCharFilter):
     def filter(self, qs: BaseQuerySet, value: str) -> BaseQuerySet:
         parent_data = getattr(self.parent, 'data', {})
 
-        if (self.field_name_user_friendly or self.field_name) not in parent_data:
+        if (self.field_name_public or self.field_name) not in parent_data:
             return qs
 
         return super().filter(qs, value)

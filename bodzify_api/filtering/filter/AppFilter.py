@@ -4,11 +4,11 @@ from django_filters import Filter
 
 
 class AppFilter(Filter):
-    field_name_user_friendly: str | None
+    field_name_public: str | None
 
-    def __init__(self, field_name_user_friendly: str | None = None, *args, **kwargs):
+    def __init__(self, field_name_public: str | None = None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.field_name_user_friendly = field_name_user_friendly
+        self.field_name_public = field_name_public
 
-        if self.field_name and not self.field_name_user_friendly:
-            raise ImproperlyConfigured('field_name_user_friendly must be provided when field_name is set')
+        if self.field_name and not self.field_name_public:
+            raise ImproperlyConfigured('field_name_public must be provided when field_name is set')

@@ -12,11 +12,11 @@ from .Fields import Fields
 
 class AlbumFilterSet(PrivateUniqueResourceFilterSet):
     name = NonEmptiableCharFilter(field_name=ModelFields.NAME_INTERNAL,
-                                  field_name_user_friendly=ModelFields.NAME_PUBLIC,
+                                  field_name_public=ModelFields.NAME_PUBLIC,
                                   lookup_expr='icontains')
     album_artist_name = PrimaryFieldCharFilter(primary_field=ArtistModelFields.NAME_INTERNAL,
                                                field_name=ModelFields.ALBUM_ARTISTS,
-                                               field_name_user_friendly=Fields.ALBUM_ARTIST_NAME,
+                                               field_name_public=Fields.ALBUM_ARTIST_NAME,
                                                lookup_expr='icontains')
 
     class Meta:

@@ -1,6 +1,7 @@
 from django.db.models import Q, QuerySet
 from django_filters import CharFilter
 
+from bodzify_api.filtering.filter.char.EmptiableCharFilter import EmptiableCharFilter
 from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import (
     PrivateUniqueResourceFilterSet
 )
@@ -15,10 +16,14 @@ from .Fields import Fields
 
 class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
     title = CharFilter(field_name=ModelFields.TITLE, lookup_expr='icontains')
-    artists_name = CharFilter(method=f'filter_{ModelFields.ARTISTS}_{ArtistFields.NAME_PUBLIC}')
-    album_name = CharFilter(method=f'filter_{ModelFields.ALBUM}_{AlbumFields.NAME_PUBLIC}')
-    genre_name = CharFilter(method=f'filter_{ModelFields.GENRE}_{CriteriaFields.NAME_PUBLIC}')
-    language = CharFilter(field_name=ModelFields.LANGUAGE, lookup_expr='icontains')
+    artists_name = EmptiableCharFilter(field_name_public=f'artist_{ArtistFields.NAME_PUBLIC}',
+                                       method=f'filter_{ModelFields.ARTISTS}_{ArtistFields.NAME_PUBLIC}')
+    album_name = EmptiableCharFilter(field_name_public=f'{ModelFields.ALBUM}_{AlbumFields.NAME_PUBLIC}',
+                                     method=f'filter_{ModelFields.ALBUM}_{AlbumFields.NAME_PUBLIC}')
+    genre_name = EmptiableCharFilter(field_name_public=f'{ModelFields.GENRE}_{CriteriaFields.NAME_PUBLIC}',
+                                     method=f'filter_{ModelFields.GENRE}_{CriteriaFields.NAME_PUBLIC}')
+    language = EmptiableCharFilter(field_name_public=ModelFields.LANGUAGE,
+                                   field_name=ModelFields.LANGUAGE, lookup_expr='icontains')
 
     class Meta:
         model = LibraryTrack
