@@ -16,14 +16,14 @@ from .Fields import Fields
 
 class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
     title = CharFilter(field_name=ModelFields.TITLE, lookup_expr='icontains')
-    artists_name = EmptiableCharFilter(field_name_public=f'artist_{ArtistFields.NAME_PUBLIC}',
-                                       method=f'filter_{ModelFields.ARTISTS}_{ArtistFields.NAME_PUBLIC}')
-    album_name = EmptiableCharFilter(field_name_public=f'{ModelFields.ALBUM}_{AlbumFields.NAME_PUBLIC}',
-                                     method=f'filter_{ModelFields.ALBUM}_{AlbumFields.NAME_PUBLIC}')
-    genre_name = EmptiableCharFilter(field_name_public=f'{ModelFields.GENRE}_{CriteriaFields.NAME_PUBLIC}',
-                                     method=f'filter_{ModelFields.GENRE}_{CriteriaFields.NAME_PUBLIC}')
-    language = EmptiableCharFilter(field_name_public=ModelFields.LANGUAGE,
-                                   field_name=ModelFields.LANGUAGE, lookup_expr='icontains')
+    artists_name = EmptiableCharFilter(
+        field_name_public=f'artist_{ArtistFields.NAME_PUBLIC}', method=f'filter_artist_name')
+    album_name = EmptiableCharFilter(
+        field_name_public=f'{ModelFields.ALBUM}_{AlbumFields.NAME_PUBLIC}', method=f'filter_album_name')
+    genre_name = EmptiableCharFilter(
+        field_name_public=f'{ModelFields.GENRE}_{CriteriaFields.NAME_PUBLIC}', method=f'filter_genre_name')
+    language = EmptiableCharFilter(
+        field_name_public=ModelFields.LANGUAGE, field_name=ModelFields.LANGUAGE, lookup_expr='icontains')
 
     class Meta:
         model = LibraryTrack
@@ -33,7 +33,7 @@ class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
                   Fields.GENRE_NAME,
                   Fields.LANGUAGE,]
 
-    def filter_artists_name(self, queryset: QuerySet, name, value):
+    def filter_artist_name(self, queryset: QuerySet, name, value):
         if value:
             return queryset.filter(
                 Q(artists__isnull=False) &
