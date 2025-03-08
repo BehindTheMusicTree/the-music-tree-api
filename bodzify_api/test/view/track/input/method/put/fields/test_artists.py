@@ -59,7 +59,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         artist = self.model_fixture_factory.create_artist(name=artist_name)
         track = self.model_fixture_factory.create_lib_track_with_file(title="Foire", artists=[artist])
 
-        data = {PutFields.ARTISTS_NAMES_ARRAY: ["Autre artiste"]}
+        data = {PutFields.ARTISTS_NAMES_ARRAY: ["Other artist"]}
         response = self._put_lib_track(uuid=track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK

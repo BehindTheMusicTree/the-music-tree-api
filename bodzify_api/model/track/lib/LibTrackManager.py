@@ -131,15 +131,17 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         from bodzify_api.model.album.Album import Album
         from bodzify_api.model.artist.Artist import Artist
 
-        old_album_artists = []
+        old_album_artists_list = []
         if old_instance.album:
-            old_album_artists = old_instance.album.album_artists.all()
+
+            # list() makes a copy of the QuerySet before the deletion
+            old_album_artists_list = list(old_instance.album.album_artists.all())
             old_album = old_instance.album
         else:
             old_album = None
 
         old_genre = old_instance.genre
-        old_artists = old_instance.artists.all()
+        old_artists_list = list(old_instance.artists.all())  # list() makes a copy of the QuerySet before the deletion
 
         updated_instance: LibraryTrack = super().update_instance(old_instance, **kwargs)
 
@@ -148,12 +150,12 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         if old_album and updated_instance.album and old_album != updated_instance.album:
             Album.objects.delete_instance_if_no_track_linked_with_potential_album_artist_deletion(old_album)
-            for album_artist in old_album_artists:
+            for album_artist in old_album_artists_list:
                 Artist.objects.delete_instance_if_nothing_linked(album_artist)
 
-        if old_artists.count() > 0:
+        if len(old_artists_list) > 0:
             current_track_artists_list = list(updated_instance.artists.all())
-            old_track_artists_list: list[Artist] = list(old_artists)
+            old_track_artists_list: list[Artist] = list(old_artists_list)
             for old_track_artist in old_track_artists_list:
                 if old_track_artist not in current_track_artists_list:
                     Artist.objects.delete_instance_if_nothing_linked(old_track_artist)
