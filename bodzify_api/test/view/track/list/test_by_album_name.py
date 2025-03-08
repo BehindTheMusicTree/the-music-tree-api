@@ -19,6 +19,8 @@ class TestCase(LibTrackTestCase, NullableCharFilterTestCase):
     def test_empty_then_results(self):
         self.model_fixture_factory.create_lib_track_with_file(title="Life")
         self.model_fixture_factory.create_lib_track_with_file(title="Hey")
+        album = self.model_fixture_factory.create_album(name="John")
+        self.model_fixture_factory.create_lib_track_with_file(title="Hey", album=album)
 
         response = self._get_lib_tracks(album_name='')
 
