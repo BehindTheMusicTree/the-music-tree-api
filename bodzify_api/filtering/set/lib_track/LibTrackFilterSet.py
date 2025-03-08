@@ -39,7 +39,8 @@ class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
                 Q(artists__isnull=False) &
                 Q(**{f'{Fields.ARTISTS_NAME}__icontains': value})
             )
-        return queryset
+        else:
+            return queryset.filter(~Q(artists__pk__isnull=False))
 
     def filter_album_name(self, queryset: QuerySet, name, value):
         if value:
@@ -47,7 +48,8 @@ class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
                 Q(album__isnull=False) &
                 Q(**{f'{Fields.ALBUM_NAME}__icontains': value})
             )
-        return queryset
+        else:
+            return queryset.filter(album__isnull=True)
 
     def filter_genre_name(self, queryset: QuerySet, name, value):
         if value:
@@ -55,4 +57,6 @@ class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
                 Q(genre__isnull=False) &
                 Q(**{f'{Fields.GENRE_NAME}__icontains': value})
             )
+        else:
+            return queryset.filter(genre__isnull=True)
         return queryset
