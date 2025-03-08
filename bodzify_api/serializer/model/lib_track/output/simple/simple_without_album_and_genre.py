@@ -21,11 +21,9 @@ class LibTrackWithoutAlbumPlaylistGenreSerializer(AppSerializer, serializers.Mod
 
     class Meta:
         model = LibraryTrack
-        fields = [
-            Fields.UUID,
-            Fields.TITLE,
-            Fields.ARTISTS,
-            Fields.RATING,
-            Fields.LANGUAGE,
-            Fields.PLAY_COUNT
-        ]
+        fields = [Fields.UUID,
+                  Fields.TITLE,
+                  Fields.ARTISTS,
+                  Fields.RATING,
+                  Fields.LANGUAGE,
+                  Fields.PLAY_COUNT,]
