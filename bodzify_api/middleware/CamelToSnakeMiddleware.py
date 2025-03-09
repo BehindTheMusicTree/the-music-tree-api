@@ -1,6 +1,9 @@
 
 import json
 from json.decoder import JSONDecodeError
+from typing import cast
+
+from rest_framework.request import Request
 
 from bodzify_api.utils import data_transformer
 
@@ -9,13 +12,13 @@ class CamelToSnakeMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
-    def __call__(self, request):
+    def __call__(self, request: Request):
         content_type = request.headers.get('Content-Type', '')
 
         if content_type.startswith('application/json'):
             try:
                 if request.body:
-                    json_data = json.loads(request.body)
+                    json_data = cast(dict, json.loads(request.body))
                     request.data = data_transformer.form_data_to_snake_case(json_data)
                 else:
                     request.data = {}
