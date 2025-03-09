@@ -8,7 +8,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 class TestCase(LibTrackTestCase, PutBodyDataTestCase):
 
     def test_not_empty_then_ok(self):
-        language = "a"
+        language = "en"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
         response = self._put_lib_track(lib_track.uuid, **{PutFields.LANGUAGE: language})
@@ -17,7 +17,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         assert self.saved_object.language == language
 
     def test_not_provided_then_unchanged(self):
-        language = "French"
+        language = "Fr"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", language=language)
 
         response = self._put_lib_track(lib_track.uuid, **{})
@@ -26,7 +26,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         assert self.saved_object.language == language
 
     def test_empty_then_none(self):
-        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", language="French")
+        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", language="Fr")
 
         response = self._put_lib_track(lib_track.uuid, **{PutFields.LANGUAGE: ""})
 
@@ -34,9 +34,9 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         assert self.saved_object.language == None
 
     def test_provided_then_update(self):
-        language = "a"
-        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", language="French")
+        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", language="en")
 
+        language = "fr"
         response = self._put_lib_track(lib_track.uuid, **{PutFields.LANGUAGE: language})
 
         assert response.status_code == status.HTTP_200_OK
