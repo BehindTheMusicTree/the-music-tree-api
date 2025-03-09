@@ -29,10 +29,11 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         assert self.saved_object.album == None
 
     def test_provided_then_update(self):
+        album_artist_new = self.model_fixture_factory.create_artist(name="James")
         album_old = self.model_fixture_factory.create_album(name="Jojo")
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="koko", album=album_old)
-        album_new = self.model_fixture_factory.create_album(name="koko")
-        album_artist_new = self.model_fixture_factory.create_artist(name="James")
+        album_artist_new = self.model_fixture_factory.create_artist(name="Harden")
+        album_new = self.model_fixture_factory.create_album(name="koko", album_artists=[album_artist_new])
 
         data = {PutFields.ALBUM_NAME: album_new.name, PutFields.ALBUM_ARTISTS_NAMES_ARRAY: [album_artist_new.name]}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
@@ -45,16 +46,16 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
     def test_provided_with_multiple_artists_then_update(self):
         album_old = self.model_fixture_factory.create_album(name="Jojo")
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="koko", album=album_old)
-        album_new = self.model_fixture_factory.create_album(name="koko")
+        album_new_name = "koko"
         album_artist_new_1 = self.model_fixture_factory.create_artist(name="James")
         album_artist_new_2 = self.model_fixture_factory.create_artist(name="Koko")
 
-        data = {PutFields.ALBUM_NAME: album_new.name,
+        data = {PutFields.ALBUM_NAME: album_new_name,
                 PutFields.ALBUM_ARTISTS_NAMES_ARRAY: [album_artist_new_1.name, album_artist_new_2.name]}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_object.album == album_new
+        assert self.saved_object.album.name == album_new_name
         assert self.saved_object.album.album_artists.count() == 2
         assert self.saved_object.album.album_artists.filter(name=album_artist_new_1.name).exists()
         assert self.saved_object.album.album_artists.filter(name=album_artist_new_2.name).exists()
