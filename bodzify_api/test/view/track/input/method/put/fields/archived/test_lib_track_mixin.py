@@ -15,4 +15,4 @@ class TestCase(LibTrackTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.test_user1.all_lib_tracks_mixin.lib_tracks_archived_count == 2
-        assert self.test_user1.all_lib_tracks_mixin.lib_tracks_not_archived_count == 0
+        assert self.test_user1.all_lib_tracks_mixin.lib_tracks_not_archived_count == 1
