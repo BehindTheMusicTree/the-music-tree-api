@@ -12,7 +12,7 @@ class TestCase(LibTrackTestCase):
         genre_name = "Rock"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
-        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre_name})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: genre_name})
 
         assert response.status_code == status.HTTP_200_OK
         track_playlists_uuids = [playlist.uuid for playlist in self.saved_object.playlists.all()]
@@ -26,7 +26,7 @@ class TestCase(LibTrackTestCase):
         self.model_fixture_factory.create_genre(name=genre_name)
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
-        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre_name})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: genre_name})
 
         assert response.status_code == status.HTTP_200_OK
 
@@ -47,7 +47,7 @@ class TestCase(LibTrackTestCase):
         self.model_fixture_factory.create_genre(name=genre_emo_name, parent=hardgenre_rock)
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
-        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre_emo_name})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: genre_emo_name})
 
         assert response.status_code == status.HTTP_200_OK
         track_playlists_uuids = [playlist.uuid for playlist in self.saved_object.playlists.all()]

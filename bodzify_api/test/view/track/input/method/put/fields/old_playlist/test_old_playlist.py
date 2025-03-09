@@ -15,7 +15,7 @@ class TestCase(LibTrackTestCase):
             **{LibTrackFields.TITLE: "Love", LibTrackFields.GENRE: old_genre.uuid})
         assert lib_track in old_genre.criteria_playlist.lib_tracks.all()
 
-        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: new_genre_name})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: new_genre_name})
 
         assert response.status_code == status.HTTP_200_OK
         old_genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(criteria=old_genre)

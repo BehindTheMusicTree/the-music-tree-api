@@ -16,7 +16,7 @@ class TestCase(LibTrackTestCase):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(
             title="Love", genre=old_genre, use_manager_for_genre_playlist_adding=True)
 
-        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: "Rock"})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: "Rock"})
 
         assert response.status_code == status.HTTP_200_OK
         old_genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(criteria=old_genre)

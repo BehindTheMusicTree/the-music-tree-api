@@ -26,7 +26,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
             **{LibTrackFields.TITLE: "koko", LibTrackFields.GENRE: rap_criteria.uuid})
         rock_criteria = self.model_fixture_factory.create_genre(name="Rock")
 
-        data = {PutFields.GENRE_NAME: rock_criteria.name}
+        data = {PutFields.GENRE: rock_criteria.name}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
@@ -37,7 +37,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(
             **{LibTrackFields.TITLE: "koko", LibTrackFields.GENRE: rap_criteria.uuid})
 
-        response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.GENRE_NAME: ''})
+        response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.GENRE: ''})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_object.genre == None
@@ -46,7 +46,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         genre_name = "rap"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title='lolo')
 
-        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre_name})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: genre_name})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_object.genre

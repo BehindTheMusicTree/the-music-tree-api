@@ -13,7 +13,7 @@ class TestCase(LibTrackTestCase):
             title="Love", genre=genre, use_manager_for_genre_playlist_adding=True)
         criteria_playlist_before_update: CriteriaPlaylist = genre.criteria_playlist
 
-        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: ''})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: ''})
 
         assert response.status_code == status.HTTP_200_OK
         criteria_playlist_after_update: CriteriaPlaylist = CriteriaPlaylist.objects.get(
@@ -28,7 +28,7 @@ class TestCase(LibTrackTestCase):
             title="Love", genre=genre, use_manager_for_genre_playlist_adding=True)
         parent_criteria_playlist_before_update: CriteriaPlaylist = genre_parent.criteria_playlist
 
-        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: ''})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: ''})
 
         assert response.status_code == status.HTTP_200_OK
         genre_parent.refresh_from_db()
@@ -42,7 +42,7 @@ class TestCase(LibTrackTestCase):
         genre = self.model_fixture_factory.create_genre(name='rock')
         criteria_playlist_before_update: CriteriaPlaylist = genre.criteria_playlist
 
-        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE_NAME: genre.name})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: genre.name})
 
         assert response.status_code == status.HTTP_200_OK
         criteria_playlist_after_update: CriteriaPlaylist = CriteriaPlaylist.objects.get(
