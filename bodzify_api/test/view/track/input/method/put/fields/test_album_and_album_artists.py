@@ -100,44 +100,46 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         album = self.model_fixture_factory.create_album(name="Jojo", album_artists=[album_artist])
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Foire", album=album)
 
-        data = {PutFields.ALBUM_ARTISTS_NAMES_ARRAY: ["Other artist"]}
+        data = {PutFields.ALBUM_NAME: "Best of", PutFields.ALBUM_ARTISTS_NAMES_ARRAY: ["Other artist"]}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
         assert not Artist.objects.filter(user=self.test_user1, name=album_artist_name).exists()
 
     def test_not_delete_old_album_artist_because_a_track_linked_to_it(self):
-        album_artist_name = "a-ha"
-        album_artist = self.model_fixture_factory.create_artist(name=album_artist_name)
-        album = self.model_fixture_factory.create_album(name="Jojo", album_artists=[album_artist])
+        old_album_artist = self.model_fixture_factory.create_artist(name="Muse")
+        album = self.model_fixture_factory.create_album(name="Jojo", album_artists=[old_album_artist])
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Foire", album=album)
         self.model_fixture_factory.create_lib_track_with_file(title="Josie", album=album)
 
-        response = self._put_lib_track(
-            uuid=lib_track.uuid, **{PutFields.ALBUM_ARTISTS_NAMES_ARRAY: [album_artist_name]})
+        data = {PutFields.ALBUM_NAME: "Best of", PutFields.ALBUM_ARTISTS_NAMES_ARRAY: ["Other artist"]}
+        response = self._put_lib_track(uuid=lib_track.uuid, **data)
+
         assert response.status_code == status.HTTP_200_OK
-        assert Artist.objects.filter(user=self.test_user1, name=album_artist_name).exists()
+        assert Artist.objects.filter(user=self.test_user1, uuid=old_album_artist.uuid).exists()
 
     def test_not_delete_old_album_artist_because_annother_album_with_a_track_linked_to_it(self):
-        album_artist_name = "a-ha"
-        album_artist = self.model_fixture_factory.create_artist(name=album_artist_name)
-        album = self.model_fixture_factory.create_album(name="Jojo", album_artists=[album_artist])
+        old_album_artist = self.model_fixture_factory.create_artist(name="Sum 41")
+        album = self.model_fixture_factory.create_album(name="Jojo", album_artists=[old_album_artist])
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Foire", album=album)
-        album2 = self.model_fixture_factory.create_album(name="Jojo2", album_artists=[album_artist])
+        album2 = self.model_fixture_factory.create_album(name="Jojo2", album_artists=[old_album_artist])
         self.model_fixture_factory.create_lib_track_with_file(title="Josie", album=album2)
 
-        response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.ALBUM_ARTISTS_NAMES_ARRAY: ["Other artist"]})
+        data = {PutFields.ALBUM_NAME: "Best of", PutFields.ALBUM_ARTISTS_NAMES_ARRAY: ["Other artist"]}
+        response = self._put_lib_track(uuid=lib_track.uuid, **data)
+
         assert response.status_code == status.HTTP_200_OK
-        assert Artist.objects.filter(user=self.test_user1, name=album_artist_name).exists()
+        assert Artist.objects.filter(user=self.test_user1, uuid=old_album_artist.uuid).exists()
 
     def test_old_album_artist_linked_to_another_album_with_a_track_then_not_delete_it(self):
-        album_artist_name = "a-ha"
-        album_artist = self.model_fixture_factory.create_artist(name=album_artist_name)
-        album = self.model_fixture_factory.create_album(name="Jojo", album_artists=[album_artist])
+        old_album_artist = self.model_fixture_factory.create_artist(name="Queen")
+        album = self.model_fixture_factory.create_album(name="Jojo", album_artists=[old_album_artist])
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Foire", album=album)
-        album2 = self.model_fixture_factory.create_album(name="Jojo2", album_artists=[album_artist])
+        album2 = self.model_fixture_factory.create_album(name="Jojo2", album_artists=[old_album_artist])
         self.model_fixture_factory.create_lib_track_with_file(title="Josie", album=album2)
 
-        response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.ALBUM_ARTISTS_NAMES_ARRAY: ["Other artist"]})
+        data = {PutFields.ALBUM_NAME: "Best of", PutFields.ALBUM_ARTISTS_NAMES_ARRAY: ["Other artist"]}
+        response = self._put_lib_track(uuid=lib_track.uuid, **data)
+
         assert response.status_code == status.HTTP_200_OK
-        assert Artist.objects.filter(user=self.test_user1, name=album_artist_name).exists()
+        assert Artist.objects.filter(user=self.test_user1, uuid=old_album_artist.uuid).exists()
