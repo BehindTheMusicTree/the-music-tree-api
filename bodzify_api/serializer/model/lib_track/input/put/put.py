@@ -11,8 +11,6 @@ class LibTrackPutSerializer(PutSerializer, LibTrackInputSerializer):
     archived = serializers.BooleanField(required=False)
 
     def validate(self, data: dict[str, Any]) -> dict[str, Any]:
-        print('PutSerializer.validate call')
+        self._validate_album_fields_from_data(data)
         data = PutSerializer.validate(self, data)
-
-        print('LibTrackInputSerializer.validate call')
         return super(LibTrackInputSerializer, self).validate(data)

@@ -13,7 +13,7 @@ class TestCase(LibTrackTestCase, NullableCharBodyDataTestCase):
 
     def test_largest_then_ok(self):
         album_name = "a" * settings.ALBUM_NAME_LEN_MAX
-        data = {PostFields.ALBUM_NAME: album_name, PostFields.ARTISTS_NAMES_ARRAY: ["muse"]}
+        data = {PostFields.ALBUM_NAME: album_name, PostFields.ALBUM_ARTISTS_NAMES_ARRAY: ["muse"]}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -41,7 +41,7 @@ class TestCase(LibTrackTestCase, NullableCharBodyDataTestCase):
         album_name = "Kopoe"
         album = self.model_fixture_factory.create_album(name=album_name)
 
-        data = {PostFields.ALBUM_NAME: album_name, PostFields.ARTISTS_NAMES_ARRAY: []}
+        data = {PostFields.ALBUM_NAME: album_name, PostFields.ALBUM_ARTISTS_NAMES_ARRAY: []}
         response = self._post_lib_track(
             test_lib_track_filename=TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
@@ -51,7 +51,7 @@ class TestCase(LibTrackTestCase, NullableCharBodyDataTestCase):
 
     def test_not_existing(self):
         album_name = "hoho"
-        data = {PostFields.ALBUM_NAME: album_name, PostFields.ARTISTS_NAMES_ARRAY: ["muse"]}
+        data = {PostFields.ALBUM_NAME: album_name, PostFields.ALBUM_ARTISTS_NAMES_ARRAY: ["muse"]}
         response = self._post_lib_track(test_lib_track_filename=TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED

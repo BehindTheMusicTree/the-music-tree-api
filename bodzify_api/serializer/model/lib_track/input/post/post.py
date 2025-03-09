@@ -103,9 +103,9 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
         input_data = self._get_input_data_from_file(file=file, user=user)
         keys = [PostFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
                 PostFields.TITLE,
-                PostFields.ARTISTS_NAMES_ARRAY[:-2],  # Removes "[]""
+                PostFields.ARTISTS_NAMES,
                 PostFields.ALBUM_NAME,
-                PostFields.ALBUM_ARTISTS_NAMES_ARRAY[:-2],  # Removes "[]""
+                PostFields.ALBUM_ARTISTS_NAMES,
                 PostFields.TRACK_NUMBER,
                 PostFields.GENRE,
                 PostFields.RATING,
