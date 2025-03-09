@@ -46,13 +46,11 @@ class LibTrackInputSerializer(AppSerializer):
                 data[ModelFields.ALBUM] = album
 
     def _update_data_with_artists_if_names_otherwise_empty_list(self, user: User, data: dict) -> None:
-        artists_names = data.pop(InputFields.ARTISTS_NAMES, None)
-        if artists_names:
+        if InputFields.ARTISTS_NAMES in data:
+            artists_names = data.pop(InputFields.ARTISTS_NAMES) or []
             artists = Artist.objects.get_artists_list_from_names_after_potential_creation(
                 user=user, artists_names=artists_names)
-        else:
-            artists = []
-        data[ModelFields.ARTISTS] = artists
+            data[ModelFields.ARTISTS] = artists
 
     def _validate_album_fields_from_data(self, data: dict):
         if InputFields.ALBUM_ARTISTS_NAMES in data:
