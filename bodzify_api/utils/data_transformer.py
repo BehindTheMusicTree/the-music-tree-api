@@ -40,22 +40,6 @@ def dict_to_snake_case(data: Any) -> dict[str, Any]:
     return {to_snake_case(key): value for key, value in data_dict.items()}
 
 
-def form_data_to_snake_case(form_data: Any) -> dict[str, Any]:
-    data = to_dict(form_data)
-    snake_case_dict: dict[str, Any] = {}
-
-    if isinstance(data, QueryDict):
-        for key, values in data.lists():
-            snake_case_key = to_snake_case(key)
-            snake_case_dict[snake_case_key] = values[0] if len(values) == 1 else values
-    elif isinstance(data, (dict, Mapping)):
-        for key, value in data.items():
-            snake_case_key = to_snake_case(key)
-            snake_case_dict[snake_case_key] = value
-
-    return snake_case_dict
-
-
 def get_copy_of_dict_including_only_specified_keys(data_dict: dict, keys) -> dict[str, Any]:
     dict2 = dict()
     for parameter_key in keys:
@@ -69,6 +53,12 @@ def remove_none_or_empty_key_from_dict(data_dict: dict):
         if data_dict[key] is None or data_dict[key] == "":
             del data_dict[key]
     return data_dict
+
+
+def update_dict_converting_empty_string_to_none(data: dict):
+    for key in data:
+        if data[key] == "":
+            data[key] = None
 
 
 def update_dict_converting_str_to_int_value_if_set(key: str, data: dict):
