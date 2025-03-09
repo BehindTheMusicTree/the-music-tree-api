@@ -57,7 +57,7 @@ class LibTrackInputSerializer(AppSerializer):
         data[ModelFields.ARTISTS] = artists
 
     def _validate_album_fields_from_data(self, data: dict):
-        if data.get(InputFields.ALBUM_ARTISTS_NAMES, None) is not None:
+        if InputFields.ALBUM_ARTISTS_NAMES in data:
             if data.get(InputFields.ALBUM_NAME, None) in [None, ""]:
                 raise AppValidationException(message="Album name is required when album artists field is provided",
                                              field_name=InputFields.ALBUM_NAME,
