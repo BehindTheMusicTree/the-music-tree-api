@@ -70,6 +70,7 @@ class LibTrackInputSerializer(AppSerializer):
                                    field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
     def validate(self, data: dict,):
+        data_transformer.update_dict_converting_empty_string_to_none(data=data)
         data_transformer.update_dict_converting_str_to_int_value_if_set(key=ModelFields.RATING, data=data)
 
         user = self.context['request'].user
