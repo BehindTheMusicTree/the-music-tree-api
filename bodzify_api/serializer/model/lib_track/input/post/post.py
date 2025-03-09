@@ -66,14 +66,16 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
         return metadata_dict
 
     def _extract_metadata_fields(self, metadata_dict: dict) -> dict:
-        return data_transformer.get_copy_of_dict_including_only_specified_keys(
+        data = data_transformer.get_copy_of_dict_including_only_specified_keys(
             data_dict=metadata_dict,
             keys=[InputFields.TITLE,
                   InputFields.ARTISTS_NAMES,
-                  InputFields.ALBUM_NAME,
-                  InputFields.ALBUM_ARTISTS_NAMES,
                   InputFields.RATING,
                   InputFields.LANGUAGE])
+        if metadata_dict.get(InputFields.ALBUM_NAME, None) not in [None, ""]:
+            data[InputFields.ALBUM_NAME] = metadata_dict.get(AppMetadataKey.ALBUM_NAME, None)
+            data[InputFields.ALBUM_ARTISTS_NAMES] = metadata_dict.get(AppMetadataKey.ALBUM_ARTISTS_NAMES, [])
+        return data
 
     def _handle_genre(self, input_data: dict, file_metadata: dict, user: User):
         genre_name = file_metadata.get(AppMetadataKey.GENRE_NAME)
@@ -94,6 +96,8 @@ class LibTrackPostSerializer(LibTrackInputSerializer):
         return input_data_clean
 
     def validate(self, data: dict):
+        self._validate_album_fields_from_data(data)
+
         user = self.context['request'].user
         file = cast(DjangoFile, data.get(PostFields.TRACK_FILE_PUBLIC))  # Required so not None
         input_data = self._get_input_data_from_file(file=file, user=user)

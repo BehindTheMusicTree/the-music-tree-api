@@ -56,11 +56,15 @@ class LibTrackInputSerializer(AppSerializer):
             artists = []
         data[ModelFields.ARTISTS] = artists
 
-    def validate(self, data: dict):
-        if data.get(InputFields.ALBUM_ARTISTS_NAMES_ARRAY) not in [None, []] \
-                and data.get(InputFields.ALBUM_NAME) in [None, ""]:
-            raise AppValidationException(field_name=InputFields.ALBUM_ARTISTS_NAMES_ARRAY,
-                                         message="Album name must be specified if album artists name is.",
+    def _validate_album_fields_from_data(self, data: dict):
+        if data.get(InputFields.ALBUM_ARTISTS_NAMES, None) is not None:
+            if data.get(InputFields.ALBUM_NAME, None) in [None, ""]:
+                raise AppValidationException(message="Album name is required when album artists field is provided",
+                                             field_name=InputFields.ALBUM_NAME,
+                                             field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
+        elif data.get(InputFields.ALBUM_NAME, None) not in [None, ""]:
+            raise AppValidationException(message="Album artists are required when album name is provided",
+                                         field_name=InputFields.ALBUM_ARTISTS_NAMES_ARRAY,
                                          field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
         if data.get(InputFields.TRACK_NUMBER) is not None and data.get(InputFields.ALBUM_NAME) in [None, ""]:
@@ -68,6 +72,8 @@ class LibTrackInputSerializer(AppSerializer):
                                    message="Album name must be specified if track position is.",
                                    field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
+    def validate(self, data: dict,):
+        self._validate_album_fields_from_data(data)
         data_transformer.update_dict_converting_str_to_int_value_if_set(key=ModelFields.RATING, data=data)
 
         user = self.context['request'].user
