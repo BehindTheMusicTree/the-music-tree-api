@@ -11,7 +11,7 @@ from bodzify_api.utils.data_transformer import to_camel_case
 
 class TestCase(LibTrackTestCase, NullableCharBodyDataTestCase):
 
-    def test_longest_then_ok(self):
+    def test_largest_then_ok(self):
         album_name = "a" * settings.ALBUM_NAME_LEN_MAX
         data = {PostFields.ALBUM_NAME: album_name, PostFields.ARTISTS_NAMES_ARRAY: ["muse"]}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)

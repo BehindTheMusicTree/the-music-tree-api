@@ -1,5 +1,5 @@
 meta {
-  name: album bo artist none
+  name: album bo | album artist none
   type: http
   seq: 3
 }
@@ -15,7 +15,7 @@ headers {
 }
 
 body:multipart-form {
-  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/utils/lib_track/files/metadata=none.mp3)
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/metadata=none.mp3)
   albumName: bo
   albumArtistsNames[]: 
 }

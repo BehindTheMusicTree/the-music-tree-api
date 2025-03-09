@@ -9,7 +9,7 @@ from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 class TestCase(GenreTestCase, PrimaryCharBodyDataTestCase):
 
-    def test_longest_then_ok(self):
+    def test_largest_then_ok(self):
         genre_name = "a" * settings.CRITERIA_NAME_LEN_MAX
         response = self._post_genre(**{Fields.NAME_PUBLIC: genre_name})
 

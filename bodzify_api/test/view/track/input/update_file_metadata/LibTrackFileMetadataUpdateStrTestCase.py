@@ -43,5 +43,5 @@ class LibTrackFileMetadataUpdateStrTestCase(LibTrackFileMetadataUpdateTestCase):
     def test_on_present_tag_then_ok(self, additional_data_dict=None):
         self._test_value("a", additional_data_dict=additional_data_dict, file_has_tags=True)
 
-    def test_longest_then_ok(self, additional_data_dict=None):
+    def test_largest_then_ok(self, additional_data_dict=None):
         self._test_value('a' * self.length_max, additional_data_dict=additional_data_dict, file_has_tags=False)

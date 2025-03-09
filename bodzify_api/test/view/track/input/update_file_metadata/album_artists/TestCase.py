@@ -18,7 +18,7 @@ class TestCase(LibTrackFileMetadataUpdateStrTestCase):
     def test_on_present_tag_then_ok(self):
         self._test_value("a", additional_data_dict=self.album_data_dict, file_has_tags=True)
 
-    def test_longest_then_ok(self):
+    def test_largest_then_ok(self):
         self._test_value("a" * self.length_max, additional_data_dict=self.album_data_dict, file_has_tags=False)
 
 

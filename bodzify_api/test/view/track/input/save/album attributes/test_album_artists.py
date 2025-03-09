@@ -12,25 +12,26 @@ from bodzify_api.utils.data_transformer import to_camel_case
 
 class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
 
-    def test_longest_then_ok(self) -> None:
+    def test_largest_then_ok(self) -> None:
         artist_name = "a" * settings.ARTIST_NAME_LEN_MAX
-        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ARTISTS_NAMES_ARRAY: artist_name}
+        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist_name]}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_object.artists.all())
+        assert self.saved_object.album
+        artists_list: list[Artist] = list(self.saved_object.album.album_artists.all())
         assert len(artists_list) > 0
         assert artists_list[0].name == artist_name
 
     def test_one_too_large_then_400(self):
         artist_name = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
-        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ARTISTS_NAMES_ARRAY: artist_name}
+        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: artist_name}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error['field'] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
+        assert error['field'] == to_camel_case(PostFields.ALBUM_ARTISTS_NAMES_ARRAY)
         assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
     def test_malformed_array_then_400(self) -> None:
@@ -45,48 +46,49 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert error['code'] == FieldValidationErrorCode.LIST_MALFORMED
 
     def test_empty_then_ok(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **
-                                        {PostFields.ALBUM_NAME: "Best Of", PostFields.ARTISTS_NAMES_ARRAY: ''})
+        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: []}
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 0
 
     def test_existing_then_ok(self) -> None:
-        artist_name = "Kopoe"
-        self.model_fixture_factory.create_artist(name=artist_name)
+        artist = self.model_fixture_factory.create_artist(name="Kopoe")
 
-        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ARTISTS_NAMES_ARRAY: artist_name}
+        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist.name]}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_object.artists.all())
-        assert len(artists_list) > 0
-        assert artists_list[0].name == artist_name
+        assert self.saved_object.album
+        artists_list: list[Artist] = list(self.saved_object.album.album_artists.all())
+        assert len(artists_list) == 1
+        assert artists_list[0].uuid == artist.uuid
 
     def test_not_existing_then_ok(self) -> None:
         artist_name = "hoho"
-        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ARTISTS_NAMES_ARRAY: artist_name}
+        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: artist_name}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_object.artists.all())
+        assert self.saved_object.album
+        artists_list: list[Artist] = list(self.saved_object.album.album_artists.all())
         assert len(artists_list) > 0
         assert artists_list[0].name == artist_name
 
     def test_multiple_existing_artists_then_ok(self) -> None:
-        artist1_name = "Kopoe"
-        artist2_name = "Steeve"
-        self.model_fixture_factory.create_artist(name=artist1_name)
-        self.model_fixture_factory.create_artist(name=artist2_name)
+        artist1 = self.model_fixture_factory.create_artist(name="Kopoe")
+        artist2 = self.model_fixture_factory.create_artist(name="Steeve")
 
-        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ARTISTS_NAMES_ARRAY: [artist1_name, artist2_name]}
+        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist1.name, artist2.name]}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_object.artists.all().order_by('name'))
+        assert self.saved_object.album
+        artists_list: list[Artist] = list(self.saved_object.album.album_artists.all())
         assert len(artists_list) == 2
-        assert artists_list[0].name == artist1_name
-        assert artists_list[1].name == artist2_name
+        album_artists_uuids = [artist.uuid for artist in artists_list]
+        assert artist1.uuid in album_artists_uuids
+        assert artist2.uuid in album_artists_uuids
 
     def test_multiple_non_existing_artists_then_ok(self) -> None:
         artist1_name = "NewArtist1"
@@ -94,72 +96,77 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         artist3_name = "NewArtist3"
 
         data = {PostFields.ALBUM_NAME: "Best Of",
-                PostFields.ARTISTS_NAMES_ARRAY: [artist1_name, artist2_name, artist3_name]}
+                PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist1_name, artist2_name, artist3_name]}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_object.artists.all().order_by('name'))
+        assert self.saved_object.album
+        artists_list: list[Artist] = list(self.saved_object.album.album_artists.all())
+        artists_names = [artist.name for artist in artists_list]
         assert len(artists_list) == 3
-        assert artists_list[0].name == artist1_name
-        assert artists_list[1].name == artist2_name
-        assert artists_list[2].name == artist3_name
+        assert artist1_name in artists_names
+        assert artist2_name in artists_names
+        assert artist3_name in artists_names
 
     def test_mix_existing_and_non_existing_artists_then_ok(self) -> None:
-        existing_artist = "Kopoe"
-        self.model_fixture_factory.create_artist(name=existing_artist)
-        new_artist1 = "NewArtist1"
-        new_artist2 = "NewArtist2"
+        existing_artist = self.model_fixture_factory.create_artist(name="Kopoe")
+        new_artist1_name = "NewArtist1"
+        new_artist2_name = "NewArtist2"
 
         data = {PostFields.ALBUM_NAME: "Best Of",
-                PostFields.ARTISTS_NAMES_ARRAY: [existing_artist, new_artist1, new_artist2]}
+                PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [existing_artist.name, new_artist1_name, new_artist2_name]}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_object.artists.all().order_by('name'))
+        assert self.saved_object.album
+        artists_list: list[Artist] = list(self.saved_object.album.album_artists.all())
         assert len(artists_list) == 3
-        assert artists_list[0].name == existing_artist
-        assert artists_list[1].name == new_artist1
-        assert artists_list[2].name == new_artist2
+        artists_uuids = [artist.uuid for artist in artists_list]
+        assert existing_artist.uuid in artists_uuids
+        artists_names = [artist.name for artist in artists_list]
+        assert new_artist1_name in artists_names
+        assert new_artist2_name in artists_names
 
     def test_multiple_with_one_too_long_then_400(self) -> None:
         valid_artist = "ValidArtist"
         too_long_artist = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
 
-        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ARTISTS_NAMES_ARRAY: f"{valid_artist}, {too_long_artist}"}
+        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [valid_artist, too_long_artist]}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error['field'] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
+        assert error['field'] == to_camel_case(PostFields.ALBUM_ARTISTS_NAMES_ARRAY)
         assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
     def test_multiple_with_one_empty_then_400(self) -> None:
-        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ARTISTS_NAMES_ARRAY: ['', 'Muse']}
+        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: ['', 'Muse']}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error['field'] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
+        assert error['field'] == to_camel_case(PostFields.ALBUM_ARTISTS_NAMES_ARRAY)
         assert error['code'] == FieldValidationErrorCode.LIST_VALUE_EMPTY
 
     def test_comma_separated_then_only_one_value(self) -> None:
         artist_name = "mat, muse"
-        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ARTISTS_NAMES_ARRAY: f"{artist_name}"}
+        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist_name]}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_object.artists.all())
+        assert self.saved_object.album
+        artists_list: list[Artist] = list(self.saved_object.album.album_artists.all())
         assert len(artists_list) == 1
         assert artists_list[0].name == artist_name
 
     def test_duplicate_values_then_400(self) -> None:
-        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ARTISTS_NAMES_ARRAY: ['Muse', 'Muse']}
+        data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: ['Muse', 'Muse']}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error['field'] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
+        assert error['field'] == to_camel_case(PostFields.ALBUM_ARTISTS_NAMES_ARRAY)
         assert error['code'] == FieldValidationErrorCode.LIST_VALUE_DUPLICATE

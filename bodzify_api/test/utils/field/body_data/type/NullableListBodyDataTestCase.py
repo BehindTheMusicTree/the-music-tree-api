@@ -44,7 +44,7 @@ from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 class NullablelistBodyDataTestCase(AppTestCase):
     def setUp(self, methods_names_to_implement: list[str] | None = None) -> None:
-        class_methods_names_to_implement = ['test_longest_then_ok',
+        class_methods_names_to_implement = ['test_largest_then_ok',
                                             'test_empty_then_ok',
                                             'test_comma_separated_then_only_one_value',
                                             'test_one_too_large_then_400',

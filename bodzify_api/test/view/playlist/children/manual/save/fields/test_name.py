@@ -17,7 +17,7 @@ class TestCase(ManualPlaylistTestCase):
         assert error['field'] == Fields.NAME_PUBLIC
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
-    def test_longest_then_ok(self):
+    def test_largest_then_ok(self):
         response = self._post_manual_playlist(**{Fields.NAME_PUBLIC: "a" * settings.MANUAL_PLAYLIST_NAME_LEN_MAX})
 
         assert response.status_code == status.HTTP_201_CREATED

@@ -1,5 +1,5 @@
 meta {
-  name: | albumName bo | artist mat
+  name: albumName bo | albumArtist muse
   type: http
   seq: 1
 }
@@ -15,10 +15,9 @@ headers {
 }
 
 body:multipart-form {
-  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/utils/lib_track/files/metadata=none.mp3)
-  artistsNames: mat
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/size_small=0.01mo.mp3)
   albumName: bo
-  albumArtistsNames: muse
+  albumArtistsNames[]: muse
 }
 
 vars:post-response {

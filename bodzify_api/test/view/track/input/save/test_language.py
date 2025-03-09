@@ -10,7 +10,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
 
-    def test_longest_then_ok(self):
+    def test_largest_then_ok(self):
         language = "a" * settings.LANGUAGE_LEN_MAX
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PutFields.LANGUAGE: language})
 
