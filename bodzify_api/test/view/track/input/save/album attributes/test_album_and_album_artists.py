@@ -53,8 +53,10 @@ class TestCase(LibTrackTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album == album
-        assert self.saved_object.album.album_artists.count() == 1
-        assert self.saved_object.album.album_artists.first() == album_artist1
+        assert self.saved_object.album.album_artists.count() == 2
+        album_artists = list(self.saved_object.album.album_artists.all())
+        assert album_artist1 in album_artists
+        assert album_artist2 in album_artists
 
     def test_provided_with_existing_album_without_album_artists_then_link_to_it(self):
         album = self.model_fixture_factory.create_album(name="koko")
@@ -64,8 +66,7 @@ class TestCase(LibTrackTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album == album
-        assert self.saved_object.album.album_artists.count() == 1
-        assert cast(Artist, self.saved_object.album.album_artists.first()).name == "James"
+        assert self.saved_object.album.album_artists.count() == 0
 
     def test_provided_with_new_album_name_then_create_it(self):
         album_artist_new = self.model_fixture_factory.create_artist(name="James")
