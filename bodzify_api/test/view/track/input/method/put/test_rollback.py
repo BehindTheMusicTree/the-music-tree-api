@@ -16,7 +16,7 @@ class TestCase(LibTrackTestCase):
             mock.side_effect = Exception(exception_message)
 
             try:
-                self._put_lib_track(uuid=track.uuid, **{InputFields.GENRE_NAME: new_genre_name})
+                self._put_lib_track(uuid=track.uuid, **{InputFields.GENRE: new_genre_name})
             except Exception as e:
                 assert str(e) == exception_message
                 assert track in original_genre.lib_tracks.all()
