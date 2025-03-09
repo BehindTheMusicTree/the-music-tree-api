@@ -4,7 +4,6 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.serializer.model.criteria.input.Fields import Fields as CriteriaInputFields
 from bodzify_api.test.utils.field.body_data.type.ForeignKeyBodyDataTestCase import ForeignKeyBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
-from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
@@ -16,7 +15,7 @@ class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaInputFields.PARENT
+        assert error['field'] == CriteriaInputFields.PARENT
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_empty_then_none(self):
@@ -41,7 +40,7 @@ class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaInputFields.PARENT
+        assert error['field'] == CriteriaInputFields.PARENT
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_non_existing_then_400(self):
@@ -53,5 +52,5 @@ class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaInputFields.PARENT
+        assert error['field'] == CriteriaInputFields.PARENT
         assert error['code'] == FieldValidationErrorCode.REFERENCE_INVALID

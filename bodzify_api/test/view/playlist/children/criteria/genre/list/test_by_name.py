@@ -6,7 +6,6 @@ from bodzify_api.model.playlist.children.criteria.genre.GenrePlaylist import Gen
 from bodzify_api.serializer.model.playlist.children.criteria.output.detailed import Fields as RietrieveFields
 from bodzify_api.test.utils.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
 from bodzify_api.test.view.playlist.children.criteria.genre.GenrePlaylistTestCase import GenrePlaylistTestCase
-from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(GenrePlaylistTestCase, NotNullableFreeCharFilterTestCase):
@@ -17,7 +16,7 @@ class TestCase(GenrePlaylistTestCase, NotNullableFreeCharFilterTestCase):
         response = self._get_genre_playlists(**{FilterFields.NAME: ''})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0][ErrorResponseFields.FieldErrors.FIELD] == FilterFields.NAME
+        assert self.bad_request_result_field_errors[0]['field'] == FilterFields.NAME
         assert self.bad_request_result_field_errors[0][
             'code'] == FieldValidationErrorCode.BLANK
 

@@ -4,7 +4,6 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.serializer.model.album.Fields import Fields as AlbumFields
 from bodzify_api.test.utils.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
-from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(AlbumTestCase, NotNullableFreeCharFilterTestCase):
@@ -15,7 +14,7 @@ class TestCase(AlbumTestCase, NotNullableFreeCharFilterTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == AlbumFields.NAME_PUBLIC
+        assert error['field'] == AlbumFields.NAME_PUBLIC
         assert error['code'] == FieldValidationErrorCode.BLANK
 
     def test_contains_in_another_case_then_results(self):

@@ -105,7 +105,7 @@ class AppTestCase(TestCase, Generic[T]):
                 # error_list is a list of error dictionaries
                 for error in error_list:
                     self.bad_request_result_field_errors.append({
-                        ErrorResponseFields.FieldErrors.FIELD: field_name,
+                        'field': field_name,
                         'message': error['message'],
                         'code': error['code']
                     })

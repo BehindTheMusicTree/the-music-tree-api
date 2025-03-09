@@ -4,7 +4,6 @@ from rest_framework import status
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.model.criteria.input.Fields import Fields as CriteriaPostFields
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
-from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestJsonDuplicateFields(GenreTestCase):
@@ -21,7 +20,7 @@ class TestJsonDuplicateFields(GenreTestCase):
         self._set_error_response_result(response)
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaPostFields.NAME_PUBLIC
+        assert error['field'] == CriteriaPostFields.NAME_PUBLIC
         assert error['code'] == FieldValidationErrorCode.DUPLICATE
 
     def test_duplicate_fields_on_json_put_then_400(self):
@@ -38,7 +37,7 @@ class TestJsonDuplicateFields(GenreTestCase):
         self._set_error_response_result(response)
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == CriteriaPostFields.NAME_PUBLIC
+        assert error['field'] == CriteriaPostFields.NAME_PUBLIC
         assert error['code'] == FieldValidationErrorCode.DUPLICATE
 
     def test_duplicate_fields_on_json_patch_then_400(self):

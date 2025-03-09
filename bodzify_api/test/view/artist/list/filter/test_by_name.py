@@ -5,7 +5,6 @@ from bodzify_api.serializer.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.test.utils.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
 from bodzify_api.test.view.artist.ArtistTestCase import ArtistTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
-from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(ArtistTestCase, NotNullableFreeCharFilterTestCase):
@@ -16,7 +15,7 @@ class TestCase(ArtistTestCase, NotNullableFreeCharFilterTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == ArtistFields.NAME_PUBLIC
+        assert error['field'] == ArtistFields.NAME_PUBLIC
         assert error['code'] == FieldValidationErrorCode.BLANK
 
     def test_contains_in_another_case_then_results(self):

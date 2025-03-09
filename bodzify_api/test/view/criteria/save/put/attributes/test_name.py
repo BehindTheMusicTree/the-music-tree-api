@@ -7,7 +7,6 @@ from bodzify_api.test.utils.field.body_data.method.PutBodyDataTestCase import Pu
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.utils import audio_metadata
 from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
-from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(GenreTestCase, PutBodyDataTestCase):
@@ -41,7 +40,7 @@ class TestCase(GenreTestCase, PutBodyDataTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == PutFields.NAME_PUBLIC
+        assert error['field'] == PutFields.NAME_PUBLIC
         assert error['code'] == FieldValidationErrorCode.BLANK
 
     def test_not_provided_then_unchanged(self):

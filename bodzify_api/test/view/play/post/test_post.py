@@ -8,7 +8,6 @@ from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.model.play.input.schema.PostFields import Fields
 from bodzify_api.test.view.play.PlayTestCase import PlayTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
-from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(PlayTestCase):
@@ -20,7 +19,7 @@ class TestCase(PlayTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == extra_field
+        assert error['field'] == extra_field
         assert error['code'] == FieldValidationErrorCode.UNKNOWN
 
     def test_multiple_values_for_content_then_400(self) -> None:
@@ -33,7 +32,7 @@ class TestCase(PlayTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(Fields.CONTENT)
+        assert error['field'] == to_camel_case(Fields.CONTENT)
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_non_existant_content_then_400(self):
@@ -42,7 +41,7 @@ class TestCase(PlayTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(Fields.CONTENT)
+        assert error['field'] == to_camel_case(Fields.CONTENT)
         assert error['code'] == FieldValidationErrorCode.REFERENCE_INVALID
 
     def test_playlist_play(self) -> None:
