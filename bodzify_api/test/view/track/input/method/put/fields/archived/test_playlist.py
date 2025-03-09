@@ -13,20 +13,22 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 class TestCase(LibTrackTestCase):
 
     def test_archived_lib_track_then_manual_playlist_has_plus_1_archived_lib_tracks(self):
-        manual_playlist_name = "simple playlist"
-        manual_playlist = self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
+        manual_playlist = self.model_fixture_factory.create_manual_playlist(name='teuf')
+
         track = self.model_fixture_factory.create_lib_track_with_file(title="not archived 1")
-        track.playlists.add(manual_playlist)
+        self.model_fixture_factory.create_lib_track_playlist_rel(playlist=manual_playlist, lib_track=track, position=1)
+
         track_archived = self.model_fixture_factory.create_lib_track_with_file(title="archived 1", archived=True)
-        track_archived.playlists.add(manual_playlist)
+        self.model_fixture_factory.create_lib_track_playlist_rel(
+            playlist=manual_playlist, lib_track=track_archived, position=2)
 
         response = self._put_lib_track(uuid=track.uuid, **{PutFields.ARCHIVED: "true"})
 
         assert response.status_code == status.HTTP_200_OK
-        manual_playlist_base_saved: ManualPlaylist = \
-            ManualPlaylist.objects.get(user=self.test_user1, name=manual_playlist_name)
-        assert manual_playlist_base_saved.lib_tracks_archived_count == 2
-        assert manual_playlist_base_saved.lib_tracks_not_archived_count == 0
+        manual_playlist_updated: ManualPlaylist = \
+            ManualPlaylist.objects.get(user=self.test_user1, name=manual_playlist.name)
+        assert manual_playlist_updated.lib_tracks_archived_count == 2
+        assert manual_playlist_updated.lib_tracks_not_archived_count == 0
 
     def test_archived_lib_track_then_criteria_playlist_has_plus_1_archived_lib_tracks(self):
         criteria = self.model_fixture_factory.create_genre(name="rock")

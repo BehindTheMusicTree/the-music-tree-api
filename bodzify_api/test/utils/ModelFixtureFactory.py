@@ -20,12 +20,14 @@ from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.model.criteria.children.tag.Tag import Tag
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
+from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from bodzify_api.model.musicbrainz_resource.children.artist.Fields import Fields as MusicbrainzArtistFields
 from bodzify_api.model.musicbrainz_resource.children.artist.MbArtist import MbArtist
 from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording import Fields as MusicbrainzRecordingFields
 from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording import MusicbrainzRecording
 from bodzify_api.model.play.Fields import Fields as PlayFields
 from bodzify_api.model.play.Play import Play
+from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.children.manual.Fields import Fields as ManualPlayListFields
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.model.playlist.Fields import Fields as PlayListFields
@@ -103,6 +105,10 @@ class ModelFixtureFactory:
             lib_track.artists.set(kwargs[LibraryTrackFields.ARTISTS])
 
         return lib_track
+
+    def create_lib_track_playlist_rel(
+            self, playlist: Playlist, lib_track: LibraryTrack, position: int) -> LibTrackPlaylistRel:
+        return G(LibTrackPlaylistRel, playlist=playlist, lib_track=lib_track, position=position)
 
     def create_lib_track_with_file(
         self,
