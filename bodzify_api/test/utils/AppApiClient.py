@@ -59,6 +59,20 @@ class AppApiClient(APIClient):
         if format == 'json' and isinstance(prepared_data, dict):
             return transform_uuids(prepared_data)  # Only convert UUIDs to strings, let client handle JSON encoding
 
+        # For multipart, ensure empty arrays are preserved by sending an empty string
+        if format == 'multipart' and isinstance(prepared_data, dict):
+            result = {}
+            for key, value in prepared_data.items():
+                if isinstance(value, list):
+                    if len(value) == 0:
+                        # Send empty string for empty arrays to ensure field is preserved
+                        result[key] = ['']
+                    else:
+                        result[key] = value
+                else:
+                    result[key] = value
+            return result
+
         return prepared_data
 
     def _prepare_request_kwargs(
@@ -98,7 +112,7 @@ class AppApiClient(APIClient):
     def post(self, path, data: dict | str | None = None, format='json', content_type=None, follow=False, **extra) -> HttpResponse:
         data_url_encoded = self._prepare_data(data, format)
         extra, handle_response, content_type = self._prepare_request_kwargs(extra, format, content_type)
-
+        print('data_url_encoded', data_url_encoded)
         response = super().post(path, data_url_encoded, follow=follow,
                                 format=format, content_type=content_type, **extra)
         return self._handle_response(response, handle_response)
