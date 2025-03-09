@@ -15,6 +15,10 @@ class TestCase(LibTrackTestCase):
             title="cdss", genre=old_genre, use_manager_for_genre_playlist_adding=True)
         lib_track = self.model_fixture_factory.create_lib_track_with_file(
             title="Love", genre=old_genre, use_manager_for_genre_playlist_adding=True)
+        old_genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(criteria=old_genre)
+        assert old_genre_playlist.lib_track_playlist_rels.get(lib_track=lib_track).position == 1
+        assert old_genre_playlist.lib_track_playlist_rels.get(lib_track=lib_track_following1).position == 2
+        assert old_genre_playlist.lib_track_playlist_rels.get(lib_track=lib_track_following2).position == 3
 
         response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: "Rock"})
 

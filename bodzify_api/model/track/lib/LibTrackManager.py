@@ -1,11 +1,12 @@
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from django.db import transaction
 from django.db.models import F, QuerySet
 from django.utils import timezone
 
 from bodzify_api.model.artist.Artist import Artist
+from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
@@ -31,19 +32,20 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         update_date = timezone.now()
         if old_genre:
-            old_genre_tree_item: Genre = old_genre
+            old_genre_tree_item: Criteria | None = old_genre
             while old_genre_tree_item != genre_limit:
-                LibTrackPlaylistRel.objects.filter(
-                    playlist=old_genre_tree_item.criteria_playlist, lib_track=instance).delete()
+                old_genre_tree_item = cast(Criteria, old_genre_tree_item)  # Cannot be None at that point
+                LibTrackPlaylistRel.objects.delete_instance(
+                    user=instance.user, playlist=old_genre_tree_item.criteria_playlist, lib_track=instance)
                 old_genre_tree_item.criteria_playlist.last_track_list_update_date = update_date
                 old_genre_tree_item.criteria_playlist.save(update_fields=[PlayListFields.LAST_TRACK_LIST_UPDATE_DATE])
 
                 # The loop will stop before genre_tree_item is None
-                old_genre_tree_item = old_genre_tree_item.parent  # type: ignore
+                old_genre_tree_item = old_genre_tree_item.parent
 
         else:
-            genreless_criteria_playlist: CriteriaPlaylist = \
-                CriteriaPlaylist.objects.get(user=instance.user, type=CriteriaTypePks.GENRE, criteria=None)
+            genreless_criteria_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(
+                user=instance.user, type=CriteriaTypePks.GENRE, criteria=None)
             genreless_criteria_playlist.last_track_list_update_date = update_date
             genreless_criteria_playlist.save(update_fields=[PlayListFields.LAST_TRACK_LIST_UPDATE_DATE])
             LibTrackPlaylistRel.objects.filter(

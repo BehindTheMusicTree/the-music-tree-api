@@ -44,9 +44,3 @@ class LibTrackPlaylistRel(PrivateStandardResource):
             lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, playlist=self.playlist)
             lib_track_playlist_rels.update(position=models.F(Fields.POSITION) + 1)
             self.position = 1
-
-    def delete(self, *args, **kwargs):
-        lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(
-            user=self.user, playlist=self.playlist, position__gt=self.position)
-        lib_track_playlist_rels.update(position=F(Fields.POSITION) - 1)
-        super().delete(*args, **kwargs)
