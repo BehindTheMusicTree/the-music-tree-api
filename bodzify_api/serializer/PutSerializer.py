@@ -10,7 +10,6 @@ from bodzify_api.serializer.AppSerializer import AppSerializer
 class PutSerializer(AppSerializer):
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        attrs = super().validate(attrs)
 
         # Ensure there's at least one field to update
         request = self.context.get(self.REQUEST_FIELD)
