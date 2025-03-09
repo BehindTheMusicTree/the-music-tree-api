@@ -10,11 +10,12 @@ class TestCase(LibTrackTestCase):
 
     def test_new_criteria_then_not_in_old_criteria_playlist_anymore(self):
         old_genre = self.model_fixture_factory.create_genre(name="Metal")
-        new_genre_name = "Rock"
+        data = {LibTrackFields.TITLE: "Love", LibTrackFields.GENRE: old_genre}
         lib_track = self.model_fixture_factory.create_lib_track_with_file(
-            **{LibTrackFields.TITLE: "Love", LibTrackFields.GENRE: old_genre.uuid})
+            use_manager_for_genre_playlist_adding=True, **data)
         assert lib_track in old_genre.criteria_playlist.lib_tracks.all()
 
+        new_genre_name = "Rock"
         response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: new_genre_name})
 
         assert response.status_code == status.HTTP_200_OK
