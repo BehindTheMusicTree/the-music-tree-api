@@ -75,7 +75,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert Artist.objects.filter(user=self.test_user1, name=artist_name).exists()
 
-    def test_not_delete_old_one_because_an_album__with_a_track_linked_to_it(self):
+    def test_not_delete_old_one_because_an_album_with_a_track_linked_to_it(self):
         artist_name = "a-ha"
         artist = self.model_fixture_factory.create_artist(name=artist_name)
         track = self.model_fixture_factory.create_lib_track_with_file(title="Foire", artists=[artist])

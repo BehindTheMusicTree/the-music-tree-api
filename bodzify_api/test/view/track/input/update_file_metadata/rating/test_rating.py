@@ -13,7 +13,7 @@ def childinstance(request, db):
     yield from conftest.base_childinstance(request, db)
 
 
-def test_max_then_ok(childinstance):
+def test_largest_then_ok(childinstance):
     childinstance._test_value(value=childinstance.value_max,
                               value_expected_in_metadata=childinstance.value_max_expected_in_metadata,
                               additional_data_dict=None,

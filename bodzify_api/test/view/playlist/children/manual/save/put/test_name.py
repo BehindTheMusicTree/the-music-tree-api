@@ -3,7 +3,6 @@ from rest_framework import status
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.playlist.Playlist import Fields as PlayListFields
 from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase import ManualPlaylistTestCase
-from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(ManualPlaylistTestCase):
@@ -27,4 +26,4 @@ class TestCase(ManualPlaylistTestCase):
         assert self.bad_request_result_field_errors[0][
             'code'] == FieldValidationErrorCode.BLANK
         assert self.bad_request_result_field_errors[0][
-            ErrorResponseFields.FieldErrors.FIELD] == PlayListFields.NAME_PUBLIC
+            'field'] == PlayListFields.NAME_PUBLIC

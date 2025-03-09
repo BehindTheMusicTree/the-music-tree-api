@@ -7,7 +7,6 @@ from bodzify_api.test.utils.field.body_data.type.NullablePositiveIntBodyDataTest
 )
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
-from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
@@ -45,7 +44,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
+        assert error['field'] == PostFields.RATING
         assert error['code'] == FieldValidationErrorCode.RATING_TOO_LARGE
 
     def test_negative_then_400(self):
@@ -54,7 +53,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
+        assert error['field'] == PostFields.RATING
         assert error['code'] == FieldValidationErrorCode.RATING_TOO_SMALL
 
     def test_multi_value_then_400(self):
@@ -63,7 +62,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
+        assert error['field'] == PostFields.RATING
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_float_then_400(self):
@@ -72,14 +71,21 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
+        assert error['field'] == PostFields.RATING
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
-    def test_string_then_400(self):
+    def test_string_not_castable_then_400(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: 'five'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == PostFields.RATING
+        assert error['field'] == PostFields.RATING
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+
+    def test_string_castable_then_ok(self):
+        rating = '5'
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: rating})
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.rating == int(rating)

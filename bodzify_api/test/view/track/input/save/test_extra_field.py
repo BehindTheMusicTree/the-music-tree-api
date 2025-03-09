@@ -4,7 +4,6 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
-from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(LibTrackTestCase):
@@ -17,5 +16,5 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == extraField
+        assert error['field'] == extraField
         assert error['code'] == FieldValidationErrorCode.UNKNOWN

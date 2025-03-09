@@ -6,7 +6,6 @@ from bodzify_api.serializer.model.lib_track.input.put.Fields import Fields as Pu
 from bodzify_api.test.utils.field.body_data.type.NullableCharBodyDataTestCase import NullableCharBodyDataTestCase
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
-from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
@@ -26,7 +25,7 @@ class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == PutFields.LANGUAGE
+        assert error['field'] == PutFields.LANGUAGE
         assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
     def test_empty_then_ok(self):
@@ -41,5 +40,5 @@ class TestCase(NullableCharBodyDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == PutFields.LANGUAGE
+        assert error['field'] == PutFields.LANGUAGE
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID

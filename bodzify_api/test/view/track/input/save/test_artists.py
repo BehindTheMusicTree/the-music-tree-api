@@ -8,7 +8,6 @@ from bodzify_api.test.utils.field.body_data.type.NullableListBodyDataTestCase im
 from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
-from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 
 
 class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
@@ -31,7 +30,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
+        assert error['field'] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
         assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
     def test_one_is_max_length_and_another_one_is_one_char_then_ok(self) -> None:
@@ -53,7 +52,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(malformed_field_name)
+        assert error['field'] == to_camel_case(malformed_field_name)
         assert error['code'] == FieldValidationErrorCode.LIST_MALFORMED
 
     def test_comma_separated_then_only_one_value(self):
@@ -72,7 +71,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
+        assert error['field'] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
         assert error['code'] == FieldValidationErrorCode.LIST_VALUE_DUPLICATE
 
     def test_empty_then_ok(self):
@@ -90,7 +89,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
+        assert error['field'] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
         assert error['code'] == FieldValidationErrorCode.LIST_VALUE_EMPTY
 
     def test_one_existing_then_create_it(self) -> None:
@@ -171,5 +170,5 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error[ErrorResponseFields.FieldErrors.FIELD] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
+        assert error['field'] == to_camel_case(PostFields.ARTISTS_NAMES_ARRAY)
         assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
