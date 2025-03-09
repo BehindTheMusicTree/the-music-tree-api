@@ -11,12 +11,12 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         rating = 5
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Korinto", rating=rating)
 
-        response = self._put_lib_track(uuid=lib_track.uuid, **{})
+        response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.TITLE: "Wech"})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_object.rating == rating
 
-    def test_zero(self):
+    def test_provided_then_update(self):
         rating = 0
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Korinto")
 
