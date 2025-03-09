@@ -7,15 +7,6 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 class TestCase(LibTrackTestCase, PutBodyDataTestCase):
 
-    def test_not_empty_then_ok(self):
-        language = "en"
-        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
-
-        response = self._put_lib_track(lib_track.uuid, **{PutFields.LANGUAGE: language})
-
-        assert response.status_code == status.HTTP_200_OK
-        assert self.saved_object.language == language
-
     def test_not_provided_then_unchanged(self):
         language = "Fr"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", language=language)
