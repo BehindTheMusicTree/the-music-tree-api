@@ -56,16 +56,14 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
     def test_one_then_ok(self):
         track_number = 1
 
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3,
-                                        albumName='hey', track_number=track_number)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, track_number=track_number)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_number == track_number
 
     def test_largest_then_ok(self):
         track_number = settings.LIB_TRACK_TRACK_NUMBER_MAX
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3,
-                                        album_name='album', track_number=track_number)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, track_number=track_number)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_number == track_number
@@ -81,7 +79,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert error['code'] == FieldValidationErrorCode.TRACK_NUMBER_TOO_LARGE
 
     def test_negative_then_400(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, album_name='albumito', track_number=-1)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, track_number=-1)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
