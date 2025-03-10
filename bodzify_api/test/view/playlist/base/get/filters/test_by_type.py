@@ -43,15 +43,14 @@ class TestCase(EnumCharFilterTestCase, PlaylistTestCase):
         assert error['code'] == FieldValidationErrorCode.BLANK
 
     def test_value_is_genre_then_results(self):
-        rock_criteria_name = "Rock n roll"
-        self.model_fixture_factory.create_genre(name=rock_criteria_name)
+        genre_rock = self.model_fixture_factory.create_genre(name="Rock n roll")
 
         response = self._get_playlists(**{FilterSetFields.TYPE_LABEL_PUBLIC: 'genre'})
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
         names = [result[PlaylistGetFields.NAME] for result in self.results]
-        assert rock_criteria_name in names
+        assert genre_rock.name in names
         assert CriterialessPlaylistNames.GENRE in names
 
     def test_value_is_tag_then_results(self):
