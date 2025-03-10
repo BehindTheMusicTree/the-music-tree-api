@@ -2,6 +2,7 @@ from django_filters import FilterSet
 
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.model.base.BaseQuerySet import BaseQuerySet
 from bodzify_api.utils import data_transformer
 
 
@@ -30,4 +31,8 @@ class AppFilterSet(FilterSet):
                 field_validation_error_code=FieldValidationErrorCode.INVALID_FILTERS
             )
 
-        return super(AppFilterSet, self).qs
+        queryset = super().qs
+        if not isinstance(queryset, BaseQuerySet):
+            # If the queryset isn't already a BaseQuerySet, create one
+            queryset = BaseQuerySet(queryset.model, using=queryset.db)
+        return queryset
