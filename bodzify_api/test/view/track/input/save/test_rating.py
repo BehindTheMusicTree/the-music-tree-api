@@ -11,7 +11,13 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
 
-    def test_empty_then_ok(self):
+    def test_empty_string_then_none(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: ''})
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.rating == None
+
+    def test_empty_then_none(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: None})
 
         assert response.status_code == status.HTTP_201_CREATED
