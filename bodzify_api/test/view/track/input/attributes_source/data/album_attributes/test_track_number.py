@@ -27,8 +27,7 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.track_number == None
 
     def test_not_provided_then_none(self):
-        data = {PostFields.ALBUM_NAME: "albumito",
-                PostFields.ALBUM_ARTISTS_NAMES_ARRAY: []}
+        data = {PostFields.ALBUM_NAME: "albumito", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: []}
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
