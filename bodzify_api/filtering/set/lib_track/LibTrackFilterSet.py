@@ -1,7 +1,7 @@
-from django.db.models import Q, QuerySet
 from django_filters import CharFilter
 
 from bodzify_api.filtering.filter.char.EmptiableCharFilter import EmptiableCharFilter
+from bodzify_api.filtering.filter.char.PrimaryFieldCharFilter import PrimaryFieldCharFilter
 from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import (
     PrivateUniqueResourceFilterSet
 )
@@ -16,12 +16,24 @@ from .Fields import Fields
 
 class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
     title = CharFilter(field_name=ModelFields.TITLE, lookup_expr='icontains')
-    artists_name = EmptiableCharFilter(
-        field_name_public=f'artist_{ArtistFields.NAME_PUBLIC}', method=f'filter_artist_name')
-    album_name = EmptiableCharFilter(
-        field_name_public=f'{ModelFields.ALBUM}_{AlbumFields.NAME_PUBLIC}', method=f'filter_album_name')
-    genre_name = EmptiableCharFilter(
-        field_name_public=f'{ModelFields.GENRE}_{CriteriaFields.NAME_PUBLIC}', method=f'filter_genre_name')
+    artists_name = PrimaryFieldCharFilter(
+        primary_field=ArtistFields.NAME_INTERNAL,
+        field_name=ModelFields.ARTISTS,
+        field_name_public=Fields.ARTISTS_NAME,
+        lookup_expr='icontains'
+    )
+    album_name = PrimaryFieldCharFilter(
+        primary_field=AlbumFields.NAME_INTERNAL,
+        field_name=ModelFields.ALBUM,
+        field_name_public=Fields.ALBUM_NAME,
+        lookup_expr='icontains'
+    )
+    genre_name = PrimaryFieldCharFilter(
+        primary_field=CriteriaFields.NAME_INTERNAL,
+        field_name=ModelFields.GENRE,
+        field_name_public=Fields.GENRE_NAME,
+        lookup_expr='icontains'
+    )
     language = EmptiableCharFilter(
         field_name_public=ModelFields.LANGUAGE, field_name=ModelFields.LANGUAGE, lookup_expr='icontains')
 
@@ -32,31 +44,3 @@ class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
                   Fields.ALBUM_NAME,
                   Fields.GENRE_NAME,
                   Fields.LANGUAGE,]
-
-    def filter_artist_name(self, queryset: QuerySet, name, value):
-        if value:
-            return queryset.filter(
-                Q(artists__isnull=False) &
-                Q(**{f'{Fields.ARTISTS_NAME}__icontains': value})
-            )
-        else:
-            return queryset.filter(~Q(artists__pk__isnull=False))
-
-    def filter_album_name(self, queryset: QuerySet, name, value):
-        if value:
-            return queryset.filter(
-                Q(album__isnull=False) &
-                Q(**{f'{Fields.ALBUM_NAME}__icontains': value})
-            )
-        else:
-            return queryset.filter(album__isnull=True)
-
-    def filter_genre_name(self, queryset: QuerySet, name, value):
-        if value:
-            return queryset.filter(
-                Q(genre__isnull=False) &
-                Q(**{f'{Fields.GENRE_NAME}__icontains': value})
-            )
-        else:
-            return queryset.filter(genre__isnull=True)
-        return queryset
