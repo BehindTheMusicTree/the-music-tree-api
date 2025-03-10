@@ -1,15 +1,15 @@
 meta {
   name: genre
   type: http
-  seq: 1
+  seq: 2
 }
 
 get {
-  url: {{BASE_URL}}manual-playlists/{{ManualPlaylistFootUuid}}/
-  body: none
+  url: {{BASE_URL}}playlists?type_label=manual
+  body: json
   auth: inherit
 }
 
-headers {
-  Authorization: Bearer {{tokenAccess}}
+params:query {
+  type_label: manual
 }
