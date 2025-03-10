@@ -21,6 +21,5 @@ class NonEmptiableCharFilter(EmptiableCharFilter):
                     message=_('This field may not be blank.'),
                     field_validation_error_code=FieldValidationErrorCode.BLANK
                 )
-
-        result = super().filter(qs, value)
-        return result
+            return super().filter(qs, value)
+        return qs
