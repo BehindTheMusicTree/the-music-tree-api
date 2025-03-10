@@ -1,50 +1,97 @@
-#!/usr/bin/env python
-
 from rest_framework import status
-from bodzify_api.serializer.track.input.endpoint.post import Fields as PostFields
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.test.utils.field.body_data.type.NullablePositiveIntBodyDataTestCase import (
+    NullablePositiveIntBodyDataTestCase
+)
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
+
+    def test_empty_string_then_none(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: ''})
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.rating == None
 
     def test_empty_then_none(self):
-        data_dict = {PostFields.RATING: None}
-        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data_dict)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: None})
+
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == None
+        assert self.saved_object.rating == None
 
     def test_zero(self):
         rating = 0
-        data_dict = {PostFields.RATING: rating}
-        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data_dict)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: rating})
+
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == rating
+        assert self.saved_object.rating == rating
 
     def test_four(self):
         rating = 4
-        data_dict = {PostFields.RATING: rating}
-        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data_dict)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == rating
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: rating})
 
-    def test_ten(self):
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.rating == rating
+
+    def test_largest_then_ok(self):
         rating = 10
-        data_dict = {PostFields.RATING: rating}
-        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data_dict)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: rating})
+
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == rating
+        assert self.saved_object.rating == rating
 
-    def test_error_when_above_maximum(self):
-        data_dict = {PostFields.RATING: 11}
-        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data_dict)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+    def test_too_large_then_400(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: 11})
 
-    def test_error_when_below_minimum(self):
-        data_dict = {PostFields.RATING: -1}
-        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data_dict)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == PostFields.RATING
+        assert error['code'] == FieldValidationErrorCode.RATING_TOO_LARGE
 
-    def test_error_when_not_integer(self):
-        data_dict = {PostFields.RATING: 5.5}
-        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data_dict)
+    def test_negative_then_400(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: -1})
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == PostFields.RATING
+        assert error['code'] == FieldValidationErrorCode.RATING_TOO_SMALL
+
+    def test_multi_value_then_400(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: [1, 2]})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == PostFields.RATING
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+
+    def test_float_then_400(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: 5.5})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == PostFields.RATING
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+
+    def test_string_not_castable_then_400(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: 'five'})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == PostFields.RATING
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+
+    def test_string_castable_then_ok(self):
+        rating = '5'
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: rating})
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.rating == int(rating)

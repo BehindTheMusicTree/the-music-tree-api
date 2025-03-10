@@ -1,0 +1,2 @@
+class Fields:
+    USER = 'user'

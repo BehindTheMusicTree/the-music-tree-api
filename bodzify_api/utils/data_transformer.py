@@ -1,0 +1,119 @@
+import re
+from typing import Any, Mapping, Union, cast
+
+from django.http import QueryDict
+
+
+def remove_substrings_from_string(string_a: str, substrings: list) -> str:
+    for substring in substrings:
+        string_a = string_a.replace(substring, '')
+    return string_a
+
+
+def convert_data_to_dict(data: Union[QueryDict, dict[str, Any], Any]) -> dict[str, Any]:
+    if isinstance(data, QueryDict):
+        return data.dict()
+    elif isinstance(data, dict):
+        return data
+    else:
+        return {k: v for k, v in data.items()}
+
+
+def to_camel_case(snake_str):
+    components = snake_str.split('_')
+    return components[0] + ''.join(x.title() for x in components[1:])
+
+
+def to_snake_case(name: str) -> str:
+    name = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', name).lower()
+
+
+def to_dict(data: Any) -> Union[QueryDict, dict[str, Any], Mapping[str, Any]]:
+    if isinstance(data, (QueryDict, dict, Mapping)):
+        return cast(Union[QueryDict, dict[str, Any], Mapping[str, Any]], data)
+    return dict(data)
+
+
+def dict_to_snake_case(data: Any) -> dict[str, Any]:
+    data_dict = to_dict(data)
+    return {to_snake_case(key): value for key, value in data_dict.items()}
+
+
+def get_copy_of_dict_including_only_specified_keys(data_dict: dict, keys) -> dict[str, Any]:
+    dict2 = dict()
+    for parameter_key in keys:
+        if parameter_key in data_dict:
+            dict2[parameter_key] = data_dict[parameter_key]
+    return dict2
+
+
+def remove_none_or_empty_key_from_dict(data_dict: dict):
+    for key in list(data_dict.keys()):
+        if data_dict[key] is None or data_dict[key] == "":
+            del data_dict[key]
+    return data_dict
+
+
+def update_dict_converting_empty_string_to_none(data: dict):
+    for key in data:
+        if data[key] == "":
+            data[key] = None
+
+
+def update_dict_converting_str_to_int_value_if_set(key: str, data: dict):
+    if key in data:
+        if data[key] is not None and data[key] != '':
+            rating = int(data[key])
+        else:
+            rating = None
+        data[key] = rating
+
+
+def update_dict1_with_key_if_set_in_dict2(key: str, dict1: dict, dict2: dict):
+    if key in dict2:
+        value = dict2[key]
+        if value == "":
+            value = None
+        dict1[key] = value
+
+
+def override_dict1_with_dict2_values_for_each_key_in_dict2(dict1: dict, dict2: dict, keys: list[str]):
+    for key in keys:
+        update_dict1_with_key_if_set_in_dict2(key=key, dict1=dict1, dict2=dict2)
+
+
+def merge_two_dicts(dict1, dict2):
+    dict1.update(dict2)
+    return dict1
+
+
+def replace_none_with_empty_string(**kwargs):
+    if kwargs is None:
+        return {}
+    return {k: ('' if v is None else v) for k, v in kwargs.items()}
+
+
+def get_first_value_str_if_exists_in_str_dict_or_none(str_dict: dict, key: str) -> str | None:
+    if key in str_dict:
+        value = str_dict[key]
+        if isinstance(value, list):
+            return value[0] if value else None
+    else:
+        return None
+
+
+def get_first_value_int_if_exists_in_str_dict_or_none(str_dict: dict, key: str) -> int | None:
+    if key in str_dict:
+        value = str_dict[key]
+        if isinstance(value, list):
+            value_str = value[0] if value else ""
+        else:
+            value_str = str(value)
+
+        if value_str and value_str.strip():
+            try:
+                return int(value_str)
+            except ValueError:
+                return None
+    return None

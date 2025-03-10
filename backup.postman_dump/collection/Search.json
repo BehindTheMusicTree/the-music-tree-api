@@ -1,1 +1,0 @@
-{"info":{"_postman_id":"1288b089-27a8-4bc5-8228-2e59b76be3ea","name":"Search","schema":"https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},"item":[{"name":"search/","id":"0c8ddec7-b6c4-4cde-b489-e0b9c6610c25","protocolProfileBehavior":{"disableBodyPruning":true},"request":{"method":"GET","header":[]},"response":[]}]}

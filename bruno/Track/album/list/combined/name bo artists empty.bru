@@ -1,0 +1,16 @@
+meta {
+  name: name bo artists empty
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}albums/?name=bo&albumArtistName
+  body: json
+  auth: inherit
+}
+
+params:query {
+  name: bo
+  albumArtistName: 
+}

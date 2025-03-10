@@ -1,8 +1,20 @@
 #!/bin/bash
 # WARNING: This script will purge the Django data. Use with caution.
 
+# Constants
+DB_TIMEOUT_SECONDS=5
+DB_TIMEOUT_ERROR_MESSAGE="ERROR: Database connection timed out after $DB_TIMEOUT_SECONDS seconds. Please check if the database server is running and accessible."
+
 log_with_script_prefixe () {
     log "[Django data purger] $1"
+}
+
+handle_db_timeout() {
+	exit_code=$1
+	if [ $exit_code -eq 124 ]; then
+		log_with_script_prefixe "$DB_TIMEOUT_ERROR_MESSAGE" >&2
+		exit 1
+	fi
 }
 
 check_script_vars_are_set() {
@@ -23,7 +35,7 @@ check_script_vars_are_set() {
 	done
 	check_bool_vars_are_set APP_IS_EXPOSED
 
-	export_value_removing_eventual_surrounding_quotes DB_SUPERUSER_PASSWORD
+	export_value_removing_potential_surrounding_quotes DB_SUPERUSER_PASSWORD
 	export PGPASSWORD=$DB_SUPERUSER_PASSWORD
 }
 
@@ -41,19 +53,31 @@ empty_libraries() {
 }
 
 force_close_db_connections_if_exist() {
-	log_with_script_prefixe "Check if database is being accessed by other users"
-	output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
-	"SELECT COUNT(*) FROM pg_stat_activity WHERE datname='${DB_BODZIFY_API_DB_NAME}'" 2>&1)
-	if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
+	log_with_script_prefixe "Force closing connections to database $1 if exists..."
+
+	db_name=$1
+	if [ -z "$db_name" ]; then
+		log_with_script_prefixe "ERROR: The database name must be provided." >&2
+		exit 1
+	fi
+
+	log_with_script_prefixe "Check if database is being accessed by other users..."
+	output=$(timeout ${DB_TIMEOUT_SECONDS}s psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
+	"SELECT COUNT(*) FROM pg_stat_activity WHERE datname='$db_name'" 2>&1)
+	exit_code=$?
+	handle_db_timeout $exit_code
+	if [ $exit_code -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
 		log_with_script_prefixe "ERROR: Failed to check if the database is being accessed by other users: $output" >&2
 		exit 1
 	fi
 	if [ "$output" -gt 0 ]; then
-		log_with_script_prefixe "Database ${DB_BODZIFY_API_DB_NAME} is being accessed by other users. Closing connections..."
-		output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
+		log_with_script_prefixe "Database $db_name is being accessed by other users. Closing connections..."
+		output=$(timeout ${DB_TIMEOUT_SECONDS}s psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
 			"SELECT pg_terminate_backend(pg_stat_activity.pid) \
 			FROM pg_stat_activity \
-			WHERE pg_stat_activity.datname = '$DB_BODZIFY_API_DB_NAME' AND pid <> pg_backend_pid();" 2>&1)
+			WHERE pg_stat_activity.datname = '$db_name' AND pid <> pg_backend_pid();" 2>&1)
+		exit_code=$?
+		handle_db_timeout $exit_code
 		if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
 			log_with_script_prefixe "ERROR: Failed to close the connections: $output" >&2
 			exit 1
@@ -65,32 +89,50 @@ force_close_db_connections_if_exist() {
 }
 
 empty_db() {
-	force_close_db_connections_if_exist
 
-	log_with_script_prefixe "Check if database exists"
-	output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
-	"SELECT 1 FROM pg_database WHERE datname='${DB_BODZIFY_API_DB_NAME}'" 2>&1)
-	if [ "$output" = "1" ]; then
-		log_with_script_prefixe "Database exists. Dropping database"
-		output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc "DROP DATABASE $DB_BODZIFY_API_DB_NAME;" 2>&1)
-		if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
-		log_with_script_prefixe "ERROR: Failed to drop the database: $output" >&2
-		exit 1
+	databases=("$DB_BODZIFY_API_DB_NAME" "test_$DB_BODZIFY_API_DB_NAME")
+
+	for db_name in "${databases[@]}"; do
+		force_close_db_connections_if_exist $db_name
+
+		log_with_script_prefixe "Checking if database $db_name exists..."
+		sql="SELECT 1 FROM pg_database WHERE datname='${!db_name}'"
+		output=$(timeout ${DB_TIMEOUT_SECONDS}s psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
+		"SELECT 1 FROM pg_database WHERE datname='${db_name}'" 2>&1)
+		exit_code=$?
+		handle_db_timeout $exit_code
+		log_with_script_prefixe "${!db_name}"
+		log_with_script_prefixe "${db_name}"
+		log_with_script_prefixe "$output"
+		if [ "$output" = "1" ]; then
+			log_with_script_prefixe "Database $db_name exists. Dropping database..."
+			output=$(timeout ${DB_TIMEOUT_SECONDS}s psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc "DROP DATABASE ${db_name};" 2>&1)
+			exit_code=$?
+			handle_db_timeout $exit_code
+			if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
+				log_with_script_prefixe "ERROR: Failed to drop the database $db_name: $output" >&2
+				exit 1
+			fi
+			log_with_script_prefixe "Database $db_name dropped successfully."
+		else
+			log_with_script_prefixe "Database $db_name does not exist."
 		fi
-	else
-		log_with_script_prefixe "Database does not exist."
-	fi
+	done
 
 	log_with_script_prefixe "Dropping user $DB_BODZIFY_API_USERNAME if exists..."
-	output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
+	output=$(timeout ${DB_TIMEOUT_SECONDS}s psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc \
 		"SELECT 1 FROM pg_roles WHERE rolname='${DB_BODZIFY_API_USERNAME}'" 2>&1)
+	exit_code=$?
+	handle_db_timeout $exit_code
 	if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
 	log_with_script_prefixe "ERROR: Failed to check if the user exists: $output" >&2
 	exit 1
 	fi
 	if [ "$output" = "1" ]; then
 		log_with_script_prefixe "User exists. Dropping user"
-		output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc "DROP USER $DB_BODZIFY_API_USERNAME;" 2>&1)
+		output=$(timeout ${DB_TIMEOUT_SECONDS}s psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -tAc "DROP USER $DB_BODZIFY_API_USERNAME;" 2>&1)
+		exit_code=$?
+		handle_db_timeout $exit_code
 		if [ $? -ne 0 ]; then
 		log_with_script_prefixe "ERROR: Failed to drop the user: $output" >&2
 		exit 1

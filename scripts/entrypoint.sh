@@ -27,8 +27,8 @@ check_script_vars_are_set () {
         exit 1
     fi
 
-    export_value_removing_eventual_surrounding_quotes DB_SUPERUSER_PASSWORD 2>&1
-    export_value_removing_eventual_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD" 2>&1
+    export_value_removing_potential_surrounding_quotes DB_SUPERUSER_PASSWORD 2>&1
+    export_value_removing_potential_surrounding_quotes "DB_BODZIFY_API_USER_PASSWORD" 2>&1
 
     check_bool_vars_are_set DEBUG APP_IS_EXPOSED 2>&1
     if [ $? -ne 0 ]; then

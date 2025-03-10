@@ -1,0 +1,11 @@
+meta {
+  name: jul
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{BASE_URL}}artists/{{artistJulUuid}}/
+  body: json
+  auth: inherit
+}

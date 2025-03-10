@@ -1,0 +1,21 @@
+meta {
+  name: uuid
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}plays/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}
+
+body:json {
+  {
+    "contentObjectUuid": "ZG3mbFXwV7w9a2CUDbFGH9"
+  }
+}

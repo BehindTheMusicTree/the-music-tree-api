@@ -1,22 +1,116 @@
-#!/usr/bin/env python
 
+# Standard library imports
 import datetime
 import os
-from pathlib import Path
 import sys
+from pathlib import Path
+from typing import Any
 
-from bodzify_api.utils.env_var_loader import load_calculated_env_paths, load_env_vars_from_file_if_exists, \
-    load_required_bool_env_var, load_required_path_env_var, load_required_secret_env_var, load_required_str_env_var
+# Third-party imports
+from bodzify_api.utils.AppStaticFileStates import StaticFileStates
+from bodzify_api.utils.env_var_loader import (
+    load_calculated_env_paths,
+    load_env_vars_from_file_if_exists,
+    load_required_bool_env_var,
+    load_required_path_env_var,
+    load_required_secret_env_var,
+    load_required_str_env_var
+)
 from bodzify_api.utils.utils import print_django
 
 
-class StaticFileState:
-    SERVING = "SERVING"
-    COLLECTING = "COLLECTING"
-    NOT_NEEDED = "NOT_NEEDED"
+TEST_USER_LIBRARIES_DIR_NAME_PREFIXE: str
+USER_MAX_NUMBER: str
+UUID_LEN: int
+LANGUAGE_LEN_MAX: int
+FILE_PATH_MAX_LENGTH: int
+LIB_TRACK_FILE_SIZE_MIN_IN_MO: int
+LIB_TRACK_FILE_SIZE_MAX_IN_MO: int
+LIB_TRACK_FILE_EXTENSIONS: list[str] = []
+LIB_TRACK_FILE_CONTENT_TYPES: list[str] = []
+LIB_TRACK_FILENAME_LEN_MAX: int
+LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH: int
+LIB_TRACK_TITLE_LEN_MAX: int
+LIB_TRACK_TITLE_LEN_MAX_ID3V1: int
+LIB_TRACK_TRACK_NUMBER_MAX: int
+LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE: list[str] = []
+LIB_TRACK_GENERATED_TITLE_LENGTH: int
+LIB_TRACK_GENERATED_TITLE_PREFIXE: str
+LIB_TRACK_RATING_VALUE_MAX: int
+MINE_TRACK_TITLE_LEN_MAX: int
+MINE_TRACK_RELEASED_ON_LEN_MAX: int
+MINE_TRACK_URL_LEN_MAX: int
+ALBUM_NAME_LEN_MAX: int
+ALBUM_NAME_LEN_MAX_ID3V1: int
+ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX: int
+ARTIST_NAME_LEN_MAX: int
+ARTIST_NAME_LEN_MAX_ID3V1: int
+ARTISTS_NAMES_LEN_MAX: int
+CRITERIA_TYPE_LABEL_LEN_MAX: int
+CRITERIA_NAME_LEN_MAX: int
+MANUAL_PLAYLIST_NAME_LEN_MAX: int
+FINGERPRINTING_ERROR_MESSAGE_LEN_MAX: int
+FINGERPRINTING_ERROR_CODE_LABEL_LEN_MAX: int
+MB_BASE_URL: str
+MB_ID_LEN_MAX: int
+MB_RECORDING_URL: str
+MB_RECORDING_TITLE_LEN_MAX: int
+MB_RECORDING_MISSING_CAUSE_CODE_LABEL_LEN_MAX: int
+MB_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX: int
+MB_ARTIST_URL: str
+MB_ARTIST_NAME_LEN_MAX: int
+PAGINATION_PAGE_SIZE_DEFAULT: int
+PAGINATION_PAGE_SIZE_MULTIMODEL_DEFAULT: int
+PAGINATION_PAGE_SIZE_MAX: int  # Security measure to avoid a DoS attack if a user requests a huge page size
+
+# AFP Connection
+AFP_POST_FULL_URL: str
+
+# Static Files
+STATIC_ROOT: Path
+STATIC_URL: str
+
+# Installed Apps and Caches
+INSTALLED_APPS: list[str] = []
+CACHES: dict[str, Any] = {}
+
+# Middleware
+MIDDLEWARE: list[str] = []
+
+# Templates
+TEMPLATES: list[dict[str, Any]] = []
+
+# Django Constants
+WSGI_APPLICATION: str
+AUTH_USER_MODEL: str
+AUTH_PASSWORD_VALIDATORS: list[dict[str, Any]] = []
+LANGUAGE_CODE: str
+TIME_ZONE: str
+USE_I18N: bool
+USE_TZ: bool
+DEFAULT_AUTO_FIELD: str
+REST_FRAMEWORK: dict[str, Any] = {}
+SPECTACULAR_SETTINGS: dict[str, Any] = {}
+SIMPLE_JWT: dict[str, Any] = {}
+
+# Media
+ACOUSTID_API_KEY: str
+MEDIA_ROOT: Path
+MEDIA_URL: str
+LIBRARIES_DIR_NAME: str
+LIBRARIES_DIR: Path
+
+# Secret Key
+SECRET_KEY: str
+
+# File Upload
+FILE_UPLOAD_TEMP_DIR: str | None
+FILE_UPLOAD_ENABLED: bool
 
 
 def init_logs_if_needed():
+    from bodzify_api.logging.LoggersName import LoggersName
+
     LOG_DIR_STR = os.getenv('DJANGO_LOG_DIR')
     if not LOG_DIR_STR:
         print_django("The DJANGO_LOG_DIR variable is not set. Logs will not be set up.")
@@ -70,14 +164,22 @@ def init_logs_if_needed():
             raise EnvironmentError(f"The log app file {LOG_APP_FILE} does not exist.")
         print_django(f"The log info file {LOG_APP_FILE} exists.")
 
+        class LOGGERS_NAME:
+            INFO = 'info'
+            REQUEST = 'request'
+            REQUEST_DJANGO = 'django.request'
+            EXCEPTIONS = 'exceptions'
+            DJANGO = 'django'
+            APP = APP_NAME
+
         global LOGGING
         LOGGING = {
             'version': 1,
             'disable_existing_loggers': False,
             'formatters': {
                 'standard': {
-                    'format': '%(asctime)s [%(levelname)s]- %(message)s'}
-
+                    'format': '%(asctime)s [%(levelname)s]- %(message)s'
+                }
             },
             'handlers': {
                 'general': {
@@ -148,32 +250,32 @@ def init_logs_if_needed():
                     'level': 'DEBUG',
                     'propagate': True
                 },
-                'info': {
+                LoggersName.INFO: {
                     'handlers': ['info'],
                     'level': 'DEBUG',
                     'propagate': True
                 },
-                'django.request': {
-                    'handlers': ['requests_with_trace'],
-                    'level': 'DEBUG',
-                    'propagate': False,
-                },
-                'exceptions': {
-                    'handlers': ['exceptions', 'console'],
-                    'level': 'DEBUG',
-                    'propagate': False,
-                },
-                'request': {
+                LoggersName.REQUEST: {
                     'handlers': ['requests', 'console'],
                     'level': 'INFO',
                     'propagate': True,
                 },
-                'django': {
+                LoggersName.REQUEST_DJANGO: {
+                    'handlers': ['requests_with_trace'],
+                    'level': 'DEBUG',
+                    'propagate': False,
+                },
+                LoggersName.EXCEPTIONS: {
+                    'handlers': ['exceptions', 'console'],
+                    'level': 'DEBUG',
+                    'propagate': False,
+                },
+                LoggersName.DJANGO: {
                     'handlers': ['django'],
                     'level': 'INFO',
                     'propagate': True
                 },
-                APP_NAME: {
+                LoggersName.APP: {
                     'handlers': [APP_NAME, 'console'],
                     'level': 'DEBUG',
                     'propagate': True
@@ -185,7 +287,7 @@ def init_logs_if_needed():
 
 def setup_app_exposure_if_needed():
     global ALLOWED_HOSTS
-
+    global APP_VERSION
     APP_VERSION = load_required_str_env_var('APP_VERSION')
     global API_ROOT_BASE
     API_ROOT_BASE = 'api/' + APP_VERSION + '/'
@@ -253,22 +355,33 @@ def setup_app_constants():
 
     # SECURITY WARNING: don't run with debug turned on in production!
     global DEBUG
-    DEBUG = load_required_bool_env_var('DEBUG')
-
-    global UUID_LEN
-    UUID_LEN = 22
+    if 'pytest' not in sys.argv[0]:  # Skip loading DEBUG from env in test mode
+        DEBUG = load_required_bool_env_var('DEBUG')
+    # else: keep the module-level DEBUG value (False by default, can be set to True by conftest)
 
     global USER_LIBRARIES_DIR_NAME_PREFIXE
     USER_LIBRARIES_DIR_NAME_PREFIXE = "user_"
+    global TEST_USER_LIBRARIES_DIR_NAME_PREFIXE
+    TEST_USER_LIBRARIES_DIR_NAME_PREFIXE = "test_user_"
     global USER_MAX_NUMBER
     USER_MAX_NUMBER = "10000000"  # hehe
 
+    global UUID_LEN
+    UUID_LEN = 36
+
+    global LANGUAGE_LEN_MAX
+    LANGUAGE_LEN_MAX = 3
+
     global FILE_PATH_MAX_LENGTH
-    FILE_PATH_MAX_LENGTH = 255
+    FILE_PATH_MAX_LENGTH = 256
     global LIB_TRACK_FILE_SIZE_MIN_IN_MO
     LIB_TRACK_FILE_SIZE_MIN_IN_MO = 0
     global LIB_TRACK_FILE_SIZE_MAX_IN_MO
     LIB_TRACK_FILE_SIZE_MAX_IN_MO = 300
+    # Set Django's upload size limit to match our max file size
+    global DATA_UPLOAD_MAX_MEMORY_SIZE
+    DATA_UPLOAD_MAX_MEMORY_SIZE = LIB_TRACK_FILE_SIZE_MAX_IN_MO * 1024 * 1024  # Convert MB to bytes
+
     global LIB_TRACK_FILE_EXTENSIONS
     LIB_TRACK_FILE_EXTENSIONS = ['mp3', 'flac', 'wav']
     global LIB_TRACK_FILE_CONTENT_TYPES
@@ -278,7 +391,11 @@ def setup_app_constants():
     global LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH
     LIB_TRACK_FILENAME_GENERATED_WITHOUT_EXTENSION_LENGTH = 20
     global LIB_TRACK_TITLE_LEN_MAX
-    LIB_TRACK_TITLE_LEN_MAX = 200
+    LIB_TRACK_TITLE_LEN_MAX = 256
+    global LIB_TRACK_TITLE_LEN_MAX_ID3V1
+    LIB_TRACK_TITLE_LEN_MAX_ID3V1 = 30
+    global LIB_TRACK_TRACK_NUMBER_MAX
+    LIB_TRACK_TRACK_NUMBER_MAX = 1000
     global LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE
     LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE = ['myfreemp3.vip', 'myfreemp3']  # The order matters
     global LIB_TRACK_GENERATED_TITLE_LENGTH
@@ -287,40 +404,65 @@ def setup_app_constants():
     LIB_TRACK_GENERATED_TITLE_PREFIXE = "bodzify_"
     global LIB_TRACK_RATING_VALUE_MAX
     LIB_TRACK_RATING_VALUE_MAX = 10
-    global LIB_TRACK_LANGUAGE_LEN_MAX
-    LIB_TRACK_LANGUAGE_LEN_MAX = 200
 
     global MINE_TRACK_TITLE_LEN_MAX
-    MINE_TRACK_TITLE_LEN_MAX = 200
+    MINE_TRACK_TITLE_LEN_MAX = 256
     global MINE_TRACK_RELEASED_ON_LEN_MAX
     MINE_TRACK_RELEASED_ON_LEN_MAX = 20
     global MINE_TRACK_URL_LEN_MAX
     MINE_TRACK_URL_LEN_MAX = 1000
+
     global ALBUM_NAME_LEN_MAX
-    ALBUM_NAME_LEN_MAX = 200
-    global ALBUM_ARTISTS_FIELD_LEN_MAX
-    ALBUM_ARTISTS_FIELD_LEN_MAX = 200
+    ALBUM_NAME_LEN_MAX = 256
+    global ALBUM_NAME_LEN_MAX_ID3V1
+    ALBUM_NAME_LEN_MAX_ID3V1 = 30
+    global ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX
+    ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX = 256
     global ARTIST_NAME_LEN_MAX
-    ARTIST_NAME_LEN_MAX = 200
+    ARTIST_NAME_LEN_MAX = 256
+    global ARTIST_NAME_LEN_MAX_ID3V1
+    ARTIST_NAME_LEN_MAX_ID3V1 = 30
+    global ARTISTS_NAMES_LEN_MAX
+    ARTISTS_NAMES_LEN_MAX = 256
+    global CRITERIA_TYPE_LABEL_LEN_MAX
+    CRITERIA_TYPE_LABEL_LEN_MAX = 50
     global CRITERIA_NAME_LEN_MAX
-    CRITERIA_NAME_LEN_MAX = 200
-    global SIMPLE_PLAYLIST_NAME_LEN_MAX
-    SIMPLE_PLAYLIST_NAME_LEN_MAX = 200
+    CRITERIA_NAME_LEN_MAX = 256
+    global MANUAL_PLAYLIST_NAME_LEN_MAX
+    MANUAL_PLAYLIST_NAME_LEN_MAX = 256
+
+    global FINGERPRINTING_ERROR_MESSAGE_LEN_MAX
+    FINGERPRINTING_ERROR_MESSAGE_LEN_MAX = 256
+    global FINGERPRINTING_ERROR_CODE_LABEL_LEN_MAX
+    FINGERPRINTING_ERROR_CODE_LABEL_LEN_MAX = 256
 
     MUSICBRAINZ_BASE_URL = "https://musicbrainz.org/"
-    global MUSICBRAINZ_RECORDING_URL
-    MUSICBRAINZ_RECORDING_URL = MUSICBRAINZ_BASE_URL + "recording/"
-    global MUSICBRAINZ_RECORDING_TITLE_LEN_MAX
-    MUSICBRAINZ_RECORDING_TITLE_LEN_MAX = 200
-    global MUSICBRAINZ_LOOKUP_ERROR_STR_LEN_MAX
-    MUSICBRAINZ_LOOKUP_ERROR_STR_LEN_MAX = 255
-    global MUSICBRAINZ_ARTIST_URL
-    MUSICBRAINZ_ARTIST_URL = MUSICBRAINZ_BASE_URL + "artist/"
-    global MUSICBRAINZ_ARTIST_NAME_LEN_MAX
-    MUSICBRAINZ_ARTIST_NAME_LEN_MAX = 200
+    global MB_ID_LEN_MAX
+    MB_ID_LEN_MAX = 36
+    global MB_RECORDING_URL
+    MB_RECORDING_URL = MUSICBRAINZ_BASE_URL + "recording/"
+    global MB_RECORDING_TITLE_LEN_MAX
+    MB_RECORDING_TITLE_LEN_MAX = 256
+    global MB_RECORDING_MISSING_CAUSE_CODE_LABEL_LEN_MAX
+    MB_RECORDING_MISSING_CAUSE_CODE_LABEL_LEN_MAX = 256
 
-    global PAGINATION_LIMIT_OFFSET_DEFAULT
-    PAGINATION_LIMIT_OFFSET_DEFAULT = 30
+    # Needs a large text for messages like:
+    # "HTTP request failed: HTTPConnectionPool(host='api.acoustid.org', port=80): Max retries exceeded with url:
+    # /v2/lookup (Caused by NameResolutionError(\"<urllib3.connection.HTTPConnection object at 0x10a884170>: Failed to
+    # resolve 'api.acoustid.org' ([Errno 8] nodename nor servname provided, or not known)\"))"
+    global MB_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX
+    MB_RECORDING_MISSING_CAUSE_MESSAGE_LEN_MAX = 400
+    global MB_ARTIST_URL
+    MB_ARTIST_URL = MUSICBRAINZ_BASE_URL + "artist/"
+    global MB_ARTIST_NAME_LEN_MAX
+    MB_ARTIST_NAME_LEN_MAX = 256
+
+    global PAGINATION_PAGE_SIZE_DEFAULT
+    PAGINATION_PAGE_SIZE_DEFAULT = 30
+    global PAGINATION_PAGE_SIZE_MULTIMODEL_DEFAULT
+    PAGINATION_PAGE_SIZE_MULTIMODEL_DEFAULT = PAGINATION_PAGE_SIZE_DEFAULT
+    global PAGINATION_PAGE_SIZE_MAX
+    PAGINATION_PAGE_SIZE_MAX = 100
 
 
 def setup_afp_connection():
@@ -355,7 +497,7 @@ def setup_static_files():
     # STATICFILES_DIRS = [] # No additional static files directories are needed.
 
 
-def setup_installed_apps():
+def setup_installed_apps_and_caches():
     global INSTALLED_APPS
     INSTALLED_APPS = ['django.contrib.admin',
                       'django.contrib.auth',
@@ -375,22 +517,36 @@ def setup_installed_apps():
     if APP_IS_EXPOSED == True:
         INSTALLED_APPS.append('rest_framework_simplejwt')
 
-    if STATIC_FILES_STATE in [StaticFileState.COLLECTING, StaticFileState.SERVING]:
+    if STATIC_FILES_STATE in [StaticFileStates.COLLECTING, StaticFileStates.SERVING]:
         INSTALLED_APPS.append('django.contrib.staticfiles')
+
+    global CACHES
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'unique-snowflake',
+        }
+    }
 
 
 def setup_middlewares():
+    """Setup Django middleware classes. Top middleware classes are executed first."""
     global MIDDLEWARE
-    MIDDLEWARE = [f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
-                  f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
-                  'django.middleware.security.SecurityMiddleware',
-                  'corsheaders.middleware.CorsMiddleware',
-                  'django.contrib.sessions.middleware.SessionMiddleware',
-                  'django.middleware.common.CommonMiddleware',
-                  'django.middleware.csrf.CsrfViewMiddleware',
-                  'django.contrib.auth.middleware.AuthenticationMiddleware',
-                  'django.contrib.messages.middleware.MessageMiddleware',
-                  'django.middleware.clickjacking.XFrameOptionsMiddleware']
+    MIDDLEWARE = [
+        f'{APP_NAME}.middleware.ContentTypeValidationMiddleware.ContentTypeValidationMiddleware',
+        f'{APP_NAME}.middleware.CamelToSnakeMiddleware.CamelToSnakeMiddleware',
+        f'{APP_NAME}.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware',
+        f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
+        f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
+        'django.middleware.security.SecurityMiddleware',
+        'corsheaders.middleware.CorsMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware'
+    ]
 
 
 def setup_db_connection():
@@ -445,6 +601,9 @@ def setup_django_constants():
     global WSGI_APPLICATION
     WSGI_APPLICATION = f'{APP_NAME}.wsgi.application'
 
+    global AUTH_USER_MODEL
+    AUTH_USER_MODEL = f'{APP_NAME}.User'
+
     global AUTH_PASSWORD_VALIDATORS
     AUTH_PASSWORD_VALIDATORS = [{'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },
                                 {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', },
@@ -465,6 +624,11 @@ def setup_django_constants():
         'DEFAULT_RENDERER_CLASSES': (
             'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
         ),
+        'DEFAULT_PARSER_CLASSES': (
+            'djangorestframework_camel_case.parser.CamelCaseJSONParser',
+            'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
+            'djangorestframework_camel_case.parser.CamelCaseFormParser',
+        ),
         'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
         'PAGE_SIZE': 30,
         'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -474,7 +638,8 @@ def setup_django_constants():
         'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
         'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
         'DEFAULT_VERSION': 'v1',
-        'ALLOWED_VERSIONS': 'v1'
+        'ALLOWED_VERSIONS': 'v1',
+        'EXCEPTION_HANDLER': 'bodzify_api.view.error.exception_handler.custom_exception_handler',
     }
 
     global SPECTACULAR_SETTINGS
@@ -498,7 +663,7 @@ def setup_media_dirs():
     print_django("FILE_UPLOAD_TEMP_DIR is set. Setting up the media variables...")
 
     global ACOUSTID_API_KEY
-    ACOUSTID_API_KEY = load_required_str_env_var('ACOUSTID_API_KEY')
+    ACOUSTID_API_KEY = load_required_secret_env_var('ACOUSTID_API_KEY')
 
     global MEDIA_ROOT  # Django constant, do not rename.
     MEDIA_ROOT = load_required_path_env_var('MEDIA_DIR')
@@ -538,19 +703,35 @@ load_env_vars_from_file_if_exists(APP_ENV_FILE)
 ENV = load_required_str_env_var('ENV')
 APP_NAME = load_required_str_env_var('APP_NAME')
 APP_IS_EXPOSED = load_required_bool_env_var('APP_IS_EXPOSED')
-FILE_UPLOAD_ENABLED = None
 
 set_secret_key()
 
+if 'pytest' in sys.argv[0]:
+    print_django("settings.py is being executed because of a pytest command.")
+
+    if os.environ.get('AUDIO_META_ANALYSIS_ENABLED', 'False').lower() == 'true':
+        AUDIO_META_ANALYSIS_ENABLED = True
+        print_django("The audio meta analysis is enabled.")
+    else:
+        AUDIO_META_ANALYSIS_ENABLED = False
+        print_django("The audio meta analysis is disabled.")
+
+    PASSWORD_HASHERS = ['django.contrib.auth.hashers.MD5PasswordHasher']  # Less secured to speed up tests
+else:
+    AUDIO_META_ANALYSIS_ENABLED = True
+    print_django("settings.py is not being executed because of a pytest command. The audio meta analysis is enabled.")
+
 if 'loaddata' in sys.argv:
     print_django("settings.py is being executed because of a loaddata command.")
-    STATIC_FILES_STATE = StaticFileState.NOT_NEEDED
+    load_calculated_env_paths(BASE_DIR)
+    STATIC_FILES_STATE = StaticFileStates.NOT_NEEDED
     setup_app_constants()
-    setup_installed_apps()
+    setup_installed_apps_and_caches()
     setup_middlewares()
     setup_django_constants()
     setup_db_connection()
     setup_templates()  # Needed to use the admin application
+    setup_media_dirs()  # Needed for the User model library path field
 else:
     load_calculated_env_paths(BASE_DIR)
     setup_app_exposure_if_needed()
@@ -558,18 +739,18 @@ else:
 
     STATIC_FILES = os.getenv('STATIC_FILES')
     if ENV == 'COLLECT_STATIC':
-        STATIC_FILES_STATE = StaticFileState.COLLECTING
+        STATIC_FILES_STATE = StaticFileStates.COLLECTING
         setup_static_files()
     else:
         if not STATIC_FILES:
             print_django("Static files are not needed.")
-            STATIC_FILES_STATE = StaticFileState.NOT_NEEDED
+            STATIC_FILES_STATE = StaticFileStates.NOT_NEEDED
         else:
             print_django("Static files are being served.")
-            STATIC_FILES_STATE = StaticFileState.SERVING
+            STATIC_FILES_STATE = StaticFileStates.SERVING
             setup_static_files()
 
-    setup_installed_apps()
+    setup_installed_apps_and_caches()
     setup_middlewares()
     setup_templates()
     setup_django_constants()

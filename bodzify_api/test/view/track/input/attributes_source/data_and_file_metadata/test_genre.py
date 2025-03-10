@@ -1,27 +1,28 @@
-#!/usr/bin/env python
-
 from rest_framework import status
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
-from bodzify_api.serializer.track.input.endpoint.post import Fields as PostFields
+
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_genre_name_in_both_then_take_data(self):
         data_genre_name = "Rock"
-        data_dict = {PostFields.GENRE_NAME: data_genre_name}
-        response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(data_dict=data_dict)
+        data_dict = {PostFields.GENRE: data_genre_name}
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_LONG_A_ID3V2_SMALL_MP3, **data_dict)
+
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre is not None
-        assert self.saved_lib_track.genre.name == data_genre_name
+        assert self.saved_object.genre
+        assert self.saved_object.genre.name == data_genre_name
 
     def test_genre_uuid_in_data_and_genre_name_in_matadata_then_take_data(self):
         data_genre_name = "Rock"
         genre_uuid = self.model_fixture_factory.create_genre(name=data_genre_name).uuid
-        data_dict = {PostFields.GENRE_UUID: genre_uuid}
-        response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(data_dict=data_dict)
+
+        data_dict = {PostFields.GENRE: genre_uuid}
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_LONG_A_ID3V2_SMALL_MP3, **data_dict)
+
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.genre is not None
-        assert self.saved_lib_track.genre.name == data_genre_name
+        assert self.saved_object.genre
+        assert self.saved_object.genre.name == data_genre_name

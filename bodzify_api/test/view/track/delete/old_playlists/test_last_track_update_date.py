@@ -1,46 +1,36 @@
-#!/usr/bin/env python
-
-import pytest
 from rest_framework import status
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PLAYLIST_SPECIAL_NAMES
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@pytest.mark.django_db
-class TrackDeleteViewTestCase(TrackTestCase):
+@
+class TestCase(LibTrackTestCase):
 
-    def test_delete_then_update_the_all_playlist_last_track_update_date(self):
-        track = self.model_fixture_factory.create_lib_track(title="We're All To Blame")
-        all_playlist = SimplePlaylist.objects.get(name=PLAYLIST_SPECIAL_NAMES.ALL).base_playlist
-        last_track_list_update_date_before_deletion = all_playlist.last_track_list_update_date
-        response = self.delete_lib_track(lib_track_uuid=track.uuid)
-        assert response.status_code == status.HTTP_204_NO_CONTENT
-        all_playlist.refresh_from_db()
-        assert all_playlist.last_track_list_update_date > last_track_list_update_date_before_deletion
-
-    def test_delete_then_update_genre_playlist_last_track_update_date(self):
+    def test_delete_then_update_genre_playlist_last_track_update_date(self) -> None:
         genre = self.model_fixture_factory.create_genre(name='rock')
-        genre_playlist = genre.criteria_playlist.base_playlist  # type: ignore
-        track = self.model_fixture_factory.create_lib_track(title="We're All To Blame", genre=genre)
-        genre_playlist_last_track_list_update_date_before_deletion = (genre_playlist.last_track_list_update_date)
-        response = self.delete_lib_track(lib_track_uuid=track.uuid)
-        assert response.status_code == status.HTTP_204_NO_CONTENT
-        genre_playlist.refresh_from_db()
-        assert genre_playlist.last_track_list_update_date > genre_playlist_last_track_list_update_date_before_deletion
+        track = self.model_fixture_factory.create_lib_track_with_file(
+            title="We're All To Blame", genre=genre, use_manager_for_genre_playlist_adding=True)
+        genre_playlist_last_track_list_update_date_before_deletion = genre.criteria_playlist.last_track_list_update_date
 
-    def test_delete_then_update_parent_of_parent_of_genre_playlist_last_track_update_date(self):
+        response = self._delete_lib_track(uuid=track.uuid)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        genre.criteria_playlist.refresh_from_db()
+        assert genre.criteria_playlist.last_track_list_update_date > \
+            genre_playlist_last_track_list_update_date_before_deletion
+
+    def test_delete_then_update_parent_of_parent_of_genre_playlist_last_track_update_date(self) -> None:
         genre1 = self.model_fixture_factory.create_genre(name='rock')
         genre2 = self.model_fixture_factory.create_genre(name='punk', parent=genre1)
         genre3 = self.model_fixture_factory.create_genre(name='punk hardcore', parent=genre2)
+        track = self.model_fixture_factory.create_lib_track_with_file(
+            title="We're All To Blame", genre=genre3, use_manager_for_genre_playlist_adding=True)
+        genre1_playlist_last_track_list_update_date_before_deletion = \
+            genre1.criteria_playlist.last_track_list_update_date
 
-        genre1_playlist = genre1.criteria_playlist.base_playlist  # type: ignore
-        track = self.model_fixture_factory.create_lib_track(title="We're All To Blame", genre=genre3)
-        genre1_playlist_last_track_list_update_date_before_deletion = genre1_playlist.last_track_list_update_date
-        response = self.delete_lib_track(lib_track_uuid=track.uuid)
+        response = self._delete_lib_track(uuid=track.uuid)
+
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        genre1_playlist.refresh_from_db()
-        assert genre1_playlist.last_track_list_update_date > genre1_playlist_last_track_list_update_date_before_deletion
+        genre1.criteria_playlist.refresh_from_db()
+        assert genre1.criteria_playlist.last_track_list_update_date > \
+            genre1_playlist_last_track_list_update_date_before_deletion

@@ -1,0 +1,19 @@
+meta {
+  name: name rock
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}genres/?name=rock
+  body: json
+  auth: inherit
+}
+
+params:query {
+  name: rock
+}
+
+vars:post-response {
+  genreRockUuid: res.body.results[0].uuid
+}

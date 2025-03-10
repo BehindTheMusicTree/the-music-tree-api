@@ -1,0 +1,12 @@
+from uuid import UUID
+
+from rest_framework import status
+
+from .AllLibTracksMixinTestCase import AllLibTracksMixinTestCase
+
+
+class TestCase(AllLibTracksMixinTestCase):
+
+    def test_retrieve_then_405(self):
+        response = self._retrieve_all_lib_tracks_mixin(uuid=UUID('00000000-0000-0000-0000-000000000000'))
+        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED

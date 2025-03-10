@@ -1,0 +1,25 @@
+meta {
+  name: | artists mat muse
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}tracks/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/utils/lib_track/files/metadata=none.mp3)
+  ArtistsNames[]: mat
+  ArtistsNames[]: muse
+}
+
+vars:pre-request {
+  : 
+}

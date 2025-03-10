@@ -1,23 +1,32 @@
-#!/usr/bin/env python
-
-import uuid
 import pytest
-
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+@pytest.mark.usefixtures("enable_audio_metadata_analysis")
+class TestCase(LibTrackTestCase):
 
     @pytest.mark.critical
     def test_audio_fingerprinter_connection_ok(self):
-        print("test_drown_7m21_mp3_then_ok")
-        response = self.post_lib_track_with_specific_sample("oostil - drown (massano remix) - 7m21.mp3")
-        assert response.status_code == status.HTTP_201_CREATED
-        if self.saved_lib_track.track_file.fingerprinting_error_code is not None:
-            print(self.saved_lib_track.track_file.fingerprinting_error_code)
+        print("test_audio_fingerprinter_connection_ok")
+        response = self._post_lib_track(TestLibTrackFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
+        is_reponse_ok = response.status_code == status.HTTP_201_CREATED
+        if not is_reponse_ok:
+            print(self.bad_request_result)
+        assert is_reponse_ok
+        track_file = self.saved_object.track_file
+        assert track_file
+        if track_file.fingerprint_missing_cause:
+            print(track_file.fingerprint_missing_cause)
+            assert False
+
+        if track_file.musicbrainz_recording_missing_cause:
+            print(track_file.musicbrainz_recording_missing_cause)
             assert False
         else:
-            assert self.saved_lib_track.musicbrainz_recording.uuid == uuid.UUID(  # type: ignore
-                "4a45b00b-273d-40ed-9ecd-42f387f59c22")
+            print("No musicbrainz_recording_missing_cause")
+
+        assert track_file.musicbrainz_recording
+        assert track_file.musicbrainz_recording.musicbrainz_id == "4a45b00b-273d-40ed-9ecd-42f387f59c22"

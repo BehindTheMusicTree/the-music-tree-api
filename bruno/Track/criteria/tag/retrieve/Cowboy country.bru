@@ -1,0 +1,15 @@
+meta {
+  name: Cowboy country
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}genres/ZyqyNTXgLMVWUjf2yARfNN/
+  body: json
+  auth: inherit
+}
+
+vars:post-response {
+  lol: res.body.uuid
+}

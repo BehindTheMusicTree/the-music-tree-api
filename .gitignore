@@ -6,3 +6,5 @@ tmp-uploaded-files/
 .venv/
 .env
 .DS_Store
+bodzify_api/fixtures/*
+!bodzify_api/fixtures/*/

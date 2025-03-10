@@ -1,0 +1,17 @@
+meta {
+  name: Country new name Country music
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{BASE_URL}}genres/{{genreCountryUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Country music"
+  }
+}

@@ -1,15 +1,14 @@
-#!/usr/bin/env python
-
 from bodzify_api import settings
-import bodzify_api.utils.audio_metadata as audio_metadata
-from bodzify_api.serializer.track.input.schema import Fields as SaveSchemaFields
-from bodzify_api.test.view.track.input.update_file_metadata.UpdateFileMetadataStrTestCase import \
-    UpdateFileMetadataStrTestCase
+from bodzify_api.serializer.model.lib_track.input.Fields import InputFields as InputFields
+from bodzify_api.test.view.track.input.update_file_metadata.LibTrackFileMetadataUpdateStrTestCase import (
+    LibTrackFileMetadataUpdateStrTestCase
+)
+from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 
 
-class TestCase(UpdateFileMetadataStrTestCase):
-    save_field = SaveSchemaFields.GENRE_NAME
-    lib_track_normalized_metadata_key = audio_metadata.NormalizedMetadataKeys.GENRE_NAME
+class TestCase(LibTrackFileMetadataUpdateStrTestCase):
+    save_field = InputFields.GENRE
+    lib_track_app_metadata_key = AppMetadataKey.GENRE
     length_max = settings.CRITERIA_NAME_LEN_MAX
 
 

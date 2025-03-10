@@ -1,1 +1,0 @@
-{"info":{"_postman_id":"14cea593-6c7a-433a-b791-56516aea4d49","name":"Soundcharts","schema":"https://schema.getpostman.com/json/collection/v2.1.0/collection.json"},"item":[{"name":"New Request","id":"28840ae9-2320-40f1-9f87-2f133e9d314e","protocolProfileBehavior":{"disableBodyPruning":true},"request":{"method":"GET","header":[]},"response":[]}]}

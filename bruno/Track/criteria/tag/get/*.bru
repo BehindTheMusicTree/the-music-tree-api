@@ -1,0 +1,15 @@
+meta {
+  name: *
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}tags/?parent
+  body: json
+  auth: inherit
+}
+
+params:query {
+  parent: 
+}

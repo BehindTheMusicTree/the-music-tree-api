@@ -22,7 +22,7 @@
     // Save filter state when clicks.
     const details = document.querySelectorAll('details');
     details.forEach(detail => {
-        detail.addEventListener('toggle', event => {
+        detail.addEventlistener('toggle', event => {
             filters[`${event.target.dataset.filterTitle}`] = detail.open;
             sessionStorage.setItem('django.admin.filtersState', JSON.stringify(filters));
         });

@@ -1,0 +1,15 @@
+meta {
+  name: Country
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}genres/{{genreCountryUuid}}/
+  body: json
+  auth: inherit
+}
+
+vars:post-response {
+  genreCountryPlaylistUuid: res.body.criteriaPlaylist.uuid
+}

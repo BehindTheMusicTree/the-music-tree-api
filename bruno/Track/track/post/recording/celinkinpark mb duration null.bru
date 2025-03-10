@@ -1,0 +1,20 @@
+meta {
+  name: celinkinpark mb duration null
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}tracks/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/recording=Celinekin Park - no musicbrainz recording duration.mp3)
+  genre: mashup
+}

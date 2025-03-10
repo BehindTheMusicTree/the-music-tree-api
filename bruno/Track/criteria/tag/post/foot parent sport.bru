@@ -1,0 +1,26 @@
+meta {
+  name: foot parent sport
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{BASE_URL}}tags/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}
+
+body:json {
+  {
+    "name": "Foot",
+    "parent": "{{tagSportUuid}}"
+  }
+}
+
+vars:post-response {
+  tagFootUuid: res.body.uuid
+}

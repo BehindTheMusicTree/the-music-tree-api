@@ -1,0 +1,15 @@
+meta {
+  name: foot | no field
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{BASE_URL}}manual-playlists/{{manualPlaylistFootUuid}}/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}

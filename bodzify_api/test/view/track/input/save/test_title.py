@@ -1,22 +1,46 @@
-#!/usr/bin/env python
-
 from rest_framework import status
+
 from bodzify_api import settings
-from bodzify_api.serializer.track.input.endpoint.put import Fields as PutFields
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.test.utils.field.body_data.type.NotNullableCharBodyDataTestCase import NotNullableCharBodyDataTestCase
+from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(NotNullableCharBodyDataTestCase, LibTrackTestCase):
 
-    def test_longest_then_ok(self):
+    def test_largest_then_ok(self):
         value = "a" * settings.LIB_TRACK_TITLE_LEN_MAX
-        data = {PutFields.TITLE: value}
-        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.title == value
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.TITLE: value})
 
-    def test_too_long_then_error(self):
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.title == value
+
+    def test_too_large_then_400(self):
         value = "a" * (settings.LIB_TRACK_TITLE_LEN_MAX + 1)
-        data = {PutFields.TITLE: value}
-        response = self.post_lib_track_with_generic_sample_no_tags(data_dict=data)
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.TITLE: value})
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == PostFields.TITLE
+        assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
+
+    def test_empty_then_400(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.TITLE: ""})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == PostFields.TITLE
+        assert error['code'] == FieldValidationErrorCode.BLANK
+
+    def test_multi_value_then_400(self):
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.TITLE: ["a", "b"]})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == PostFields.TITLE
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID

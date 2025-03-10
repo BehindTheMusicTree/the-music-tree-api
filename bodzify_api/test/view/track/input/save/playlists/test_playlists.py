@@ -1,78 +1,66 @@
-#!/usr/bin/env python
-
-import pytest
 from rest_framework import status
-from bodzify_api.model.criteria.CriteriaType import CriteriaTypesId
-from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.playlist.BasePlaylist import SpecialNames as PLAYLIST_SPECIAL_NAMES
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.track.input.endpoint.put import Fields as PutFields
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+
+from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+from bodzify_api.serializer.model.lib_track.input.put.Fields import Fields as PutFields
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@pytest.mark.django_db
-class TestCase(TrackTestCase):
+@
+class TestCase(LibTrackTestCase):
 
-    def test_new_genre_then_in_new_genre_playlist_and_all_playlist(self):
+    def test_newly_created_genre_then_in_new_genre_playlist(self):
         genre_name = "Rock"
-        lib_track = self.model_fixture_factory.create_lib_track(title="Love")
+        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
-        data = {PutFields.GENRE_NAME: genre_name}
-        response = self.put_lib_track(lib_track.uuid, data_dict=data)
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: genre_name})
+
         assert response.status_code == status.HTTP_200_OK
+        track_playlists_uuids = [playlist.uuid for playlist in self.saved_object.playlists.all()]
+        assert len(track_playlists_uuids) == 1
+        rock_criteria_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(
+            user=self.test_user1, criteria__name=genre_name)
+        assert rock_criteria_playlist.playlist.uuid in track_playlists_uuids
 
-        track_playlists = self.saved_lib_track.base_playlists.all()
-        assert len(track_playlists) == 2
-
-        criteria_playlists = CriteriaPlaylist.objects.filter(base_playlist__in=track_playlists)
-        assert criteria_playlists.filter(criteria__name=genre_name).exists()
-
-        simple_playlists = SimplePlaylist.objects.filter(base_playlist__in=track_playlists)
-        assert simple_playlists.filter(name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
-
-    def test_existing_genre_then_track_in_existing_playlist_and_all_playlist(self):
+    def test_existing_then_ok_genre_then_track_in_existing_playlist(self):
         genre_name = "Rock"
-        genre = self.model_fixture_factory.create_genre(name=genre_name)
-        lib_track = self.model_fixture_factory.create_lib_track(title="Love")
+        self.model_fixture_factory.create_genre(name=genre_name)
+        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
-        data = {PutFields.GENRE_NAME: genre_name}
-        response = self.put_lib_track(lib_track.uuid, data_dict=data)
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: genre_name})
+
         assert response.status_code == status.HTTP_200_OK
 
-        track_playlists = self.saved_lib_track.base_playlists.all()
-        assert len(track_playlists) == 2
+        track_playlists_uuids = [playlist.uuid for playlist in self.saved_object.playlists.all()]
+        assert len(track_playlists_uuids) == 1
 
-        genre_playlist = CriteriaPlaylist.objects.get(criteria=genre).base_playlist
-        assert lib_track in genre_playlist.library_tracks.all()  # type: ignore
+        rock_criteria_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(
+            user=self.test_user1, criteria__name=genre_name)
+        assert rock_criteria_playlist.playlist.uuid in track_playlists_uuids
 
-        all_playlist = SimplePlaylist.objects.get(name=PLAYLIST_SPECIAL_NAMES.ALL).base_playlist
-        assert lib_track in all_playlist.library_tracks.all()  # type: ignore
+    def test_existing_then_ok_genre_with_2_successive_ascendants_then_track_in_3_existing_playlists(self):
+        genre_rock_name = "Rock"
+        genre_hard_rock_name = "Hard rock"
+        genre_emo_name = "Emo"
 
-    def test_existing_genre_with_2_successive_ascendants_then_track_in_3_existing_playlists(self):
-        rock_genre_name = "Rock"
-        hardrock_genre_name = "Hard rock"
-        emo_genre_name = "Emo"
+        genre_rock = self.model_fixture_factory.create_genre(name=genre_rock_name)
+        hardgenre_rock = self.model_fixture_factory.create_genre(name=genre_hard_rock_name, parent=genre_rock)
+        self.model_fixture_factory.create_genre(name=genre_emo_name, parent=hardgenre_rock)
+        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
 
-        rock_genre = self.model_fixture_factory.create_genre(name=rock_genre_name)
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: genre_emo_name})
 
-        hardrock_genre = self.model_fixture_factory.create_genre(name=hardrock_genre_name, parent=rock_genre)
-
-        self.model_fixture_factory.create_genre(name=emo_genre_name, parent=hardrock_genre)
-
-        lib_track = self.model_fixture_factory.create_lib_track(title="Love")
-        data = {PutFields.GENRE_NAME: emo_genre_name}
-        response = self.put_lib_track(lib_track.uuid, data_dict=data)
         assert response.status_code == status.HTTP_200_OK
+        track_playlists_uuids = [playlist.uuid for playlist in self.saved_object.playlists.all()]
+        assert len(track_playlists_uuids) == 3
 
-        lib_track_playlists = self.saved_lib_track.base_playlists.all()
-        assert len(lib_track_playlists) == 4
+        criteria_rock_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(
+            user=self.test_user1, criteria__name=genre_rock_name)
+        assert criteria_rock_playlist.playlist.uuid in track_playlists_uuids
 
-        lib_track_criteria_playlists = CriteriaPlaylist.objects.filter(base_playlist__in=lib_track_playlists)
-        assert lib_track_criteria_playlists.filter(criteria__name=emo_genre_name).exists()
-        assert lib_track_criteria_playlists.filter(criteria__name=hardrock_genre_name).exists()
-        assert lib_track_criteria_playlists.filter(criteria__name=rock_genre_name).exists()
+        criteria_hard_rock_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(
+            user=self.test_user1, criteria__name=genre_hard_rock_name)
+        assert criteria_hard_rock_playlist.playlist.uuid in track_playlists_uuids
 
-        lib_track_simple_playlists = SimplePlaylist.objects.filter(base_playlist__in=lib_track_playlists)
-        assert lib_track_simple_playlists.filter(name=PLAYLIST_SPECIAL_NAMES.ALL).exists()
+        criteria_emo_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(
+            user=self.test_user1, criteria__name=genre_emo_name)
+        assert criteria_emo_playlist.playlist.uuid in track_playlists_uuids

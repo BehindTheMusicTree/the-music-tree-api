@@ -1,0 +1,165 @@
+from typing import Any, Generic, Sequence, Type, TypeVar, Union, cast
+
+from django.core.exceptions import ImproperlyConfigured
+from django.db.models import QuerySet
+from django.http import FileResponse
+from rest_framework import status, viewsets
+from rest_framework.exceptions import MethodNotAllowed
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
+from rest_framework.response import Response
+from rest_framework.serializers import BaseSerializer, ModelSerializer, Serializer
+
+from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
+from bodzify_api.model.base.BaseModel import BaseModel
+from bodzify_api.model.private.Fields import Fields as PrivateFields
+from bodzify_api.serializer.SerializerType import SerializerType
+from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
+from bodzify_api.view.HttpMethod import HttpMethod
+
+from ....pagination.AppPagination import AppPagination
+
+
+T = TypeVar('T', bound=BaseModel)
+
+
+class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
+    pagination_class = AppPagination
+    permission_classes = [IsAuthenticated]
+    model_class: Type[T]
+    filterset_class: Type[AppFilterSet] = AppFilterSet
+    simple_serializer_class: Type[ModelSerializer] | None = None
+    detailed_serializer_class: Type[ModelSerializer] | None = None
+    create_serializer_class: Type[Serializer] | None = None
+    update_serializer_class: Type[Serializer] | None = None
+    is_private_resource: bool = True
+
+    def __init__(self, model_class: Type[T],
+                 filterset_class: Type[AppFilterSet] = AppFilterSet,
+                 simple_serializer_class: Type[ModelSerializer] | None = None,
+                 detailed_serializer_class: Type[ModelSerializer] | None = None,
+                 update_serializer_class: Type[Serializer] | None = None,
+                 create_serializer_class: Type[Serializer] | None = None,
+                 is_private_resource: bool = True,
+                 **kwargs):
+        super().__init__(**kwargs)
+        self.model_class = model_class
+        self.filterset_class = filterset_class
+        self.simple_serializer_class = simple_serializer_class
+        self.detailed_serializer_class = detailed_serializer_class
+        self.update_serializer_class = update_serializer_class
+        self.create_serializer_class = create_serializer_class
+        self.is_private_resource = is_private_resource
+
+    def _require_serializer(self, serializer_type: SerializerType) -> Type[Union[ModelSerializer, Serializer]]:
+        serializer = getattr(self, serializer_type.class_name, None)
+        if not serializer:
+            raise ImproperlyConfigured(f"Serializer {serializer_type.class_name} not defined in viewset")
+        return serializer
+
+    def _get_validated_data(self, serializer: Union[Serializer, ModelSerializer, BaseSerializer]) -> dict[str, Any]:
+        serializer.is_valid(raise_exception=True)
+        validated_data_dict = getattr(serializer, 'validated_data', {})
+        if PrivateFields.USER not in validated_data_dict:
+            validated_data_dict[PrivateFields.USER] = self.request.user
+        return validated_data_dict
+
+    def _inject_user(self, data: dict[str, Any], request: Request) -> dict[str, Any]:
+        if PrivateFields.USER not in data:
+            data[PrivateFields.USER] = request.user
+        return data
+
+    def _create_instance(self, request: Request, create_data: dict[str, Any]) -> T:
+        serializer_class = self._require_serializer(SerializerType.CREATE)
+        serializer = serializer_class(data=create_data, context={'request': request})
+        validated_data = self._get_validated_data(serializer)
+        return self.model_class.objects.create(**validated_data)
+
+    def _update_instance(self, request: Request, instance: T, update_data: dict[str, Any]) -> T:
+        serializer_class = self._require_serializer(SerializerType.UPDATE)
+        serializer = serializer_class(instance=instance, data=update_data, partial=True, context={'request': request})
+        validated_data = self._get_validated_data(serializer)
+        return self.model_class.objects.update_instance(instance, **validated_data)
+
+    def _handle_list(self) -> Response:
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+
+        if not queryset.exists():
+            data = []
+        elif page is not None:
+            serializer = self._require_serializer(SerializerType.SIMPLE)(page, many=True)
+            data = list(serializer.data)
+        else:
+            data = []
+
+        return self.get_paginated_response(data)
+
+    def _handle_post(self, request: Request) -> Response:
+        instance = self._create_instance(request=request, create_data=request.data)
+        serializer = self._require_serializer(SerializerType.DETAILED)(instance=instance)
+        headers = self.get_success_headers(serializer.data)
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def _handle_retrieve(self) -> Response:
+        serializer = self._require_serializer(SerializerType.DETAILED)(self.get_object())
+        return Response(serializer.data)
+
+    def _handle_update(self, request: Request) -> Response:
+        updated_instance = self._update_instance(request=request, instance=self.get_object(), update_data=request.data)
+        serializer = self._require_serializer(SerializerType.DETAILED)(instance=updated_instance)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def _handle_destroy(self) -> Response:
+        self.model_class.objects.delete_instance(self.get_object())
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def paginate_queryset(self, queryset) -> Union[list[T], QuerySet[T]] | None:
+        if self.paginator is None:
+            return None
+        if isinstance(queryset, Sequence) and not isinstance(queryset, QuerySet):
+            queryset = self.model_class.objects.filter(id__in=[obj.id for obj in queryset])
+        return self.paginator.paginate_queryset(cast(QuerySet[T], queryset), self.request, view=self)
+
+    def get_object(self) -> T:
+        return super().get_object()
+
+    def get_serializer_class(self) -> Type[Serializer]:
+        if self.action == 'retrieve':
+            return self._require_serializer(SerializerType.DETAILED)
+        elif self.action == 'create':
+            return self._require_serializer(SerializerType.CREATE)
+        elif self.action in ['update', 'partial_update']:
+            return self._require_serializer(SerializerType.UPDATE)
+        raise NotImplementedError(f"Action {self.action} not defined in viewset")
+
+    def get_queryset(self):
+        request: Request = cast(Request, self.request)
+        if self.is_private_resource:
+            queryset = self.model_class.objects.filter(user=request.user)
+        else:
+            queryset = self.model_class.objects.all()
+
+        if request.method == HttpMethod.GET and request.query_params:
+            queryset = self.filterset_class(request.query_params, queryset=queryset).qs
+
+        ordering_fields = cast(BaseModel, self.model_class).objects.get_default_ordering()
+        return queryset.order_by(*ordering_fields)
+
+    def get_file_response(self, file_path: str) -> FileResponse:
+        return AppFileResponse.from_file(file_path=file_path, filename=file_path.split('/')[-1])
+
+    def retrieve(self, *args, **kwargs) -> Response:
+        raise MethodNotAllowed('GET', detail='Retrieve operation not allowed for this resource')
+
+    def create(self, *args: Any, **kwargs: Any) -> Response:
+        raise MethodNotAllowed('POST', detail='Create operation not allowed for this resource')
+
+    def list(self, *args: Any, **kwargs: Any) -> Response:
+        raise MethodNotAllowed('GET', detail='list operation not allowed for this resource')
+
+    def update(self, *args: Any, **kwargs: Any) -> Response:
+        raise MethodNotAllowed('PUT', detail='Update operation not allowed for this resource')
+
+    def destroy(self, *args, **kwargs) -> Response:
+        raise MethodNotAllowed('DELETE', detail='Delete operation not allowed for this resource')

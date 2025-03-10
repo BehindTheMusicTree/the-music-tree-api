@@ -1,0 +1,11 @@
+meta {
+  name: horses
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{BASE_URL}}tracks/{{libTrackHorsesUuid}}/
+  body: json
+  auth: inherit
+}

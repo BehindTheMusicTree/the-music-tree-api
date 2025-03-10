@@ -1,0 +1,17 @@
+meta {
+  name: foot parent teuf
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{BASE_URL}}tags/{{tagFootUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "parent": "{{tagTeufUuid}}"
+  }
+}
