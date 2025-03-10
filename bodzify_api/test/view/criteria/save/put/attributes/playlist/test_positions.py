@@ -91,28 +91,30 @@ class TestCase(GenreTestCase):
     def test_new_parent_not_acendant_of_old_parent_then_update_positions_in_old_parent(self) -> None:
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
-        track_fourth_in_rock = self.model_fixture_factory.create_lib_track_with_file(
+        track_rock_added_first = self.model_fixture_factory.create_lib_track_with_file(
             title="Rock song 2", genre=genre_rock, use_manager_for_genre_playlist_adding=True)
-        track_third_in_rock = self.model_fixture_factory.create_lib_track_with_file(
+        track_punk_added_second = self.model_fixture_factory.create_lib_track_with_file(
             title="Punk song 2", genre=genre_punk, use_manager_for_genre_playlist_adding=True)
-        track_second_in_rock = self.model_fixture_factory.create_lib_track_with_file(
+        track_rock_added_third = self.model_fixture_factory.create_lib_track_with_file(
             title="Rock song 1", genre=genre_rock, use_manager_for_genre_playlist_adding=True)
-        track_first_in_rock = self.model_fixture_factory.create_lib_track_with_file(
+        track_punk_added_forth = self.model_fixture_factory.create_lib_track_with_file(
             title="Punk song 1", genre=genre_punk, use_manager_for_genre_playlist_adding=True)
-        assert track_fourth_in_rock.lib_track_playlist_rels.get(playlist=genre_rock.criteria_playlist).position == 4
-        assert track_third_in_rock.lib_track_playlist_rels.get(playlist=genre_rock.criteria_playlist).position == 3
-        assert track_second_in_rock.lib_track_playlist_rels.get(playlist=genre_rock.criteria_playlist).position == 2
-        assert track_first_in_rock.lib_track_playlist_rels.get(playlist=genre_rock.criteria_playlist).position == 1
+
+        rock_criteria_lib_tracks_not_archived_dict_by_position = \
+            genre_rock.criteria_playlist.lib_tracks_not_archived_dict_by_position
+        assert rock_criteria_lib_tracks_not_archived_dict_by_position[1] == track_punk_added_forth
+        assert rock_criteria_lib_tracks_not_archived_dict_by_position[2] == track_rock_added_third
+        assert rock_criteria_lib_tracks_not_archived_dict_by_position[3] == track_punk_added_second
+        assert rock_criteria_lib_tracks_not_archived_dict_by_position[4] == track_rock_added_first
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: ''})
 
         assert response.status_code == status.HTTP_200_OK
-        lib_track_playlist_rels: list[LibTrackPlaylistRel] = \
-            list(LibTrackPlaylistRel.objects.filter(user=self.test_user1, playlist=genre_rock.criteria_playlist))
-        assert len(lib_track_playlist_rels) == 2
-        tracks_positions = {relation.lib_track.uuid: relation.position for relation in lib_track_playlist_rels}
-        assert tracks_positions[track_second_in_rock.uuid] == 1
-        assert tracks_positions[track_fourth_in_rock.uuid] == 2
+        rock_criteria_lib_tracks_not_archived_dict_by_position = \
+            genre_rock.criteria_playlist.lib_tracks_not_archived_dict_by_position
+        assert len(rock_criteria_lib_tracks_not_archived_dict_by_position) == 2
+        assert rock_criteria_lib_tracks_not_archived_dict_by_position[1] == track_rock_added_third
+        assert rock_criteria_lib_tracks_not_archived_dict_by_position[2] == track_rock_added_first
 
     def test_new_parent_undirect_ascendant_of_old_parent_then_update_positions_in_criterias_in_between(self) -> None:
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
