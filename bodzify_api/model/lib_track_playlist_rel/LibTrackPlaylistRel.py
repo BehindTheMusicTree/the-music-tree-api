@@ -35,8 +35,8 @@ class LibTrackPlaylistRel(PrivateStandardResource):
         ]
 
     def __str__(self):
-        return (f'User {self.user} | Playlist "{self.playlist.name}" | Lib track title "{self.lib_track.title}" | '
-                f'Position {self.position}')
+        return (f'Playlist "{self.playlist.name}" | Lib track title "{self.lib_track.title}" | '
+                f'Position {self.position} User {self.user}')
 
     def _perform_save(self, adding: bool, ctx) -> None:
         if adding:

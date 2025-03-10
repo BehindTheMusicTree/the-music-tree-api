@@ -1,5 +1,5 @@
 
-from typing import TYPE_CHECKING, cast, Dict
+from typing import TYPE_CHECKING, cast
 
 from django.db.models import F
 
@@ -40,7 +40,7 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
         for i, relation in enumerate(tracks_positions_ordered_asc, 1):
             relation: LibTrackPlaylistRel = relation  # for type hinting
             relation.position = i
-            relation.save()
+            relation.save(update_fields=[Fields.POSITION])
 
     def archive_instances_of_lib_track(self, lib_track: 'LibraryTrack'):
         for lib_track_playlist_rel in lib_track.lib_track_playlist_rels.all():
