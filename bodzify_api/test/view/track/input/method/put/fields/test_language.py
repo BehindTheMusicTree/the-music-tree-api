@@ -11,7 +11,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         language = "Fr"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love", language=language)
 
-        response = self._put_lib_track(lib_track.uuid, **{})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.TITLE: 'MJ'})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_object.language == language
