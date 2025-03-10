@@ -42,21 +42,15 @@ class CriteriaPlaylistManager(StandardResourceManager):
         for child in instance.children.all():
             self.update_instance_and_children_root(instance=child, root=root)
 
-    def update_ascendants_lib_tracks(self,
-                                     instance: 'CriteriaPlaylist',
-                                     old_parent: 'Criteria | None',
-                                     common_criteria: 'Criteria | None'):
+    def update_ascendants_lib_tracks(
+            self, instance: 'CriteriaPlaylist', old_parent: 'Criteria | None', common_criteria: 'Criteria | None'):
         if instance.parent:
             self.add_lib_tracks_to_instance_and_ascendants_until_criteria_limit(
-                instance=instance.parent,
-                lib_tracks=instance.lib_tracks_not_archived.all(),
-                criteria_limit=common_criteria)
+                instance=instance.parent, lib_tracks=instance.lib_tracks.all(), criteria_limit=common_criteria)
 
         if old_parent:
             self.remove_lib_tracks_from_instance_and_ascendants_until_criteria_limit(
-                instance=old_parent.criteria_playlist,
-                lib_tracks=instance.lib_tracks_not_archived.all(),
-                criteria_limit=common_criteria)
+                instance=old_parent.criteria_playlist, lib_tracks=instance.lib_tracks.all(), criteria_limit=common_criteria)
 
     def add_lib_tracks_to_instance_and_ascendants_until_criteria_limit(self,
                                                                        instance: 'CriteriaPlaylist',
@@ -68,9 +62,8 @@ class CriteriaPlaylistManager(StandardResourceManager):
                 LibTrackPlaylistRel(user=instance.user, playlist=instance, lib_track=lib_track).save()
 
             if instance.parent:
-                self.add_lib_tracks_to_instance_and_ascendants_until_criteria_limit(instance=instance.parent,
-                                                                                    lib_tracks=lib_tracks,
-                                                                                    criteria_limit=criteria_limit)
+                self.add_lib_tracks_to_instance_and_ascendants_until_criteria_limit(
+                    instance=instance.parent, lib_tracks=lib_tracks, criteria_limit=criteria_limit)
 
     def remove_lib_tracks_from_instance_and_ascendants_until_criteria_limit(
             self, instance: 'CriteriaPlaylist',
@@ -83,6 +76,5 @@ class CriteriaPlaylistManager(StandardResourceManager):
             LibTrackPlaylistRel.objects.update_positions_to_fill_deleted_ones(instance)
 
             if instance.parent:
-                self.remove_lib_tracks_from_instance_and_ascendants_until_criteria_limit(instance=instance.parent,
-                                                                                         lib_tracks=lib_tracks,
-                                                                                         criteria_limit=criteria_limit)
+                self.remove_lib_tracks_from_instance_and_ascendants_until_criteria_limit(
+                    instance=instance.parent, lib_tracks=lib_tracks, criteria_limit=criteria_limit)
