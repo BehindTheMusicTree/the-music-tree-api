@@ -4,7 +4,18 @@ from pathlib import Path
 
 import pytest
 from _pytest.main import Session
+from django.test import override_settings
 from bodzify_api import settings
+
+
+@pytest.fixture(autouse=True)
+def set_debug_for_tests():
+    """Set DEBUG=True by default for tests.
+
+    Individual tests can use @override_settings(DEBUG=False) when needed.
+    """
+    with override_settings(DEBUG=True):
+        yield
 
 
 critical_test_failed = False

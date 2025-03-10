@@ -18,13 +18,6 @@ from bodzify_api.utils.env_var_loader import (
 )
 from bodzify_api.utils.utils import print_django
 
-# Set DEBUG=True for tests before any Django imports
-# This ensures Django and all apps see the correct debug setting from the start
-DEBUG = True if 'pytest' in sys.argv[0] else os.environ.get('DEBUG', 'False').lower() == 'true'
-if 'pytest' in sys.argv[0]:
-    os.environ['DEBUG'] = 'True'  # Also set env var for consistency
-    print_django("DEBUG is set to True for tests")
-
 
 TEST_USER_LIBRARIES_DIR_NAME_PREFIXE: str
 USER_MAX_NUMBER: str
@@ -364,6 +357,7 @@ def setup_app_constants():
     global DEBUG
     if 'pytest' not in sys.argv[0]:  # Skip loading DEBUG from env in test mode
         DEBUG = load_required_bool_env_var('DEBUG')
+    # else: keep the module-level DEBUG value (False by default, can be set to True by conftest)
 
     global USER_LIBRARIES_DIR_NAME_PREFIXE
     USER_LIBRARIES_DIR_NAME_PREFIXE = "user_"
@@ -714,8 +708,6 @@ set_secret_key()
 
 if 'pytest' in sys.argv[0]:
     print_django("settings.py is being executed because of a pytest command.")
-    print_django("DEBUG is set to True for tests")
-    DEBUG = True
 
     if os.environ.get('AUDIO_META_ANALYSIS_ENABLED', 'False').lower() == 'true':
         AUDIO_META_ANALYSIS_ENABLED = True
