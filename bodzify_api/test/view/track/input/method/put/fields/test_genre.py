@@ -34,7 +34,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
     def test_empty_then_none(self):
         rap_criteria = self.model_fixture_factory.create_genre(name="Rap")
         lib_track = self.model_fixture_factory.create_lib_track_with_file(
-            **{LibTrackFields.TITLE: "koko", LibTrackFields.GENRE: rap_criteria.uuid})
+            title="wech", genre=rap_criteria, use_manager_for_genre_playlist_adding=True)
 
         response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.GENRE: ''})
 
