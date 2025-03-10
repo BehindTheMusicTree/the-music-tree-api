@@ -1,14 +1,19 @@
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from django.db.models import QuerySet
 
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.PlaylistTypesLabel import PlaylistTypesLabel
+from bodzify_api.model.lib_track_playlist_rel.Fields import Fields as LibTrackPlaylistFields
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 
 from .children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from .Fields import Fields
 from .PlaylistQuerySet import PlaylistQuerySet
+
+if TYPE_CHECKING:
+    from bodzify_api.model.playlist.Playlist import Playlist
+    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 
 
 class PlaylistManager(StandardResourceManager):

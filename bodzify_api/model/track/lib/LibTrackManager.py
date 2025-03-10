@@ -132,6 +132,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
     def update_instance(self, old_instance: 'LibraryTrack', **kwargs) -> 'LibraryTrack':
         from bodzify_api.model.album.Album import Album
         from bodzify_api.model.artist.Artist import Artist
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 
         old_album_artists_list = []
         if old_instance.album:
@@ -144,6 +145,8 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         old_genre = old_instance.genre
         old_artists_list = list(old_instance.artists.all())  # list() makes a copy of the QuerySet before the deletion
+
+        old_archived_state = old_instance.archived
 
         updated_instance: LibraryTrack = super().update_instance(old_instance, **kwargs)
 
@@ -161,6 +164,12 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             for old_track_artist in old_track_artists_list:
                 if old_track_artist not in current_track_artists_list:
                     Artist.objects.delete_instance_if_nothing_linked(old_track_artist)
+
+        if old_archived_state != updated_instance.archived:
+            if updated_instance.archived:
+                LibTrackPlaylistRel.objects.archive_instances_of_lib_track(lib_track=updated_instance)
+            else:
+                LibTrackPlaylistRel.objects.unarchive_instances_of_lib_track(lib_track=updated_instance)
 
         return updated_instance
 

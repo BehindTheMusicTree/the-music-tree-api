@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import F
+from django.db.models import F, Case, When, Value
+
 
 from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
 from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRelManager import LibTrackPlaylistRelManager
@@ -17,13 +18,11 @@ User = get_user_model()
 
 
 class LibTrackPlaylistRel(PrivateStandardResource):
-    playlist = PrivateForeignKey(Playlist,
-                                 on_delete=models.CASCADE,
-                                 related_name=PlayListFields.LIB_TRACK_PLAYLIST_RELS_INTERNAL)
-    lib_track = PrivateForeignKey(LibraryTrack,
-                                  on_delete=models.CASCADE,
-                                  related_name=LibTrackFields.LIB_TRACK_PLAYLIST_RELS)
-    position = models.PositiveIntegerField()
+    playlist: Playlist = PrivateForeignKey(  # type: ignore
+        Playlist, on_delete=models.CASCADE, related_name=PlayListFields.LIB_TRACK_PLAYLIST_RELS_INTERNAL)
+    lib_track: LibraryTrack = PrivateForeignKey(  # type: ignore
+        LibraryTrack, on_delete=models.CASCADE, related_name=LibTrackFields.LIB_TRACK_PLAYLIST_RELS)
+    position = models.PositiveIntegerField(null=True, blank=True)
 
     objects: LibTrackPlaylistRelManager = LibTrackPlaylistRelManager()
 
@@ -36,11 +35,23 @@ class LibTrackPlaylistRel(PrivateStandardResource):
         ]
 
     def __str__(self):
-        return (f'User {self.user} | Playlist {self.playlist.name} | Track title {self.lib_track.title} | '
+        return (f'User {self.user} | Playlist "{self.playlist.name}" | Lib track title "{self.lib_track.title}" | '
                 f'Position {self.position}')
 
     def _perform_save(self, adding: bool, ctx) -> None:
         if adding:
+            print('all')
+            print(LibTrackPlaylistRel.objects.all())
+            print('filter user', self.user, 'pk:', self.user.pk)
+            print('filter playlist', self.playlist, 'pk:', self.playlist.pk)
             lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, playlist=self.playlist)
-            lib_track_playlist_rels.update(position=models.F(Fields.POSITION) + 1)
+            print('filtered')
+            print(lib_track_playlist_rels)
+            lib_track_playlist_rels.update(
+                position=Case(
+                    When(**{Fields.POSITION + '__isnull': False}, then=F(Fields.POSITION) + 1),
+                    default=Value(None)
+                )
+            )
             self.position = 1
+        super()._perform_save(adding, ctx)

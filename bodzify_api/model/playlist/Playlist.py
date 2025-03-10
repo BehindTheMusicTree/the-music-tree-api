@@ -1,11 +1,12 @@
 from abc import abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from django.db import models
 
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
 from bodzify_api.model.playlist.PlaylistManager import PlaylistManager
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
+from bodzify_api.model.lib_track_playlist_rel.Fields import Fields as LibTrackPlaylistFields
 
 from .Fields import Fields
 
@@ -52,6 +53,27 @@ class Playlist(LibTrackMixin, TrackablePlayCount):
             return self.criteria_playlist.type_label
         else:
             raise ValueError('Playlist has no type')
+
+    @property
+    def lib_tracks_not_archived_dict_by_position(self) -> dict[int, 'LibraryTrack']:
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        """
+        Returns a dictionary of LibraryTrack objects where dict[position] = lib_track.
+        Only includes non-archived tracks (position is not None).
+        Returns empty dict if no tracks or all tracks are archived.
+        """
+        relations = LibTrackPlaylistRel.objects.filter(user=self.user, playlist=self, position__isnull=False
+                                                       ).order_by(LibTrackPlaylistFields.POSITION)
+
+        if not relations.exists():
+            return {}
+
+        result: dict[int, 'LibraryTrack'] = {}
+        for relation in relations:
+            relation = cast(LibTrackPlaylistRel, relation)
+            result[cast(int, relation.position)] = relation.lib_track
+
+        return result
 
     @property
     @abstractmethod
