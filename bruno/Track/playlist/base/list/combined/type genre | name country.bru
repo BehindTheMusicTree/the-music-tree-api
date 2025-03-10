@@ -5,12 +5,12 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}playlists?type=genres&name=tagless
+  url: {{BASE_URL}}playlists?type=genre&name=country
   body: json
   auth: inherit
 }
 
 params:query {
-  type: genres
-  name: tagless
+  type: genre
+  name: country
 }
