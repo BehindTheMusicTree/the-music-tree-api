@@ -118,7 +118,7 @@ class ModelFixtureFactory:
 
     def create_lib_track_with_file(
         self,
-        title: str,
+        title: str | None = "test",
         test_lib_track_filename: TestLibTrackFilename | None = TestLibTrackFilename.DEFAULT_MP3,
         user: User | None = None,
         use_manager_for_genre_playlist_adding: bool = False,

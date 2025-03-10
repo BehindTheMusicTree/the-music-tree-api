@@ -14,7 +14,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(
             **{LibTrackFields.TITLE: "Love", LibTrackFields.GENRE: rap_criteria.uuid})
 
-        response = self._put_lib_track(lib_track.uuid, **{})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.TITLE: "koko"})
 
         assert response.status_code == status.HTTP_200_OK
         updated_lib_track = LibraryTrack.objects.get(uuid=lib_track.uuid)
@@ -23,11 +23,10 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
     def test_ok_when_updating_to_not_none(self):
         rap_criteria = self.model_fixture_factory.create_genre(name="Rap")
         lib_track = self.model_fixture_factory.create_lib_track_with_file(
-            **{LibTrackFields.TITLE: "koko", LibTrackFields.GENRE: rap_criteria.uuid})
+            title="hoyo", use_manager_for_genre_playlist_adding=True, genre=rap_criteria)
         rock_criteria = self.model_fixture_factory.create_genre(name="Rock")
 
-        data = {PutFields.GENRE: rock_criteria.name}
-        response = self._put_lib_track(uuid=lib_track.uuid, **data)
+        response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.GENRE: rock_criteria.name})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_object.genre == rock_criteria

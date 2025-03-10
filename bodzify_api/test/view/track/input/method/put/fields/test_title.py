@@ -20,7 +20,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         old_title = "Love"
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title=old_title)
 
-        response = self._put_lib_track(lib_track.uuid, **{})
+        response = self._put_lib_track(lib_track.uuid, **{PutFields.ARCHIVED: True})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_object.title == old_title
