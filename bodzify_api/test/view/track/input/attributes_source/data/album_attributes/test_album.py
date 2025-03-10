@@ -9,7 +9,8 @@ class TestCase(LibTrackTestCase):
 
     def test_value_then_ok(self):
         value = 'fofof'
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.ALBUM_NAME: value})
+        data = {PostFields.ALBUM_NAME: value, PostFields.ALBUM_ARTISTS_NAMES_ARRAY: []}
+        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
