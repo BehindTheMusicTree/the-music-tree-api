@@ -2,8 +2,8 @@ from uuid import UUID
 
 from django.urls import reverse
 
-from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
 from bodzify_api.test.utils.AppTestCase import AppTestCase
+from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
 
 
 class AllLibTracksMixinTestCase(AppTestCase[AllLibTracksMixin]):

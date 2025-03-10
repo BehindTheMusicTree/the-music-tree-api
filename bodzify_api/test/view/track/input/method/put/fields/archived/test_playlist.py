@@ -1,6 +1,7 @@
 
 
 from rest_framework import status
+from django.db.models import F, OrderBy
 
 from bodzify_api.model.lib_track_playlist_rel.Fields import Fields as LibTrackPlaylistRelFields
 from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
@@ -33,11 +34,11 @@ class TestCase(LibTrackTestCase):
     def test_archived_lib_track_then_criteria_playlist_has_plus_1_archived_lib_tracks(self):
         criteria = self.model_fixture_factory.create_genre(name="rock")
         self.model_fixture_factory.create_lib_track_with_file(
-            title="not archived 1", genre=criteria)
+            title="not archived 1", genre=criteria, use_manager_for_genre_playlist_adding=True)
         self.model_fixture_factory.create_lib_track_with_file(
-            title="archived 1", genre=criteria, archived=True)
+            title="archived 1", genre=criteria, archived=True, use_manager_for_genre_playlist_adding=True)
         track_love = self.model_fixture_factory.create_lib_track_with_file(
-            title="Love", genre=criteria)
+            title="Love", genre=criteria, use_manager_for_genre_playlist_adding=True)
 
         response = self._put_lib_track(uuid=track_love.uuid, **{PutFields.ARCHIVED: "true"})
 
@@ -45,19 +46,24 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.genre
         criteria_playlist_saved: CriteriaPlaylist = self.saved_object.genre.criteria_playlist
         assert criteria_playlist_saved.lib_tracks_archived_count == 2
-        assert criteria_playlist_saved.lib_tracks_not_archived_count == 0
+        assert criteria_playlist_saved.lib_tracks_not_archived_count == 1
 
     def test_archived_lib_track_then_decrement_next_positions(self):
         manual_playlist_name = "manual playlist"
         manual_playlist = self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
         track1 = self.model_fixture_factory.create_lib_track_with_file(title="not archived 1")
-        track1.playlists.add(manual_playlist)
-        track2 = self.model_fixture_factory.create_lib_track_with_file(title="not archived 2")
-        track2.playlists.add(manual_playlist)
+        self.model_fixture_factory.create_lib_track_playlist_rel(playlist=manual_playlist, lib_track=track1, position=4)
+        track2 = self.model_fixture_factory.create_lib_track_with_file(title="to archived 2")
+        self.model_fixture_factory.create_lib_track_playlist_rel(playlist=manual_playlist, lib_track=track2, position=3)
         track3 = self.model_fixture_factory.create_lib_track_with_file(title="not archived 3")
-        track3.playlists.add(manual_playlist)
+        self.model_fixture_factory.create_lib_track_playlist_rel(playlist=manual_playlist, lib_track=track3, position=2)
         track4 = self.model_fixture_factory.create_lib_track_with_file(title="not archived 4")
-        track4.playlists.add(manual_playlist)
+        self.model_fixture_factory.create_lib_track_playlist_rel(playlist=manual_playlist, lib_track=track4, position=1)
+
+        assert LibTrackPlaylistRel.objects.get(playlist=manual_playlist, lib_track=track1).position == 4
+        assert LibTrackPlaylistRel.objects.get(playlist=manual_playlist, lib_track=track2).position == 3
+        assert LibTrackPlaylistRel.objects.get(playlist=manual_playlist, lib_track=track3).position == 2
+        assert LibTrackPlaylistRel.objects.get(playlist=manual_playlist, lib_track=track4).position == 1
 
         response = self._put_lib_track(uuid=track2.uuid, **{PutFields.ARCHIVED: "true"})
 
@@ -67,23 +73,26 @@ class TestCase(LibTrackTestCase):
         assert manual_playlist_saved.lib_tracks_archived_count == 1
         assert manual_playlist_saved.lib_tracks_not_archived_count == 3
 
-        lib_track_playlist_rels: list[LibTrackPlaylistRel] = list(LibTrackPlaylistRel.objects.filter(
-            playlist=manual_playlist_saved).order_by(LibTrackPlaylistRelFields.POSITION))
-        assert lib_track_playlist_rels[0] == track4
-        assert lib_track_playlist_rels[1] == track3
-        assert lib_track_playlist_rels[2] == track1
+        lib_track_playlist_rels: list[LibTrackPlaylistRel] = list(
+            LibTrackPlaylistRel.objects.filter(playlist=manual_playlist_saved)
+            .order_by(OrderBy(F(LibTrackPlaylistRelFields.POSITION), nulls_last=True))
+        )
+        assert lib_track_playlist_rels[0].lib_track == track4
+        assert lib_track_playlist_rels[1].lib_track == track3
+        assert lib_track_playlist_rels[2].lib_track == track1
+        assert lib_track_playlist_rels[3].lib_track == track2
 
     def test_unarchived_lib_track_then_in_first_position_of_playlist(self):
         manual_playlist_name = "manual playlist"
         manual_playlist = self.model_fixture_factory.create_manual_playlist(name=manual_playlist_name)
         track1 = self.model_fixture_factory.create_lib_track_with_file(title="not archived 1")
-        track1.playlists.add(manual_playlist)
+        self.model_fixture_factory.create_lib_track_playlist_rel(playlist=manual_playlist, lib_track=track1, position=4)
         track2 = self.model_fixture_factory.create_lib_track_with_file(title="not archived 2")
-        track2.playlists.add(manual_playlist)
+        self.model_fixture_factory.create_lib_track_playlist_rel(playlist=manual_playlist, lib_track=track1, position=3)
         track3 = self.model_fixture_factory.create_lib_track_with_file(title="not archived 3")
-        track3.playlists.add(manual_playlist)
+        self.model_fixture_factory.create_lib_track_playlist_rel(playlist=manual_playlist, lib_track=track1, position=2)
         track4 = self.model_fixture_factory.create_lib_track_with_file(title="not archived 4")
-        track4.playlists.add(manual_playlist)
+        self.model_fixture_factory.create_lib_track_playlist_rel(playlist=manual_playlist, lib_track=track1, position=1)
         response = self._put_lib_track(uuid=track2.uuid, **{PutFields.ARCHIVED: "true"})
         assert response.status_code == status.HTTP_200_OK
 
@@ -94,9 +103,11 @@ class TestCase(LibTrackTestCase):
             ManualPlaylist.objects.get(user=self.test_user1, name=manual_playlist_name)
         assert manual_playlist_saved.lib_tracks_archived_count == 0
         assert manual_playlist_saved.lib_tracks_not_archived_count == 4
-        lib_track_playlist_rels: list[LibTrackPlaylistRel] = list(LibTrackPlaylistRel.objects.filter(
-            playlist=manual_playlist_saved).order_by(LibTrackPlaylistRelFields.POSITION))
-        assert lib_track_playlist_rels[0] == track2
-        assert lib_track_playlist_rels[1] == track4
-        assert lib_track_playlist_rels[2] == track3
-        assert lib_track_playlist_rels[3] == track1
+        lib_track_playlist_rels: list[LibTrackPlaylistRel] = list(
+            LibTrackPlaylistRel.objects.filter(playlist=manual_playlist_saved)
+            .order_by(OrderBy(F(LibTrackPlaylistRelFields.POSITION), nulls_last=True))
+        )
+        assert lib_track_playlist_rels[0].lib_track == track2
+        assert lib_track_playlist_rels[1].lib_track == track4
+        assert lib_track_playlist_rels[2].lib_track == track3
+        assert lib_track_playlist_rels[3].lib_track == track1
