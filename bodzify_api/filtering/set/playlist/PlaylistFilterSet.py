@@ -26,39 +26,54 @@ class PlaylistFilterSet(PrivateUniqueResourceFilterSet):
         name_value = self.data.get(Fields.NAME)
         type_label = self.data.get(Fields.TYPE_LABEL_PUBLIC)
 
-        manual_playlist_queryset = Playlist.objects.none()
+        # Pre-filter the base queryset with common conditions
+        base_queryset = queryset.order_by(ModelFields.CREATED_ON)
+
+        result_querysets = []
+
+        # Manual playlists
         if type_label is None or type_label.lower() == PlaylistTypesLabel.MANUAL.lower():
-            manual_playlist_queryset = queryset.filter(
+            manual_qs = base_queryset.filter(
                 manual_playlist__isnull=False,
                 manual_playlist__name__icontains=name_value if name == Fields.NAME else ''
             )
+            result_querysets.append(manual_qs)
 
-        criteria_playlist_queryset = Playlist.objects.none()
+        # Criteria playlists (Genre and Tag)
         if type_label is None or type_label.lower() in [PlaylistTypesLabel.GENRE.lower(),
                                                         PlaylistTypesLabel.TAG.lower()]:
-            criteria_playlist_queryset = queryset.filter(
+            criteria_qs = base_queryset.filter(
                 criteria_playlist__isnull=False,
                 criteria_playlist__type__label__icontains=type_label.upper() if type_label else '',
                 criteria_playlist__criteria__name__icontains=name_value if name == Fields.NAME else ''
             )
+            result_querysets.append(criteria_qs)
 
-        genreless_playlist = Playlist.objects.none()
+        # Genreless playlists
         if ((not name_value or name_value.lower() in CriterialessPlaylistNames.GENRE.lower()) and
                 type_label in [None, PlaylistTypesLabel.GENRE]):
-            genreless_playlist = queryset.filter(
+            genreless_qs = base_queryset.filter(
                 criteria_playlist__isnull=False,
                 criteria_playlist__criteria__isnull=True,
                 criteria_playlist__type_id=CriteriaTypePks.GENRE
             )
+            result_querysets.append(genreless_qs)
 
-        tagless_playlist = Playlist.objects.none()
+        # Tagless playlists
         if ((not name_value or name_value.lower() in CriterialessPlaylistNames.TAG.lower()) and
                 type_label in [None, PlaylistTypesLabel.TAG]):
-            tagless_playlist = queryset.filter(
+            tagless_qs = base_queryset.filter(
                 criteria_playlist__isnull=False,
                 criteria_playlist__criteria__isnull=True,
                 criteria_playlist__type_id=CriteriaTypePks.TAG
             )
+            result_querysets.append(tagless_qs)
 
-        return manual_playlist_queryset.union(criteria_playlist_queryset).union(genreless_playlist).union(
-            tagless_playlist).order_by(ModelFields.CREATED_ON)
+        # Start with an empty queryset
+        if not result_querysets:
+            return Playlist.objects.none()
+
+        # Combine all querysets using reduce and union
+        from functools import reduce
+        from operator import or_
+        return reduce(or_, result_querysets)
