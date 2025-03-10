@@ -4,8 +4,7 @@ from pathlib import Path
 
 import pytest
 from _pytest.main import Session
-from django.conf import settings
-from bodzify_api import settings as app_settings  # Used for app-specific paths
+from bodzify_api import settings
 
 
 critical_test_failed = False
@@ -30,7 +29,6 @@ def base_childinstance(request, db):
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "critical: mark test as critical to pass")
-    settings.DEBUG = True
 
 
 def pytest_runtest_makereport(item, call):
@@ -113,7 +111,7 @@ def pytest_sessionfinish(session: Session, exitstatus: int) -> None:
     """
     print("Executing post-test cleanup operations...")
 
-    libraries_path = Path(app_settings.LIBRARIES_DIR)
+    libraries_path = Path(settings.LIBRARIES_DIR)
     removed_dirs: list[str] = []
     failed_dirs: list[str] = []
 
@@ -126,7 +124,7 @@ def pytest_sessionfinish(session: Session, exitstatus: int) -> None:
         # Iterate through directory entries
         for entry in libraries_path.iterdir():
             print(f'Entry: {entry}')
-            if entry.is_dir() and entry.name.startswith(app_settings.TEST_USER_LIBRARIES_DIR_NAME_PREFIXE):
+            if entry.is_dir() and entry.name.startswith(settings.TEST_USER_LIBRARIES_DIR_NAME_PREFIXE):
                 print(f"Removing test directory: {entry}")
                 try:
                     shutil.rmtree(entry)

@@ -1,10 +1,12 @@
 
+# Standard library imports
 import datetime
 import os
 import sys
 from pathlib import Path
 from typing import Any
 
+# Third-party imports
 from bodzify_api.utils.AppStaticFileStates import StaticFileStates
 from bodzify_api.utils.env_var_loader import (
     load_calculated_env_paths,
@@ -15,6 +17,13 @@ from bodzify_api.utils.env_var_loader import (
     load_required_str_env_var
 )
 from bodzify_api.utils.utils import print_django
+
+# Set DEBUG=True for tests before any Django imports
+# This ensures Django and all apps see the correct debug setting from the start
+DEBUG = True if 'pytest' in sys.argv[0] else os.environ.get('DEBUG', 'False').lower() == 'true'
+if 'pytest' in sys.argv[0]:
+    os.environ['DEBUG'] = 'True'  # Also set env var for consistency
+    print_django("DEBUG is set to True for tests")
 
 
 TEST_USER_LIBRARIES_DIR_NAME_PREFIXE: str
@@ -353,7 +362,8 @@ def setup_app_constants():
 
     # SECURITY WARNING: don't run with debug turned on in production!
     global DEBUG
-    DEBUG = load_required_bool_env_var('DEBUG')
+    if 'pytest' not in sys.argv[0]:  # Skip loading DEBUG from env in test mode
+        DEBUG = load_required_bool_env_var('DEBUG')
 
     global USER_LIBRARIES_DIR_NAME_PREFIXE
     USER_LIBRARIES_DIR_NAME_PREFIXE = "user_"
@@ -704,6 +714,8 @@ set_secret_key()
 
 if 'pytest' in sys.argv[0]:
     print_django("settings.py is being executed because of a pytest command.")
+    print_django("DEBUG is set to True for tests")
+    DEBUG = True
 
     if os.environ.get('AUDIO_META_ANALYSIS_ENABLED', 'False').lower() == 'true':
         AUDIO_META_ANALYSIS_ENABLED = True
