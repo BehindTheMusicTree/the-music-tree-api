@@ -21,4 +21,4 @@ class PutSerializer(AppSerializer):
         else:
             raise ImproperlyConfigured('Put request field not found in context')
 
-        return super().validate(attrs)
+        return attrs

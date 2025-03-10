@@ -13,4 +13,4 @@ class LibTrackPutSerializer(PutSerializer, LibTrackInputSerializer):
     def validate(self, data: dict[str, Any]) -> dict[str, Any]:
         data = PutSerializer.validate(self, data)
         self._validate_album_fields_from_data(data)
-        return super(LibTrackInputSerializer, self).validate(data)
+        return LibTrackInputSerializer.validate(self, data)
