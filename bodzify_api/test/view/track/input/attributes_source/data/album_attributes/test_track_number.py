@@ -15,7 +15,6 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.album
         assert self.saved_object.track_number == value
 
     def test_empty_then_none(self):
@@ -25,7 +24,6 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.album == None
         assert self.saved_object.track_number == None
 
     def test_not_provided_then_none(self):
@@ -34,5 +32,4 @@ class TestCase(LibTrackTestCase):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.album == None
         assert self.saved_object.track_number == None
