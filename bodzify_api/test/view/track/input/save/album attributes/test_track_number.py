@@ -11,7 +11,7 @@ from bodzify_api.utils.data_transformer import to_camel_case
 
 class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
 
-    def test_empty_then_ok(self):
+    def test_empty_then_none(self):
         response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.TRACK_NUMBER: None})
 
         assert response.status_code == status.HTTP_201_CREATED
