@@ -204,7 +204,6 @@ class ModelFixtureFactory:
             PlayListFields.UPDATED_ON: kwargs.get(PlayListFields.UPDATED_ON, now),
             PlayListFields.USER: user or self.default_test_user,
             PlayListFields.PLAY_COUNT: kwargs.get(PlayListFields.PLAY_COUNT, 0),
-            PlayListFields.LAST_TRACK_LIST_UPDATE_DATE: kwargs.get(PlayListFields.LAST_TRACK_LIST_UPDATE_DATE, now),
             # ManualPlaylist specific field
             ManualPlayListFields.NAME_PUBLIC: name,  # Maps to _name in the model
         }

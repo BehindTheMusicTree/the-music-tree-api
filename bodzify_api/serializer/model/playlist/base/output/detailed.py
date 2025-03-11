@@ -27,6 +27,5 @@ class PlaylistDetailedSerializer(serializers.ModelSerializer):
                   Fields.DURATION_IN_SEC,
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC,
                   Fields.PLAY_COUNT,
-                  Fields.LAST_TRACK_LIST_UPDATE_DATE,
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON,]

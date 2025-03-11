@@ -37,8 +37,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 old_genre_tree_item = cast(Criteria, old_genre_tree_item)  # Cannot be None at that point
                 LibTrackPlaylistRel.objects.delete_instance(
                     user=instance.user, playlist=old_genre_tree_item.criteria_playlist, lib_track=instance)
-                old_genre_tree_item.criteria_playlist.last_track_list_update_date = update_date
-                old_genre_tree_item.criteria_playlist.save(update_fields=[PlayListFields.LAST_TRACK_LIST_UPDATE_DATE])
 
                 # The loop will stop before genre_tree_item is None
                 old_genre_tree_item = old_genre_tree_item.parent
@@ -46,8 +44,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         else:
             genreless_criteria_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(
                 user=instance.user, type=CriteriaTypePks.GENRE, criteria=None)
-            genreless_criteria_playlist.last_track_list_update_date = update_date
-            genreless_criteria_playlist.save(update_fields=[PlayListFields.LAST_TRACK_LIST_UPDATE_DATE])
             LibTrackPlaylistRel.objects.filter(
                 playlist=genreless_criteria_playlist, lib_track=instance).delete()
 
@@ -61,8 +57,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             while genre_tree_item != genre_limit:
                 LibTrackPlaylistRel.objects.create(
                     user=instance.user, playlist=genre_tree_item.criteria_playlist, lib_track=instance)
-                genre_tree_item.criteria_playlist.last_track_list_update_date = update_date
-                genre_tree_item.criteria_playlist.save(update_fields=[PlayListFields.LAST_TRACK_LIST_UPDATE_DATE])
 
                 # The loop will stop before genre_tree_item is None
                 genre_tree_item = genre_tree_item.parent  # type: ignore
@@ -72,8 +66,6 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                                                                                          criteria=None)
             LibTrackPlaylistRel.objects.create(
                 user=instance.user, playlist=genreless_criteria_playlist, lib_track=instance)
-            genreless_criteria_playlist.last_track_list_update_date = update_date
-            genreless_criteria_playlist.save(update_fields=[PlayListFields.LAST_TRACK_LIST_UPDATE_DATE])
 
     def _decrease_position_of_next_tracks_in_old_track_playlists(self, user: User, playlists_with_old_position: list):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields

@@ -25,7 +25,6 @@ class CriteriaPlaylistDetailedSerializer(serializers.ModelSerializer):
                   Fields.NAME,
                   Fields.LIB_TRACK_PLAYLIST_RELS_PUBLIC,
                   Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
-                  Fields.LAST_TRACK_LIST_UPDATE_DATE,
                   Fields.DURATION_IN_SEC,
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC,
                   Fields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC,

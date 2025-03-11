@@ -142,13 +142,3 @@ class LibraryTrack(TrackablePlayCount):
         lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, lib_track=self)
         return list(lib_track_playlist_rels.values_list(LibTrackPlaylistRelFields.PLAYLIST + '__uuid',
                                                         LibTrackPlaylistRelFields.POSITION))
-
-
-@receiver(pre_delete, sender=settings.APP_NAME + '.LibraryTrack')
-def handle_pre_delete(sender, instance: LibraryTrack, using, **kwargs):
-    from bodzify_api.model.playlist.Playlist import Playlist
-    now = timezone.now()
-    playlists: list[Playlist] = list(instance.playlists.all())
-    for playlist in playlists:
-        playlist.last_track_list_update_date = now
-        playlist.save()
