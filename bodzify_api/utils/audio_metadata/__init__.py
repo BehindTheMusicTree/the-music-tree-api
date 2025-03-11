@@ -82,7 +82,7 @@ Legend:
 from mutagen.id3 import ID3
 
 from django.core.exceptions import ImproperlyConfigured
-from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
+from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.db.models.fields.files import FieldFile
 
 from ..AudioFile import AudioFile
@@ -106,7 +106,7 @@ TAG_FORMAT_MANAGER_CLASS_MAP = {
     MetadataFormat.RIFF: RiffManager
 }
 
-FILE_TYPE = AudioFile | InMemoryUploadedFile | TemporaryUploadedFile | FieldFile | str
+FILE_TYPE = AudioFile | TemporaryUploadedFile | FieldFile | str
 
 
 def _get_metadata_manager(
@@ -224,7 +224,7 @@ def is_flac_md5_valid(file: FILE_TYPE) -> bool:
     return file.is_flac_file_md5_valid()
 
 
-def fix_md5_checking(file: FILE_TYPE) -> InMemoryUploadedFile | str:
+def fix_md5_checking(file: FILE_TYPE) -> str:
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
     return file.get_file_with_corrected_md5()

@@ -3,7 +3,9 @@ import datetime
 import os
 from typing import TYPE_CHECKING, cast
 
+from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.db import models
+from django.db.models.fields.files import FieldFile
 from django.db.models import F
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -38,11 +40,12 @@ from .fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMis
 class TrackFile(PrivateStandardResource):
     lib_track = PrivateOneToOneField(  # type: ignore
         'LibraryTrack', on_delete=models.CASCADE, related_name=LibraryTrackFields.TRACK_FILE_INTERNAL)
-    file = models.FileField(upload_to=model_utils.get_user_lib_path,
-                            storage=PreserveSpacesStorage(),
-                            help_text="Only audio formats accepted.",
-                            validators=[TrackFileValidator(),],
-                            max_length=settings.FILE_PATH_MAX_LENGTH)
+    file: TemporaryUploadedFile | FieldFile = models.FileField(  # type: ignore
+        upload_to=model_utils.get_user_lib_path,
+        storage=PreserveSpacesStorage(),
+        help_text="Only audio formats accepted.",
+        validators=[TrackFileValidator(),],
+        max_length=settings.FILE_PATH_MAX_LENGTH)
     duration_in_sec = models.PositiveIntegerField()
     fingerprint_memory = models.BinaryField(null=True, blank=True, default=None, editable=True)
     fingerprint_missing_cause = AppForeignKey(
@@ -170,7 +173,6 @@ class TrackFile(PrivateStandardResource):
                         # If we got a file path, create a new TemporaryUploadedFile
                         from django.core.files.uploadedfile import TemporaryUploadedFile
                         import shutil
-                        import tempfile
 
                         # Create a temporary file in Django's upload directory
                         temp_file = TemporaryUploadedFile(

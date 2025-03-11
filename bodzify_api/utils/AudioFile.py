@@ -3,7 +3,7 @@ import json
 import os
 import subprocess
 import tempfile
-from typing import Union, cast
+from typing import cast, TypeAlias
 
 from mutagen.flac import FLAC
 from mutagen.flac import StreamInfo
@@ -19,18 +19,15 @@ from django.db.models.fields.files import FieldFile
 from bodzify_api import settings
 from bodzify_api.utils.audio_metadata.exceptions import FileByteMismatchError, FileCorruptedError
 
+# Type alias for files that can be handled (must be disk-based)
+DiskBasedFile: TypeAlias = TemporaryUploadedFile | FieldFile | str
+
 
 class AudioFile:
-
-    file: TemporaryUploadedFile | FieldFile | str
+    file: DiskBasedFile
     file_path: str
 
-    def __init__(self, file: Union[TemporaryUploadedFile, FieldFile, str]):
-        """Initialize AudioFile with a disk-based file.
-
-        Args:
-            file: Either a TemporaryUploadedFile, FieldFile, or file path string
-        """
+    def __init__(self, file: DiskBasedFile):
         if isinstance(file, FieldFile):
             file = file.file
 
@@ -230,7 +227,14 @@ class AudioFile:
         """
         Returns a new file with corrected MD5 signature.
         Returns the path to the corrected file.
+
+        Raises:
+            FileCorruptedError: If the FLAC file is corrupted or cannot be corrected
+            RuntimeError: If the FLAC command fails to execute
         """
+        if not self.file_extension == '.flac':
+            raise ImproperlyConfigured("The file is not a FLAC file")
+
         # Create a temporary file to store the corrected FLAC content
         temp_dir = settings.FILE_UPLOAD_TEMP_DIR
         temp_file = tempfile.NamedTemporaryFile(dir=temp_dir if temp_dir else None, delete=False)
@@ -239,22 +243,36 @@ class AudioFile:
 
         success = False
         try:
+            # Read the input file and run FLAC command
             with open(self.file_path, 'rb') as f:
                 result = subprocess.run(['flac', '-f', '--best', '-o', temp_path, '-'],
-                                        input=f.read(),
+                                        stdin=f,
                                         stdout=subprocess.PIPE,
                                         stderr=subprocess.PIPE)
+
+            if result.returncode != 0:
+                raise FileCorruptedError(f"The MD5 correction FLAC command failed: {result.stderr.decode()}")
 
             stderr = result.stderr.decode()
             if 'wrote' not in stderr:
                 raise FileCorruptedError(
-                    "The Flac file md5 check failed and could not be corrected. The file is probably corrupted.")
+                    "The FLAC file MD5 check failed and could not be corrected. The file is probably corrupted.")
+
+            # Verify the output file exists and is valid
+            if not os.path.exists(temp_path) or os.path.getsize(temp_path) == 0:
+                raise FileCorruptedError("Failed to create corrected FLAC file")
+
             success = True
             return temp_path
+
+        except (subprocess.SubprocessError, OSError) as e:
+            raise RuntimeError(f"Failed to execute FLAC command: {str(e)}")
         except Exception as e:
-            # Re-raise the exception after cleanup
             raise e
         finally:
             # Clean up the temp file only if we failed
             if not success and os.path.exists(temp_path):
-                os.unlink(temp_path)
+                try:
+                    os.unlink(temp_path)
+                except OSError:
+                    pass  # Ignore cleanup errors
