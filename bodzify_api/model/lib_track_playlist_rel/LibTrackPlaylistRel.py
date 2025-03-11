@@ -40,9 +40,7 @@ class LibTrackPlaylistRel(PrivateStandardResource):
 
     def _perform_save(self, adding: bool, ctx) -> None:
         if adding:
-            print(LibTrackPlaylistRel.objects.all())
             lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, playlist=self.playlist)
-            print(lib_track_playlist_rels)
             lib_track_playlist_rels.update(
                 position=Case(
                     When(**{Fields.POSITION + '__isnull': False}, then=F(Fields.POSITION) + 1),

@@ -112,7 +112,6 @@ class AppApiClient(APIClient):
     def post(self, path, data: dict | str | None = None, format='json', content_type=None, follow=False, **extra) -> HttpResponse:
         data_url_encoded = self._prepare_data(data, format)
         extra, handle_response, content_type = self._prepare_request_kwargs(extra, format, content_type)
-        print('data_url_encoded', data_url_encoded)
         response = super().post(path, data_url_encoded, follow=follow,
                                 format=format, content_type=content_type, **extra)
         return self._handle_response(response, handle_response)
