@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Changed
 - Put all test files in same directory with consistent naming
+- Set app not to handle in memory files: small files are handle as regular files
 
 ## [v0.1.1] - 2024-09-06
 

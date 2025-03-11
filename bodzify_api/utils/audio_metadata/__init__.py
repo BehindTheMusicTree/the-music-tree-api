@@ -224,10 +224,24 @@ def is_flac_md5_valid(file: FILE_TYPE) -> bool:
     return file.is_flac_file_md5_valid()
 
 
-def fix_md5_checking(file: FILE_TYPE) -> str:
+def fix_md5_checking(file: FILE_TYPE) -> TemporaryUploadedFile:
+    """
+    Returns a temporary file with corrected MD5 signature.
+
+    Args:
+        file: The file to fix MD5 for. Can be AudioFile, TemporaryUploadedFile, FieldFile, or str path.
+
+    Returns:
+        TemporaryUploadedFile: A temporary file containing the corrected audio data.
+
+    Raises:
+        ImproperlyConfigured: If the file is not a FLAC file
+        FileCorruptedError: If the FLAC file is corrupted or cannot be corrected
+        RuntimeError: If the FLAC command fails to execute
+    """
     if not isinstance(file, AudioFile):
         file = AudioFile(file)
-    return file.get_file_with_corrected_md5()
+    return file.get_file_with_corrected_md5(delete_original=True)
 
 
 def delete_potential_id3_metadata_with_header(file: FILE_TYPE) -> None:

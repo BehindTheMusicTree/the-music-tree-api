@@ -1,12 +1,17 @@
 
+import os
 from django.db import transaction
+from django.core.files.base import File
+from django.core.files.storage import default_storage
 from drf_spectacular.types import OpenApiTypes  # type: ignore
 from drf_spectacular.utils import OpenApiParameter, extend_schema  # type: ignore
 from rest_framework.decorators import action
+from typing import cast
 
 from bodzify_api.filtering.set.lib_track.Fields import Fields as FilterFields
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.serializer.model.lib_track.input.post.post import LibTrackPostSerializer
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.serializer.model.lib_track.input.put.put import LibTrackPutSerializer
 from bodzify_api.serializer.model.lib_track.output.detailed import LibTrackDetailedSerializer
 from bodzify_api.serializer.model.lib_track.output.simple.simple_without_track_number import LibTrackSimpleWithoutPositionInAlbumSerializer
@@ -26,8 +31,17 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
-        track: LibraryTrack = LibraryTrack.objects.get(uuid=pk)
-        return self.get_file_response(file_path=track.track_file.file.path)
+        track = cast(LibraryTrack, LibraryTrack.objects.get(uuid=pk))
+        file = cast(File, track.track_file.file)
+        if not file:
+            raise ValueError("File not found")
+
+        # Use Django's storage API to get the file path
+        file_path = default_storage.path(file.name)
+        if not os.path.exists(file_path):
+            raise ValueError("File path not found")
+
+        return self.get_file_response(file_path=file_path)
 
     @transaction.atomic
     @extend_schema(request=LibTrackPostSerializer, responses=LibTrackDetailedSerializer, description=("""
@@ -60,7 +74,19 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
         """)
                    )
     def create(self, request, *args, **kwargs):
-        return self._handle_post(request)
+        try:
+            return self._handle_post(request)
+        except Exception as e:
+            # Clean up temporary file if it exists
+            if request.FILES.get(
+                    PostFields.TRACK_FILE_PUBLIC) and hasattr(
+                    request.FILES[PostFields.TRACK_FILE_PUBLIC],
+                    'temporary_file_path'):
+                try:
+                    os.unlink(request.FILES[PostFields.TRACK_FILE_PUBLIC].temporary_file_path())
+                except (OSError, AttributeError):
+                    pass  # Ignore cleanup errors
+            raise  # Re-raise the original exception
 
     @extend_schema(parameters=[
         OpenApiParameter(name=FilterFields.TITLE, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),

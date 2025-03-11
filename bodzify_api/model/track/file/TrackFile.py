@@ -168,28 +168,7 @@ class TrackFile(PrivateStandardResource):
                     audio_metadata.delete_potential_id3_metadata_with_header(self.file)
 
                     # Fix MD5 and preserve file path
-                    corrected_file = audio_metadata.fix_md5_checking(self.file)
-                    if isinstance(corrected_file, str):
-                        # If we got a file path, create a new TemporaryUploadedFile
-                        from django.core.files.uploadedfile import TemporaryUploadedFile
-                        import shutil
-
-                        # Create a temporary file in Django's upload directory
-                        temp_file = TemporaryUploadedFile(
-                            name=getattr(self.file, 'name', os.path.basename(corrected_file)),
-                            content_type='audio/x-flac',
-                            size=os.path.getsize(corrected_file),
-                            charset=None
-                        )
-
-                        # Copy the corrected file to the temporary file
-                        shutil.copy2(corrected_file, temp_file.temporary_file_path())
-
-                        # Update the file field
-                        self.file = temp_file
-                    else:
-                        # If we got an UploadedFile, use it directly
-                        self.file = corrected_file
+                    self.file = audio_metadata.fix_md5_checking(self.file)
                     self.md5_has_been_corrected = True
                 except FileCorruptedError as e:
                     if not isinstance(e, FlacMd5CheckFailedError):

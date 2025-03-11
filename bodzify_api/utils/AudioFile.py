@@ -223,14 +223,19 @@ class AudioFile:
         else:
             raise FileCorruptedError("The Flac file md5 check failed")
 
-    def get_file_with_corrected_md5(self) -> str:
+    def get_file_with_corrected_md5(self, delete_original: bool = False) -> TemporaryUploadedFile:
         """
-        Returns a new file with corrected MD5 signature.
-        Returns the path to the corrected file.
+        Returns a new temporary file with corrected MD5 signature.
+        Returns a TemporaryUploadedFile instance pointing to the corrected file.
+
+        Args:
+            delete_original: If True, deletes the original file after creating the corrected version.
+                           Defaults to False to maintain backward compatibility.
 
         Raises:
             FileCorruptedError: If the FLAC file is corrupted or cannot be corrected
             RuntimeError: If the FLAC command fails to execute
+            OSError: If deletion of the original file fails when delete_original is True
         """
         if not self.file_extension == '.flac':
             raise ImproperlyConfigured("The file is not a FLAC file")
@@ -263,7 +268,24 @@ class AudioFile:
                 raise FileCorruptedError("Failed to create corrected FLAC file")
 
             success = True
-            return temp_path
+
+            # If requested, try to delete the original file
+            if delete_original and success:
+                try:
+                    os.unlink(self.file_path)
+                except OSError as e:
+                    raise OSError(f"Failed to delete original file: {str(e)}")
+
+            # Create a TemporaryUploadedFile from the temp file
+            temp_uploaded = TemporaryUploadedFile(
+                name=os.path.basename(self.file_path),
+                content_type='audio/flac',
+                size=os.path.getsize(temp_path),
+                charset=None
+            )
+            # Move the temp file to the TemporaryUploadedFile location
+            os.rename(temp_path, temp_uploaded.temporary_file_path())
+            return temp_uploaded
 
         except (subprocess.SubprocessError, OSError) as e:
             raise RuntimeError(f"Failed to execute FLAC command: {str(e)}")
