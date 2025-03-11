@@ -287,7 +287,7 @@ class AudioFile:
 
             # Create a TemporaryUploadedFile from the temp file
             temp_uploaded = TemporaryUploadedFile(
-                name=os.path.basename(self.file_path),
+                name=self.get_file_name_original(),
                 content_type='audio/flac',
                 size=os.path.getsize(temp_path),
                 charset=None
