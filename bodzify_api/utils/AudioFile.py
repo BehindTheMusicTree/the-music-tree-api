@@ -12,8 +12,8 @@ from mutagen.wave import WAVE
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files import File as DjangoFile
-from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.core.files.base import File as DjangoBaseFile
+from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.db.models.fields.files import FieldFile
 
 from bodzify_api import settings
@@ -242,7 +242,7 @@ class AudioFile:
 
         # Create a temporary file to store the corrected FLAC content
         temp_dir = settings.FILE_UPLOAD_TEMP_DIR
-        temp_file = tempfile.NamedTemporaryFile(dir=temp_dir if temp_dir else None, delete=False)
+        temp_file = tempfile.NamedTemporaryFile(dir=temp_dir if temp_dir else None, delete=False, suffix='.flac')
         temp_path = temp_file.name
         temp_file.close()  # Close but don't delete yet
 
@@ -256,12 +256,21 @@ class AudioFile:
                                         stderr=subprocess.PIPE)
 
             if result.returncode != 0:
-                raise FileCorruptedError(f"The MD5 correction FLAC command failed: {result.stderr.decode()}")
+                stderr = result.stderr.decode()
+                if 'wrote' not in stderr:
+                    # Try reencoding with ffmpeg as a fallback
+                    ffmpeg_cmd = ['ffmpeg', '-i', self.file_path, '-c:a', 'flac', temp_path]
 
-            stderr = result.stderr.decode()
-            if 'wrote' not in stderr:
-                raise FileCorruptedError(
-                    "The FLAC file MD5 check failed and could not be corrected. The file is probably corrupted.")
+                    ffmpeg_result = subprocess.run(
+                        ffmpeg_cmd,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE
+                    )
+
+                    if ffmpeg_result.returncode != 0:
+                        raise FileCorruptedError(
+                            "The FLAC file MD5 check failed and reencoding attempts were unsuccessful. The file is probably corrupted."
+                        )
 
             # Verify the output file exists and is valid
             if not os.path.exists(temp_path) or os.path.getsize(temp_path) == 0:
