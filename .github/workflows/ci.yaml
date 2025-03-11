@@ -4,7 +4,7 @@ on:
   workflow_call:
   workflow_dispatch:
   push:
-    branches: [main, dev, enhancement/add-criteria-ascendants-to-criteria-playlists-get]
+    branches: [main, dev, features/archive-tracks]
   pull_request:
     branches: [main, dev]
 
