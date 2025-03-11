@@ -378,7 +378,10 @@ def setup_app_constants():
     LIB_TRACK_FILE_SIZE_MIN_IN_MO = 0
     global LIB_TRACK_FILE_SIZE_MAX_IN_MO
     LIB_TRACK_FILE_SIZE_MAX_IN_MO = 300
-    # Set Django's upload size limit to match our max file size
+    # Force all uploads to be written to disk by setting memory size to 0
+    global FILE_UPLOAD_MAX_MEMORY_SIZE
+    FILE_UPLOAD_MAX_MEMORY_SIZE = 0  # Force all uploads to disk
+    # Set max upload size limit
     global DATA_UPLOAD_MAX_MEMORY_SIZE
     DATA_UPLOAD_MAX_MEMORY_SIZE = LIB_TRACK_FILE_SIZE_MAX_IN_MO * 1024 * 1024  # Convert MB to bytes
 

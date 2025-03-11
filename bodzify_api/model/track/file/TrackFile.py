@@ -167,29 +167,26 @@ class TrackFile(PrivateStandardResource):
                     # Fix MD5 and preserve file path
                     corrected_file = audio_metadata.fix_md5_checking(self.file)
                     if isinstance(corrected_file, str):
-                        # If we got a file path, create a new InMemoryUploadedFile
-                        from django.core.files.uploadedfile import InMemoryUploadedFile
-                        from io import BytesIO
+                        # If we got a file path, create a new TemporaryUploadedFile
+                        from django.core.files.uploadedfile import TemporaryUploadedFile
+                        import shutil
+                        import tempfile
 
-                        # Read the corrected file content
-                        with open(corrected_file, 'rb') as f:
-                            content = f.read()
-
-                        # Create a new BytesIO object with the content
-                        file_obj = BytesIO(content)
-
-                        # Create new InMemoryUploadedFile with same name and content type
-                        self.file = InMemoryUploadedFile(
-                            file=file_obj,
-                            field_name=None,
-                            name=getattr(self.file, 'name', corrected_file),
+                        # Create a temporary file in Django's upload directory
+                        temp_file = TemporaryUploadedFile(
+                            name=getattr(self.file, 'name', os.path.basename(corrected_file)),
                             content_type='audio/x-flac',
-                            size=len(content),
-                            charset=None,
-                            content_type_extra={}
+                            size=os.path.getsize(corrected_file),
+                            charset=None
                         )
+
+                        # Copy the corrected file to the temporary file
+                        shutil.copy2(corrected_file, temp_file.temporary_file_path())
+
+                        # Update the file field
+                        self.file = temp_file
                     else:
-                        # If we got an InMemoryUploadedFile, use it directly
+                        # If we got an UploadedFile, use it directly
                         self.file = corrected_file
                     self.md5_has_been_corrected = True
                 except FileCorruptedError as e:
