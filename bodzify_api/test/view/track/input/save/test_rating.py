@@ -5,47 +5,47 @@ from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as P
 from bodzify_api.test.utils.field.body_data.type.NullablePositiveIntBodyDataTestCase import (
     NullablePositiveIntBodyDataTestCase
 )
-from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
+from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
 class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
 
     def test_empty_string_then_none(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: ''})
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.RATING: ''})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.rating == None
 
     def test_empty_then_none(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: None})
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.RATING: None})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.rating == None
 
     def test_zero(self):
         rating = 0
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: rating})
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.RATING: rating})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.rating == rating
 
     def test_four(self):
         rating = 4
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: rating})
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.RATING: rating})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.rating == rating
 
     def test_largest_then_ok(self):
         rating = 10
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: rating})
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.RATING: rating})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.rating == rating
 
     def test_too_large_then_400(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: 11})
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.RATING: 11})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -54,7 +54,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert error['code'] == FieldValidationErrorCode.RATING_TOO_LARGE
 
     def test_negative_then_400(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: -1})
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.RATING: -1})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -63,7 +63,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert error['code'] == FieldValidationErrorCode.RATING_TOO_SMALL
 
     def test_multi_value_then_400(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: [1, 2]})
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.RATING: [1, 2]})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -72,7 +72,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_float_then_400(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: 5.5})
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.RATING: 5.5})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -81,7 +81,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_string_not_castable_then_400(self):
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: 'five'})
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.RATING: 'five'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -91,7 +91,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
 
     def test_string_castable_then_ok(self):
         rating = '5'
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **{PostFields.RATING: rating})
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.RATING: rating})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.rating == int(rating)

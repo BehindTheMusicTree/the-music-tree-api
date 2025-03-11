@@ -38,7 +38,7 @@ from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.model.user.User import User
-from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
+from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
 
 
 global_settings.DDF_FIELD_FIXTURES['django.db.models.fields.generated.GeneratedField'] = lambda: None  # type: ignore
@@ -119,7 +119,7 @@ class ModelFixtureFactory:
     def create_lib_track_with_file(
         self,
         title: str | None = "test",
-        test_lib_track_filename: TestLibTrackFilename | None = TestLibTrackFilename.DEFAULT_MP3,
+        test_lib_track_filename: LibTrackTestFilename | None = LibTrackTestFilename.DEFAULT_MP3,
         user: User | None = None,
         use_manager_for_genre_playlist_adding: bool = False,
         **kwargs

@@ -13,7 +13,7 @@ from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.utils.ConcatOp import ConcatOp
 from bodzify_api.model.utils.ConditionalExpression import ConditionalExpression
-from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
+from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
 
 from .Fields import Fields
 from .UserManager import UserManager
@@ -54,7 +54,7 @@ class User(AbstractUser, BaseModel):
         all_lib_tracks_mixin, _ = AllLibTracksMixin.objects.get_or_create(user=self)
         return all_lib_tracks_mixin
 
-    def does_track_filename_exist_in_lib(self, test_lib_track_filename: TestLibTrackFilename):
+    def does_track_filename_exist_in_lib(self, test_lib_track_filename: LibTrackTestFilename):
         return os.path.isfile(Path(self.lib_abs_path) / test_lib_track_filename)
 
     def delete(self, *args, **kwargs):

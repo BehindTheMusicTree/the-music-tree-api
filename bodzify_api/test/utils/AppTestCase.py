@@ -14,7 +14,7 @@ from bodzify_api.model.user.User import User
 from bodzify_api.model.uuid.Fields import Fields as UuidModelFields
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as LibTrackPostFields
 from bodzify_api.test.utils.AppApiClient import AppApiClient
-from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
+from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.utils.ModelFixtureFactory import ModelFixtureFactory
 from bodzify_api.utils import audio_metadata, data_transformer
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
@@ -121,7 +121,7 @@ class AppTestCase(TestCase, Generic[T]):
 
     # Defined here and not in LibTrackTestCase because other views needs sometimes to post a track for testing purposes
     # (testing metadata updates for example)
-    def _post_lib_track(self, test_lib_track_filename: TestLibTrackFilename = TestLibTrackFilename.DEFAULT_MP3, **kwargs
+    def _post_lib_track(self, test_lib_track_filename: LibTrackTestFilename = LibTrackTestFilename.DEFAULT_MP3, **kwargs
                         ) -> Union[JsonResponse, HttpResponse]:
         file_abs_path = self.TEST_FILES_BASE_DIR / test_lib_track_filename
 

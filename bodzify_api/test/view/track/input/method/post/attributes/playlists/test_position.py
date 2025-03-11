@@ -1,11 +1,10 @@
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
+from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@
 class TestCase(LibTrackTestCase):
 
     def test_create_then_in_first_position_of_genre_playlist_and_other_tracks_after(self):
@@ -15,7 +14,7 @@ class TestCase(LibTrackTestCase):
         lib_track2 = self.model_fixture_factory.create_lib_track_with_file(
             title="We're All To lol", genre=genre, use_manager_for_genre_playlist_adding=True)
 
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3)
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
 

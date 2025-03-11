@@ -2,7 +2,6 @@
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@
 class TestCase(LibTrackTestCase):
 
     """

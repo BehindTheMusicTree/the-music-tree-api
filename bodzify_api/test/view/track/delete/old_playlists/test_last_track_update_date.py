@@ -3,7 +3,6 @@ from rest_framework import status
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@
 class TestCase(LibTrackTestCase):
 
     def test_delete_then_update_genre_playlist_last_track_update_date(self) -> None:

@@ -9,7 +9,7 @@ from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCas
 
 class TestCase(PlaylistTestCase):
 
-        def test_type_genre_and_name_tagless_then_no_result(self):
+    def test_type_genre_and_name_tagless_then_no_result(self):
         data_dict = {
             Filters.TYPE_LABEL_PUBLIC: PlaylistTypesLabel.GENRE,
             Filters.NAME: CriterialessPlaylistNames.TAG
