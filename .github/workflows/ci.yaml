@@ -67,7 +67,7 @@ jobs:
           python-version: 3.12
 
       - name: Cache apt packages
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: /var/cache/apt
           key: ${{ runner.os }}-apt-${{ hashFiles('scripts/install-dependencies.sh') }}
@@ -75,7 +75,7 @@ jobs:
             ${{ runner.os }}-apt-
   
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
