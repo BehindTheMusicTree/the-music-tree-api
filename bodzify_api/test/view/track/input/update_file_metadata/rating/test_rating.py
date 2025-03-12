@@ -1,48 +1,39 @@
-import pytest
 
-from bodzify_api.test import conftest
-from bodzify_api.test.view.track.input.update_file_metadata.rating.TestCase import (
-    FlacTestCase,
-    Mp3TestCase,
-    WavTestCase
-)
+from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
 
 
-@pytest.fixture(params=[Mp3TestCase, WavTestCase, FlacTestCase])
-def childinstance(request, db):
-    yield from conftest.base_childinstance(request, db)
+class TestCase(LibTrackTestCase):
 
+    def test_0_then_0_on_mp3(self):
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.RATING: 0})
+        assert response.status_code == 201
+        assert self.saved_lib_track_metadata[AppMetadataKey.RATING] == 0
 
-def test_largest_then_ok(childinstance):
-    childinstance._test_value(value=childinstance.value_max,
-                              value_expected_in_metadata=childinstance.value_max_expected_in_metadata,
-                              additional_data=None,
-                              file_has_metadata=False)
+    def test_0_then_0_on_wav(self):
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_WAV, **{PostFields.RATING: 0})
+        assert response.status_code == 201
+        assert self.saved_lib_track_metadata[AppMetadataKey.RATING] == 0
 
+    def test_0_then_0_on_flac(self):
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_FLAC, **{PostFields.RATING: 0})
+        assert response.status_code == 201
+        assert self.saved_object.track_file
+        assert self.saved_lib_track_metadata[AppMetadataKey.RATING] == 0
 
-def test_on_missing_tag_then_ok(childinstance):
-    childinstance._test_value(value=childinstance.value_min,
-                              value_expected_in_metadata=childinstance.value_min_expected_in_metadata,
-                              additional_data=None,
-                              file_has_metadata=False)
+    def test_5_then_5_on_mp3(self):
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.RATING: 5})
+        assert response.status_code == 201
+        assert self.saved_lib_track_metadata[AppMetadataKey.RATING] == 5
 
+    def test_5_then_5_on_wav(self):
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_WAV, **{PostFields.RATING: 5})
+        assert response.status_code == 201
+        assert self.saved_lib_track_metadata[AppMetadataKey.RATING] == 5
 
-def test_on_present_tag_then_ok(childinstance):
-    childinstance._test_value(value=childinstance.value_min,
-                              value_expected_in_metadata=childinstance.value_min_expected_in_metadata,
-                              additional_data=None,
-                              file_has_metadata=True)
-
-
-def test_min_then_ok(childinstance):
-    childinstance._test_value(value=childinstance.value_min,
-                              value_expected_in_metadata=childinstance.value_min_expected_in_metadata,
-                              file_has_metadata=False)
-
-
-def test_none_then_none(childinstance):
-    childinstance._test_value(value=None, additional_data=None, file_has_metadata=False)
-
-
-def test_zero_then_0(childinstance):
-    childinstance._test_value(0, 0)
+    def test_5_then_5_on_flac(self):
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_FLAC, **{PostFields.RATING: 5})
+        assert response.status_code == 201
+        assert self.saved_lib_track_metadata[AppMetadataKey.RATING] == 5
