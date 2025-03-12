@@ -386,7 +386,7 @@ def setup_app_constants():
     DATA_UPLOAD_MAX_MEMORY_SIZE = LIB_TRACK_FILE_SIZE_MAX_IN_MO * 1024 * 1024  # Convert MB to bytes
 
     global LIB_TRACK_FILE_EXTENSIONS
-    LIB_TRACK_FILE_EXTENSIONS = ['mp3', 'flac', 'wav']
+    LIB_TRACK_FILE_EXTENSIONS = ['.mp3', '.flac', '.wav']
     global LIB_TRACK_FILE_CONTENT_TYPES
     LIB_TRACK_FILE_CONTENT_TYPES = ['audio/mpeg', 'audio/flac', 'audio/wav']
     global LIB_TRACK_FILENAME_LEN_MAX
