@@ -13,21 +13,21 @@ class TestCase(LibTrackFileMetadataUpdateStrTestCase):
     album_data_dict = {PostFields.ALBUM_NAME: "The Great Twenty-Eight"}
 
     def test_on_missing_tag_then_ok(self):
-        self._test_value("a", additional_data_dict=self.album_data_dict, file_has_tags=False)
+        self._test_value("a", additional_data_dict=self.album_data_dict, file_has_metadata=False)
 
     def test_on_present_tag_then_ok(self):
-        self._test_value("a", additional_data_dict=self.album_data_dict, file_has_tags=True)
+        self._test_value("a", additional_data_dict=self.album_data_dict, file_has_metadata=True)
 
     def test_largest_then_ok(self):
-        self._test_value("a" * self.length_max, additional_data_dict=self.album_data_dict, file_has_tags=False)
+        self._test_value("a" * self.length_max, additional_data_dict=self.album_data_dict, file_has_metadata=False)
 
 
 class Mp3TestCase(TestCase):
-    file_extension = 'mp3'
+    file_extension = '.mp3'
 
 
 class FlacTestCase(TestCase):
-    file_extension = 'flac'
+    file_extension = '.flac'
 
 
 class WavTestCase(TestCase):

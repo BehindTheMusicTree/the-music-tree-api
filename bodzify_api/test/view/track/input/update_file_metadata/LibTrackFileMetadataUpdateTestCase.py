@@ -19,7 +19,7 @@ class LibTrackFileMetadataUpdateTestCase(LibTrackTestCase):
     file_extension_metadata_max_a_test_lib_track_mapping: dict[str, LibTrackTestFilename] = {
         '.mp3': LibTrackTestFilename.METADATA_LONG_A_ID3V2_SMALL_MP3,
         '.flac': LibTrackTestFilename.METADATA_LONG_A_VORBIS_SMALL_FLAC,
-        '.wav': LibTrackTestFilename.METADATA_LONG_A_ID3V2_SMALL_WAV
+        '.wav': LibTrackTestFilename.METADATA_LONG_A_RIFF_SMALL_WAV
     }
 
     def _post_lib_track(self, file_has_metadata: bool, extension: str, **data):

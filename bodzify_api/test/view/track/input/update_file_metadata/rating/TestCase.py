@@ -14,7 +14,7 @@ class UpdateFileMetadataRatingTestCase(LibTrackFileMetadataUpdatePositiveIntTest
 
 
 class FlacTestCase(UpdateFileMetadataRatingTestCase):
-    file_extension = 'flac'
+    file_extension = '.flac'
     value_max_expected_in_metadata = 100
 
     def test_1_then_10(self):
@@ -49,7 +49,7 @@ class FlacTestCase(UpdateFileMetadataRatingTestCase):
 
 
 class Mp3TestCase(UpdateFileMetadataRatingTestCase):
-    file_extension = 'mp3'
+    file_extension = '.mp3'
     value_max_expected_in_metadata = 255
 
     def test_1_then_13(self):

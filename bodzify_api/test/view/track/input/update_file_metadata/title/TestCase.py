@@ -13,11 +13,11 @@ class TestCase(LibTrackFileMetadataUpdateStrTestCase):
 
 
 class Mp3TestCase(TestCase):
-    file_extension = 'mp3'
+    file_extension = '.mp3'
 
 
 class FlacTestCase(TestCase):
-    file_extension = 'flac'
+    file_extension = '.flac'
 
 
 class WavTestCase(TestCase):

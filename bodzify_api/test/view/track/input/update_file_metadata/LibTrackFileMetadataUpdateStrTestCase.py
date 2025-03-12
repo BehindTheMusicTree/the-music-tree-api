@@ -15,13 +15,13 @@ class LibTrackFileMetadataUpdateStrTestCase(LibTrackFileMetadataUpdateTestCase):
                     value: str | None,
                     additional_data_dict,
                     value_expected_in_metadata=VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED,
-                    file_has_tags=False):
+                    file_has_metadata=False):
         data = {self.save_field: value}
 
         if additional_data_dict:
             data.update(additional_data_dict)
 
-        response = self._post_lib_track(file_has_metadata=file_has_tags, extension=self.file_extension, **data)
+        response = self._post_lib_track(file_has_metadata=file_has_metadata, extension=self.file_extension, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -38,10 +38,10 @@ class LibTrackFileMetadataUpdateStrTestCase(LibTrackFileMetadataUpdateTestCase):
             assert self.saved_lib_track_metadata[self.lib_track_app_metadata_key] == value_expected_in_metadata
 
     def test_on_missing_tag_then_ok(self, additional_data_dict=None):
-        self._test_value("a", additional_data_dict=additional_data_dict, file_has_tags=False)
+        self._test_value("a", additional_data_dict=additional_data_dict, file_has_metadata=False)
 
     def test_on_present_tag_then_ok(self, additional_data_dict=None):
-        self._test_value("a", additional_data_dict=additional_data_dict, file_has_tags=True)
+        self._test_value("a", additional_data_dict=additional_data_dict, file_has_metadata=True)
 
     def test_largest_then_ok(self, additional_data_dict=None):
-        self._test_value('a' * self.length_max, additional_data_dict=additional_data_dict, file_has_tags=False)
+        self._test_value('a' * self.length_max, additional_data_dict=additional_data_dict, file_has_metadata=False)
