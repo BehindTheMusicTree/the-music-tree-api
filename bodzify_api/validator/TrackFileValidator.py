@@ -16,7 +16,7 @@ class TrackFileValidator:
         b'ID3': 'audio/mpeg',
         b'\x4F\x67\x67\x53': 'audio/ogg',
         b'RIFF': 'audio/wav',
-        b'fLaC': 'audio/flac',
+        b'.flac': 'audio/flac',
     }
 
     def __init__(self, field_name=None):
@@ -29,7 +29,7 @@ class TrackFileValidator:
 
     def _validate_extension(self, value, field=None):
         allowed_extensions = [ext.lower() for ext in settings.LIB_TRACK_FILE_EXTENSIONS]
-        extension = Path(value.name).suffix[1:].lower()
+        extension = Path(value.name).suffix[0:].lower()
 
         if extension not in allowed_extensions:
             message = _(
@@ -45,7 +45,8 @@ class TrackFileValidator:
             else:
                 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
                 raise AppValidationException(
-                    message=message, field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_EXTENSION_INVALID,
+                    message=message,
+                    field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_EXTENSION_INVALID,
                     field_name=self.field_name)
 
     def _validate_file_size(self, file, field=None):
