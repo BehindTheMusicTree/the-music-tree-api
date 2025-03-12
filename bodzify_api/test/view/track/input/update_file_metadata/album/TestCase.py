@@ -10,6 +10,16 @@ class TestCase(LibTrackFileMetadataUpdateStrTestCase):
     save_field = InputFields.ALBUM_NAME
     lib_track_app_metadata_key = AppMetadataKey.ALBUM_NAME
     length_max = settings.ALBUM_NAME_LEN_MAX
+    album_artists_data = {InputFields.ALBUM_ARTISTS_NAMES_ARRAY: ['Muse']}
+
+    def test_on_missing_tag_then_ok(self):
+        self._test_value("a", additional_data=self.album_artists_data, file_has_metadata=False)
+
+    def test_on_present_tag_then_ok(self):
+        self._test_value("a", additional_data=self.album_artists_data, file_has_metadata=True)
+
+    def test_largest_then_ok(self):
+        self._test_value("a" * self.length_max, additional_data=self.album_artists_data, file_has_metadata=False)
 
 
 class Mp3TestCase(TestCase):
@@ -21,4 +31,4 @@ class FlacTestCase(TestCase):
 
 
 class WavTestCase(TestCase):
-    file_extension = 'wav'
+    file_extension = '.wav'

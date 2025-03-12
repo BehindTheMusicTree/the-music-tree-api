@@ -16,32 +16,32 @@ def childinstance(request, db):
 def test_largest_then_ok(childinstance):
     childinstance._test_value(value=childinstance.value_max,
                               value_expected_in_metadata=childinstance.value_max_expected_in_metadata,
-                              additional_data_dict=None,
-                              file_has_tags=False)
+                              additional_data=None,
+                              file_has_metadata=False)
 
 
 def test_on_missing_tag_then_ok(childinstance):
     childinstance._test_value(value=childinstance.value_min,
                               value_expected_in_metadata=childinstance.value_min_expected_in_metadata,
-                              additional_data_dict=None,
-                              file_has_tags=False)
+                              additional_data=None,
+                              file_has_metadata=False)
 
 
 def test_on_present_tag_then_ok(childinstance):
     childinstance._test_value(value=childinstance.value_min,
                               value_expected_in_metadata=childinstance.value_min_expected_in_metadata,
-                              additional_data_dict=None,
-                              file_has_tags=True)
+                              additional_data=None,
+                              file_has_metadata=True)
 
 
 def test_min_then_ok(childinstance):
     childinstance._test_value(value=childinstance.value_min,
                               value_expected_in_metadata=childinstance.value_min_expected_in_metadata,
-                              file_has_tags=False)
+                              file_has_metadata=False)
 
 
 def test_none_then_none(childinstance):
-    childinstance._test_value(value=None, additional_data_dict=None, file_has_tags=False)
+    childinstance._test_value(value=None, additional_data=None, file_has_metadata=False)
 
 
 def test_zero_then_0(childinstance):

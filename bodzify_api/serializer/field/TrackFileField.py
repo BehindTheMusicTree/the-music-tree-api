@@ -70,7 +70,7 @@ class TrackFileField(AppField):
                 content_type = response.headers.get('Content-Type', '')
                 if 'mpeg' in content_type:
                     filename += '.mp3'
-                elif 'wav' in content_type:
+                elif '.wav' in content_type:
                     filename += '.wav'
                 elif 'flac' in content_type:
                     filename += '.flac'

@@ -84,7 +84,7 @@ class Mp3TestCase(UpdateFileMetadataRatingTestCase):
 
 
 class WavTestCase(UpdateFileMetadataRatingTestCase):
-    file_extension = 'wav'
+    file_extension = '.wav'
     value_max_expected_in_metadata = 255
 
     def test_1_then_13(self):

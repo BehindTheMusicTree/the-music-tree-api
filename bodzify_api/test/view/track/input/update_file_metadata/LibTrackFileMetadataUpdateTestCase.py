@@ -29,7 +29,7 @@ class LibTrackFileMetadataUpdateTestCase(LibTrackTestCase):
             return super()._post_lib_track(self.file_extension_metadata_none_test_lib_track_mapping[extension], **data)
 
     def _test_value(self, value: str | None,
-                    additional_data_dict,
+                    additional_data,
                     value_expected_in_metadata=VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED,
                     file_has_metadata=False):
         raise NotImplementedError()

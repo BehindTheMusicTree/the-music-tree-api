@@ -21,4 +21,4 @@ class FlacTestCase(TestCase):
 
 
 class WavTestCase(TestCase):
-    file_extension = 'wav'
+    file_extension = '.wav'

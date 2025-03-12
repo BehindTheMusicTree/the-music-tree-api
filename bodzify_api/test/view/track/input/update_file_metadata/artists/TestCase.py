@@ -7,9 +7,10 @@ from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 
 
 class TestCase(LibTrackFileMetadataUpdateStrTestCase):
-    save_field = InputFields.ARTISTS_NAMES
+    save_field = InputFields.ARTISTS_NAMES_ARRAY
     lib_track_app_metadata_key = AppMetadataKey.ARTISTS_NAMES
     length_max = settings.ARTIST_NAME_LEN_MAX
+    value_expected_in_metadata_is_list = True
 
 
 class Mp3TestCase(TestCase):
@@ -21,4 +22,4 @@ class FlacTestCase(TestCase):
 
 
 class WavTestCase(TestCase):
-    file_extension = 'wav'
+    file_extension = '.wav'
