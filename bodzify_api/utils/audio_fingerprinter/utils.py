@@ -3,6 +3,7 @@ import base64
 import re
 
 import requests
+import urllib3
 
 from bodzify_api import settings
 
@@ -82,7 +83,9 @@ def post_fingerprint_audio(filename: str, title: str, user_id: str) -> tuple[byt
         else:
             raise exception.AudioFingerprinterException(response_json)
     except requests.exceptions.ConnectionError as e:
-        if str(e).find('Errno 61') != -1:
+        if str(e).find('Errno 61') != -1 or str(e).find('Errno 111') != -1:
             raise exception.ServiceNotFoundException()
         else:
             raise ConnectionError(str(e))
+    except urllib3.exceptions.MaxRetryError as e:
+        raise exception.ServiceNotFoundException()
