@@ -29,7 +29,7 @@ class AppTestCase(TestCase, Generic[T]):
     saved_object: T  # Must be defined in child classes
 
     api_client: AppApiClient
-    saved_lib_track_metadata: dict
+    saved_lib_track_metadata_with_raw_rating: dict
 
     TEST_FILES_BASE_DIR = Path(__file__).parent.parent / 'utils' / 'lib_track' / 'files'
 
@@ -117,7 +117,8 @@ class AppTestCase(TestCase, Generic[T]):
 
     def _set_saved_lib_track_metadata(self):
         saved_lib_track = cast(LibraryTrack, self.saved_object)
-        self.saved_lib_track_metadata = audio_metadata.get_merged_app_metadata(file=saved_lib_track.track_file.file)
+        self.saved_lib_track_metadata_with_raw_rating = audio_metadata.get_merged_app_metadata(
+            file=saved_lib_track.track_file.file)
 
     # Defined here and not in LibTrackTestCase because other views needs sometimes to post a track for testing purposes
     # (testing metadata updates for example)
