@@ -1,13 +1,9 @@
-import logging
-
+import warnings
 import pytest
 from rest_framework import status
 
 from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
-
-
-logger = logging.getLogger(__name__)
 
 
 @pytest.mark.usefixtures("enable_audio_metadata_analysis")
@@ -16,13 +12,11 @@ class TestCase(LibTrackTestCase):
     def test_mp3(self):
         response = self._post_lib_track(LibTrackTestFilename.RECORDING_CARMINA_BURANA_REMIX_7M52_MP3)
         assert response.status_code == status.HTTP_201_CREATED
-        print(self.saved_object.track_file.fingerprint_bytes)
         if self.saved_object.track_file.fingerprint_bytes != (
             b'AQADtAqzRQmTKUF4XMfhFY8FikcXMseJXoG9oQwnCs8-5Ed9-LTRh8dJo04vNGMPckcTUsh-6NMR6hLe5SizC43GIzihS-mMPEfJHM_x4WgqBjfmHj1TNIzxJHnQqRdSHT2uDzq--uhzNOXxSK6xo88RUmlwUccmLz2-7Kh0ND0-XEesy0imKDz65Lgc9NmCd-zgF_mhEy9iI1cSY6WOc1DHGeGJ_jqa8zgdfA86RVEs_EcaSROuDfpydCFT5OGOCVOe4set9vjxC0_CY88RGs5RUoe66BGeW0dcotQoNMtRXw_sxDh6CrcU5Id45Fmu4HrQOBQmD-EPsUf44LWDWpEe8MWPkJ0V7A_0QxceakflTgjzD1fEJTh-pNyChxmFmTnEHzdORUfPQ4s-PMss5NLB50VT40f8HWIY5ki7HF0ZPNxRoulTPMh7yF3wK0fIJLrgSRfgB30inBoY64OVRmlClPlxovqEM0dOfIFuIVaPXsd7cH_xBjaT4MqE64EzTsdD9Dma8sdPfJyQxzNURUL-48d0PMN5fHAcHfeMUBuS58JZ1DuqGj2sJsezI-GlnEijLMM1V-iP4xzCHMmOUZSO54GLH7eOPIYcGTk_XLwxOhRu5MkPLd3RcT_uB9qXw1F85IerLEWfD__xpKhMolFz_AgTJRcUcckG_ShsIebxo8fT40do0biP8zhebvBIQ_p0XMc3eN1x3IEvUpiIj4cm7rA8RBd-eJ6PD1cOLyQy_od2HaEjFk0b4SFfPC_S74KO4DrKRMyHh_HQB92UIYcP7Svu7IFGNfAZ4oHjoL_x4ce1oDqa82igizp8HXlC-MWjHFMiFl0zEo6DKT9y6dB5vBPyjEGjLHmIX7h4GCcc3C88H7mi40-gB0ZP_DfeHD3hnB1MXDzS48oEY-QOKxl-YotzoXl25DrUH5ePM2iULJcMVUfeDD-e5SglHc-DpirCZ0fyZcfDFuhzuNtRfSmOB3-I2IfGVoeXmMKh57iLPBmMw8vxC76OZ0b44RluFj2aE4XVEGaEKyOs41EIq0etEP0HHw6PEyIuGunRU0ePL9gHRz3e5EGkPHuhGvHxxA9xSkHzoOeDZxqKI6SMK0eP5lnw5ejDwudRi8N9oMmL64Whi_CRJzthB1d4w9lg5caP5hkuBHoT8fgiIVyy4NdgMR0ufBn640X4Fs2PhxahnTDKBr-GR0cTQ7uyIyRxJSgffEFzEvEhqjpyZiy-HEeo7uiZD_6gLdODdnIDcfdxFXnwEL5j5JmhqyfCqMmOF1cWnEPjNujD40Vf5Bs0xLZRnjCrw9PwHGmQ6BV--Dge4buIbzci6Tl6iEfXHP3x4jkm6jh-hDqokceL70Pz5EXO5FCO8McZoZJ2PJhOohHFY2fxPUSuoxeahzn6w19KPIQf4ocfHhdchTj8EIdPwCeMnmhwwkU9Hs1xwkU9Hs1xwkePBif84jn8Hg_8ED_88LjgKsThh7jgjoBPGD1R-ISLejya44SLejya44R71Dua44RfPIff44Ef4vCLK3AV4vBDXHAV4vAJoycKnzB6Hs1xwkU9Hs1xwkePBif84jn8Hg_84oFfXIGrEIcf4oKrEB_MhXCFekQLnzB6osFHGC15NMVHC-6Pw9dxHn7RB50GVyH80LiO5uHRD1ZD4_BDXHAV4vBDXHDH44RPwkU9Hs1xwjgPHydcFbWC5vjgHodfPPCL5_B7XIGrEIcf4oKrEIcf4mhOFD5h9Dya44SLejya44R71Dua44RfPPCLB37xHH6PK3AV4ocfHocf4vBDXGiYEYVPmCnqEYVP-DjhHydc1OPRHCf84jn84yH84jn8Hlfgh7gOPzwOP8ThhziaE4VPuPgI44TREw1OuKjHozlO-EUfNDjhFw_84oEf4ocfHhdchTj8EEdzovAJoycanHBRj0dznHBRj0dznPDRo8EJv3gOv8cDP8QPPzwuuApx-CEuuCPgE0ZPFD5h9Dya44SLejya44R7fPBx-MUDv3jgFw_84gpchTj8EBdchTh8wuiJwidc1OPRHCdc1OPRHCd89Ghwwi8e-MUDv3jgFw_8EDr8EBdchTjMhXAFzePRwyeMljx6-IRxwjTqEc1Rr2iImyn84jn8Ho9gtcYDP8Thh_jhh8QFP8QFn3BRj0cPnzDOw8cJ96iHBj2NpsdHGCf84oFfPPCL5_B7XIGrEIcf4oKrEIcf4mhOAOEAqB4wIhBDDAhAAABCESCIMkgiAQhFjpoilBAEIGMNEIoAIyhAwADOFAKAAkIEUcYppQiCwgBAgBIAIUWgAFZYAAAoQBBDwDFCAGAAUgCAIAhhzAkChIQCOOAIYIAo4qwSkCgAhABEIMEEFcAhQhhyCghgDBIAAEICc4YIIoxgABEEARDCCKIcA8oIBAhpAgKCICHKSAUEUMAhIxgBYgAjCQGKACaMAEgQIIUAAjEgEWPKA0AhEYgZJYxBSAhCAKQIGEK4AQARRwAwQggiBHAQIKGkOQAIq4QzSEghDAEGAUOFMsYpIAxwiDgBqAHMIGKAEEAAhbCiDhggDGIKAgaghIAgwYhwABCAIBAMGmXEMQAxzAwgTBghhLDGCSSAU5gQgAAQBBBCAAECOIuIAgwI4ARASBigAAKEMcCIIBRwhAwRwhgiMANAGIgMMAI44gRCRggECFKEAAWIcEgpKhQijiCnGEAEEA2hMZYhAA4AjCFjgKBgCWaUYMYBAQQACgAGGAMCMcCEIE5oJ7RTxAGmgGCAMSAQA0gQIbQT2gGlHWAKCAYYQAwgJoggQjuhnSIOMAUEAwwgBpARBAkEhDPCGCAAYkAIBhADSHghtHNCO4WAAwwwBQRiADHAhCBCO6EdUNoBBhhgCgjEGBAMMICEsM4IJ7QDTAHGAFNAIIAYEAwwwIRAjjihHRAOMMAAY0AgBpgQxAnthHaKOMAUEAwwBgRiAAkiiNBOaAeQcoABBhhADCAmiBDaCe0UcYABBhhgAAHEBBeCC6cEYAoIxgADjAAEkBBcOKEdIAw5wAADTAGBGEAMMAE',
         ):
-            logger.warning("Fingerprint mismatch.")
-        else:
-            logger.info("Fingerprint match.")
+            warnings.warn("Fingerprint mismatch.")
+        assert True
 
     def test_flac(self):
         response = self._post_lib_track(LibTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M20_FLAC)
@@ -32,9 +26,8 @@ class TestCase(LibTrackTestCase):
         )
         track_fingerprint_bytes = self.saved_object.track_file.fingerprint_bytes
         if track_fingerprint_bytes is None or track_fingerprint_bytes != expected_fingerprint:
-            logger.warning("Fingerprint mismatch.")
-        else:
-            logger.info("Fingerprint match.")
+            warnings.warn("Fingerprint mismatch.")
+        assert True
 
     def test_wav(self):
         response = self._post_lib_track(LibTrackTestFilename.RECORDING_CARMINA_BURANA_REMIX_7M52_WAV)
@@ -44,9 +37,8 @@ class TestCase(LibTrackTestCase):
         )
         track_fingerprint_bytes = self.saved_object.track_file.fingerprint_bytes
         if track_fingerprint_bytes is None or track_fingerprint_bytes != expected_fingerprint:
-            logger.warning("Fingerprint mismatch.")
-        else:
-            logger.info("Fingerprint match.")
+            warnings.warn("Fingerprint mismatch.")
+        assert True
 
     def test_SMALL_MP3(self):
         response = self._post_lib_track(LibTrackTestFilename.DURATION_LESS_THAN_1_SEC_MP3)

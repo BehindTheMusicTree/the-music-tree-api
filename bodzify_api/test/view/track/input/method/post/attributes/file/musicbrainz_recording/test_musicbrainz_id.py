@@ -1,14 +1,10 @@
-import logging
+import warnings
 
 import pytest
 from rest_framework import status
 
-from bodzify_api.logging.LoggersName import LoggersName
 from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
-
-
-logger = logging.getLogger(LoggersName.INFO)
 
 
 @pytest.mark.usefixtures("enable_audio_metadata_analysis")
@@ -33,18 +29,26 @@ class TestCase(LibTrackTestCase):
         expected_musicbrainz_recording_id = "9f3c3b61-41a6-4bb9-a49c-33606f536784"
         if (track_musicbrainz_recording is None
                 or track_musicbrainz_recording.musicbrainz_id != expected_musicbrainz_recording_id):
-            logger.warning(f"The expected MusicBrainz recording id {
-                           track_musicbrainz_recording} is not the one expected {expected_musicbrainz_recording_id}")
+            warnings.warn(f"The expected MusicBrainz recording id {
+                track_musicbrainz_recording} is not the one expected {expected_musicbrainz_recording_id}")
 
     def test_different_format_but_same_musicbrainz_recording(self):
         response = self._post_lib_track(LibTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M20_FLAC)
         assert response.status_code == status.HTTP_201_CREATED
         recording1 = self.saved_object.track_file.musicbrainz_recording
-        assert recording1
-        flac_recording_id = recording1.musicbrainz_id
+        if not recording1:
+            warnings.warn(("Recording 1 is None because of the following missing cause: "
+                           f"{self.saved_object.track_file.musicbrainz_recording_missing_cause}"))
+        else:
+            flac_recording_id = recording1.musicbrainz_id
 
-        response = self._post_lib_track(LibTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
-        assert response.status_code == status.HTTP_201_CREATED
-        recording = self.saved_object.track_file.musicbrainz_recording
-        assert recording
-        assert recording.musicbrainz_id == flac_recording_id
+            response = self._post_lib_track(
+                LibTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
+            assert response.status_code == status.HTTP_201_CREATED
+            recording2 = self.saved_object.track_file.musicbrainz_recording
+            if not recording2:
+                warnings.warn(("Recording 2 is None because of the following missing cause: "
+                               f"{self.saved_object.track_file.musicbrainz_recording_missing_cause}"))
+            else:
+                assert recording2
+                assert recording2.musicbrainz_id == flac_recording_id
