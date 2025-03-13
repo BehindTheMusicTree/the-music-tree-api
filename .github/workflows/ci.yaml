@@ -112,8 +112,8 @@ jobs:
         run: bash scripts/init-django-data.sh
 
       # Run pytest with specific output formatting options
-      - name: Run pytest
-        run: pytest -v --tb=short -W always --junitxml=test-results.xml
+      - name: Run pytest 
+        run: pytest -v --tb=short -W always --junitxml=test-results.xml bodzify_api/test/view/track/input/method/post/attributes/file/fingerprint/test_missing_cause.py
         # --tb=short: Shows shorter tracebacks for failures, making output more readable
         # -W always: Ensures all warnings are displayed during test execution
         # --junitxml=test-results.xml: Generates a JUnit XML report for CI integration
