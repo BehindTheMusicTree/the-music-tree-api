@@ -70,14 +70,9 @@ AFP_POST_FULL_URL: str
 STATIC_ROOT: Path
 STATIC_URL: str
 
-# Installed Apps and Caches
 INSTALLED_APPS: list[str] = []
 CACHES: dict[str, Any] = {}
-
-# Middleware
 MIDDLEWARE: list[str] = []
-
-# Templates
 TEMPLATES: list[dict[str, Any]] = []
 
 # Django Constants
@@ -743,6 +738,7 @@ else:
     STATIC_FILES = os.getenv('STATIC_FILES')
     if ENV == 'COLLECT_STATIC':
         STATIC_FILES_STATE = StaticFileStates.COLLECTING
+        LIBRARIES_DIR_NAME = ''  # Needed to setup the database (User model)
         setup_static_files()
     else:
         if not STATIC_FILES:
