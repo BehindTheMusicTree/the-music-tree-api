@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
-from bodzify_api.test.utils.lib_track.TestLibTrackUrl import TestLibTrackUrl
+from bodzify_api.test.utils.lib_track.LibTrackTestUrl import LibTracTestkUrl
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -27,7 +27,7 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.title == "filename= with spaces"
 
     def test_not_providing_title_nor_artist_and_original_filename_too_long_then_generate_with_app_prefixe(self):
-        response = self._post_lib_track_from_url(TestLibTrackUrl.LONG_MP3)
+        response = self._post_lib_track_from_url(LibTracTestkUrl.LONG_MP3)
 
         assert True
         assert response.status_code == status.HTTP_201_CREATED
