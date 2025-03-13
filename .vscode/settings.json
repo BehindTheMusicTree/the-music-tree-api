@@ -21,4 +21,5 @@
 	},
 	"files.autoSave": "onFocusChange",
 	"python.testing.unittestEnabled": false,
+	"python.pythonPath": "/Users/mignot/git/bodzify-api-django/.venv/bin/python",
 }

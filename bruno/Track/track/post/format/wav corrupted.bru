@@ -1,7 +1,7 @@
 meta {
-  name: in memory
+  name: wav corrupted
   type: http
-  seq: 1
+  seq: 3
 }
 
 post {
@@ -15,7 +15,7 @@ headers {
 }
 
 body:multipart-form {
-  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/metadata=long a_id3v1_short.mp3)
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/album=koko_vorbis.flac)
 }
 
 vars:post-response {
