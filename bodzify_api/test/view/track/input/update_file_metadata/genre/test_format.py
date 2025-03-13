@@ -55,7 +55,7 @@ class TestCase(LibTrackTestCase):
         assert self.saved_lib_track_metadata_with_raw_rating.get(AppMetadataKey.GENRE_NAME, None) == None
 
     def test_wav_empty_then_ok(self):
-        genre_name = 'metal'
+        genre_name = 'Metal'
         data = {PostFields.GENRE: genre_name}
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_WAV, **data)
 
@@ -63,7 +63,7 @@ class TestCase(LibTrackTestCase):
         assert self.saved_lib_track_metadata_with_raw_rating[AppMetadataKey.GENRE_NAME] == genre_name
 
     def test_wav_filled_then_ok(self):
-        genre_name = 'metal'
+        genre_name = 'Metal'
         data = {PostFields.GENRE: genre_name}
         response = self._post_lib_track(LibTrackTestFilename.METADATA_LONG_A_RIFF_SMALL_WAV, **data)
 
