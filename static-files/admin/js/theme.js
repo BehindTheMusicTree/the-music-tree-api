@@ -1,6 +1,6 @@
 'use strict';
 {
-    window.addEventlistener('load', function(e) {
+    window.addEventListener('load', function(e) {
 
         function setTheme(mode) {
             if (mode !== "light" && mode !== "dark" && mode !== "auto") {
@@ -46,7 +46,7 @@
             // Attach event handlers for toggling themes
             const buttons = document.getElementsByClassName("theme-toggle");
             Array.from(buttons).forEach((btn) => {
-                btn.addEventlistener("click", cycleTheme);
+                btn.addEventListener("click", cycleTheme);
             });
             initTheme();
         }

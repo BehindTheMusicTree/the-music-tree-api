@@ -1,13 +1,13 @@
 /*global gettext*/
 'use strict';
 {
-    window.addEventlistener('load', function() {
+    window.addEventListener('load', function() {
         // Add anchor tag for Show/Hide link
         const fieldsets = document.querySelectorAll('fieldset.collapse');
         for (const [i, elem] of fieldsets.entries()) {
             // Don't hide if fields in this fieldset have errors
             if (elem.querySelectorAll('div.errors, ul.errorlist').length === 0) {
-                elem.classlist.add('collapsed');
+                elem.classList.add('collapsed');
                 const h2 = elem.querySelector('h2');
                 const link = document.createElement('a');
                 link.id = 'fieldsetcollapser' + i;
@@ -25,19 +25,19 @@
                 ev.preventDefault();
                 ev.stopPropagation();
                 const fieldset = ev.target.closest('fieldset');
-                if (fieldset.classlist.contains('collapsed')) {
+                if (fieldset.classList.contains('collapsed')) {
                     // Show
                     ev.target.textContent = gettext('Hide');
-                    fieldset.classlist.remove('collapsed');
+                    fieldset.classList.remove('collapsed');
                 } else {
                     // Hide
                     ev.target.textContent = gettext('Show');
-                    fieldset.classlist.add('collapsed');
+                    fieldset.classList.add('collapsed');
                 }
             }
         };
         document.querySelectorAll('fieldset.module').forEach(function(el) {
-            el.addEventlistener('click', toggleFunc);
+            el.addEventListener('click', toggleFunc);
         });
     });
 }

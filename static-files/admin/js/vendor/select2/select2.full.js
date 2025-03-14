@@ -3357,7 +3357,7 @@ S2.define('select2/data/select',[
     }
 
     if (data.id !== undefined) {
-      option = data.id;
+      option.value = data.id;
     }
 
     if (data.disabled) {
@@ -3491,7 +3491,7 @@ S2.define('select2/data/array',[
 
   ArrayAdapter.prototype.select = function (data) {
     var $option = this.$element.find('option').filter(function (i, elm) {
-      return elm == data.id.toString();
+      return elm.value == data.id.toString();
     });
 
     if ($option.length === 0) {
@@ -4793,7 +4793,7 @@ S2.define('select2/defaults',[
   './i18n/en'
 ], function ($, require,
 
-             Resultslist,
+             ResultsList,
 
              SingleSelection, MultipleSelection, Placeholder, AllowClear,
              SelectionSearch, EventRelay,
@@ -4875,7 +4875,7 @@ S2.define('select2/defaults',[
     }
 
     if (options.resultsAdapter == null) {
-      options.resultsAdapter = Resultslist;
+      options.resultsAdapter = ResultsList;
 
       if (options.ajax != null) {
         options.resultsAdapter = Utils.Decorate(
@@ -5571,21 +5571,21 @@ S2.define('select2/core',[
       });
       this._observer.observe(this.$element[0], {
         attributes: true,
-        childlist: true,
+        childList: true,
         subtree: false
       });
-    } else if (this.$element[0].addEventlistener) {
-      this.$element[0].addEventlistener(
+    } else if (this.$element[0].addEventListener) {
+      this.$element[0].addEventListener(
         'DOMAttrModified',
         self._syncA,
         false
       );
-      this.$element[0].addEventlistener(
+      this.$element[0].addEventListener(
         'DOMNodeInserted',
         self._syncS,
         false
       );
-      this.$element[0].addEventlistener(
+      this.$element[0].addEventListener(
         'DOMNodeRemoved',
         self._syncS,
         false
@@ -5967,13 +5967,13 @@ S2.define('select2/core',[
     if (this._observer != null) {
       this._observer.disconnect();
       this._observer = null;
-    } else if (this.$element[0].removeEventlistener) {
+    } else if (this.$element[0].removeEventListener) {
       this.$element[0]
-        .removeEventlistener('DOMAttrModified', this._syncA, false);
+        .removeEventListener('DOMAttrModified', this._syncA, false);
       this.$element[0]
-        .removeEventlistener('DOMNodeInserted', this._syncS, false);
+        .removeEventListener('DOMNodeInserted', this._syncS, false);
       this.$element[0]
-        .removeEventlistener('DOMNodeRemoved', this._syncS, false);
+        .removeEventListener('DOMNodeRemoved', this._syncS, false);
     }
 
     this._syncA = null;
@@ -6555,9 +6555,9 @@ S2.define('select2/selection/stopPropagation',[
         version: '3.1.12',
 
         setup: function() {
-            if ( this.addEventlistener ) {
+            if ( this.addEventListener ) {
                 for ( var i = toBind.length; i; ) {
-                    this.addEventlistener( toBind[--i], handler, false );
+                    this.addEventListener( toBind[--i], handler, false );
                 }
             } else {
                 this.onmousewheel = handler;
@@ -6568,9 +6568,9 @@ S2.define('select2/selection/stopPropagation',[
         },
 
         teardown: function() {
-            if ( this.removeEventlistener ) {
+            if ( this.removeEventListener ) {
                 for ( var i = toBind.length; i; ) {
-                    this.removeEventlistener( toBind[--i], handler, false );
+                    this.removeEventListener( toBind[--i], handler, false );
                 }
             } else {
                 this.onmousewheel = null;

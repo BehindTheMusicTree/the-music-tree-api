@@ -7,7 +7,7 @@
         if (document.readyState !== 'loading') {
             fn();
         } else {
-            document.addEventlistener('DOMContentLoaded', fn);
+            document.addEventListener('DOMContentLoaded', fn);
         }
     }
 
@@ -23,7 +23,7 @@
         }
 
         document.querySelectorAll('.cancel-link').forEach(function(el) {
-            el.addEventlistener('click', handleClick);
+            el.addEventListener('click', handleClick);
         });
     });
 }

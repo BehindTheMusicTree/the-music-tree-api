@@ -161,7 +161,7 @@ depends on core.js for utility functions like removeChildren or quickElement
 
                 const cell = quickElement('td', tableRow, '', 'class', todayClass);
                 const link = quickElement('a', cell, currentDay, 'href', '#');
-                link.addEventlistener('click', calendarMonth(year, month));
+                link.addEventListener('click', calendarMonth(year, month));
                 currentDay++;
             }
 

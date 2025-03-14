@@ -780,7 +780,7 @@ function safeActiveElement() {
 	} catch ( err ) { }
 }
 
-// Optimize for push.apply( _, Nodelist )
+// Optimize for push.apply( _, NodeList )
 try {
 	push.apply(
 		( arr = slice.call( preferredDoc.childNodes ) ),
@@ -1145,7 +1145,7 @@ function setDocument( node ) {
 		( subWindow = document.defaultView ) && subWindow.top !== subWindow ) {
 
 		// Support: IE 9 - 11+, Edge 12 - 18+
-		subWindow.addEventlistener( "unload", unloadHandler );
+		subWindow.addEventListener( "unload", unloadHandler );
 	}
 
 	// Support: IE <10
@@ -1209,7 +1209,7 @@ function setDocument( node ) {
 			return function( elem ) {
 				var node = typeof elem.getAttributeNode !== "undefined" &&
 					elem.getAttributeNode( "id" );
-				return node && node === attrId;
+				return node && node.value === attrId;
 			};
 		};
 
@@ -1224,7 +1224,7 @@ function setDocument( node ) {
 
 					// Verify the id attribute
 					node = elem.getAttributeNode( "id" );
-					if ( node && node === id ) {
+					if ( node && node.value === id ) {
 						return [ elem ];
 					}
 
@@ -1233,7 +1233,7 @@ function setDocument( node ) {
 					i = 0;
 					while ( ( elem = elems[ i++ ] ) ) {
 						node = elem.getAttributeNode( "id" );
-						if ( node && node === id ) {
+						if ( node && node.value === id ) {
 							return [ elem ];
 						}
 					}
@@ -2161,7 +2161,7 @@ function toSelector( tokens ) {
 		len = tokens.length,
 		selector = "";
 	for ( ; i < len; i++ ) {
-		selector += tokens[ i ];
+		selector += tokens[ i ].value;
 	}
 	return selector;
 }
@@ -2468,7 +2468,7 @@ function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
 
 			// Add elements passing elementMatchers directly to results
 			// Support: iOS <=7 - 9 only
-			// Tolerate Nodelist properties (IE: "length"; Safari: <number>) matching
+			// Tolerate NodeList properties (IE: "length"; Safari: <number>) matching
 			// elements by id. (see trac-14142)
 			for ( ; i !== len && ( elem = elems[ i ] ) != null; i++ ) {
 				if ( byElement && elem ) {
@@ -2634,7 +2634,7 @@ function select( selector, context, results, seed ) {
 				context = context.parentNode;
 			}
 
-			selector = selector.slice( tokens.shift().length );
+			selector = selector.slice( tokens.shift().value.length );
 		}
 
 		// Fetch a seed set for right-to-left matching
@@ -3798,11 +3798,11 @@ jQuery.readyException = function( error ) {
 
 
 // The deferred used on DOM ready
-var readylist = jQuery.Deferred();
+var readyList = jQuery.Deferred();
 
 jQuery.fn.ready = function( fn ) {
 
-	readylist
+	readyList
 		.then( fn )
 
 		// Wrap jQuery.readyException in a function so that the lookup
@@ -3841,16 +3841,16 @@ jQuery.extend( {
 		}
 
 		// If there are functions bound, to execute
-		readylist.resolveWith( document, [ jQuery ] );
+		readyList.resolveWith( document, [ jQuery ] );
 	}
 } );
 
-jQuery.ready.then = readylist.then;
+jQuery.ready.then = readyList.then;
 
 // The ready event handler and self cleanup method
 function completed() {
-	document.removeEventlistener( "DOMContentLoaded", completed );
-	window.removeEventlistener( "load", completed );
+	document.removeEventListener( "DOMContentLoaded", completed );
+	window.removeEventListener( "load", completed );
 	jQuery.ready();
 }
 
@@ -3867,10 +3867,10 @@ if ( document.readyState === "complete" ||
 } else {
 
 	// Use the handy event callback
-	document.addEventlistener( "DOMContentLoaded", completed );
+	document.addEventListener( "DOMContentLoaded", completed );
 
 	// A fallback to window.onload, that will always work
-	window.addEventlistener( "load", completed );
+	window.addEventListener( "load", completed );
 }
 
 
@@ -4989,12 +4989,12 @@ jQuery.event = {
 				handlers = events[ type ] = [];
 				handlers.delegateCount = 0;
 
-				// Only use addEventlistener if the special events handler returns false
+				// Only use addEventListener if the special events handler returns false
 				if ( !special.setup ||
 					special.setup.call( elem, data, namespaces, eventHandle ) === false ) {
 
-					if ( elem.addEventlistener ) {
-						elem.addEventlistener( type, eventHandle );
+					if ( elem.addEventListener ) {
+						elem.addEventListener( type, eventHandle );
 					}
 				}
 			}
@@ -5407,8 +5407,8 @@ function leverageNative( el, type, isSetup ) {
 jQuery.removeEvent = function( elem, type, handle ) {
 
 	// This "if" is needed for plain objects
-	if ( elem.removeEventlistener ) {
-		elem.removeEventlistener( type, handle );
+	if ( elem.removeEventListener ) {
+		elem.removeEventListener( type, handle );
 	}
 };
 
@@ -5596,7 +5596,7 @@ jQuery.each( { focus: "focusin", blur: "focusout" }, function( type, delegateTyp
 				// Use `delegateType` as the key as `type` is already used by `leverageNative`.
 				attaches = dataPriv.get( this, delegateType );
 				if ( !attaches ) {
-					this.addEventlistener( delegateType, focusMappedHandler );
+					this.addEventListener( delegateType, focusMappedHandler );
 				}
 				dataPriv.set( this, delegateType, ( attaches || 0 ) + 1 );
 			} else {
@@ -5620,7 +5620,7 @@ jQuery.each( { focus: "focusin", blur: "focusout" }, function( type, delegateTyp
 			if ( document.documentMode ) {
 				attaches = dataPriv.get( this, delegateType ) - 1;
 				if ( !attaches ) {
-					this.removeEventlistener( delegateType, focusMappedHandler );
+					this.removeEventListener( delegateType, focusMappedHandler );
 					dataPriv.remove( this, delegateType );
 				} else {
 					dataPriv.set( this, delegateType, attaches );
@@ -5668,9 +5668,9 @@ jQuery.each( { focus: "focusin", blur: "focusout" }, function( type, delegateTyp
 			// Use `delegateType` as the key as `type` is already used by `leverageNative`.
 			if ( !attaches ) {
 				if ( document.documentMode ) {
-					this.addEventlistener( delegateType, focusMappedHandler );
+					this.addEventListener( delegateType, focusMappedHandler );
 				} else {
-					doc.addEventlistener( type, focusMappedHandler, true );
+					doc.addEventListener( type, focusMappedHandler, true );
 				}
 			}
 			dataPriv.set( dataHolder, delegateType, ( attaches || 0 ) + 1 );
@@ -5682,9 +5682,9 @@ jQuery.each( { focus: "focusin", blur: "focusout" }, function( type, delegateTyp
 
 			if ( !attaches ) {
 				if ( document.documentMode ) {
-					this.removeEventlistener( delegateType, focusMappedHandler );
+					this.removeEventListener( delegateType, focusMappedHandler );
 				} else {
-					doc.removeEventlistener( type, focusMappedHandler, true );
+					doc.removeEventListener( type, focusMappedHandler, true );
 				}
 				dataPriv.remove( dataHolder, delegateType );
 			} else {
@@ -7849,7 +7849,7 @@ jQuery.fn.delay = function( time, type ) {
 
 	// Support: Android <=4.3 only
 	// Default value for a checkbox should be "on"
-	support.checkOn = input !== "";
+	support.checkOn = input.value !== "";
 
 	// Support: IE <=11 only
 	// Must access selectedIndex to make default options select
@@ -7858,9 +7858,9 @@ jQuery.fn.delay = function( time, type ) {
 	// Support: IE <=11 only
 	// An input loses its value after becoming a radio
 	input = document.createElement( "input" );
-	input = "t";
+	input.value = "t";
 	input.type = "radio";
-	support.radioValue = input === "t";
+	support.radioValue = input.value === "t";
 } )();
 
 
@@ -7931,10 +7931,10 @@ jQuery.extend( {
 			set: function( elem, value ) {
 				if ( !support.radioValue && value === "radio" &&
 					nodeName( elem, "input" ) ) {
-					var val = elem;
+					var val = elem.value;
 					elem.setAttribute( "type", value );
 					if ( val ) {
-						elem = val;
+						elem.value = val;
 					}
 					return value;
 				}
@@ -8333,7 +8333,7 @@ jQuery.fn.extend( {
 					return ret;
 				}
 
-				ret = elem;
+				ret = elem.value;
 
 				// Handle most common string cases
 				if ( typeof ret === "string" ) {
@@ -8379,7 +8379,7 @@ jQuery.fn.extend( {
 
 			// If set returns undefined, fall back to normal setting
 			if ( !hooks || !( "set" in hooks ) || hooks.set( this, val, "value" ) === undefined ) {
-				this = val;
+				this.value = val;
 			}
 		} );
 	}
@@ -8487,7 +8487,7 @@ jQuery.each( [ "radio", "checkbox" ], function() {
 	};
 	if ( !support.checkOn ) {
 		jQuery.valHooks[ this ].get = function( elem ) {
-			return elem.getAttribute( "value" ) === null ? "on" : elem;
+			return elem.getAttribute( "value" ) === null ? "on" : elem.value;
 		};
 	}
 } );
@@ -8662,13 +8662,13 @@ jQuery.extend( jQuery.event, {
 					jQuery.event.triggered = type;
 
 					if ( event.isPropagationStopped() ) {
-						lastElement.addEventlistener( type, stopPropagationCallback );
+						lastElement.addEventListener( type, stopPropagationCallback );
 					}
 
 					elem[ type ]();
 
 					if ( event.isPropagationStopped() ) {
-						lastElement.removeEventlistener( type, stopPropagationCallback );
+						lastElement.removeEventListener( type, stopPropagationCallback );
 					}
 
 					jQuery.event.triggered = undefined;
@@ -8785,7 +8785,7 @@ jQuery.param = function( a, traditional ) {
 
 		// Serialize the form elements
 		jQuery.each( a, function() {
-			add( this.name, this );
+			add( this.name, this.value );
 		} );
 
 	} else {
@@ -9903,7 +9903,7 @@ jQuery.ajaxTransport( function( options ) {
 					};
 				};
 
-				// listen to events
+				// Listen to events
 				xhr.onload = callback();
 				errorCallback = xhr.onerror = xhr.ontimeout = callback( "error" );
 
