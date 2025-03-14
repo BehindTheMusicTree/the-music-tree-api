@@ -97,7 +97,7 @@
             value = result[0];
             data = result.slice(1);
         } else if (type === 'object') {
-            value = result;
+            value = result.value;
             data = result.data;
         }
         value = String(value);
@@ -136,7 +136,7 @@
     /**
      * Build an url
      * @param {string} url Base url
-     * @param {object} [params] dictionary of parameters
+     * @param {object} [params] Dictionary of parameters
      */
     var makeUrl = function(url, params) {
         var urlAppend = [];
@@ -158,8 +158,8 @@
      * @returns {number}
      */
     var sortValueAlpha = function(a, b, matchCase) {
-        a = String(a);
-        b = String(b);
+        a = String(a.value);
+        b = String(b.value);
         if (!matchCase) {
             a = a.toLowerCase();
             b = b.toLowerCase();
@@ -692,12 +692,12 @@
      * @private
      */
     $.Autocompleter.prototype.defaultFilter = function(result, filter) {
-        if (!result) {
+        if (!result.value) {
             return false;
         }
         if (this.options.filterResults) {
             var pattern = this.matchStringConverter(filter);
-            var testValue = this.matchStringConverter(result);
+            var testValue = this.matchStringConverter(result.value);
             if (!this.options.matchCase) {
                 pattern = pattern.toLowerCase();
                 testValue = testValue.toLowerCase();
@@ -823,8 +823,8 @@
     $.Autocompleter.prototype.createItemFromResult = function(result) {
         var self = this;
         var $li = $('<li/>');
-        $li.html(this.showResult(result, result.data));
-        $li.data({value: result, data: result.data})
+        $li.html(this.showResult(result.value, result.data));
+        $li.data({value: result.value, data: result.data})
             .click(function() {
                 self.selectItem($li);
             })
@@ -859,7 +859,7 @@
                 $li = this.createItemFromResult(result);
                 $ul.append($li);
                 if (first === false) {
-                    first = String(result);
+                    first = String(result.value);
                     $first = $li;
                     $li.addClass(this.options.firstItemClass);
                 }

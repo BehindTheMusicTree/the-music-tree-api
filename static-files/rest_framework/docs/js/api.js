@@ -49,14 +49,14 @@ function formEntries (form) {
       }
     } else if (element.type === 'select-multiple' || element.type === 'select-one') {
       for (var j = 0; j < element.selectedOptions.length; j++) {
-        entries.push([element.name, element.selectedOptions[j]])
+        entries.push([element.name, element.selectedOptions[j].value])
       }
     } else if (element.type === 'checkbox') {
       if (element.checked) {
-        entries.push([element.name, element])
+        entries.push([element.name, element.value])
       }
     } else {
-      entries.push([element.name, element])
+      entries.push([element.name, element.value])
     }
   }
 

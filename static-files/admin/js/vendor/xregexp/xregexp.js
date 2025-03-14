@@ -266,7 +266,7 @@ var _default = function _default(XRegExp) {
 
     try {
       for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var item = _step;
+        var item = _step.value;
 
         if (!item.name) {
           throw new Error(ERR_NO_NAME);
@@ -860,7 +860,7 @@ function prepareFlags(pattern, flags) {
 
   try {
     for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var flag = _step;
+      var flag = _step.value;
 
       if (!registeredFlags[flag]) {
         throw new SyntaxError("Unknown regex flag ".concat(flag));
@@ -1196,7 +1196,7 @@ XRegExp.addToken = function (regex, handler, options) {
 
     try {
       for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-        var flag = _step2;
+        var flag = _step2.value;
         registerFlag(flag);
       }
     } catch (err) {
@@ -1609,7 +1609,7 @@ XRegExp.matchChain = function (str, chain) {
 
     try {
       for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-        var value = _step3;
+        var value = _step3.value;
         (0, _forEach["default"])(XRegExp).call(XRegExp, value, item.regex, addMatch);
       }
     } catch (err) {
@@ -1735,7 +1735,7 @@ XRegExp.replaceEach = function (str, replacements) {
 
   try {
     for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
-      var r = _step4;
+      var r = _step4.value;
       str = XRegExp.replace(str, r[0], r[1], r[2]);
     }
   } catch (err) {
@@ -1899,7 +1899,7 @@ XRegExp.union = function (patterns, flags, options) {
 
   try {
     for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
-      var pattern = _step5;
+      var pattern = _step5.value;
 
       if (XRegExp.isRegExp(pattern)) {
         numPriorCaptures = numCaptures;
@@ -2513,7 +2513,7 @@ function _iterableToArrayLimit(arr, i) {
 
   try {
     for (_i = _i.call(arr); !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s);
+      _arr.push(_s.value);
 
       if (i && _arr.length === i) break;
     }
@@ -2885,7 +2885,7 @@ module.exports = function from(arrayLike /* , mapfn = undefined, thisArg = undef
     next = iterator.next;
     result = IS_CONSTRUCTOR ? new this() : [];
     for (;!(step = call(next, iterator)).done; index++) {
-      value = mapping ? callWithSafeIterationClosing(iterator, mapfn, [step, index], true) : step;
+      value = mapping ? callWithSafeIterationClosing(iterator, mapfn, [step.value, index], true) : step.value;
       createProperty(result, index, value);
     }
   } else {
@@ -3442,37 +3442,37 @@ module.exports = function (it) {
 // iterable DOM collections
 // flag - `iterable` interface - 'entries', 'keys', 'values', 'forEach' methods
 module.exports = {
-  CSSRulelist: 0,
+  CSSRuleList: 0,
   CSSStyleDeclaration: 0,
-  CSSValuelist: 0,
-  ClientRectlist: 0,
-  DOMRectlist: 0,
-  DOMStringlist: 0,
-  DOMTokenlist: 1,
-  DataTransferItemlist: 0,
-  Filelist: 0,
+  CSSValueList: 0,
+  ClientRectList: 0,
+  DOMRectList: 0,
+  DOMStringList: 0,
+  DOMTokenList: 1,
+  DataTransferItemList: 0,
+  FileList: 0,
   HTMLAllCollection: 0,
   HTMLCollection: 0,
   HTMLFormElement: 0,
   HTMLSelectElement: 0,
-  Medialist: 0,
+  MediaList: 0,
   MimeTypeArray: 0,
   NamedNodeMap: 0,
-  Nodelist: 1,
-  PaintRequestlist: 0,
+  NodeList: 1,
+  PaintRequestList: 0,
   Plugin: 0,
   PluginArray: 0,
-  SVGLengthlist: 0,
-  SVGNumberlist: 0,
-  SVGPathSeglist: 0,
-  SVGPointlist: 0,
-  SVGStringlist: 0,
-  SVGTransformlist: 0,
-  SourceBufferlist: 0,
-  StyleSheetlist: 0,
-  TextTrackCuelist: 0,
-  TextTracklist: 0,
-  Touchlist: 0
+  SVGLengthList: 0,
+  SVGNumberList: 0,
+  SVGPathSegList: 0,
+  SVGPointList: 0,
+  SVGStringList: 0,
+  SVGTransformList: 0,
+  SourceBufferList: 0,
+  StyleSheetList: 0,
+  TextTrackCueList: 0,
+  TextTrackList: 0,
+  TouchList: 0
 };
 
 },{}],86:[function(require,module,exports){
@@ -3612,7 +3612,7 @@ module.exports = function (options, source) {
 
     if (USE_NATIVE) if (options.noTargetGet) {
       descriptor = getOwnPropertyDescriptor(nativeSource, key);
-      nativeProperty = descriptor && descriptor;
+      nativeProperty = descriptor && descriptor.value;
     } else nativeProperty = nativeSource[key];
 
     // export native or implementation
@@ -4328,7 +4328,7 @@ exports.f = DESCRIPTORS ? $defineProperty : function defineProperty(O, P, Attrib
     return $defineProperty(O, P, Attributes);
   } catch (error) { /* empty */ }
   if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported');
-  if ('value' in Attributes) O[P] = Attributes;
+  if ('value' in Attributes) O[P] = Attributes.value;
   return O;
 };
 
@@ -5073,7 +5073,7 @@ module.exports = defineIterator(Array, 'Array', function (iterated, kind) {
   return { value: [index, target[index]], done: false };
 }, 'values');
 
-// argumentslist[@@iterator] is %ArrayProto_values%
+// argumentsList[@@iterator] is %ArrayProto_values%
 // https://tc39.es/ecma262/#sec-createunmappedargumentsobject
 // https://tc39.es/ecma262/#sec-createmappedargumentsobject
 var values = Iterators.Arguments = Iterators.Array;
@@ -5856,8 +5856,8 @@ var method = require('../array/virtual/for-each');
 var ArrayPrototype = Array.prototype;
 
 var DOMIterables = {
-  DOMTokenlist: true,
-  Nodelist: true
+  DOMTokenList: true,
+  NodeList: true
 };
 
 module.exports = function (it) {
