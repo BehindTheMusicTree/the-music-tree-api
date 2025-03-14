@@ -7,7 +7,10 @@ from rest_framework import status
 from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
 from rest_framework.exceptions import ValidationError as DrfValidationError
 from rest_framework_simplejwt.exceptions import InvalidToken
-from rest_framework.exceptions import NotAuthenticated, ParseError, UnsupportedMediaType, MethodNotAllowed, PermissionDenied
+from rest_framework.exceptions import (
+    NotAuthenticated, ParseError, UnsupportedMediaType, MethodNotAllowed,
+    PermissionDenied, AuthenticationFailed
+)
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
@@ -90,7 +93,7 @@ class ErrorResponse:
         }
 
     @staticmethod
-    def _from_invalid_jwt_token(exception: InvalidToken | NotAuthenticated) -> JsonResponse:
+    def _from_invalid_jwt_token(exception: InvalidToken | NotAuthenticated | AuthenticationFailed) -> JsonResponse:
         detail = exception.detail
         message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
         code = detail['code'] if isinstance(detail, dict) and 'code' in detail else exception.default_code
@@ -254,7 +257,7 @@ class ErrorResponse:
             return ErrorResponse._from_validation_error(exc)
         elif isinstance(exc, IntegrityError):
             return ErrorResponse._from_unhandled_integrity_error(exc)
-        elif isinstance(exc, (InvalidToken, NotAuthenticated)):
+        elif isinstance(exc, (InvalidToken, NotAuthenticated, AuthenticationFailed)):
             return ErrorResponse._from_invalid_jwt_token(exc)
         elif isinstance(exc, ParseError):
             return ErrorResponse._from_content_type_exception(exc)
