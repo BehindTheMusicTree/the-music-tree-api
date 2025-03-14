@@ -56,6 +56,9 @@ class ErrorResponseFields:
         ApiErrorCodeNumeric.EXTERNAL_SERVICE_TIMEOUT: "External service request timed out",
         ApiErrorCodeNumeric.EXTERNAL_SERVICE_UNAVAILABLE: "External service is temporarily unavailable",
 
+        # Security (6000-6999)
+        ApiErrorCodeNumeric.SECURITY_ERROR: "Security error",
+
         # System errors
         ApiErrorCodeNumeric.SYSTEM_INTERNAL_ERROR: "An internal system error occurred",
         ApiErrorCodeNumeric.SYSTEM_NOT_IMPLEMENTED: "An internal system error occurred",

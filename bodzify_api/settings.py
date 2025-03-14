@@ -531,15 +531,16 @@ def setup_middlewares():
     """Setup Django middleware classes. Top middleware classes are executed first."""
     global MIDDLEWARE
     MIDDLEWARE = [
-        f'{APP_NAME}.middleware.ContentTypeValidationMiddleware.ContentTypeValidationMiddleware',
-        f'{APP_NAME}.middleware.CamelToSnakeMiddleware.CamelToSnakeMiddleware',
-        f'{APP_NAME}.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware',
-        f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
-        f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
         'django.middleware.security.SecurityMiddleware',
         'corsheaders.middleware.CorsMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
+        f'{APP_NAME}.middleware.HostValidationMiddleware.HostValidationMiddleware',
         'django.middleware.common.CommonMiddleware',
+        f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
+        f'{APP_NAME}.middleware.ContentTypeValidationMiddleware.ContentTypeValidationMiddleware',
+        f'{APP_NAME}.middleware.CamelToSnakeMiddleware.CamelToSnakeMiddleware',
+        f'{APP_NAME}.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware',
+        f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
