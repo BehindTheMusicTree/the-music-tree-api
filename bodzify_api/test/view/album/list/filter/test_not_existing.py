@@ -9,7 +9,7 @@ class TestCase(AlbumTestCase):
 
     def test_filter_not_existing_then_400(self):
         invalid_filter = 'invalidFilter'
-        response = self._get_albums(**{invalid_filter: 'value'})
+        response = self._list_albums(**{invalid_filter: 'value'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
