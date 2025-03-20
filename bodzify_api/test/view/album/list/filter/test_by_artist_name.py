@@ -14,7 +14,7 @@ class TestCase(AlbumTestCase, NullableCharFilterTestCase):
         artist = self.model_fixture_factory.create_artist(name="Muse")
         self.model_fixture_factory.create_album(name="Jon", album_artists=[artist])
 
-        response = self._get_albums(**{FilterFields.ALBUM_ARTIST_NAME: ''})
+        response = self._list_albums(**{FilterFields.ALBUM_ARTIST_NAME: ''})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
@@ -27,7 +27,7 @@ class TestCase(AlbumTestCase, NullableCharFilterTestCase):
         album = self.model_fixture_factory.create_album(name="Dark", album_artists=[artist])
         self.model_fixture_factory.create_album(name="Jon")
 
-        response = self._get_albums(**{FilterFields.ALBUM_ARTIST_NAME: 'MUs'})
+        response = self._list_albums(**{FilterFields.ALBUM_ARTIST_NAME: 'MUs'})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
@@ -37,7 +37,7 @@ class TestCase(AlbumTestCase, NullableCharFilterTestCase):
         album1 = self.model_fixture_factory.create_album(name="Dark")
         album2 = self.model_fixture_factory.create_album(name="Jon")
 
-        response = self._get_albums()
+        response = self._list_albums()
 
         assert response.status_code == status.HTTP_200_OK
         assert len(self.results) == 2
