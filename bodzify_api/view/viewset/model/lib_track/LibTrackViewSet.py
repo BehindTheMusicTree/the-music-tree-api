@@ -14,7 +14,6 @@ from bodzify_api.serializer.model.lib_track.input.post.post import LibTrackPostS
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.serializer.model.lib_track.input.put.put import LibTrackPutSerializer
 from bodzify_api.serializer.model.lib_track.output.detailed import LibTrackDetailedSerializer
-from bodzify_api.serializer.model.lib_track.output.simple.simple_without_track_number import LibTrackSimpleWithoutPositionInAlbumSerializer
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 
@@ -23,7 +22,7 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
         from bodzify_api.filtering.set.lib_track.LibTrackFilterSet import LibTrackFilterSet
         super().__init__(model_class=LibraryTrack,
                          filterset_class=LibTrackFilterSet,
-                         simple_serializer_class=LibTrackSimpleWithoutPositionInAlbumSerializer,
+                         simple_serializer_class=LibTrackDetailedSerializer,
                          detailed_serializer_class=LibTrackDetailedSerializer,
                          create_serializer_class=LibTrackPostSerializer,
                          update_serializer_class=LibTrackPutSerializer,
