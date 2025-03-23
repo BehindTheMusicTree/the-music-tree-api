@@ -25,7 +25,7 @@ class GenreTestCase(AppTestCase[Genre]):
         return self.api_client.get(
             path=reverse(self.detail_endpoint, kwargs={'pk': uuid}), handle_response=self._set_results)
 
-    def _get_genres(self, **kwargs):
+    def _list_genres(self, **kwargs):
         return self.api_client.get(path=reverse(self.list_endpoint), data=kwargs, handle_response=self._set_results)
 
     def _post_genre(self, **kwargs):
