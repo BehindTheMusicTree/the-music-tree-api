@@ -1,6 +1,14 @@
 
 
 {
+    "workbench.colorCustomizations": {
+        "editorCursor.foreground": "#2E8B57",
+        "terminalCursor.foreground": "#2E8B57",
+        "titleBar.activeBackground": "#2E8B57",
+        "titleBar.activeForeground": "#ffffff",
+        "activityBar.background": "#1d5737",
+        "statusBar.background": "#1d5737"
+    },
     "python.languageServer": "Pylance",
 	"python.analysis.typeCheckingMode": "basic",
 	"editor.rulers": [
@@ -21,4 +29,5 @@
 	},
 	"files.autoSave": "onFocusChange",
 	"python.testing.unittestEnabled": false,
+	"python.pythonPath": "/Users/mignot/git/bodzify-api-django/.venv/bin/python",
 }

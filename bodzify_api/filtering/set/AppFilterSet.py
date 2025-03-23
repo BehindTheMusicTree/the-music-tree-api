@@ -7,6 +7,8 @@ from bodzify_api.utils import data_transformer
 
 
 class AppFilterSet(FilterSet):
+    # Pagination parameters that should not be considered as filters
+    allowed_non_filter_params = {'page', 'page_size'}
     strict = False
 
     @property
@@ -15,7 +17,7 @@ class AppFilterSet(FilterSet):
         invalid_filters = []
 
         for param in self.data.keys():
-            if param not in valid_filters:
+            if param not in valid_filters and param not in self.allowed_non_filter_params:
                 invalid_filters.append(data_transformer.to_camel_case(param))
 
         if invalid_filters:

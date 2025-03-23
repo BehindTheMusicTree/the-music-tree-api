@@ -15,12 +15,5 @@ headers {
 }
 
 body:multipart-form {
-  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/rating=0.5 star_vorbis.flac)
-}
-
-vars:post-response {
-  libTrackHorsesUuid: res.body.uuid
-  genreOutlawUuid: res.body.genre.uuid
-  genreOutlawPlaylistUuid: res.body.playlists[0].uuid
-  title: horses
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/rating_vorbis=0.5 star.flac)
 }

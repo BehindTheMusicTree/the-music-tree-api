@@ -3,3 +3,6 @@ class PaginatedResponseFields:
     NEXT = 'next'
     PREVIOUS = 'previous'
     RESULTS = 'results'
+    PAGE = 'page'
+    PAGE_SIZE = 'pageSize'
+    TOTAL_PAGES = 'totalPages'

@@ -16,7 +16,6 @@ class Fields:
     DURATION_IN_SEC = ChildPlayListFields.DURATION_IN_SEC
     DURATION_STR_IN_HOUR_MIN_SEC = ChildPlayListFields.DURATION_STR_IN_HOUR_MIN_SEC
     NAME = ChildPlayListFields.NAME
-    LAST_TRACK_LIST_UPDATE_DATE = ChildPlayListFields.LAST_TRACK_LIST_UPDATE_DATE
 
     CRITERIA = ModelFields.CRITERIA
     PARENT = ModelFields.PARENT

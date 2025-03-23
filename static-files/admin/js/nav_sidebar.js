@@ -8,17 +8,17 @@
         if (navSidebarIsOpen === null) {
             navSidebarIsOpen = 'true';
         }
-        main.classlist.toggle('shifted', navSidebarIsOpen === 'true');
+        main.classList.toggle('shifted', navSidebarIsOpen === 'true');
         navSidebar.setAttribute('aria-expanded', navSidebarIsOpen);
 
-        toggleNavSidebar.addEventlistener('click', function() {
+        toggleNavSidebar.addEventListener('click', function() {
             if (navSidebarIsOpen === 'true') {
                 navSidebarIsOpen = 'false';
             } else {
                 navSidebarIsOpen = 'true';
             }
             localStorage.setItem('django.admin.navSidebarIsOpen', navSidebarIsOpen);
-            main.classlist.toggle('shifted');
+            main.classList.toggle('shifted');
             navSidebar.setAttribute('aria-expanded', navSidebarIsOpen);
         });
     }
@@ -34,13 +34,13 @@
         });
 
         function checkValue(event) {
-            let filterValue = event.target;
+            let filterValue = event.target.value;
             if (filterValue) {
                 filterValue = filterValue.toLowerCase();
             }
             if (event.key === 'Escape') {
                 filterValue = '';
-                event.target = ''; // clear input
+                event.target.value = ''; // clear input
             }
             let matches = false;
             for (const o of options) {
@@ -56,21 +56,21 @@
                 o.node.parentNode.parentNode.style.display = displayValue;
             }
             if (!filterValue || matches) {
-                event.target.classlist.remove('no-results');
+                event.target.classList.remove('no-results');
             } else {
-                event.target.classlist.add('no-results');
+                event.target.classList.add('no-results');
             }
             sessionStorage.setItem('django.admin.navSidebarFilterValue', filterValue);
         }
 
         const nav = document.getElementById('nav-filter');
-        nav.addEventlistener('change', checkValue, false);
-        nav.addEventlistener('input', checkValue, false);
-        nav.addEventlistener('keyup', checkValue, false);
+        nav.addEventListener('change', checkValue, false);
+        nav.addEventListener('input', checkValue, false);
+        nav.addEventListener('keyup', checkValue, false);
 
         const storedValue = sessionStorage.getItem('django.admin.navSidebarFilterValue');
         if (storedValue) {
-            nav = storedValue;
+            nav.value = storedValue;
             checkValue({target: nav, key: ''});
         }
     }

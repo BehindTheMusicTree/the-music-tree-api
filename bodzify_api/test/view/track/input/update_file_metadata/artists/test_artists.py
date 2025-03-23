@@ -14,7 +14,7 @@ def childinstance(request, db):
 
 
 def test_3_then_ok(childinstance):
-    childinstance._test_value(value="artist1, artist2, artist3",
-                              value_expected_in_metadata="artist1,artist2,artist3",
-                              additional_data_dict=None,
-                              file_has_tags=False)
+    childinstance._test_value(value=["artist1", "artist2", "artist3"],
+                              value_expected_in_metadata=["artist1", "artist2", "artist3"],
+                              additional_data=None,
+                              file_has_metadata=False)

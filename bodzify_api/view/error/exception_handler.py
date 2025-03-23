@@ -1,10 +1,14 @@
 
 
+import logging
 from django.http.response import Http404
-from rest_framework_simplejwt.exceptions import InvalidToken
-from rest_framework.exceptions import NotAuthenticated, ValidationError, MethodNotAllowed, PermissionDenied
-
+from django.core.exceptions import DisallowedHost
 from django.conf import settings
+from rest_framework_simplejwt.exceptions import InvalidToken
+from rest_framework.exceptions import (
+    NotAuthenticated, ValidationError, MethodNotAllowed, PermissionDenied, AuthenticationFailed
+)
+
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 
 
@@ -46,8 +50,11 @@ def custom_exception_handler(exc, context):
         Response object with error details in production,
         None in debug mode to let Django's default handler show the traceback page
     """
+
     if settings.DEBUG and not isinstance(
-            exc, (ValidationError, InvalidToken, NotAuthenticated, MethodNotAllowed, Http404, PermissionDenied)):
+        exc,
+        (ValidationError, InvalidToken, NotAuthenticated, AuthenticationFailed, MethodNotAllowed, Http404,
+         PermissionDenied)):
         # Return None to let Django's default handler show the HTML traceback page
         return None
 

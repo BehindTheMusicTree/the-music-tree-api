@@ -6,7 +6,7 @@ Array notation is the only supported way to send multiple values in multipart/fo
 Example for multiple values:
 ```bash
 curl --request POST \\
-  --url http://127.0.0.1:8000/api/v0.1.1/endpoint/ \\
+  --url http://127.0.0.1:8000/api/vX.Y.Z/endpoint/ \\
   --header 'content-type: multipart/form-data' \\
   --form 'field[]=value1' \\
   --form 'field[]=value2'
@@ -17,14 +17,14 @@ a) Omit the field completely
 b) Send an empty array:
 ```bash
 curl --request POST \\
-  --url http://127.0.0.1:8000/api/v0.1.1/endpoint/ \\
+  --url http://127.0.0.1:8000/api/vX.Y.Z/endpoint/ \\
   --header 'content-type: multipart/form-data' \\
   --form 'field[]='
 ```
 c) Send an explicit empty array:
 ```bash
 curl --request POST \\
-  --url http://127.0.0.1:8000/api/v0.1.1/endpoint/ \\
+  --url http://127.0.0.1:8000/api/vX.Y.Z/endpoint/ \\
   --header 'content-type: multipart/form-data' \\
   --form 'field[]=[]'
 ```

@@ -70,14 +70,9 @@ AFP_POST_FULL_URL: str
 STATIC_ROOT: Path
 STATIC_URL: str
 
-# Installed Apps and Caches
 INSTALLED_APPS: list[str] = []
 CACHES: dict[str, Any] = {}
-
-# Middleware
 MIDDLEWARE: list[str] = []
-
-# Templates
 TEMPLATES: list[dict[str, Any]] = []
 
 # Django Constants
@@ -336,9 +331,9 @@ def setup_app_exposure_if_needed():
         else:
             raise EnvironmentError("The app is exposed but no allowed hosts are set.")
 
-        print_django(f"CORS_ALLOW_ALL_ORIGINS is not set as a web server is used to handle CORS.")
+        print_django(f"CORS_ALLOW_ALL_ORIGINS is not set as a web server interface is used to handle CORS.")
     else:
-        ALLOWED_HOSTS = ['127.0.0.1']
+        ALLOWED_HOSTS = ['127.0.0.1', '127.0.0.1:8000', 'localhost', 'localhost:8000']
         global CORS_ALLOW_ALL_ORIGINS
         CORS_ALLOW_ALL_ORIGINS = True
         print_django(f"CORS_ALLOW_ALL_ORIGINS is set to: {CORS_ALLOW_ALL_ORIGINS}")
@@ -378,12 +373,15 @@ def setup_app_constants():
     LIB_TRACK_FILE_SIZE_MIN_IN_MO = 0
     global LIB_TRACK_FILE_SIZE_MAX_IN_MO
     LIB_TRACK_FILE_SIZE_MAX_IN_MO = 300
-    # Set Django's upload size limit to match our max file size
+    # Force all uploads to be written to disk by setting memory size to 0
+    global FILE_UPLOAD_MAX_MEMORY_SIZE
+    FILE_UPLOAD_MAX_MEMORY_SIZE = 0  # Force all uploads to disk
+    # Set max upload size limit
     global DATA_UPLOAD_MAX_MEMORY_SIZE
     DATA_UPLOAD_MAX_MEMORY_SIZE = LIB_TRACK_FILE_SIZE_MAX_IN_MO * 1024 * 1024  # Convert MB to bytes
 
     global LIB_TRACK_FILE_EXTENSIONS
-    LIB_TRACK_FILE_EXTENSIONS = ['mp3', 'flac', 'wav']
+    LIB_TRACK_FILE_EXTENSIONS = ['.mp3', '.flac', '.wav']
     global LIB_TRACK_FILE_CONTENT_TYPES
     LIB_TRACK_FILE_CONTENT_TYPES = ['audio/mpeg', 'audio/flac', 'audio/wav']
     global LIB_TRACK_FILENAME_LEN_MAX
@@ -533,15 +531,16 @@ def setup_middlewares():
     """Setup Django middleware classes. Top middleware classes are executed first."""
     global MIDDLEWARE
     MIDDLEWARE = [
-        f'{APP_NAME}.middleware.ContentTypeValidationMiddleware.ContentTypeValidationMiddleware',
-        f'{APP_NAME}.middleware.CamelToSnakeMiddleware.CamelToSnakeMiddleware',
-        f'{APP_NAME}.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware',
-        f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
-        f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
         'django.middleware.security.SecurityMiddleware',
         'corsheaders.middleware.CorsMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
+        f'{APP_NAME}.middleware.HostValidationMiddleware.HostValidationMiddleware',
         'django.middleware.common.CommonMiddleware',
+        f'{APP_NAME}.middleware.ExceptionLoggingMiddleware.ExceptionLoggingMiddleware',
+        f'{APP_NAME}.middleware.ContentTypeValidationMiddleware.ContentTypeValidationMiddleware',
+        f'{APP_NAME}.middleware.CamelToSnakeMiddleware.CamelToSnakeMiddleware',
+        f'{APP_NAME}.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware',
+        f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
@@ -740,6 +739,7 @@ else:
     STATIC_FILES = os.getenv('STATIC_FILES')
     if ENV == 'COLLECT_STATIC':
         STATIC_FILES_STATE = StaticFileStates.COLLECTING
+        LIBRARIES_DIR_NAME = ''  # Needed to setup the database (User model)
         setup_static_files()
     else:
         if not STATIC_FILES:

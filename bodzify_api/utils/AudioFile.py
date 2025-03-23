@@ -3,7 +3,7 @@ import json
 import os
 import subprocess
 import tempfile
-from typing import Union, cast
+from typing import cast, TypeAlias
 
 from mutagen.flac import FLAC
 from mutagen.flac import StreamInfo
@@ -12,21 +12,22 @@ from mutagen.wave import WAVE
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.files import File as DjangoFile
-from django.core.files.uploadedfile import InMemoryUploadedFile, TemporaryUploadedFile
 from django.core.files.base import File as DjangoBaseFile
+from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.db.models.fields.files import FieldFile
 
 from bodzify_api import settings
 from bodzify_api.utils.audio_metadata.exceptions import FileByteMismatchError, FileCorruptedError
 
+# Type alias for files that can be handled (must be disk-based)
+DiskBasedFile: TypeAlias = TemporaryUploadedFile | FieldFile | str
+
 
 class AudioFile:
+    file: DiskBasedFile
+    file_path: str
 
-    file: TemporaryUploadedFile | FieldFile | InMemoryUploadedFile | str
-    file_path: str | None
-
-    def __init__(self, file: Union[TemporaryUploadedFile, FieldFile, InMemoryUploadedFile, str]):
-
+    def __init__(self, file: DiskBasedFile):
         if isinstance(file, FieldFile):
             file = file.file
 
@@ -34,8 +35,6 @@ class AudioFile:
 
         if isinstance(file, TemporaryUploadedFile):
             self.file_path = file.temporary_file_path()
-        elif isinstance(file, InMemoryUploadedFile):
-            self.file_path = None
         elif isinstance(file, DjangoBaseFile):
             self.file_path = file.file.name if file.file else file.name
         elif isinstance(file, DjangoFile):
@@ -43,16 +42,15 @@ class AudioFile:
         else:
             self.file_path = file
 
-        if self.file_path is not None and not os.path.exists(self.file_path):
+        if not os.path.exists(self.file_path):
             raise FileNotFoundError(f"File {self.file_path} does not exist")
 
-        file_extension = os.path.splitext(self.file.name if not self.file_path else self.file_path)[  # type: ignore
-            1].lower()
+        file_extension = os.path.splitext(self.file_path)[1].lower()
         self.file_extension = file_extension
         return
 
     def get_duration_in_sec(self) -> float:
-        path = self.get_file_path_or_object()
+        path = self.file_path
 
         if self.file_extension == '.mp3':
             try:
@@ -112,7 +110,7 @@ class AudioFile:
             raise NotImplementedError(f"Reading is not supported for file type: {type(self.file)}")
 
     def get_bitrate(self) -> int:
-        path = self.get_file_path_or_object()
+        path = self.file_path
         if self.file_extension == '.mp3':
             audio = MP3(path)
             # Calculate MP3 bitrate from file size and duration
@@ -164,38 +162,20 @@ class AudioFile:
             raise NotImplementedError(f"Reading is not supported for file type: {type(self.file)}")
 
     def read(self, size: int = -1) -> bytes:
-        if isinstance(self.file, InMemoryUploadedFile):
-            return self.file.read(size)
-        elif self.file_path is not None:
-            with open(self.file_path, 'rb') as f:
-                return f.read(size)
-        else:
-            raise NotImplementedError(f"Reading is not supported for file type: {type(self.file)}")
+        with open(self.file_path, 'rb') as f:
+            return f.read(size)
 
     def write(self, data: bytes) -> int:
-        if isinstance(self.file, InMemoryUploadedFile):
-            return self.file.write(data)
-        elif self.file_path is not None:
-            with open(self.file_path, 'wb') as f:
-                return f.write(data)
-        else:
-            raise NotImplementedError(f"Writing is not supported for file type: {type(self.file)}")
+        with open(self.file_path, 'wb') as f:
+            return f.write(data)
 
     def seek(self, offset: int, whence: int = 0) -> int:
-        if isinstance(self.file, InMemoryUploadedFile):
-            # For InMemoryUploadedFile, we can directly use the file object
-            return self.file.seek(offset, whence)
-        elif self.file_path is not None:
-            with open(self.file_path, 'rb') as f:
-                return f.seek(offset, whence)
-        else:
-            raise NotImplementedError(f"Seeking is not supported for file type: {type(self.file)}")
+        with open(self.file_path, 'rb') as f:
+            return f.seek(offset, whence)
 
     def close(self) -> None:
-        if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile)):
+        if isinstance(self.file, (TemporaryUploadedFile, FieldFile)):
             self.file.close()
-        else:
-            raise NotImplementedError(f"Closing is not supported for file type: {type(self.file)}")
 
     def __enter__(self):
         return self
@@ -204,31 +184,15 @@ class AudioFile:
         self.close()
 
     def get_file_path_or_object(self) -> str:
-        """
-        Returns a path to the file on the filesystem.
-        For InMemoryUploadedFile, creates a temporary file in Django's upload directory.
-        """
-        if isinstance(self.file, (InMemoryUploadedFile)):
-            from django.conf import settings
-            temp_dir = settings.FILE_UPLOAD_TEMP_DIR
-            if temp_dir:
-                temp_file = tempfile.NamedTemporaryFile(dir=temp_dir, delete=False)
-            else:
-                # Fallback to system default if Django temp dir not configured
-                temp_file = tempfile.NamedTemporaryFile(delete=False)
-            for chunk in self.file.chunks():
-                temp_file.write(chunk)
-            temp_file.close()
-            return temp_file.name
-        else:
-            return self.file_path  # type: ignore  # We validate in __init__ that it exists and is str
+        """Returns the path to the file on the filesystem."""
+        return self.file_path
 
     def get_file_name_original(self):
         """
         "Original" means the name of the file that was uploaded by the user.
         The actual file name may be different if the file was renamed during the upload process.
         """
-        if isinstance(self.file, (TemporaryUploadedFile, FieldFile, InMemoryUploadedFile, DjangoFile)):
+        if isinstance(self.file, (TemporaryUploadedFile, FieldFile, DjangoFile)):
             return self.file.name
         elif isinstance(self.file, str):
             return self.file
@@ -239,37 +203,15 @@ class AudioFile:
         """
         Returns the actual filename in the system, which may be different from the original name
         if the file was renamed during upload or processing.
-        For InMemoryUploadedFile, creates a temporary file and returns its path.
         """
-        path = self.get_file_path_or_object()  # This handles creating temp file for InMemoryUploadedFile
+        path = self.file_path
         return os.path.basename(path)
 
     def is_flac_file_md5_valid(self) -> bool:
         if not self.file_extension == '.flac':
             raise ImproperlyConfigured("The file is not a FLAC file")
 
-        if isinstance(self.file, InMemoryUploadedFile):
-            # Create a temporary file for validation
-            temp_dir = settings.FILE_UPLOAD_TEMP_DIR
-            with tempfile.NamedTemporaryFile(dir=temp_dir if temp_dir else None, delete=False) as temp_file:
-                temp_path = temp_file.name
-                self.file.seek(0)
-                temp_file.write(self.read())
-
-            try:
-                # Validate the temporary file
-                result = subprocess.run(['flac', '-t', temp_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                os.unlink(temp_path)  # Clean up
-            except Exception as e:
-                os.unlink(temp_path)  # Clean up even on error
-                raise e
-
-            # Reset file position for future operations
-            self.file.seek(0)
-        else:
-            # Then the file path is not None
-            file_path: str = self.file_path  # type: ignore
-            result = subprocess.run(['flac', '-t', file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        result = subprocess.run(['flac', '-t', self.file_path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         output = result.stderr.decode()
         if 'ok' in output:
@@ -281,71 +223,87 @@ class AudioFile:
         else:
             raise FileCorruptedError("The Flac file md5 check failed")
 
-    def get_file_with_corrected_md5(self) -> InMemoryUploadedFile | str:
+    def get_file_with_corrected_md5(self, delete_original: bool = False) -> TemporaryUploadedFile:
         """
-        Returns a new file with corrected MD5 signature.
-        For InMemoryUploadedFile, returns a new InMemoryUploadedFile instance.
-        For file-based files, returns the path to the corrected file.
+        Returns a new temporary file with corrected MD5 signature.
+        Returns a TemporaryUploadedFile instance pointing to the corrected file.
+
+        Args:
+            delete_original: If True, deletes the original file after creating the corrected version.
+                           Defaults to False to maintain backward compatibility.
+
+        Raises:
+            FileCorruptedError: If the FLAC file is corrupted or cannot be corrected
+            RuntimeError: If the FLAC command fails to execute
+            OSError: If deletion of the original file fails when delete_original is True
         """
+        if not self.file_extension == '.flac':
+            raise ImproperlyConfigured("The file is not a FLAC file")
+
         # Create a temporary file to store the corrected FLAC content
         temp_dir = settings.FILE_UPLOAD_TEMP_DIR
-        with tempfile.NamedTemporaryFile(dir=temp_dir if temp_dir else None, delete=False) as temp_file:
-            temp_path = temp_file.name
+        temp_file = tempfile.NamedTemporaryFile(dir=temp_dir if temp_dir else None, delete=False, suffix='.flac')
+        temp_path = temp_file.name
+        temp_file.close()  # Close but don't delete yet
 
-        if isinstance(self.file, InMemoryUploadedFile):
-            self.file.seek(0)
-            result = subprocess.run(['flac', '-f', '--best', '-o', temp_path, '-'],
-                                    input=self.read(),
-                                    stdout=subprocess.PIPE,
-                                    stderr=subprocess.PIPE)
-        else:
-            # The file path is not None
-            file_path = cast(str, self.file_path)
-            with open(file_path, 'rb') as f:
+        success = False
+        try:
+            # Read the input file and run FLAC command
+            with open(self.file_path, 'rb') as f:
                 result = subprocess.run(['flac', '-f', '--best', '-o', temp_path, '-'],
-                                        input=f.read(),
+                                        stdin=f,
                                         stdout=subprocess.PIPE,
                                         stderr=subprocess.PIPE)
 
-        stderr = result.stderr.decode()
-        if 'wrote' not in stderr:
-            os.unlink(temp_path)  # Clean up on error
-            raise FileCorruptedError(
-                "The Flac file md5 check failed and could not be corrected. The file is probably corrupted.")
+            if result.returncode != 0:
+                stderr = result.stderr.decode()
+                if 'wrote' not in stderr:
+                    # Try reencoding with ffmpeg as a fallback
+                    ffmpeg_cmd = ['ffmpeg', '-i', self.file_path, '-c:a', 'flac', temp_path]
 
-        if isinstance(self.file, InMemoryUploadedFile):
-            # Read the corrected content
-            with open(temp_path, 'rb') as f:
-                corrected_content = f.read()
+                    ffmpeg_result = subprocess.run(
+                        ffmpeg_cmd,
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE
+                    )
 
-            # Create a new InMemoryUploadedFile with the corrected content
-            from io import BytesIO
-            file_obj = BytesIO()
-            file_obj.write(corrected_content)
-            file_obj.seek(0)  # Reset position for reading
+                    if ffmpeg_result.returncode != 0:
+                        raise FileCorruptedError(
+                            "The FLAC file MD5 check failed and reencoding attempts were unsuccessful. The file is probably corrupted."
+                        )
 
-            original_file = cast(InMemoryUploadedFile, self.file)
+            # Verify the output file exists and is valid
+            if not os.path.exists(temp_path) or os.path.getsize(temp_path) == 0:
+                raise FileCorruptedError("Failed to create corrected FLAC file")
 
-            # Create new file with same metadata as original
-            new_file = InMemoryUploadedFile(
-                file=file_obj,
-                field_name=original_file.field_name or None,
-                name=original_file.name,
-                content_type=original_file.content_type or 'audio/x-flac',
-                size=len(corrected_content),
-                charset=original_file.charset,
-                content_type_extra=original_file.content_type_extra or {}
+            success = True
+
+            # If requested, try to delete the original file
+            if delete_original and success:
+                try:
+                    os.unlink(self.file_path)
+                except OSError as e:
+                    raise OSError(f"Failed to delete original file: {str(e)}")
+
+            # Create a TemporaryUploadedFile from the temp file
+            temp_uploaded = TemporaryUploadedFile(
+                name=self.get_file_name_original(),
+                content_type='audio/flac',
+                size=os.path.getsize(temp_path),
+                charset=None
             )
+            # Move the temp file to the TemporaryUploadedFile location
+            os.rename(temp_path, temp_uploaded.temporary_file_path())
+            return temp_uploaded
 
-            # Clean up and verify
-            os.unlink(temp_path)
-
-            # Create temporary AudioFile to verify the fix worked
-            temp_audio_file = AudioFile(new_file)
-            if not temp_audio_file.is_flac_file_md5_valid():
-                raise FileCorruptedError("Failed to fix FLAC MD5 signature")
-
-            return new_file
-        else:
-            # For file-based files, return the path to the corrected file
-            return temp_path
+        except (subprocess.SubprocessError, OSError) as e:
+            raise RuntimeError(f"Failed to execute FLAC command: {str(e)}")
+        except Exception as e:
+            raise e
+        finally:
+            # Clean up the temp file only if we failed
+            if not success and os.path.exists(temp_path):
+                try:
+                    os.unlink(temp_path)
+                except OSError:
+                    pass  # Ignore cleanup errors

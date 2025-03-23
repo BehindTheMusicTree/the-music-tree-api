@@ -14,7 +14,7 @@ class AlbumTestCase(AppTestCase[Album]):
         return self.api_client.post(
             path=reverse('album-list'), data=kwargs, content_type='application/json', handle_response=self._set_results)
 
-    def _get_albums(self, **kwargs):
+    def _list_albums(self, **kwargs):
         return self.api_client.get(path=reverse('album-list'), data=kwargs, handle_response=self._set_results)
 
     def _retrieve_album(self, uuid: UUID):

@@ -1,7 +1,7 @@
 meta {
-  name: genreCode id3v1 Unknown
+  name: 0 on flac
   type: http
-  seq: 7
+  seq: 2
 }
 
 post {
@@ -16,8 +16,7 @@ headers {
 
 body:multipart-form {
   file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/utils/lib_track/files/metadata=none.mp3)
-  title: Horses
-  genre: Outlaw
+  rating: 11
 }
 
 vars:post-response {

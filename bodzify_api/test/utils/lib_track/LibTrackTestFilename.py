@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class TestLibTrackFilename(str, Enum):
+class LibTrackTestFilename(str, Enum):
     ALBUM_ARTISTS_MUSE_ID3V2_MP3 = "album artists=muse_id3v2.mp3"
 
     ALBUM_ARTISTS_ONE_TWO_THREE_ANTISLASH_ID3V2 = "album artists=One Two Three_antislash_id3v2.mp3"

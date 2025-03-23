@@ -3,7 +3,9 @@ import datetime
 import os
 from typing import TYPE_CHECKING, cast
 
+from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.db import models
+from django.db.models.fields.files import FieldFile
 from django.db.models import F
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -38,11 +40,12 @@ from .fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMis
 class TrackFile(PrivateStandardResource):
     lib_track = PrivateOneToOneField(  # type: ignore
         'LibraryTrack', on_delete=models.CASCADE, related_name=LibraryTrackFields.TRACK_FILE_INTERNAL)
-    file = models.FileField(upload_to=model_utils.get_user_lib_path,
-                            storage=PreserveSpacesStorage(),
-                            help_text="Only audio formats accepted.",
-                            validators=[TrackFileValidator(),],
-                            max_length=settings.FILE_PATH_MAX_LENGTH)
+    file: TemporaryUploadedFile | FieldFile = models.FileField(  # type: ignore
+        upload_to=model_utils.get_user_lib_path,
+        storage=PreserveSpacesStorage(),
+        help_text="Only audio formats accepted.",
+        validators=[TrackFileValidator(),],
+        max_length=settings.FILE_PATH_MAX_LENGTH)
     duration_in_sec = models.PositiveIntegerField()
     fingerprint_memory = models.BinaryField(null=True, blank=True, default=None, editable=True)
     fingerprint_missing_cause = AppForeignKey(
@@ -165,32 +168,7 @@ class TrackFile(PrivateStandardResource):
                     audio_metadata.delete_potential_id3_metadata_with_header(self.file)
 
                     # Fix MD5 and preserve file path
-                    corrected_file = audio_metadata.fix_md5_checking(self.file)
-                    if isinstance(corrected_file, str):
-                        # If we got a file path, create a new InMemoryUploadedFile
-                        from django.core.files.uploadedfile import InMemoryUploadedFile
-                        from io import BytesIO
-
-                        # Read the corrected file content
-                        with open(corrected_file, 'rb') as f:
-                            content = f.read()
-
-                        # Create a new BytesIO object with the content
-                        file_obj = BytesIO(content)
-
-                        # Create new InMemoryUploadedFile with same name and content type
-                        self.file = InMemoryUploadedFile(
-                            file=file_obj,
-                            field_name=None,
-                            name=getattr(self.file, 'name', corrected_file),
-                            content_type='audio/x-flac',
-                            size=len(content),
-                            charset=None,
-                            content_type_extra={}
-                        )
-                    else:
-                        # If we got an InMemoryUploadedFile, use it directly
-                        self.file = corrected_file
+                    self.file = audio_metadata.fix_md5_checking(self.file)
                     self.md5_has_been_corrected = True
                 except FileCorruptedError as e:
                     if not isinstance(e, FlacMd5CheckFailedError):

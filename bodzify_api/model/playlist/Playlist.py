@@ -20,7 +20,6 @@ if TYPE_CHECKING:
 
 
 class Playlist(LibTrackMixin, TrackablePlayCount):
-    last_track_list_update_date = models.DateTimeField(auto_now_add=True)
 
     objects: PlaylistManager = PlaylistManager()
 

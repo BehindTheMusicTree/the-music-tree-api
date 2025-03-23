@@ -15,24 +15,24 @@ class LibTrackFileMetadataUpdatePositiveIntTestCase(LibTrackFileMetadataUpdateTe
 
     def _test_value(self, value: int | None,
                     value_expected_in_metadata: int | None = None,
-                    additional_data_dict=None,
-                    file_has_tags=False):
+                    additional_data=None,
+                    file_has_metadata=False):
         value_str = str(value) if value else ''
         data = {self.save_field: value_str}
-        if additional_data_dict:
-            data.update(additional_data_dict)
+        if additional_data:
+            data.update(additional_data)
 
-        response = self._post_lib_track(file_has_metadata=file_has_tags, extension=self.file_extension, **data)
+        response = self._post_lib_track(file_has_metadata=file_has_metadata, extension=self.file_extension, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
 
         value_expected_in_metadata = value_expected_in_metadata if value_expected_in_metadata else value
 
         if value_expected_in_metadata is None:
-            if self.lib_track_app_metadata_key in self.saved_lib_track_metadata:
-                assert not self.saved_lib_track_metadata[self.lib_track_app_metadata_key]
+            if self.lib_track_app_metadata_key in self.saved_lib_track_metadata_with_raw_rating:
+                assert not self.saved_lib_track_metadata_with_raw_rating[self.lib_track_app_metadata_key]
             else:
                 assert True
         else:
-            assert self.lib_track_app_metadata_key in self.saved_lib_track_metadata
-            assert self.saved_lib_track_metadata[self.lib_track_app_metadata_key] == value_expected_in_metadata
+            assert self.lib_track_app_metadata_key in self.saved_lib_track_metadata_with_raw_rating
+            assert self.saved_lib_track_metadata_with_raw_rating[self.lib_track_app_metadata_key] == value_expected_in_metadata

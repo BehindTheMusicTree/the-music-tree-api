@@ -5,7 +5,7 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
 from bodzify_api.test.utils.field.body_data.type.NullableListBodyDataTestCase import NullablelistBodyDataTestCase
-from bodzify_api.test.utils.lib_track.TestLibTrackFilename import TestLibTrackFilename
+from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 
@@ -15,7 +15,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
     def test_largest_then_ok(self) -> None:
         artist_name = "a" * settings.ARTIST_NAME_LEN_MAX
         data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist_name]}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
@@ -26,7 +26,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
     def test_one_too_large_then_400(self):
         artist_name = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
         data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: artist_name}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -37,7 +37,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
     def test_malformed_array_then_400(self) -> None:
         malformed_field_name = "album_artists_names"
         data = {PostFields.ALBUM_NAME: "Best Of", malformed_field_name: ['muse']}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -47,7 +47,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
 
     def test_empty_then_ok(self):
         data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: []}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 0
@@ -56,7 +56,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         artist = self.model_fixture_factory.create_artist(name="Kopoe")
 
         data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist.name]}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
@@ -67,7 +67,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
     def test_not_existing_then_ok(self) -> None:
         artist_name = "hoho"
         data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: artist_name}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
@@ -80,7 +80,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         artist2 = self.model_fixture_factory.create_artist(name="Steeve")
 
         data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist1.name, artist2.name]}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
@@ -97,7 +97,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
 
         data = {PostFields.ALBUM_NAME: "Best Of",
                 PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist1_name, artist2_name, artist3_name]}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
@@ -115,7 +115,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
 
         data = {PostFields.ALBUM_NAME: "Best Of",
                 PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [existing_artist.name, new_artist1_name, new_artist2_name]}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
@@ -132,7 +132,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         too_long_artist = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
 
         data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [valid_artist, too_long_artist]}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -142,7 +142,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
 
     def test_multiple_with_one_empty_then_400(self) -> None:
         data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: ['', 'Muse']}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -153,7 +153,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
     def test_comma_separated_then_only_one_value(self) -> None:
         artist_name = "mat, muse"
         data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [artist_name]}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
@@ -163,7 +163,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
 
     def test_duplicate_values_then_400(self) -> None:
         data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: ['Muse', 'Muse']}
-        response = self._post_lib_track(TestLibTrackFilename.METADATA_NONE_MP3, **data)
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1

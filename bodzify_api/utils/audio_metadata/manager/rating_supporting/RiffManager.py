@@ -370,7 +370,8 @@ class RiffManager(RatingSupportingMetadataManager):
         )
 
     def _get_genre_code_from_name(self, genre_name: str) -> int | None:
+        genre_name_lower = genre_name.lower()
         for code, name in ID3V1_GENRE_CODE_MAP.items():
-            if name == genre_name:
+            if name and name.lower() == genre_name_lower:
                 return code
-        return None
+        return 12  # Default to 'Other' genre if not found

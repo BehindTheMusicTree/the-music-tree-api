@@ -1,5 +1,6 @@
 from typing import Any, Union
 
+from django.core.exceptions import DisallowedHost
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import IntegrityError
 from django.http import JsonResponse, Http404
@@ -7,7 +8,9 @@ from rest_framework import status
 from rest_framework.exceptions import ErrorDetail as DRFErrorDetail
 from rest_framework.exceptions import ValidationError as DrfValidationError
 from rest_framework_simplejwt.exceptions import InvalidToken
-from rest_framework.exceptions import NotAuthenticated, ParseError, UnsupportedMediaType, MethodNotAllowed, PermissionDenied
+from rest_framework.exceptions import (
+    NotAuthenticated, ParseError, UnsupportedMediaType, MethodNotAllowed, PermissionDenied, AuthenticationFailed
+)
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
@@ -33,7 +36,7 @@ class ErrorResponse:
 
     @staticmethod
     def create_error_response(
-        error_detail: dict[str, Any], api_error_code: ApiErrorCodeNumeric = ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT
+        error_detail, api_error_code: ApiErrorCodeNumeric = ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT
     ) -> JsonResponse:
         http_status = ErrorResponseFields.ERROR_TO_HTTP_STATUS.get(api_error_code, status.HTTP_400_BAD_REQUEST)
         status_message = ErrorResponseFields.STATUS_MESSAGES.get(http_status, "An error occurred")
@@ -90,7 +93,7 @@ class ErrorResponse:
         }
 
     @staticmethod
-    def _from_invalid_jwt_token(exception: InvalidToken | NotAuthenticated) -> JsonResponse:
+    def _from_invalid_jwt_token(exception: InvalidToken | NotAuthenticated | AuthenticationFailed) -> JsonResponse:
         detail = exception.detail
         message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
         code = detail['code'] if isinstance(detail, dict) and 'code' in detail else exception.default_code
@@ -243,6 +246,16 @@ class ErrorResponse:
         )
 
     @staticmethod
+    def _from_disallowed_host_exception(exception: DisallowedHost) -> JsonResponse:
+        return ErrorResponse.create_error_response(
+            error_detail={
+                'message': 'Invalid host header',
+                'code': 'disallowed_host'
+            },
+            api_error_code=ApiErrorCodeNumeric.SECURITY_ERROR,
+        )
+
+    @staticmethod
     def handle_exception(exc: Exception) -> JsonResponse:
         """
         Routes different types of exceptions to their appropriate handlers.
@@ -254,7 +267,7 @@ class ErrorResponse:
             return ErrorResponse._from_validation_error(exc)
         elif isinstance(exc, IntegrityError):
             return ErrorResponse._from_unhandled_integrity_error(exc)
-        elif isinstance(exc, (InvalidToken, NotAuthenticated)):
+        elif isinstance(exc, (InvalidToken, NotAuthenticated, AuthenticationFailed)):
             return ErrorResponse._from_invalid_jwt_token(exc)
         elif isinstance(exc, ParseError):
             return ErrorResponse._from_content_type_exception(exc)
@@ -266,5 +279,7 @@ class ErrorResponse:
             return ErrorResponse._from_http_404_exception(exc)
         elif isinstance(exc, PermissionDenied):
             return ErrorResponse._from_permission_denied_exception(exc)
+        elif isinstance(exc, DisallowedHost):
+            return ErrorResponse._from_disallowed_host_exception(exc)
         else:
             return ErrorResponse._from_unhandled_exception(exc)

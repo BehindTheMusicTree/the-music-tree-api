@@ -7,7 +7,7 @@ from .PaginatedResponseFields import PaginatedResponseFields
 
 
 class AppPagination(PageNumberPagination):
-    page_size = settings.PAGINATION_PAGE_SIZE_DEFAULT
+    page_size: int = settings.PAGINATION_PAGE_SIZE_DEFAULT
     page_size_query_param = 'page_size'
     max_page_size = settings.PAGINATION_PAGE_SIZE_MAX
 
@@ -18,15 +18,26 @@ class AppPagination(PageNumberPagination):
                 PaginatedResponseFields.OVERALL_TOTAL: 0,
                 PaginatedResponseFields.NEXT: None,
                 PaginatedResponseFields.PREVIOUS: None,
-                PaginatedResponseFields.RESULTS: data
+                PaginatedResponseFields.RESULTS: data,
+                PaginatedResponseFields.PAGE: 1,
+                PaginatedResponseFields.PAGE_SIZE: self.page_size,
+                PaginatedResponseFields.TOTAL_PAGES: 0
             })
 
-    # Normal pagination response
+        # Calculate total pages using safe integer operations
+        count = self.count
+        page_size = int(self.page_size)
+        total_pages = ((count + page_size - 1) // page_size) if count > 0 else 0
+
+        # Normal pagination response
         return Response({
-            PaginatedResponseFields.OVERALL_TOTAL: self.count,
+            PaginatedResponseFields.OVERALL_TOTAL: count,
             PaginatedResponseFields.NEXT: self.get_next_link(),
             PaginatedResponseFields.PREVIOUS: self.get_previous_link(),
-            PaginatedResponseFields.RESULTS: data
+            PaginatedResponseFields.RESULTS: data,
+            PaginatedResponseFields.PAGE: self.page.number,
+            PaginatedResponseFields.PAGE_SIZE: page_size,
+            PaginatedResponseFields.TOTAL_PAGES: total_pages
         })
 
     @property

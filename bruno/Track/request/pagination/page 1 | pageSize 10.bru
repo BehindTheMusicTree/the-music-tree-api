@@ -1,0 +1,16 @@
+meta {
+  name: page 1 | pageSize 10
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}albums/?page=0
+  body: json
+  auth: inherit
+}
+
+params:query {
+  page: 0
+  ~pageSize: 10
+}

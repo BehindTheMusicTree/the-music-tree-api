@@ -9,7 +9,7 @@ from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 class TestCase(AlbumTestCase, NotNullableFreeCharFilterTestCase):
 
     def test_empty_then_400(self):
-        response = self._get_albums(name='')
+        response = self._list_albums(name='')
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -21,7 +21,7 @@ class TestCase(AlbumTestCase, NotNullableFreeCharFilterTestCase):
         album = self.model_fixture_factory.create_album(name="Black")
         self.model_fixture_factory.create_album(name="Jon")
 
-        response = self._get_albums(name='BLA')
+        response = self._list_albums(name='BLA')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
@@ -31,7 +31,7 @@ class TestCase(AlbumTestCase, NotNullableFreeCharFilterTestCase):
         self.model_fixture_factory.create_album(name="Dark")
         self.model_fixture_factory.create_album(name="Jon")
 
-        response = self._get_albums()
+        response = self._list_albums()
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2

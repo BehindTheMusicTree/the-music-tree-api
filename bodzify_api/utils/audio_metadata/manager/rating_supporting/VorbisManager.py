@@ -143,7 +143,7 @@ class VorbisManager(RatingSupportingMetadataManager):
                                            app_metadata_value: AppMetadataValue,
                                            app_metadata_key: AppMetadataKey):
         if app_metadata_key == AppMetadataKey.RATING:
-            if app_metadata_value:
+            if app_metadata_value is not None:
                 app_metadata_value = str(app_metadata_value)
             self._update_formatted_value_in_raw_mutagen_metadata(raw_mutagen_metadata=raw_mutagen_metadata,
                                                                  raw_metadata_key=self.VorbisKey.RATING,

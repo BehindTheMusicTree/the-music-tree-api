@@ -1,10 +1,9 @@
 import os
-from io import BytesIO
 from typing import Any
 from urllib.parse import urlparse
 
 import requests
-from django.core.files.uploadedfile import UploadedFile, InMemoryUploadedFile
+from django.core.files.uploadedfile import UploadedFile, TemporaryUploadedFile
 
 from bodzify_api import settings
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
@@ -19,7 +18,7 @@ from bodzify_api.validator.TrackUrlValidator import TrackUrlValidator
 class TrackFileField(AppField):
     """
     A unified field that handles both URL and file uploads for tracks.
-    When a URL is provided, downloads the file and converts it to an InMemoryUploadedFile.
+    When a URL is provided, downloads the file and saves it as a TemporaryUploadedFile.
     Automatically detects input type and processes accordingly.
     """
 
@@ -41,7 +40,7 @@ class TrackFileField(AppField):
         if self.file_field:
             self.file_field.bind(field_name, parent)
 
-    def _download_file_from_url(self, url: str) -> InMemoryUploadedFile:
+    def _download_file_from_url(self, url: str) -> TemporaryUploadedFile:
         """
         Downloads a file from a URL and returns it as an InMemoryUploadedFile.
 
@@ -49,7 +48,7 @@ class TrackFileField(AppField):
             url: The URL to download the file from
 
         Returns:
-            InMemoryUploadedFile: The downloaded file in memory
+            TemporaryUploadedFile: The downloaded file saved to disk
 
         Raises:
             AppValidationException: If the download fails, times out, or encounters other errors
@@ -71,7 +70,7 @@ class TrackFileField(AppField):
                 content_type = response.headers.get('Content-Type', '')
                 if 'mpeg' in content_type:
                     filename += '.mp3'
-                elif 'wav' in content_type:
+                elif '.wav' in content_type:
                     filename += '.wav'
                 elif 'flac' in content_type:
                     filename += '.flac'
@@ -81,20 +80,26 @@ class TrackFileField(AppField):
                         message='Invalid file extension. Supported formats are: mp3, wav, flac',
                         field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_EXTENSION_INVALID)
 
-            # Create a BytesIO object to store the file content
-            content = BytesIO()
+            # Get content length if available
+            content_length = response.headers.get('Content-Length')
+            file_size = int(content_length) if content_length else 0
+
+            # Create a temporary file with known size
+            temp_file = TemporaryUploadedFile(
+                name=filename,
+                content_type=response.headers.get('Content-Type', ''),
+                size=file_size,
+                charset=None
+            )
+
+            # Write content in chunks
             for chunk in response.iter_content(chunk_size=8192):
                 if chunk:  # filter out keep-alive chunks
-                    content.write(chunk)
-            content.seek(0)
+                    temp_file.write(chunk)
 
-            return InMemoryUploadedFile(file=content,
-                                        field_name=None,
-                                        name=filename,
-                                        content_type=response.headers.get('Content-Type'),
-                                        size=len(content.getvalue()),
-                                        charset=None,
-                                        content_type_extra={})
+            # Seek to start for reading
+            temp_file.seek(0)
+            return temp_file
         except requests.Timeout:
             raise AppValidationException(field_name=self.get_error_field_name(),
                                          message='URL request timed out. Please try again.',

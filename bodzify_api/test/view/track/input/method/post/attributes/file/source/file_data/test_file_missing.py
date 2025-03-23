@@ -5,7 +5,6 @@ from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as L
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@
 class TestCase(LibTrackTestCase):
 
     def test_missing_then_400(self):

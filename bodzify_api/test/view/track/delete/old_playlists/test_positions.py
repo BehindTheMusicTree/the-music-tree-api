@@ -4,7 +4,6 @@ from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrac
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@
 class TrackDeleteViewTestCase(LibTrackTestCase):
 
     def test_removal_then_next_tracks_in_playlist_decrease_position(self):

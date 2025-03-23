@@ -7,7 +7,7 @@ function replaceDocument(docString) {
   if (window.djdt) {
     // If Django Debug Toolbar is available, reinitialize it so that
     // it can show updated panels from new `docString`.
-    window.addEventlistener("load", djdt.init);
+    window.addEventListener("load", djdt.init);
   }
 }
 
@@ -55,7 +55,7 @@ function doAjaxSubmit(e) {
       if (boundary !== null) {
         contentType += '; boundary="' + boundary[1] + '"';
       }
-      // Fix textarea EOL normalisation (multipart/form-data should use CR+NL, not NL)
+      // Fix textarea.value EOL normalisation (multipart/form-data should use CR+NL, not NL)
       data = data.replace(/\n/g, '\r\n');
     }
   } else {
