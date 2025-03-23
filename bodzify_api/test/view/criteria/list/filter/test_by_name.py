@@ -13,7 +13,7 @@ class TestCase(GenreTestCase, NotNullableFreeCharFilterTestCase):
         self.model_fixture_factory.create_genre(name="Rock")
         self.model_fixture_factory.create_genre(name="Pop")
 
-        response = self._get_genres(name='')
+        response = self._list_genres(name='')
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -26,7 +26,7 @@ class TestCase(GenreTestCase, NotNullableFreeCharFilterTestCase):
         genre_rock2 = self.model_fixture_factory.create_genre(name="Rockabilly")
         self.model_fixture_factory.create_genre(name="Pop")
 
-        response = self._get_genres(name='RoC')
+        response = self._list_genres(name='RoC')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
@@ -38,7 +38,7 @@ class TestCase(GenreTestCase, NotNullableFreeCharFilterTestCase):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_pop = self.model_fixture_factory.create_genre(name="Pop")
 
-        response = self._get_genres()
+        response = self._list_genres()
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
