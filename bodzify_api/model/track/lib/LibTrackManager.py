@@ -99,7 +99,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             TrackFile.objects.create(**track_file_model_data)
 
             self._add_to_genre_playlists(instance)
-            instance.update_file_tags_from_lib_track_instance_values()
+            instance.update_file_metadata_from_lib_track_instance_values()
             return instance
 
     def create_instance_with_track_file(
@@ -116,7 +116,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             track_file_data[TrackFileFields.LIB_TRACK] = lib_track
             TrackFile.objects.create(**track_file_data)
 
-        lib_track.update_file_tags_from_lib_track_instance_values()
+        lib_track.update_file_metadata_from_lib_track_instance_values()
 
         return lib_track
 

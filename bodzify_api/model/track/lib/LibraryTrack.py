@@ -3,9 +3,6 @@ from typing import TYPE_CHECKING
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import QuerySet
-from django.db.models.signals import pre_delete
-from django.dispatch import receiver
-from django.utils import timezone
 
 from bodzify_api import settings
 from bodzify_api.model.album.Album import Album
@@ -99,7 +96,7 @@ class LibraryTrack(TrackablePlayCount):
             artist.name for artist in artists) if self.artists.exists() else f"no {Fields.ARTISTS}"
         return f"{self.uuid} | {self.title} by {artists_str}"
 
-    def update_file_tags_from_lib_track_instance_values(self):
+    def update_file_metadata_from_lib_track_instance_values(self):
         normalized_metadata = dict()
         normalized_metadata[AppMetadataKey.TITLE] = self.title
 
