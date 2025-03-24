@@ -109,128 +109,41 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         - If it has children but no parent, children become root criteria
         - If it's a root criteria, tracks are moved to the criterialess playlist
         """
+        from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+
         with transaction.atomic():
-            is_root = instance.is_root
-            parent = instance.parent
+            from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
 
-            # Handle library tracks based on whether this is a root criteria or not
-            if hasattr(instance, Fields.LIB_TRACKS_RELATED_NAME):
-                if parent:
-                    # For non-root criteria, reassign lib_tracks to parent
-                    instance.lib_tracks.update(genre=parent)
-                else:
-                    # For root criteria, set genre to None
-                    instance.lib_tracks.update(genre=None)
-
-            # Update metadata for affected tracks
             for lib_track in instance.lib_tracks.all():
+                lib_track.genre = instance.parent
+                lib_track.save(update_fields=[f'{LibTrackFields.GENRE}_id'])
                 lib_track.update_file_metadata_from_lib_track_instance_values()
 
-            # Handle track transfer for root criteria BEFORE handling children
-            if is_root:
-                from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-
+            if instance.is_root:
                 # Use CriteriaPlaylistManager to handle playlist operations
                 CriteriaPlaylist.objects.transfer_direct_tracks_to_criterialess_playlist(
                     criteria_playlist=instance.criteria_playlist,
                     criteria=instance
                 )
 
-            # Handle children reassignment AFTER handling tracks
             if instance.children.exists():
                 children = list(instance.children.all())
 
-                # BEFORE deleting, ensure tracks from this genre and its descendants
-                # have relationships to any parent playlists to preserve visibility
-                if parent and hasattr(instance, 'criteria_playlist') and instance.criteria_playlist:
-                    from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+                for child in children:
+                    child.parent = instance.parent
+                    child.save(update_fields=[f'{Fields.PARENT}_id'])
 
-                    # Get the parent playlist
-                    parent_playlist = parent.criteria_playlist if hasattr(parent, 'criteria_playlist') else None
-                    if parent_playlist:
-                        # Get all descendants including this criteria
-                        all_criteria = [instance] + self.get_all_descendants(instance)
+                    child.criteria_playlist.parent = instance.parent.criteria_playlist if instance.parent else None
+                    child.criteria_playlist.save(update_fields=[Fields.PARENT])
 
-                        # Use CriteriaPlaylistManager to ensure tracks are in parent playlist
-                        CriteriaPlaylist.objects.ensure_tracks_in_parent_playlist(
-                            criteria_list=[c for c in all_criteria],  # Explicit cast to list of criteria
-                            parent_playlist=parent_playlist,
-                            user=instance.user
-                        )
-
-                if parent:
-                    # Reassign children to parent
-                    for child in children:
-                        # Update criteria relationship first
-                        child.parent = parent
-                        child.root = parent.root if parent.root else parent
-                        child.save(update_fields=[f'{Fields.PARENT}_id', f'{Fields.ROOT}_id'])
-
-                        # Then update all descendants' root reference
-                        for descendant in self.get_all_descendants(child):
-                            descendant.root = parent.root if parent.root else parent
-                            descendant.save(update_fields=[f'{Fields.ROOT}_id'])
-
-                        # Update the child's playlist after criteria
-                        if hasattr(child, 'criteria_playlist') and child.criteria_playlist:
-                            from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-
-                            # Update playlist parent and root
-                            grandparent_playlist = parent.criteria_playlist if hasattr(
-                                parent, 'criteria_playlist') else None
-                            if grandparent_playlist:
-                                root_playlist = grandparent_playlist.root if grandparent_playlist.root else grandparent_playlist
-                                CriteriaPlaylist.objects.update_instance(
-                                    instance=child.criteria_playlist,
-                                    **{
-                                        Fields.PARENT: grandparent_playlist,
-                                        Fields.ROOT: root_playlist
-                                    }
-                                )
-
-                                # Update all descendant playlists' root
-                                for descendant in self.get_all_descendants(child):
-                                    if hasattr(descendant, 'criteria_playlist') and descendant.criteria_playlist:
-                                        CriteriaPlaylist.objects.update_instance(
-                                            instance=descendant.criteria_playlist,
-                                            **{Fields.ROOT: root_playlist}
-                                        )
-
-                        # Update playlist hierarchy after criteria
-                        if hasattr(child, 'criteria_playlist') and child.criteria_playlist:
-                            from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-
-                            # Make child playlist a root using CriteriaPlaylistManager
-                            CriteriaPlaylist.objects.make_playlist_root(
-                                playlist=child.criteria_playlist
-                            )
-                else:
-                    # Make children root criteria
-                    for child in children:
-                        # Update criteria relationship first
-                        child.parent = None
-                        child.root = child  # Self as root
-                        child.save(update_fields=[f'{Fields.PARENT}_id', f'{Fields.ROOT}_id'])
-
-                        # Then update all descendants' root reference
-                        for descendant in self.get_all_descendants(child):
-                            descendant.root = child
-                            descendant.save(update_fields=[f'{Fields.ROOT}_id'])
-
-                        # Update playlist hierarchy after criteria
-                        if hasattr(child, 'criteria_playlist') and child.criteria_playlist:
-                            from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-
-                            # Make child playlist a root using CriteriaPlaylistManager
-                            CriteriaPlaylist.objects.make_playlist_root(
-                                playlist=child.criteria_playlist
-                            )
+                    if not instance.parent:
+                        CriteriaPlaylist.objects.make_playlist_root(child.criteria_playlist)
 
             # Delete the criteria instance directly
             # This will cascade delete its playlist due to foreign key relationships
             instance.delete()
 
-    def get_roots(self, user: 'User') -> QuerySet[T]:
+    def get_roots(self, user: 'User') -> 'QuerySet[T]':
         return self.filter(user=user, parent__isnull=True)
 
     def refresh_ascendants_of_instance(self, instance: T):

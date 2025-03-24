@@ -64,15 +64,6 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
 
     def move_tracks_to_playlist_beginning(
             self, source_rels: list, target_playlist: 'Playlist', user: User) -> None:
-        """
-        Move pre-filtered tracks to the beginning of target playlist.
-        Existing tracks in the target playlist will be shifted down.
-
-        Args:
-            source_rels: Pre-filtered and ordered list of LibTrackPlaylistRel objects
-            target_playlist: The target playlist where tracks will be moved to
-            user: The user who owns the playlists and tracks
-        """
         from .LibTrackPlaylistRel import LibTrackPlaylistRel
         from .Fields import Fields
 
