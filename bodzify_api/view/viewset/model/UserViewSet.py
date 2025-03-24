@@ -1,6 +1,5 @@
 from typing import Any
 
-from django.db import transaction
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 
@@ -26,6 +25,5 @@ class UserViewSet(AppModelViewSet[User]):
     def retrieve(self, *args, **kwargs):
         return self._handle_retrieve()
 
-    @transaction.atomic
     def destroy(self, *args, **kwargs):
         return self._handle_destroy()

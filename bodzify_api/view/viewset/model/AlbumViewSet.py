@@ -1,6 +1,6 @@
-from django.db import transaction
 from drf_spectacular.utils import OpenApiParameter  # type: ignore
-from drf_spectacular.utils import OpenApiTypes, extend_schema
+from drf_spectacular.types import OpenApiTypes  # type: ignore
+from drf_spectacular.utils import extend_schema
 
 from bodzify_api.filtering.set.album.AlbumFilterSet import AlbumFilterSet
 from bodzify_api.filtering.set.album.Fields import Fields as FilterFields
@@ -28,6 +28,5 @@ class AlbumViewSet(AppModelViewSet[Album]):
     def retrieve(self, *args, **kwargs):
         return self._handle_retrieve()
 
-    @transaction.atomic
     def destroy(self, *args, **kwargs):
         return self._handle_destroy()

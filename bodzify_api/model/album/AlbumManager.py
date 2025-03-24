@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 
+from django.db import transaction
 from django.db.models import QuerySet
 
 from bodzify_api.model.lib_track_mixin.Fields import Fields
@@ -53,7 +54,8 @@ class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
             user=user, name=name, album_artists=album_artists)
 
     def delete_instance(self, instance: 'Album') -> None:
-        self.delete_instance_with_tracks_and_potentially_artists(instance)
+        with transaction.atomic():
+            self.delete_instance_with_tracks_and_potentially_artists(instance)
 
     def delete_instance_with_tracks_and_potentially_artists(self, instance: 'Album'):
         from bodzify_api.model.artist.Artist import Artist
