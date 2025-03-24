@@ -142,6 +142,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             old_archived_state = old_instance.archived
 
             updated_instance: LibraryTrack = super().update_instance(old_instance, **kwargs)
+            updated_instance.update_file_metadata_from_lib_track_instance_values()
 
             if old_genre != updated_instance.genre:
                 self._update_genre_playlists(updated_instance, old_genre=old_genre)
