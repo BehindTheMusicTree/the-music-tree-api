@@ -126,7 +126,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
 
             # Get the playlist before doing any modifications
             criteria_playlist = None
-            if hasattr(instance, Fields.CRITERIA_PLAYLIST):
+            if instance.criteria_playlist:
                 criteria_playlist = instance.criteria_playlist
 
             # Handle track transfer for root criteria BEFORE handling children
@@ -211,7 +211,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
                     from bodzify_api.model.lib_track_playlist_rel.Fields import Fields as LibTrackPlaylistRelFields
 
                     # Get the parent playlist
-                    parent_playlist = parent.criteria_playlist if hasattr(parent, Fields.CRITERIA_PLAYLIST) else None
+                    parent_playlist = parent.criteria_playlist if parent.criteria_playlist else None
 
                     if parent_playlist:
                         # Get all descendants including this criteria
@@ -232,8 +232,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
 
                 if parent:
                     # Reassign children to grandparent
-                    grandparent_playlist = parent.criteria_playlist if hasattr(
-                        parent, Fields.CRITERIA_PLAYLIST) else None
+                    grandparent_playlist = parent.criteria_playlist if parent.criteria_playlist else None
 
                     for child in children:
                         # Update criteria relationship first
@@ -247,7 +246,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
                             descendant.save(update_fields=[f'{Fields.ROOT}_id'])
 
                         # Update the child's playlist after criteria
-                        if hasattr(child, Fields.CRITERIA_PLAYLIST) and child.criteria_playlist and grandparent_playlist:
+                        if child.criteria_playlist and grandparent_playlist:
                             child_playlist = child.criteria_playlist
 
                             # Update playlist parent and root
@@ -259,7 +258,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
 
                             # Update all descendant playlists' root
                             for descendant in self.get_all_descendants(child):
-                                if hasattr(descendant, Fields.CRITERIA_PLAYLIST) and descendant.criteria_playlist:
+                                if descendant.criteria_playlist:
                                     desc_playlist = descendant.criteria_playlist
                                     root_playlist = grandparent_playlist.root if grandparent_playlist.root else grandparent_playlist
 
@@ -281,7 +280,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
                             descendant.save(update_fields=[f'{Fields.ROOT}_id'])
 
                         # Update playlist hierarchy after criteria
-                        if hasattr(child, Fields.CRITERIA_PLAYLIST) and child.criteria_playlist:
+                        if child.criteria_playlist:
                             child_playlist = child.criteria_playlist
 
                             # Make child playlist a root
@@ -296,7 +295,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
 
                             # Update all descendant playlists' root
                             for descendant in self.get_all_descendants(child):
-                                if hasattr(descendant, Fields.CRITERIA_PLAYLIST) and descendant.criteria_playlist:
+                                if descendant.criteria_playlist:
                                     desc_playlist = descendant.criteria_playlist
 
                                     CriteriaPlaylist.objects.update_instance(
