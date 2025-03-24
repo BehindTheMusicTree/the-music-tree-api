@@ -1,4 +1,3 @@
-
 from typing import TYPE_CHECKING, cast
 
 from django.db.models import F
@@ -62,3 +61,33 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
         if lib_track_playlist_rel.position is not None:  # if lib track not archived
             self._decrement_positions_of_following_tracks(playlist, lib_track_playlist_rel.position)
         lib_track_playlist_rel.delete()
+
+    def move_tracks_to_playlist_beginning(
+            self, source_rels: list, target_playlist: 'Playlist', user: User) -> None:
+        from .LibTrackPlaylistRel import LibTrackPlaylistRel
+        from .Fields import Fields
+
+        # Skip if there are no tracks to move
+        if not source_rels:
+            return
+
+        new_tracks_count = len(source_rels)
+
+        if new_tracks_count == 0:
+            return
+
+        self.filter(
+            playlist=target_playlist,
+            user=user,
+            position__isnull=False
+        ).update(
+            position=F(Fields.POSITION) + new_tracks_count
+        )
+
+        for i, rel in enumerate(source_rels, 1):
+            LibTrackPlaylistRel.objects.create(
+                user=user,
+                playlist=target_playlist,
+                lib_track=rel.lib_track,
+                position=i
+            )

@@ -78,3 +78,71 @@ class CriteriaPlaylistManager(StandardResourceManager):
             if instance.parent:
                 self.remove_lib_tracks_from_instance_and_ascendants_until_criteria_limit(
                     instance=instance.parent, lib_tracks=lib_tracks, criteria_limit=criteria_limit)
+
+    def transfer_direct_tracks_to_criterialess_playlist(
+            self, criteria_playlist: 'CriteriaPlaylist', criteria: 'Criteria'):
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        from bodzify_api.model.lib_track_playlist_rel.Fields import Fields as LibTrackPlaylistRelFields
+
+        # Get the criterialess playlist for this criteria type
+        criterialess_playlist = self.get(
+            user=criteria_playlist.user,
+            criteria=None,
+            type=criteria_playlist.type
+        )
+
+        # Get pre-filtered and ordered tracks to move
+        source_rels = list(LibTrackPlaylistRel.objects.filter(
+            playlist=criteria_playlist,
+            lib_track__genre=criteria
+        ).select_related('lib_track').order_by(LibTrackPlaylistRelFields.POSITION))
+
+        # Use the LibTrackPlaylistRelManager to move tracks
+        LibTrackPlaylistRel.objects.move_tracks_to_playlist_beginning(
+            source_rels=source_rels,
+            target_playlist=criterialess_playlist,
+            user=criteria_playlist.user
+        )
+
+    def ensure_tracks_in_parent_playlist(
+            self, criteria_list: list['Criteria'],
+            parent_playlist: 'CriteriaPlaylist', user):
+        """
+        Ensure all tracks from the given criteria list have relationships to the parent playlist.
+
+        Args:
+            criteria_list: List of criteria whose tracks need to be in the parent playlist
+            parent_playlist: The parent playlist to ensure the tracks are in
+            user: The user who owns the playlists and tracks
+        """
+        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+
+        # Get all criteria IDs
+        all_criteria_ids = [c.pk for c in criteria_list]
+
+        # Find all tracks from these criteria
+        all_tracks = list(LibraryTrack.objects.filter(genre_id__in=all_criteria_ids).all())
+
+        # For each track, create a relationship to the parent playlist if it doesn't exist
+        for track in all_tracks:
+            # This ensures tracks remain visible in parent playlists after deletion
+            LibTrackPlaylistRel.objects.get_or_create(
+                user=user,
+                playlist=parent_playlist,
+                lib_track=track
+            )
+
+    def make_playlist_root(self, playlist: 'CriteriaPlaylist'):
+        """
+        Set a playlist as its own root and update all descendants.
+
+        Args:
+            playlist: The playlist to make a root
+        """
+        playlist.parent = None
+        playlist.root = playlist
+        playlist.save(update_fields=[Fields.PARENT, Fields.ROOT])
+
+        # Update all descendant playlists to use this as the root
+        self.update_descendants_root(instance=playlist, root=playlist)
