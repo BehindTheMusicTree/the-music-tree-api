@@ -48,6 +48,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
     def get_default_ordering(self) -> list[str]:
         return [LibTrackMixinFields.NAME_INTERNAL]
 
+    @transaction.atomic
     def create(self, type_id: int, **kwargs) -> T:
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
         type = CriteriaType.objects.get(pk=type_id)
@@ -56,6 +57,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         self._refresh_ascendants_of_instance(instance)
         return instance
 
+    @transaction.atomic
     def update_instance(self, instance: T, **kwargs) -> T:
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
         old_root = instance.root
@@ -122,6 +124,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
             result.extend(self.get_all_descendants(child))
         return result
 
+    @transaction.atomic
     def delete_instance(self, instance: T) -> None:
         """
         Delete a criteria and handle relationships.
@@ -133,37 +136,36 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         """
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 
-        with transaction.atomic():
-            from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
+        from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
 
-            criteria_lib_tracks = instance.lib_tracks.all()
-            for lib_track in criteria_lib_tracks:
-                lib_track.genre = instance.parent
-                lib_track.save(update_fields=[f'{LibTrackFields.GENRE}_id'])
-                lib_track.update_file_metadata_from_lib_track_instance_values()
+        criteria_lib_tracks = instance.lib_tracks.all()
+        for lib_track in criteria_lib_tracks:
+            lib_track.genre = instance.parent
+            lib_track.save(update_fields=[f'{LibTrackFields.GENRE}_id'])
+            lib_track.update_file_metadata_from_lib_track_instance_values()
 
-            if instance.is_root:
-                CriteriaPlaylist.objects.transfer_direct_tracks_to_criterialess_playlist(
-                    direct_tracks=criteria_lib_tracks,
-                    criteria_playlist=instance.criteria_playlist)
+        if instance.is_root:
+            CriteriaPlaylist.objects.transfer_direct_tracks_to_criterialess_playlist(
+                direct_tracks=criteria_lib_tracks,
+                criteria_playlist=instance.criteria_playlist)
 
-            if instance.children.exists():
-                children = list(instance.children.all())
+        if instance.children.exists():
+            children = list(instance.children.all())
 
-                for child in children:
-                    child.parent = instance.parent
-                    child.save(update_fields=[f'{Fields.PARENT}_id'])
-                    self._refresh_ascendants_of_instance_and_children(child)
+            for child in children:
+                child.parent = instance.parent
+                child.save(update_fields=[f'{Fields.PARENT}_id'])
+                self._refresh_ascendants_of_instance_and_children(child)
 
-                    child.criteria_playlist.parent = instance.parent.criteria_playlist if instance.parent else None
-                    child.criteria_playlist.save(update_fields=[Fields.PARENT])
+                child.criteria_playlist.parent = instance.parent.criteria_playlist if instance.parent else None
+                child.criteria_playlist.save(update_fields=[Fields.PARENT])
 
-                    if not instance.parent:
-                        CriteriaPlaylist.objects.make_playlist_root(child.criteria_playlist)
+                if not instance.parent:
+                    CriteriaPlaylist.objects.make_playlist_root(child.criteria_playlist)
 
-            # Delete the criteria instance directly
-            # This will cascade delete its playlist due to foreign key relationships
-            instance.delete()
+        # Delete the criteria instance directly
+        # This will cascade delete its playlist due to foreign key relationships
+        instance.delete()
 
     def get_roots(self, user: 'User') -> 'QuerySet[T]':
         return self.filter(user=user, parent__isnull=True)
