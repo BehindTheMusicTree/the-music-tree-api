@@ -81,3 +81,16 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
             relation.playlist = target_playlist
             relation.position = i
             relation.save(update_fields=[Fields.POSITION, 'playlist'])
+
+    def get_ordered_relations_for_playlist(self, playlist: 'Playlist') -> QuerySet['LibTrackPlaylistRel']:
+        """
+        Returns ordered relations for a playlist, with non-archived tracks first (sorted by position)
+        followed by archived tracks (null positions).
+        """
+        return self.filter(
+            user=playlist.user,
+            playlist=playlist
+        ).select_related('lib_track').order_by(
+            F(Fields.POSITION).desc(nulls_last=True),
+            Fields.POSITION
+        )
