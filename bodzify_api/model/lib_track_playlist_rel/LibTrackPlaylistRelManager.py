@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, cast
 
-from django.db.models import F
+from django.db.models import F, QuerySet
 
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from bodzify_api.model.user.User import User
@@ -63,32 +63,21 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
         lib_track_playlist_rel.delete()
 
     def move_tracks_to_playlist_beginning(
-            self, source_rels: list, target_playlist: 'Playlist') -> None:
-        from .LibTrackPlaylistRel import LibTrackPlaylistRel
+            self, source_rels: QuerySet['LibTrackPlaylistRel'], target_playlist: 'Playlist') -> None:
         from .Fields import Fields
 
         if not source_rels:
             return
 
-        # Count how many new tracks we're adding
-        new_tracks_count = len(source_rels)
-
-        # First, shift all existing tracks down by the number of new tracks
-        # This is more efficient than updating each track individually
         self.filter(
             user=target_playlist.user,
             playlist=target_playlist,
             position__isnull=False
         ).update(
-            position=F(Fields.POSITION) + new_tracks_count
+            position=F(Fields.POSITION) + source_rels.count()
         )
 
-        # Now add the new tracks at the beginning positions
-        for i, rel in enumerate(source_rels, 1):
-            # Create relationship in target playlist
-            LibTrackPlaylistRel.objects.create(
-                user=target_playlist.user,
-                playlist=target_playlist,
-                lib_track=rel.lib_track,
-                **{Fields.POSITION: i}
-            )
+        for i, relation in enumerate(source_rels.order_by(Fields.POSITION), 1):
+            relation.playlist = target_playlist
+            relation.position = i
+            relation.save(update_fields=[Fields.POSITION, 'playlist'])
