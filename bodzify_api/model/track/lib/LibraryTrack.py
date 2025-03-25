@@ -86,7 +86,7 @@ class LibraryTrack(TrackablePlayCount):
         language_str = f"{Fields.LANGUAGE}: {self.language}" if self.language else f"{Fields.LANGUAGE}: --"
         file_str = f"{Fields.TRACK_FILE_INTERNAL}: {self.track_file}" if self.track_file else "no track file"
 
-        return (f"{self.uuid} | {position_str} | {self.title} by {artists_str} | {album_str} | "
+        return (f"{self.uuid} | {position_str} | '{self.title}' by {artists_str} | {album_str} | "
                 f"{genre_str} | {rating_str} | {language_str} | "
                 + f"{Fields.CREATED_ON}: {self.created_on} | {file_str}")
 
@@ -94,7 +94,7 @@ class LibraryTrack(TrackablePlayCount):
         artists: QuerySet[Artist] = self.artists.all()
         artists_str = ", ".join(
             artist.name for artist in artists) if self.artists.exists() else f"no {Fields.ARTISTS}"
-        return f"{self.uuid} | {self.title} by {artists_str}"
+        return f"{self.uuid} | '{self.title}' by {artists_str}"
 
     def update_file_metadata_from_lib_track_instance_values(self):
         normalized_metadata = dict()
