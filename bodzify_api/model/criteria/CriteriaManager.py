@@ -23,6 +23,28 @@ T = TypeVar('T', bound='Criteria')
 class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
     model: type[T]
 
+    def _refresh_ascendants_of_instance(self, instance: T):
+        from .lineage_rel.CriteriaLineageRel import CriteriaLineageRel
+
+        instance.ascendants_rels.all().delete()
+        current_degree = 1
+        current_parent = instance.parent
+
+        while current_parent:
+            CriteriaLineageRel.objects.create(
+                user=instance.user, descendant=instance, ascendant=current_parent, degree=current_degree)
+            current_parent = current_parent.parent
+            current_degree = current_degree + 1
+
+    def _refresh_ascendants_of_instance_and_children(self, instance):
+        self._refresh_ascendants_of_instance(instance)
+        for child in self.filter(parent=instance):
+            self._refresh_ascendants_of_instance_and_children(child)
+
+    def _refresh_ascendants_of_descendants(self, instance):
+        for child in instance.children.all():
+            self._refresh_ascendants_of_instance_and_children(child)
+
     def get_default_ordering(self) -> list[str]:
         return [LibTrackMixinFields.NAME_INTERNAL]
 
@@ -31,7 +53,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         type = CriteriaType.objects.get(pk=type_id)
         instance: T = super().create(type=type, **kwargs)
         CriteriaPlaylist.objects.create(user=instance.user, criteria=instance, type=type)
-        self.refresh_ascendants_of_instance(instance)
+        self._refresh_ascendants_of_instance(instance)
         return instance
 
     def update_instance(self, instance: T, **kwargs) -> T:
@@ -43,7 +65,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         updated_instance: T = super().update_instance(instance, **kwargs)
 
         if old_parent != updated_instance.parent:
-            self.refresh_ascendants_of_instance_and_children(updated_instance)
+            self._refresh_ascendants_of_instance_and_children(updated_instance)
 
             playlist_parent = updated_instance.parent.criteria_playlist if updated_instance.parent else None
             CriteriaPlaylist.objects.update_instance(instance=instance.criteria_playlist,
@@ -131,6 +153,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
                 for child in children:
                     child.parent = instance.parent
                     child.save(update_fields=[f'{Fields.PARENT}_id'])
+                    self._refresh_ascendants_of_instance_and_children(child)
 
                     child.criteria_playlist.parent = instance.parent.criteria_playlist if instance.parent else None
                     child.criteria_playlist.save(update_fields=[Fields.PARENT])
@@ -144,26 +167,6 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
 
     def get_roots(self, user: 'User') -> 'QuerySet[T]':
         return self.filter(user=user, parent__isnull=True)
-
-    def refresh_ascendants_of_instance(self, instance: T):
-        from .lineage_rel.CriteriaLineageRel import CriteriaLineageRel
-
-        instance.ascendants_rels.all().delete()
-        current_degree = 1
-        current_parent = instance.parent
-
-        while current_parent:
-            CriteriaLineageRel.objects.create(user=instance.user,
-                                              descendant=instance,
-                                              ascendant=current_parent,
-                                              degree=current_degree)
-            current_parent = current_parent.parent
-            current_degree = current_degree + 1
-
-    def refresh_ascendants_of_instance_and_children(self, instance: T):
-        self.refresh_ascendants_of_instance(instance)
-        for child in self.filter(parent=instance):
-            self.refresh_ascendants_of_instance_and_children(child)
 
     def update_children_root(self, criteria: 'Criteria', new_root: 'Criteria'):
         children = criteria.children.all()
