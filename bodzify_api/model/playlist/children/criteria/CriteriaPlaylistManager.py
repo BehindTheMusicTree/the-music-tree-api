@@ -4,7 +4,6 @@ from django.db import models
 from django.db.models import QuerySet
 
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
-from bodzify_api.model.lib_track_playlist_rel.Fields import Fields as LibTrackPlaylistRelFields
 from .Fields import Fields
 
 
@@ -91,9 +90,7 @@ class CriteriaPlaylistManager(StandardResourceManager):
             lib_track__uuid__in=[track.uuid for track in direct_tracks]
         )
 
-        direct_tracks_rels_not_archived = list(direct_tracks_rels_in_criteria_playlist.filter(
-            position__isnull=False
-        ).order_by(LibTrackPlaylistRelFields.POSITION))
+        direct_tracks_rels_not_archived = direct_tracks_rels_in_criteria_playlist.filter(position__isnull=False)
 
         LibTrackPlaylistRel.objects.move_tracks_to_playlist_beginning(
             source_rels=direct_tracks_rels_not_archived, target_playlist=criterialess_playlist)
