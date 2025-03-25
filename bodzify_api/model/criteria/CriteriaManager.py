@@ -154,8 +154,10 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
 
             for child in children:
                 child.parent = instance.parent
-                child.save(update_fields=[f'{Fields.PARENT}_id'])
+                child.root = instance.parent or child
+                child.save(update_fields=[Fields.PARENT, Fields.ROOT])
                 self._refresh_ascendants_of_instance_and_children(child)
+                self.update_children_root(child, child.root)
 
                 child.criteria_playlist.parent = instance.parent.criteria_playlist if instance.parent else None
                 child.criteria_playlist.save(update_fields=[Fields.PARENT])
