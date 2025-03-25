@@ -103,15 +103,8 @@ class CriteriaPlaylistManager(StandardResourceManager):
         direct_tracks_rels_in_criteria_playlist.filter(position__isnull=True).update(playlist=criterialess_playlist)
 
     def make_playlist_root(self, playlist: 'CriteriaPlaylist'):
-        """
-        Set a playlist as its own root and update all descendants.
-
-        Args:
-            playlist: The playlist to make a root
-        """
         playlist.parent = None
         playlist.root = playlist
         playlist.save(update_fields=[Fields.PARENT, Fields.ROOT])
 
-        # Update all descendant playlists to use this as the root
         self.update_descendants_root(instance=playlist, root=playlist)
