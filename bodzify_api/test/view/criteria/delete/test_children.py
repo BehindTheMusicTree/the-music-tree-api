@@ -41,3 +41,20 @@ class TestCase(GenreTestCase):
         child_second.refresh_from_db()
         assert child_second.parent is None
         assert child_second.is_root
+
+    def delete_then_update_ascendants_of_children(self):
+        rock = self.model_fixture_factory.create_genre(name='rock')
+        punk = self.model_fixture_factory.create_genre(name='punk', parent=rock)
+        hardcore = self.model_fixture_factory.create_genre(name='hardcore', parent=punk)
+
+        assert punk.ascendants == [rock]
+        assert hardcore.ascendants == [punk, rock]
+
+        response = self._delete_genre(uuid=rock.uuid)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+        punk.refresh_from_db()
+        assert punk.ascendants == []
+        hardcore.refresh_from_db()
+        assert hardcore.ascendants == [punk]
