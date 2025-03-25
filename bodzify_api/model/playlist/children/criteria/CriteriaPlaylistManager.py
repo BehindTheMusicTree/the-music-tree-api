@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import QuerySet
 
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
+from bodzify_api.model.lib_track_playlist_rel.Fields import Fields as LibTrackPlaylistFields
 
 from .Fields import Fields
 
@@ -80,29 +81,58 @@ class CriteriaPlaylistManager(StandardResourceManager):
                     instance=instance.parent, lib_tracks=lib_tracks, criteria_limit=criteria_limit)
 
     def transfer_direct_tracks_to_criterialess_playlist(
-            self, criteria_playlist: 'CriteriaPlaylist', criteria: 'Criteria'):
+            self, direct_tracks: QuerySet['LibraryTrack'],
+            criteria_playlist: 'CriteriaPlaylist'):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
-        from bodzify_api.model.lib_track_playlist_rel.Fields import Fields as LibTrackPlaylistRelFields
 
-        # Get the criterialess playlist for this criteria type
-        criterialess_playlist = self.get(
-            user=criteria_playlist.user,
-            criteria=None,
-            type=criteria_playlist.type
-        )
+        criterialess_playlist = self.get(user=criteria_playlist.user,
+                                         criteria=None,
+                                         type=criteria_playlist.type)
 
-        # Get pre-filtered and ordered tracks to move
-        source_rels = list(LibTrackPlaylistRel.objects.filter(
-            playlist=criteria_playlist,
-            lib_track__genre=criteria
-        ).select_related(LibTrackPlaylistRelFields.LIB_TRACK_INTERNAL).order_by(LibTrackPlaylistRelFields.POSITION))
+        # Collect all the direct tracks we need to transfer
+        print('direct_tracks', direct_tracks)
+        print('direct_tracks users:', [track.user for track in direct_tracks])
+        print('criteria_playlist user:', criteria_playlist.user)
 
-        # Use the LibTrackPlaylistRelManager to move tracks
-        LibTrackPlaylistRel.objects.move_tracks_to_playlist_beginning(
-            source_rels=source_rels,
-            target_playlist=criterialess_playlist,
-            user=criteria_playlist.user
-        )
+        # Instead of querying by UUID, let's get all playlist relationships and filter in Python
+        # This is more robust against any UUID formatting issues
+        all_rels = list(criteria_playlist.lib_track_playlist_rels.all().select_related('lib_track'))
+        print('criteria_playlist rels', all_rels)
+        print('criteria_playlist rels users:', [rel.user for rel in all_rels])
+
+        # Get all direct track UUIDs for comparing
+        direct_track_uuids = set(str(track.uuid) for track in direct_tracks)
+
+        # Find matching relationships by comparing track UUIDs
+        direct_tracks_rels_in_criteria_playlist = []
+        for rel in all_rels:
+            if str(rel.lib_track.uuid) in direct_track_uuids:
+                direct_tracks_rels_in_criteria_playlist.append(rel)
+
+        print('direct_tracks_rels_in_criteria_playlist', direct_tracks_rels_in_criteria_playlist)
+
+        # Convert to query result for compatibility with the rest of the function
+        if direct_tracks_rels_in_criteria_playlist:
+            rel_ids = [rel.id for rel in direct_tracks_rels_in_criteria_playlist]
+            direct_tracks_rels_in_criteria_playlist = LibTrackPlaylistRel.objects.filter(id__in=rel_ids)
+
+            # Now that we have a queryset, get not archived tracks
+            direct_tracks_rels_in_criteria_playlist_not_archived = list(direct_tracks_rels_in_criteria_playlist.filter(
+                position__isnull=False
+            ).order_by(LibTrackPlaylistFields.POSITION))
+
+            # Move the tracks to the criterialess playlist
+            LibTrackPlaylistRel.objects.move_tracks_to_playlist_beginning(
+                source_rels=direct_tracks_rels_in_criteria_playlist_not_archived,
+                target_playlist=criterialess_playlist,)
+
+            # Update archived tracks
+            direct_tracks_rels_in_criteria_playlist.filter(
+                position__isnull=True
+            ).update(playlist=criterialess_playlist)
+        else:
+            # No relationships found, nothing to move
+            direct_tracks_rels_in_criteria_playlist_not_archived = []
 
     def make_playlist_root(self, playlist: 'CriteriaPlaylist'):
         """

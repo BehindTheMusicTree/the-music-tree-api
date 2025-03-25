@@ -2,6 +2,7 @@ from abc import abstractmethod
 from typing import TYPE_CHECKING, cast
 
 from django.db import models
+from django.db.models import F
 
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
 from bodzify_api.model.playlist.PlaylistManager import PlaylistManager
@@ -54,23 +55,27 @@ class Playlist(LibTrackMixin, TrackablePlayCount):
             raise ValueError('Playlist has no type')
 
     @property
-    def lib_tracks_not_archived_dict_by_position(self) -> dict[int, 'LibraryTrack']:
+    def lib_tracks_not_archived_dict_by_position(self) -> dict[int | None, 'LibraryTrack']:
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
         """
         Returns a dictionary of LibraryTrack objects where dict[position] = lib_track.
-        Only includes non-archived tracks (position is not None).
-        Returns empty dict if no tracks or all tracks are archived.
+        Includes both non-archived tracks (with position) and archived tracks (position is None).
+        Archived tracks (null positions) are sorted last.
+        Returns empty dict if no tracks.
         """
-        relations = LibTrackPlaylistRel.objects.filter(user=self.user, playlist=self, position__isnull=False
-                                                       ).order_by(LibTrackPlaylistFields.POSITION)
+        relations = LibTrackPlaylistRel.objects.filter(user=self.user, playlist=self
+                                                       ).select_related('lib_track'
+                                                                        ).order_by(
+                                                           F(LibTrackPlaylistFields.POSITION).desc(nulls_last=True),
+                                                           LibTrackPlaylistFields.POSITION)
 
         if not relations.exists():
             return {}
 
-        result: dict[int, 'LibraryTrack'] = {}
+        result: dict[int | None, 'LibraryTrack'] = {}
         for relation in relations:
             relation = cast(LibTrackPlaylistRel, relation)
-            result[cast(int, relation.position)] = relation.lib_track
+            result[relation.position] = relation.lib_track
 
         return result
 

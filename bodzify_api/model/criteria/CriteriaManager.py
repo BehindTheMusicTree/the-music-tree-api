@@ -114,17 +114,16 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         with transaction.atomic():
             from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
 
-            for lib_track in instance.lib_tracks.all():
+            criteria_lib_tracks = instance.lib_tracks.all()
+            for lib_track in criteria_lib_tracks:
                 lib_track.genre = instance.parent
                 lib_track.save(update_fields=[f'{LibTrackFields.GENRE}_id'])
                 lib_track.update_file_metadata_from_lib_track_instance_values()
 
             if instance.is_root:
-                # Use CriteriaPlaylistManager to handle playlist operations
                 CriteriaPlaylist.objects.transfer_direct_tracks_to_criterialess_playlist(
-                    criteria_playlist=instance.criteria_playlist,
-                    criteria=instance
-                )
+                    direct_tracks=criteria_lib_tracks,
+                    criteria_playlist=instance.criteria_playlist)
 
             if instance.children.exists():
                 children = list(instance.children.all())

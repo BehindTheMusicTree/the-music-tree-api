@@ -63,11 +63,10 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
         lib_track_playlist_rel.delete()
 
     def move_tracks_to_playlist_beginning(
-            self, source_rels: list, target_playlist: 'Playlist', user: User) -> None:
+            self, source_rels: list, target_playlist: 'Playlist') -> None:
         from .LibTrackPlaylistRel import LibTrackPlaylistRel
         from .Fields import Fields
 
-        # Skip if there are no tracks to move
         if not source_rels:
             return
 
@@ -77,8 +76,8 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
         # First, shift all existing tracks down by the number of new tracks
         # This is more efficient than updating each track individually
         self.filter(
+            user=target_playlist.user,
             playlist=target_playlist,
-            user=user,
             position__isnull=False
         ).update(
             position=F(Fields.POSITION) + new_tracks_count
@@ -88,7 +87,7 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
         for i, rel in enumerate(source_rels, 1):
             # Create relationship in target playlist
             LibTrackPlaylistRel.objects.create(
-                user=user,
+                user=target_playlist.user,
                 playlist=target_playlist,
                 lib_track=rel.lib_track,
                 **{Fields.POSITION: i}
