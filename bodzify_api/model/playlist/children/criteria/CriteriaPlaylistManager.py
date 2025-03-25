@@ -87,11 +87,9 @@ class CriteriaPlaylistManager(StandardResourceManager):
         criterialess_playlist = self.get(
             user=criteria_playlist.user, criteria=None, type=criteria_playlist.type)
 
-        direct_track_uuids = [track.uuid for track in direct_tracks]
         direct_tracks_rels_in_criteria_playlist = criteria_playlist.lib_track_playlist_rels.filter(
-            lib_track__uuid__in=direct_track_uuids
+            lib_track__uuid__in=[track.uuid for track in direct_tracks]
         )
-        print('direct_tracks_rels_in_criteria_playlist:', direct_tracks_rels_in_criteria_playlist)
 
         direct_tracks_rels_not_archived = list(direct_tracks_rels_in_criteria_playlist.filter(
             position__isnull=False
@@ -107,4 +105,5 @@ class CriteriaPlaylistManager(StandardResourceManager):
         playlist.root = playlist
         playlist.save(update_fields=[Fields.PARENT, Fields.ROOT])
 
+        # Update all descendant playlists to use this as the root
         self.update_descendants_root(instance=playlist, root=playlist)
