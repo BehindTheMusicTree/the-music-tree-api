@@ -92,8 +92,6 @@ class CriteriaPlaylist(Playlist):
 
         if current_root_id != new_root_id:
             self.root_id = new_root_id
-            print('_set_root self.pk:', self.pk)
-            print('_set_root root_id:', self.root_id)
             return True
         else:
             return False
@@ -103,8 +101,6 @@ class CriteriaPlaylist(Playlist):
         return ctx.kwargs
 
     def _perform_save(self, adding: bool, ctx: SaveContext) -> None:
-        print('uuid:', self.uuid)
-        print('pk:', self.pk)
         parent_has_changed = self._set_parent()
         if not adding and parent_has_changed:
             ctx.add_modified_field(Fields.PARENT)
@@ -112,8 +108,6 @@ class CriteriaPlaylist(Playlist):
         root_has_changed = self._set_root()
         if not adding and root_has_changed:
             ctx.add_modified_field(f'{Fields.ROOT}_id')
-
-        print('root_id:', self.root_id)
 
         super()._perform_save(adding=adding, ctx=ctx)
 
