@@ -61,5 +61,6 @@ class TestCase(GenreTestCase, PrimaryCharBodyDataTestCase):
 
         self._login_as_test_user2()
         response = self._post_genre(**{Fields.NAME_PUBLIC: genre_name})
+        self._login_as_test_user1()
 
         assert response.status_code == status.HTTP_201_CREATED

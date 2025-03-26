@@ -19,4 +19,6 @@ class TestCase(LibTrackTestCase):
 
         self._login_as_test_user2()
         response = self._retrieve_lib_track(uuid=track_uuid)
+        self._login_as_test_user1()
+
         assert response.status_code == status.HTTP_404_NOT_FOUND

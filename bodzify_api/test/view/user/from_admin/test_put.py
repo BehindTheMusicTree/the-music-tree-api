@@ -9,4 +9,6 @@ class TestCase(UserTestCase):
         new_email = 'newemail@whatever.com'
         self._login_as_test_admin()
         response = self._put_user(pk=self.test_user1.pk, email=new_email)
+        self._login_as_test_user1()
+
         assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
