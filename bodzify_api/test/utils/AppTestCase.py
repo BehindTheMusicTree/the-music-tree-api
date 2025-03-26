@@ -35,8 +35,8 @@ class AppTestCase(TestCase, Generic[T]):
 
     def _login_as_user(self, user: User):
         self.api_client.force_authenticate(user=user)
-        AccessToken.for_user(user)
-        self.api_client.credentials(HTTP_AUTHORIZATION='Bearer {access}')
+        token = AccessToken.for_user(user)
+        self.api_client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
 
     def _login_as_test_user1(self):
         self._login_as_user(self.test_user1)
