@@ -11,7 +11,7 @@ class TestCase(GenrePlaylistTestCase):
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
         genre_punky = self.model_fixture_factory.create_genre(name="Punky", parent=genre_rock)
 
-        response = self._get_genre_playlists(name='PU', parent=genre_rock.criteria_playlist.uuid)
+        response = self._list_genre_playlists(name='PU', parent=genre_rock.criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2

@@ -30,7 +30,7 @@ class TestCase(AlbumTestCase):
         assert response_data["totalPages"] == 2
         assert response_data["overallTotal"] == settings.PAGINATION_PAGE_SIZE_DEFAULT + 1
 
-    def test_page_and_pagesize_provided_then_page_and_pagesize_are_used(self):
+    def test_page_and_pagesize_provided_then_page_and_pagesize_are_used_1(self):
         albums_count = 15
         for i in range(albums_count):
             self.model_fixture_factory.create_album(name=f"Album {i}")
