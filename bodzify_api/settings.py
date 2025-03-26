@@ -1,4 +1,3 @@
-
 # Standard library imports
 import datetime
 import os
@@ -628,7 +627,7 @@ def setup_django_constants():
             'djangorestframework_camel_case.parser.CamelCaseMultiPartParser',
             'djangorestframework_camel_case.parser.CamelCaseFormParser',
         ),
-        'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+        'DEFAULT_PAGINATION_CLASS': 'bodzify_api.view.pagination.AppPagination',
         'PAGE_SIZE': 30,
         'DEFAULT_AUTHENTICATION_CLASSES': (
             'rest_framework_simplejwt.authentication.JWTAuthentication',
