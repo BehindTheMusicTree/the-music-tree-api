@@ -16,11 +16,6 @@ class TagTestCase(AppTestCase[Tag]):
         self.detail_endpoint = 'tag-detail'
         self.list_endpoint = 'tag-list'
 
-    def _set_saved_object_from_response(self, response):
-        """Override base method to add user filter to query."""
-        uuid = response.json()[Fields.UUID]
-        self.saved_object = self.model_class.objects.get(user=self.test_user1, uuid=uuid)  # type: ignore
-
     def _retrieve_tag(self, uuid: UUID):
         return self.api_client.get(
             path=reverse(self.detail_endpoint, kwargs={'pk': uuid}), handle_response=self._set_results)
