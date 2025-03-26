@@ -8,6 +8,9 @@ from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
 class TagTestCase(AppTestCase[Tag]):
+    model_class = Tag
+    saved_object: Tag
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.detail_endpoint = 'tag-detail'
