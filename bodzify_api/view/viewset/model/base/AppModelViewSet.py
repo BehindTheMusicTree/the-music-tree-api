@@ -1,8 +1,10 @@
+import re
 from typing import Any, Generic, Sequence, Type, TypeVar, Union, cast
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import QuerySet
 from django.http import FileResponse
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.permissions import IsAuthenticated
@@ -16,8 +18,9 @@ from bodzify_api.model.private.Fields import Fields as PrivateFields
 from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
 from bodzify_api.view.HttpMethod import HttpMethod
-
 from ....pagination.AppPagination import AppPagination
+# UUID format: 8-4-4-4-12 hexadecimal digits
+UUID_PATTERN = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
 
 
 T = TypeVar('T', bound=BaseModel)
@@ -26,6 +29,7 @@ T = TypeVar('T', bound=BaseModel)
 class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     pagination_class = AppPagination
     permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
     model_class: Type[T]
     filterset_class: Type[AppFilterSet] = AppFilterSet
     simple_serializer_class: Type[ModelSerializer] | None = None
@@ -73,6 +77,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         serializer_class = self._require_serializer(SerializerType.CREATE)
         serializer = serializer_class(data=create_data, context={'request': request})
         validated_data = self._get_validated_data(serializer)
+
         return self.model_class.objects.create(**validated_data)
 
     def _update_instance(self, request: Request, instance: T, update_data: dict[str, Any]) -> T:
@@ -122,7 +127,32 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         return self.paginator.paginate_queryset(cast(QuerySet[T], queryset), self.request, view=self)
 
     def get_object(self) -> T:
-        return super().get_object()
+        from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+        from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+
+        # Use a direct query instead of relying on the DRF lookup mechanism
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+        lookup_value = self.kwargs[lookup_url_kwarg]
+
+        # Validate UUID format if the field is 'uuid'
+        if self.lookup_field == 'pk' and not UUID_PATTERN.match(lookup_value):
+            raise AppValidationException(
+                message=f"Invalid UUID format: {lookup_value}",
+                field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID,
+                field_name=self.lookup_field
+            )
+
+        try:
+            filter_kwargs = {
+                self.lookup_field: lookup_value,
+                'user': self.request.user
+            }
+
+            obj = self.model_class.objects.get(**filter_kwargs)
+            return obj
+        except self.model_class.DoesNotExist:
+            # Fall back to the standard DRF lookup if direct lookup fails
+            return super().get_object()
 
     def get_serializer_class(self) -> Type[Serializer]:
         if self.action == 'retrieve':
@@ -144,7 +174,8 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             queryset = self.filterset_class(request.query_params, queryset=queryset).qs
 
         ordering_fields = cast(BaseModel, self.model_class).objects.get_default_ordering()
-        return queryset.order_by(*ordering_fields)
+        queryset = queryset.order_by(*ordering_fields)
+        return queryset
 
     def get_file_response(self, file_path: str) -> FileResponse:
         return AppFileResponse.from_file(file_path=file_path, filename=file_path.split('/')[-1])
