@@ -4,7 +4,7 @@ from typing import Any, Generic, Sequence, Type, TypeVar, Union, cast
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import QuerySet
 from django.http import FileResponse
-from django_filters.rest_framework import DjangoFilterBackend
+from bodzify_api.filtering.backend.ConsistentParametersFilterBackend import ConsistentParametersFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.permissions import IsAuthenticated
@@ -29,7 +29,7 @@ T = TypeVar('T', bound=BaseModel)
 class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     pagination_class = AppPagination
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [ConsistentParametersFilterBackend]
     model_class: Type[T]
     filterset_class: Type[AppFilterSet] = AppFilterSet
     simple_serializer_class: Type[ModelSerializer] | None = None
