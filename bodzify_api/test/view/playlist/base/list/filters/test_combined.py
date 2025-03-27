@@ -54,44 +54,21 @@ class TestCase(PlaylistTestCase):
         assert genre2_name in names
 
     def test_type_tag_and_created_on_range_then_results(self):
-        """
-        Test that we can filter playlists by type_label=TAG and created_on date range.
-        The test creates three playlists:
-        - tagless_playlist: created at 'now'
-        - tag1 (Summer): created at 'now'
-        - tag2 (Winter): created at 'past'
-        - tag3 (Spring): created at 'future'
 
-        Then filters for all playlists of type TAG with created_on between past and now.
-        """
-        # Helper function to update playlist creation date and force sync to database
         def update_creation_date(playlist, date):
-            # Apply date to the base playlist first
             playlist.created_on = date
             playlist.save(update_fields=['created_on'])
 
-            # If it's a criteria playlist, also update the base Playlist entry
-            # This ensures both inheritance model entries have same dates
-            if hasattr(playlist, 'playlist_ptr'):
-                playlist.playlist_ptr.created_on = date
-                playlist.playlist_ptr.save(update_fields=['created_on'])
-
             print(f"Set {playlist.name} created_on to {date.isoformat()}")
 
-        # Setup test timestamps
         now = timezone.now()
         past = now - timedelta(days=5)
         future = now + timedelta(days=5)
 
-        print(f"\n===== TAG AND DATE RANGE TEST =====")
-        print(f"Time values: past={past.isoformat()}, now={now.isoformat()}, future={future.isoformat()}")
-
-        # Get the tagless playlist
         tagless_playlist = TagPlaylist.objects.get(
             user=self.test_user1, type=CriteriaTypePks.TAG, criteria=None)
         update_creation_date(tagless_playlist, now)
 
-        # Create test tags with different creation dates
         tag1_name = "Summer"
         tag1 = self.model_fixture_factory.create_tag(name=tag1_name)
         update_creation_date(tag1, now)
@@ -107,25 +84,14 @@ class TestCase(PlaylistTestCase):
         update_creation_date(tag3, future)
         update_creation_date(tag3.criteria_playlist, future)
 
-        # Verify all playlists are properly set in database
-        print("\nVerifying all tag playlists in database:")
-        for playlist in TagPlaylist.objects.filter(user=self.test_user1):
-            print(f"  {playlist.name}: created_on={playlist.created_on.isoformat()}")
-
-        # Test with date range filter
-        data_dict = {
+        data = {
             Filters.TYPE_LABEL_PUBLIC: PlaylistTypesLabel.TAG,
             PrivateUniqueResourceFields.CREATED_ON_GTE: past.isoformat(),
             PrivateUniqueResourceFields.CREATED_ON_LTE: now.isoformat()
         }
+        response = self._get_playlists(**data)
 
-        print(f"\nApplying filter: {data_dict}")
-        response = self._get_playlists(**data_dict)
-
-        print(f"Response status: {response.status_code}")
-        print(f"Results count: {len(self.results)}")
         names = [result[PlaylistGetFields.NAME] for result in self.results]
-        print(f"Names in results: {names}")
 
         # Make assertions for the test
         assert response.status_code == status.HTTP_200_OK
