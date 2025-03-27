@@ -1,4 +1,17 @@
 from django_filters.rest_framework import DjangoFilterBackend
+import logging
+import sys
+
+# Configure a direct console logger to ensure visibility during tests
+logger = logging.getLogger('filter_backend_debug')
+if not logger.handlers:
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+    logger.setLevel(logging.DEBUG)
+    logger.propagate = False
 
 
 class ConsistentParametersFilterBackend(DjangoFilterBackend):
@@ -10,38 +23,30 @@ class ConsistentParametersFilterBackend(DjangoFilterBackend):
     parameters are consistently handled whether pagination is used or not.
     """
 
+    def get_query_params(self, request):
+        """Get query parameters in a way that works with both DRF Request and Django WSGIRequest"""
+        if hasattr(request, 'query_params'):
+            return request.query_params
+        elif hasattr(request, 'GET'):
+            return request.GET
+        return {}
+
     def get_filterset_kwargs(self, request, queryset, view):
-        """
-        Get the arguments to pass to the filterset class constructor.
+        query_params = self.get_query_params(request)
 
-        This overrides the parent method to modify how request parameters are processed
-        when pagination is involved.
-        """
-        # Get standard kwargs from parent method
-        kwargs = super().get_filterset_kwargs(request, queryset, view)
+        # Get the original query parameters from the request URL
+        original_query_params = set(request.GET.keys() if hasattr(request, 'GET') else request.query_params.keys())
 
-        # If pagination parameters are present, process the data to prevent normalization
-        if any(param in request.query_params for param in ['page', 'pageSize']):
-            # Create filterset instance to safely access filter fields
-            filterset_class = self.get_filterset_class(view, queryset)
-            if filterset_class:
-                # Get filter fields from filterset meta or model fields if available
-                filter_fields = []
+        # Reimplement parent's get_filterset_kwargs logic to avoid accessing request.query_params directly
+        kwargs = {
+            'data': query_params.copy(),  # Use copy to avoid modifying the original
+            'queryset': queryset,
+            'request': request,
+        }
 
-                # Try to get fields from Meta class
-                if hasattr(filterset_class, 'Meta') and hasattr(filterset_class.Meta, 'fields'):
-                    if isinstance(filterset_class.Meta.fields, dict):
-                        filter_fields = list(filterset_class.Meta.fields.keys())
-                    else:
-                        filter_fields = list(filterset_class.Meta.fields)
+        for field_name in list(kwargs['data'].keys()):
+            if field_name not in ['page', 'page_size'] and field_name not in original_query_params:
+                del kwargs['data'][field_name]
 
-                # For each parameter that might be a filter field
-                for field_name in list(kwargs['data'].keys()):
-                    # If it looks like a filter field and wasn't in the original request
-                    if (field_name not in ['page', 'pageSize'] and
-                        field_name not in request.query_params and
-                            kwargs['data'].get(field_name, '') == ''):
-                        # Remove it to ensure consistent behavior
-                        del kwargs['data'][field_name]
-
+        logger.debug(f"Final kwargs: {kwargs}")
         return kwargs

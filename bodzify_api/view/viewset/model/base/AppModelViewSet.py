@@ -3,7 +3,6 @@ from typing import Any, Generic, Sequence, Type, TypeVar, Union, cast
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import QuerySet
-from django.http import FileResponse
 from bodzify_api.filtering.backend.ConsistentParametersFilterBackend import ConsistentParametersFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.exceptions import MethodNotAllowed
@@ -17,7 +16,6 @@ from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.private.Fields import Fields as PrivateFields
 from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
-from bodzify_api.view.HttpMethod import HttpMethod
 from ....pagination.AppPagination import AppPagination
 # UUID format: 8-4-4-4-12 hexadecimal digits
 UUID_PATTERN = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
@@ -88,6 +86,8 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def _handle_list(self) -> Response:
         queryset = self.get_queryset()
+        # Apply filters using filter_queryset method which invokes the filter backends
+        queryset = self.filter_queryset(queryset)
         page = self.paginate_queryset(queryset)
 
         if not queryset.exists():
@@ -170,14 +170,19 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         else:
             queryset = self.model_class.objects.all()
 
-        if request.method == HttpMethod.GET and request.query_params:
-            queryset = self.filterset_class(request.query_params, queryset=queryset).qs
-
         ordering_fields = cast(BaseModel, self.model_class).objects.get_default_ordering()
-        queryset = queryset.order_by(*ordering_fields)
+        return queryset.order_by(*ordering_fields)
+
+    def filter_queryset(self, queryset):
+        """
+        Apply filtering to the queryset using configured filter backends.
+        """
+        for backend in list(self.filter_backends):
+            queryset = backend().filter_queryset(self.request, queryset, self)
+
         return queryset
 
-    def get_file_response(self, file_path: str) -> FileResponse:
+    def get_file_response(self, file_path: str):
         return AppFileResponse.from_file(file_path=file_path, filename=file_path.split('/')[-1])
 
     def retrieve(self, *args, **kwargs) -> Response:
