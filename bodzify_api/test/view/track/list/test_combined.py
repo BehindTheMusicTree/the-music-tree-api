@@ -1,8 +1,11 @@
 from rest_framework import status
+from datetime import timedelta
+from django.utils import timezone
 
 from bodzify_api.serializer.model.lib_track.output.Fields import Fields as LibTrackFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.utils import data_transformer
+from bodzify_api.filtering.set.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
 
 
 class TestCase(LibTrackTestCase):
@@ -50,3 +53,36 @@ class TestCase(LibTrackTestCase):
             data_transformer.to_camel_case(LibTrackFields.TITLE)]
         assert track_pascalito.title in titles
         assert track_mapasa.title in titles
+
+    def test_genre_name_and_created_on_range_then_ok(self):
+        now = timezone.now()
+        past = now - timedelta(days=5)
+        future = now + timedelta(days=5)
+
+        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
+        genre_pop = self.model_fixture_factory.create_genre(name="Pop")
+
+        # Track within date range and matching genre
+        track_rock_in_range = self.model_fixture_factory.create_lib_track_with_file(
+            title="Rock Song", genre=genre_rock, created_on=now)
+
+        # Tracks outside date range or not matching genre
+        self.model_fixture_factory.create_lib_track_with_file(
+            title="Old Rock", genre=genre_rock, created_on=past)
+        self.model_fixture_factory.create_lib_track_with_file(
+            title="Future Rock", genre=genre_rock, created_on=future)
+        self.model_fixture_factory.create_lib_track_with_file(
+            title="Pop Song", genre=genre_pop, created_on=now)
+
+        response = self._get_lib_tracks(
+            genre_name='Rock',
+            **{
+                PrivateUniqueResourceFields.CREATED_ON_GTE: past.isoformat(),
+                PrivateUniqueResourceFields.CREATED_ON_LTE: now.isoformat()
+            }
+        )
+
+        assert response.status_code == status.HTTP_200_OK
+        assert self.results_overall_total == 2
+        titles = [result[data_transformer.to_camel_case(LibTrackFields.TITLE)] for result in self.results]
+        assert track_rock_in_range.title in titles

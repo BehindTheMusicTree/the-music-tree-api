@@ -1,10 +1,13 @@
 from rest_framework import status
+from datetime import timedelta
+from django.utils import timezone
 
 from bodzify_api.filtering.set.playlist.Fields import Fields as Filters
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from bodzify_api.model.playlist.PlaylistTypesLabel import PlaylistTypesLabel
 from bodzify_api.serializer.model.playlist.base.output.detailed import Fields as PlaylistGetFields
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
+from bodzify_api.filtering.set.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
 
 
 class TestCase(PlaylistTestCase):
@@ -47,3 +50,40 @@ class TestCase(PlaylistTestCase):
         names = [result[PlaylistGetFields.NAME] for result in self.results]
         assert genre1_name in names
         assert genre2_name in names
+
+    def test_type_tag_and_created_on_range_then_results(self):
+        now = timezone.now()
+        past = now - timedelta(days=5)
+        future = now + timedelta(days=5)
+
+        # Create tags with different created_on dates
+        tag1_name = "Summer"
+        tag1 = self.model_fixture_factory.create_tag(name=tag1_name)
+        tag1.created_on = now
+        tag1.save()
+
+        tag2_name = "Winter"
+        tag2 = self.model_fixture_factory.create_tag(name=tag2_name)
+        tag2.created_on = past
+        tag2.save()
+
+        tag3_name = "Spring"
+        tag3 = self.model_fixture_factory.create_tag(name=tag3_name)
+        tag3.created_on = future
+        tag3.save()
+
+        # Filter by type_label, and created_on range
+        data_dict = {
+            Filters.TYPE_LABEL_PUBLIC: PlaylistTypesLabel.TAG,
+            PrivateUniqueResourceFields.CREATED_ON_GTE: past.isoformat(),
+            PrivateUniqueResourceFields.CREATED_ON_LTE: now.isoformat()
+        }
+
+        response = self._get_playlists(**data_dict)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(self.results) == 2  # Only tag1 and tag2 should be in the results
+        names = [result[PlaylistGetFields.NAME] for result in self.results]
+        assert tag1_name in names
+        assert tag2_name in names
+        assert tag3_name not in names
