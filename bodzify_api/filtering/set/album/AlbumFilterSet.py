@@ -21,4 +21,9 @@ class AlbumFilterSet(PrivateUniqueResourceFilterSet):
 
     class Meta:
         model = Album
-        fields = [Fields.NAME_PUBLIC, Fields.ALBUM_ARTIST_NAME]
+        # Include both album-specific fields and base fields for dates
+        fields = [
+            Fields.NAME_PUBLIC,
+            Fields.ALBUM_ARTIST_NAME,
+            *PrivateUniqueResourceFilterSet.get_date_fields()
+        ]

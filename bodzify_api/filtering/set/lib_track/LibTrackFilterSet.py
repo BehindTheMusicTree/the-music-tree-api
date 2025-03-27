@@ -39,8 +39,11 @@ class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
 
     class Meta:
         model = LibraryTrack
-        fields = [Fields.TITLE,
-                  Fields.ARTISTS_NAME,
-                  Fields.ALBUM_NAME,
-                  Fields.GENRE_NAME,
-                  Fields.LANGUAGE,]
+        fields = [
+            Fields.TITLE,
+            Fields.ARTISTS_NAME,
+            Fields.ALBUM_NAME,
+            Fields.GENRE_NAME,
+            Fields.LANGUAGE,
+            *PrivateUniqueResourceFilterSet.get_date_fields()
+        ]

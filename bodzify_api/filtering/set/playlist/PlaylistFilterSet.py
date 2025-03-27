@@ -20,7 +20,11 @@ class PlaylistFilterSet(PrivateUniqueResourceFilterSet):
 
     class Meta:
         model = Playlist
-        fields = [Fields.NAME, Fields.TYPE_LABEL_PUBLIC]
+        fields = [
+            Fields.NAME,
+            Fields.TYPE_LABEL_PUBLIC,
+            *PrivateUniqueResourceFilterSet.get_date_fields()
+        ]
 
     def filter_by_name_and_type(self, queryset: QuerySet, name: str, value: str) -> QuerySet:
         name_value = self.data.get(Fields.NAME)
