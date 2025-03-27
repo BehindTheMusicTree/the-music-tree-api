@@ -2,6 +2,9 @@ from rest_framework import status
 from datetime import timedelta
 from django.utils import timezone
 
+from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
+from bodzify_api.model.playlist.Fields import Fields
+from bodzify_api.model.playlist.children.criteria.genre.GenrePlaylist import GenrePlaylist
 from bodzify_api.serializer.model.playlist.children.criteria.output.detailed import Fields as RietrieveFields
 from bodzify_api.test.view.playlist.children.criteria.genre.GenrePlaylistTestCase import GenrePlaylistTestCase
 from bodzify_api.filtering.set.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
@@ -27,21 +30,26 @@ class TestCase(GenrePlaylistTestCase):
         past = now - timedelta(days=5)
         future = now + timedelta(days=5)
 
+        genreless_playlist: GenrePlaylist = GenrePlaylist.objects.get(
+            user=self.test_user1, type=CriteriaTypePks.GENRE, criteria=None)
+        genreless_playlist.created_on = now
+        genreless_playlist.save(update_fields=[Fields.CREATED_ON])
+
         # Create parent genre
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
 
         # Create child genres with different created_on dates
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
         genre_punk.criteria_playlist.created_on = now
-        genre_punk.criteria_playlist.save()
+        genre_punk.criteria_playlist.save(update_fields=[Fields.CREATED_ON])
 
         genre_metal = self.model_fixture_factory.create_genre(name="Metal", parent=genre_rock)
         genre_metal.criteria_playlist.created_on = past
-        genre_metal.criteria_playlist.save()
+        genre_metal.criteria_playlist.save(update_fields=[Fields.CREATED_ON])
 
         genre_indie = self.model_fixture_factory.create_genre(name="Indie", parent=genre_rock)
         genre_indie.criteria_playlist.created_on = future
-        genre_indie.criteria_playlist.save()
+        genre_indie.criteria_playlist.save(update_fields=[Fields.CREATED_ON])
 
         # Create unrelated genre
         self.model_fixture_factory.create_genre(name="Pop", created_on=now)
