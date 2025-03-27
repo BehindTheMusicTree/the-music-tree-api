@@ -23,6 +23,7 @@ class TestCase(UserTestCase):
 
         self._login_as_test_admin()
         response = self._delete_user(user.pk)
+        self._login_as_test_user1()
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
