@@ -17,19 +17,12 @@ class TestCase(TagPlaylistTestCase):
         tag_punk = self.model_fixture_factory.create_tag(name="Punk", parent=tag_fiesta)
         tag_punky = self.model_fixture_factory.create_tag(name="Punky", parent=tag_fiesta)
 
-        print(f"\n--- Test 1: Combined Filters ---")
-        print(f"Parent tag: {tag_fiesta.name} (UUID: {tag_fiesta.criteria_playlist.uuid})")
-        print(f"Child tags: {tag_punk.name}, {tag_punky.name}")
-
         filters = {'name': 'PU', 'parent': tag_fiesta.criteria_playlist.uuid}
-        print(f"Applied filters: {filters}")
 
         response = self._list_tag_playlists(**filters)
 
         assert response.status_code == status.HTTP_200_OK
         result_names = [result[RietrieveFields.NAME] for result in self.results]
-        print(f"Results overall total: {self.results_overall_total}")
-        print(f"Result names: {result_names}")
 
         assert self.results_overall_total == 2
         assert tag_punk.name in result_names
