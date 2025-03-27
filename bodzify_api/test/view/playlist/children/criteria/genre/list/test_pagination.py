@@ -19,10 +19,6 @@ class TestCase(GenrePlaylistTestCase):
         assert response.status_code == status.HTTP_200_OK
         response_data = response.json()
         actual_results_count = len(response_data["results"])
-        print(f"With page=1 - results count: {actual_results_count}")
-        print(f"With page=1 - results: {[r.get('name', 'genreless') for r in response_data['results']]}")
-        print(f"All response data: {response_data}")
-        print("--- End Debug Info ---")
 
         assert actual_results_count == total_genre_playlist_count
         assert response_data["page"] == 1
