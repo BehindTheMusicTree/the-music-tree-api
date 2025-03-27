@@ -31,5 +31,5 @@ class LibTrackTestCase(AppTestCase[LibraryTrack]):
         return self.api_client.get(path=reverse('library-track-detail', kwargs={'pk': uuid}),
                                    handle_response=self._set_results)
 
-    def _get_lib_tracks(self, **kwargs):
+    def _list_lib_tracks(self, **kwargs):
         return self.api_client.get(path=reverse('library-track-list'), data=kwargs, handle_response=self._set_results)

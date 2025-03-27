@@ -13,7 +13,7 @@ class TestCase(LibTrackTestCase, NullableCharFilterTestCase):
         genre = self.model_fixture_factory.create_genre(name="Rock")
         track_what = self.model_fixture_factory.create_lib_track_with_file(title="What", genre=genre)
 
-        response = self._get_lib_tracks()
+        response = self._list_lib_tracks()
 
         assert response.status_code == status.HTTP_200_OK
         titles = [result[LibTrackFields.TITLE] for result in self.results]
@@ -28,7 +28,7 @@ class TestCase(LibTrackTestCase, NullableCharFilterTestCase):
         genre = self.model_fixture_factory.create_genre(name="Rock")
         self.model_fixture_factory.create_lib_track_with_file(title="Hey", genre=genre)
 
-        response = self._get_lib_tracks(genre_name='')
+        response = self._list_lib_tracks(genre_name='')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
@@ -40,7 +40,7 @@ class TestCase(LibTrackTestCase, NullableCharFilterTestCase):
         genre_punk = self.model_fixture_factory.create_genre(name="Punk")
         self.model_fixture_factory.create_lib_track_with_file(title="Hey", genre=genre_punk)
 
-        response = self._get_lib_tracks(genre_name='RoC')
+        response = self._list_lib_tracks(genre_name='RoC')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1

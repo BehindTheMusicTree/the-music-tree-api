@@ -17,7 +17,7 @@ class TestCase(LibTrackTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="Hey", language="fr")
         self.model_fixture_factory.create_lib_track_with_file(title="Rockaille", language="en")
 
-        response = self._get_lib_tracks(language='en', genre_name='Roc')
+        response = self._list_lib_tracks(language='en', genre_name='Roc')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
@@ -44,7 +44,7 @@ class TestCase(LibTrackTestCase):
                                                               album=album_best,
                                                               artists=[artist_john, artist_jony])
 
-        response = self._get_lib_tracks(title='pas', album_name='Best', artists_name='Joh')
+        response = self._list_lib_tracks(title='pas', album_name='Best', artists_name='Joh')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
@@ -74,7 +74,7 @@ class TestCase(LibTrackTestCase):
         self.model_fixture_factory.create_lib_track_with_file(
             title="Pop Song", genre=genre_pop, created_on=now)
 
-        response = self._get_lib_tracks(
+        response = self._list_lib_tracks(
             genre_name='Rock',
             **{
                 PrivateUniqueResourceFields.CREATED_ON_GTE: past.isoformat(),
