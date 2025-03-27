@@ -13,7 +13,7 @@ class TestCase(TagPlaylistTestCase, NotNullableFreeCharFilterTestCase):
     def test_empty_then_400(self):
         self.model_fixture_factory.create_tag(name="Fiesta")
 
-        response = self._get_tag_playlists(**{FilterFields.NAME: ''})
+        response = self._list_tag_playlists(**{FilterFields.NAME: ''})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0]['field'] == FilterFields.NAME
@@ -24,7 +24,7 @@ class TestCase(TagPlaylistTestCase, NotNullableFreeCharFilterTestCase):
         tag = self.model_fixture_factory.create_tag(name="foot")
         gnere = self.model_fixture_factory.create_genre(name="footcode")
 
-        response = self._get_tag_playlists(**{FilterFields.NAME: 'foot'})
+        response = self._list_tag_playlists(**{FilterFields.NAME: 'foot'})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
@@ -37,7 +37,7 @@ class TestCase(TagPlaylistTestCase, NotNullableFreeCharFilterTestCase):
         criteria2 = self.model_fixture_factory.create_tag(name="Fiestaabilly")
         self.model_fixture_factory.create_tag(name="Punk")
 
-        response = self._get_tag_playlists(**{FilterFields.NAME: 'Fi'})
+        response = self._list_tag_playlists(**{FilterFields.NAME: 'Fi'})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
@@ -50,7 +50,7 @@ class TestCase(TagPlaylistTestCase, NotNullableFreeCharFilterTestCase):
         criteria2 = self.model_fixture_factory.create_tag(name="Fiestaabilly")
         criteria3 = self.model_fixture_factory.create_tag(name="Punk")
 
-        response = self._get_tag_playlists()
+        response = self._list_tag_playlists()
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 4
@@ -63,7 +63,7 @@ class TestCase(TagPlaylistTestCase, NotNullableFreeCharFilterTestCase):
         tag_tag = self.model_fixture_factory.create_tag(name="tag")
         tag_fiesta = self.model_fixture_factory.create_tag(name="Fiesta")
 
-        response = self._get_tag_playlists(**{FilterFields.NAME: 'taG'})
+        response = self._list_tag_playlists(**{FilterFields.NAME: 'taG'})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
