@@ -6,7 +6,7 @@ from django.db.models import Q, QuerySet
 from bodzify_api.filtering.filter.char.EmptiableCharFilter import EmptiableCharFilter
 
 
-class PrimaryFieldCharFilter(EmptiableCharFilter):
+class RelatedObjectCharFilter(EmptiableCharFilter):
     """
     A filter that handles filtering by a primary field of a related instance.
     When the filter value is empty, it returns results with no related instance.

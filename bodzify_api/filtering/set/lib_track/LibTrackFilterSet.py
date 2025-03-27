@@ -1,7 +1,7 @@
 from django_filters import CharFilter
 
 from bodzify_api.filtering.filter.char.EmptiableCharFilter import EmptiableCharFilter
-from bodzify_api.filtering.filter.char.PrimaryFieldCharFilter import PrimaryFieldCharFilter
+from bodzify_api.filtering.filter.char.RelatedObjectCharFilter import RelatedObjectCharFilter
 from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import (
     PrivateUniqueResourceFilterSet
 )
@@ -16,19 +16,19 @@ from .Fields import Fields
 
 class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
     title = CharFilter(field_name=ModelFields.TITLE, lookup_expr='icontains')
-    artists_name = PrimaryFieldCharFilter(
+    artists_name = RelatedObjectCharFilter(
         primary_field=ArtistFields.NAME_INTERNAL,
         field_name=ModelFields.ARTISTS,
         field_name_public=Fields.ARTISTS_NAME,
         lookup_expr='icontains'
     )
-    album_name = PrimaryFieldCharFilter(
+    album_name = RelatedObjectCharFilter(
         primary_field=AlbumFields.NAME_INTERNAL,
         field_name=ModelFields.ALBUM,
         field_name_public=Fields.ALBUM_NAME,
         lookup_expr='icontains'
     )
-    genre_name = PrimaryFieldCharFilter(
+    genre_name = RelatedObjectCharFilter(
         primary_field=CriteriaFields.NAME_INTERNAL,
         field_name=ModelFields.GENRE,
         field_name_public=Fields.GENRE_NAME,
