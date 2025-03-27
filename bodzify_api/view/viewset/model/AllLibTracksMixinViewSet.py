@@ -23,7 +23,9 @@ class AllLibTracksViewSet(AppModelViewSet[AllLibTracksMixin]):
 
     @extend_schema(responses=LibTrackMinimumSerializer(many=True))
     def list(self, args, **kwargs):
-        allLibTracksMixin: AllLibTracksMixin | None = self.get_queryset().first()
+        queryset = self.get_queryset()
+        queryset = self.filter_queryset(queryset)
+        allLibTracksMixin: AllLibTracksMixin | None = queryset.first()
         if not allLibTracksMixin:
             raise APIException('System initialization error: User data is corrupted')
         page = self.paginate_queryset(allLibTracksMixin.lib_tracks_not_archived_sorted)
