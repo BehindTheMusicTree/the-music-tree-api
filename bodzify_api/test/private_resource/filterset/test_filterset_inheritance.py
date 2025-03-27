@@ -1,4 +1,3 @@
-
 from datetime import timedelta
 
 from django.utils import timezone
@@ -8,7 +7,10 @@ from bodzify_api.filtering.set.album.AlbumFilterSet import AlbumFilterSet
 from bodzify_api.filtering.set.artist.ArtistFilterSet import ArtistFilterSet
 from bodzify_api.filtering.set.criteria.CriteriaFilterSet import CriteriaFilterSet
 from bodzify_api.filtering.set.lib_track.LibTrackFilterSet import LibTrackFilterSet
+from bodzify_api.filtering.set.play.PlayFilterSet import PlayFilterSet
 from bodzify_api.filtering.set.playlist.PlaylistFilterSet import PlaylistFilterSet
+from bodzify_api.filtering.set.playlist.children.criteria.CriteriaPlaylistFilterSet import CriteriaPlaylistFilterSet
+from bodzify_api.filtering.set.playlist.children.manual.ManualPlaylistFilterSet import ManualPlaylistFilterSet
 from bodzify_api.filtering.set.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
 from bodzify_api.test.utils.AppTestCase import AppTestCase
 
@@ -43,6 +45,19 @@ class TestFilterInheritance(AppTestCase):
             assert hasattr(filterset.filters[filter_name], 'filter'), \
                 f"{filterset_class.__name__}'s {filter_name} filter is not callable"
 
+        # Check if datetime filters are properly defined in Meta fields
+        meta_fields = getattr(filterset_class.Meta, 'fields', None)
+        if meta_fields != '__all__' and meta_fields is not None:
+            meta_fields_set = set(meta_fields)
+            # Extract base field names (without suffixes like _gt, _lt)
+            base_datetime_fields = {
+                PrivateUniqueResourceFields.CREATED_ON,
+                PrivateUniqueResourceFields.UPDATED_ON
+            }
+            missing_fields = base_datetime_fields - meta_fields_set
+            assert not missing_fields, \
+                f"{filterset_class.__name__}'s Meta.fields is missing datetime fields: {missing_fields}"
+
     def test_album_filter_inheritance(self):
         self.assert_datetime_inherited_filters(AlbumFilterSet)
 
@@ -55,8 +70,17 @@ class TestFilterInheritance(AppTestCase):
     def test_criteria_filter_inheritance(self):
         self.assert_datetime_inherited_filters(CriteriaFilterSet)
 
-    def test_playlist_param_filter_inheritance(self):
+    def test_base_playlist_filter_inheritance(self):
         self.assert_datetime_inherited_filters(PlaylistFilterSet)
+
+    def test_manual_playlist_filter_inheritance(self):
+        self.assert_datetime_inherited_filters(ManualPlaylistFilterSet)
+
+    def test_criteria_playlist_filter_inheritance(self):
+        self.assert_datetime_inherited_filters(CriteriaPlaylistFilterSet)
+
+    def test_play_filter_inheritance(self):
+        self.assert_datetime_inherited_filters(PlayFilterSet)
 
     def test_filter_functionality_using_a_concrete_model(self):
         now = timezone.now()

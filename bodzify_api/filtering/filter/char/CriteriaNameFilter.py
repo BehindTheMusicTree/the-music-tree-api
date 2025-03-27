@@ -30,7 +30,7 @@ class CriteriaNameFilter(NonEmptiableCharFilter):
         # For playlists with criteria, filter by the criteria's name
         # Use a subquery to get the criteria name to avoid the OneToOneField lookup issue
         criteria_name_filter = Q(criteria__isnull=False) & Q(
-            criteria__uuid__in=Criteria.objects.filter(_name__icontains=value).values('uuid'))
+            criteria__uuid__in=Criteria.objects.filter(name__icontains=value).values('uuid'))
 
         # Annotate with special name and apply the combined filter
         return qs.annotate(

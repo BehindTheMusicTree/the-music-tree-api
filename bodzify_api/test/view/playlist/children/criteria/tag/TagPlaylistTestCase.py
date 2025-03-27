@@ -20,7 +20,7 @@ class TagPlaylistTestCase(AppTestCase):
         return self.api_client.get(
             path=reverse('tag-playlist-detail', kwargs={'pk': uuid}), handle_response=self._set_results)
 
-    def _get_tag_playlists(self, **kwargs):
+    def _list_tag_playlists(self, **kwargs):
         return self.api_client.get(
             path=reverse('tag-playlist-list'), data=kwargs, handle_response=self._set_results)
 

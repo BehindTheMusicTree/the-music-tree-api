@@ -4,7 +4,6 @@ from django.db.models import QuerySet
 
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.PlaylistTypesLabel import PlaylistTypesLabel
-from bodzify_api.model.lib_track_playlist_rel.Fields import Fields as LibTrackPlaylistFields
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 
 from .children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
@@ -62,3 +61,26 @@ class PlaylistManager(StandardResourceManager):
                 genreless_playlist).union(tagless_playlist)
 
         return queryset
+
+    def get_ordered_relations_for_playlist(self, playlist: 'Playlist') -> dict[int | None, 'LibraryTrack']:
+        """
+        Returns a dictionary of LibraryTrack objects where dict[position] = lib_track.
+        Includes both non-archived tracks (with position) and archived tracks (position is None).
+        Archived tracks (null positions) are sorted last.
+        Returns empty dict if no tracks.
+        """
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        relations = LibTrackPlaylistRel.objects.get_ordered_relations_for_playlist(playlist)
+
+        if not relations.exists():
+            return {}
+
+        result: dict[int | None, 'LibraryTrack'] = {}
+        for relation in relations.filter(position__isnull=False):
+            relation = cast(LibTrackPlaylistRel, relation)
+            result[relation.position] = relation.lib_track
+        for relation in relations.filter(position__isnull=True):
+            relation = cast(LibTrackPlaylistRel, relation)
+            result[len(result) + 1] = relation.lib_track
+
+        return result

@@ -4,7 +4,6 @@ from django.db import models
 from django.db.models import QuerySet
 
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
-
 from .Fields import Fields
 
 
@@ -78,3 +77,30 @@ class CriteriaPlaylistManager(StandardResourceManager):
             if instance.parent:
                 self.remove_lib_tracks_from_instance_and_ascendants_until_criteria_limit(
                     instance=instance.parent, lib_tracks=lib_tracks, criteria_limit=criteria_limit)
+
+    def transfer_direct_tracks_to_criterialess_playlist(
+            self, direct_tracks: QuerySet['LibraryTrack'],
+            criteria_playlist: 'CriteriaPlaylist'):
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+
+        criterialess_playlist = self.get(
+            user=criteria_playlist.user, criteria=None, type=criteria_playlist.type)
+
+        direct_tracks_rels_in_criteria_playlist = criteria_playlist.lib_track_playlist_rels.filter(
+            lib_track__uuid__in=[track.uuid for track in direct_tracks]
+        )
+
+        direct_tracks_rels_not_archived = direct_tracks_rels_in_criteria_playlist.filter(position__isnull=False)
+
+        LibTrackPlaylistRel.objects.move_tracks_to_playlist_beginning(
+            source_rels=direct_tracks_rels_not_archived, target_playlist=criterialess_playlist)
+
+        direct_tracks_rels_in_criteria_playlist.filter(position__isnull=True).update(playlist=criterialess_playlist)
+
+    def make_playlist_root(self, playlist: 'CriteriaPlaylist'):
+        playlist.parent = None
+        playlist.root = playlist
+        playlist.save(update_fields=[Fields.PARENT, Fields.ROOT])
+
+        # Update all descendant playlists to use this as the root
+        self.update_descendants_root(instance=playlist, root=playlist)

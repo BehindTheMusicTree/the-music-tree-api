@@ -1,6 +1,4 @@
-
 import os
-from django.db import transaction
 from django.core.files.base import File
 from django.core.files.storage import default_storage
 from drf_spectacular.types import OpenApiTypes  # type: ignore
@@ -42,7 +40,6 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
 
         return self.get_file_response(file_path=file_path)
 
-    @transaction.atomic
     @extend_schema(request=LibTrackPostSerializer, responses=LibTrackDetailedSerializer, description=("""
         Create a track with metadata by uploading or a file or downloading it from another source:
             # Uploading a file:
@@ -99,7 +96,6 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
     def retrieve(self, *args, **kwargs):
         return self._handle_retrieve()
 
-    @transaction.atomic
     @extend_schema(request=LibTrackPutSerializer,
                    responses=LibTrackDetailedSerializer,
                    description=("""
@@ -131,6 +127,5 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
     def update(self, request, *args, **kwargs):
         return self._handle_update(request)
 
-    @transaction.atomic
     def destroy(self, *args, **kwargs):
         return self._handle_destroy()

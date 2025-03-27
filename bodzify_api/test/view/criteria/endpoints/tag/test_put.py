@@ -1,16 +1,16 @@
 from rest_framework import status
 
 from bodzify_api.serializer.model.criteria.input.put import Fields as PutFields
-from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
+from bodzify_api.test.view.criteria.TagTestCase import TagTestCase
 
 
-class TestCase(GenreTestCase):
+class TestCase(TagTestCase):
 
     def test_ok(self):
-        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
+        tag = self.model_fixture_factory.create_tag(name="Sport")
 
-        genre_new_name = "Punk"
-        response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME_PUBLIC: genre_new_name})
+        tag_new_name = "Kitchen"
+        response = self._put_tag(uuid=tag.uuid, **{PutFields.NAME_PUBLIC: tag_new_name})
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.saved_object.name == genre_new_name
+        assert self.saved_object.name == tag_new_name

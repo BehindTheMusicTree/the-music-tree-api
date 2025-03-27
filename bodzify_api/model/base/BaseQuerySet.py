@@ -1,7 +1,7 @@
 from typing import Any, Type
 
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, OrderBy, F
 
 from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
 
@@ -181,9 +181,11 @@ class BaseQuerySet(models.QuerySet):
         - name
         - -name
         - manual_playlist__name
+        It also handles OrderBy objects with F expressions such as:
+        - OrderBy(F('position'), descending=True)
 
         Args:
-            *field_names: The field names to order by
+            *field_names: The field names to order by (strings or OrderBy objects)
 
         Returns:
             QuerySet with transformed field names for ordering
@@ -191,35 +193,73 @@ class BaseQuerySet(models.QuerySet):
         transformed_field_names = []
 
         for field_name in field_names:
-            # Handle descending prefix
-            descending = field_name.startswith('-')
-            clean_name = field_name[1:] if descending else field_name
+            # Handle OrderBy objects (e.g., OrderBy(F('position'), descending=True))
+            if isinstance(field_name, OrderBy):
+                # Extract expression and descending flag directly from OrderBy object
+                expression = field_name.expression
+                descending = field_name.descending
 
-            # Split the field path
-            parts = clean_name.split('__')
+                # Check specifically for F objects which have a name attribute
+                if isinstance(expression, F):
+                    field_path = expression.name
 
-            # Find any part that starts with 'name'
-            name_part_index = -1
-            for i, part in enumerate(parts):
-                if part.startswith(LibTrackMixinFields.NAME_PUBLIC):
-                    name_part_index = i
-                    break
+                    # Check if this is a name field that needs transformation
+                    parts = field_path.split('__')
 
-            if name_part_index >= 0:
-                # Get the model that owns the name field
-                field_path = '__'.join(parts[:name_part_index]) if name_part_index > 0 else ''
-                current_model = get_related_model(self.model, field_path) if field_path else self.model
+                    # Find any part that starts with 'name'
+                    name_part_index = -1
+                    for i, part in enumerate(parts):
+                        if part.startswith(LibTrackMixinFields.NAME_PUBLIC):
+                            name_part_index = i
+                            break
 
-                # Check if this model uses internal name fields
-                if uses_internal_name(current_model):
-                    # Transform name to _name
-                    parts[name_part_index] = LibTrackMixinFields.NAME_INTERNAL
-                    transformed_name = '__'.join(parts)
-                    # Restore descending prefix if needed
-                    transformed_field_names.append(f'-{transformed_name}' if descending else transformed_name)
-                    continue
+                    if name_part_index >= 0:
+                        # Get the model that owns the name field
+                        field_path_prefix = '__'.join(parts[:name_part_index]) if name_part_index > 0 else ''
+                        current_model = get_related_model(
+                            self.model, field_path_prefix) if field_path_prefix else self.model
 
-            # If no transformation needed, use original field name
-            transformed_field_names.append(field_name)
+                        # Check if this model uses internal name fields
+                        if uses_internal_name(current_model):
+                            # Transform name to _name
+                            parts[name_part_index] = LibTrackMixinFields.NAME_INTERNAL
+                            transformed_field_path = '__'.join(parts)
+                            # Create new OrderBy with the transformed field path
+                            transformed_field_names.append(OrderBy(F(transformed_field_path), descending=descending))
+                            continue
+
+                # If no transformation needed, use original OrderBy object
+                transformed_field_names.append(field_name)
+            else:
+                # Handle string field names
+                descending = field_name.startswith('-')
+                clean_name = field_name[1:] if descending else field_name
+
+                # Split the field path
+                parts = clean_name.split('__')
+
+                # Find any part that starts with 'name'
+                name_part_index = -1
+                for i, part in enumerate(parts):
+                    if part.startswith(LibTrackMixinFields.NAME_PUBLIC):
+                        name_part_index = i
+                        break
+
+                if name_part_index >= 0:
+                    # Get the model that owns the name field
+                    field_path = '__'.join(parts[:name_part_index]) if name_part_index > 0 else ''
+                    current_model = get_related_model(self.model, field_path) if field_path else self.model
+
+                    # Check if this model uses internal name fields
+                    if uses_internal_name(current_model):
+                        # Transform name to _name
+                        parts[name_part_index] = LibTrackMixinFields.NAME_INTERNAL
+                        transformed_name = '__'.join(parts)
+                        # Restore descending prefix if needed
+                        transformed_field_names.append(f'-{transformed_name}' if descending else transformed_name)
+                        continue
+
+                # If no transformation needed, use original field name
+                transformed_field_names.append(field_name)
 
         return super().order_by(*transformed_field_names)

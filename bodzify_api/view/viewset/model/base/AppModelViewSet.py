@@ -1,8 +1,9 @@
+import re
 from typing import Any, Generic, Sequence, Type, TypeVar, Union, cast
 
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import QuerySet
-from django.http import FileResponse
+from bodzify_api.filtering.backend.ConsistentParametersFilterBackend import ConsistentParametersFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.permissions import IsAuthenticated
@@ -15,9 +16,9 @@ from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.private.Fields import Fields as PrivateFields
 from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.view.file_response.AppFileResponse import AppFileResponse
-from bodzify_api.view.HttpMethod import HttpMethod
-
 from ....pagination.AppPagination import AppPagination
+# UUID format: 8-4-4-4-12 hexadecimal digits
+UUID_PATTERN = re.compile(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
 
 
 T = TypeVar('T', bound=BaseModel)
@@ -26,6 +27,7 @@ T = TypeVar('T', bound=BaseModel)
 class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     pagination_class = AppPagination
     permission_classes = [IsAuthenticated]
+    filter_backends = [ConsistentParametersFilterBackend]
     model_class: Type[T]
     filterset_class: Type[AppFilterSet] = AppFilterSet
     simple_serializer_class: Type[ModelSerializer] | None = None
@@ -33,6 +35,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     create_serializer_class: Type[Serializer] | None = None
     update_serializer_class: Type[Serializer] | None = None
     is_private_resource: bool = True
+    is_pk_uuid: bool = True
 
     def __init__(self, model_class: Type[T],
                  filterset_class: Type[AppFilterSet] = AppFilterSet,
@@ -41,6 +44,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
                  update_serializer_class: Type[Serializer] | None = None,
                  create_serializer_class: Type[Serializer] | None = None,
                  is_private_resource: bool = True,
+                 is_pk_uuid: bool = True,
                  **kwargs):
         super().__init__(**kwargs)
         self.model_class = model_class
@@ -50,6 +54,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         self.update_serializer_class = update_serializer_class
         self.create_serializer_class = create_serializer_class
         self.is_private_resource = is_private_resource
+        self.is_pk_uuid = is_pk_uuid
 
     def _require_serializer(self, serializer_type: SerializerType) -> Type[Union[ModelSerializer, Serializer]]:
         serializer = getattr(self, serializer_type.class_name, None)
@@ -73,6 +78,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         serializer_class = self._require_serializer(SerializerType.CREATE)
         serializer = serializer_class(data=create_data, context={'request': request})
         validated_data = self._get_validated_data(serializer)
+
         return self.model_class.objects.create(**validated_data)
 
     def _update_instance(self, request: Request, instance: T, update_data: dict[str, Any]) -> T:
@@ -83,6 +89,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def _handle_list(self) -> Response:
         queryset = self.get_queryset()
+        queryset = self.filter_queryset(queryset)
         page = self.paginate_queryset(queryset)
 
         if not queryset.exists():
@@ -122,7 +129,37 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         return self.paginator.paginate_queryset(cast(QuerySet[T], queryset), self.request, view=self)
 
     def get_object(self) -> T:
-        return super().get_object()
+        from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+        from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+
+        # Use a direct query instead of relying on the DRF lookup mechanism
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+        lookup_value = self.kwargs[lookup_url_kwarg]
+
+        # Validate eventually UUID format if the field is 'pk'
+        if self.lookup_field == 'pk' and self.is_pk_uuid and not UUID_PATTERN.match(lookup_value):
+            raise AppValidationException(
+                message=f"Invalid UUID format: {lookup_value}",
+                field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID,
+                field_name=self.lookup_field
+            )
+
+        try:
+            if self.is_private_resource:
+                filter_kwargs = {
+                    self.lookup_field: lookup_value,
+                    'user': self.request.user
+                }
+            else:
+                filter_kwargs = {
+                    self.lookup_field: lookup_value,
+                }
+
+            obj = self.model_class.objects.get(**filter_kwargs)
+            return obj
+        except self.model_class.DoesNotExist:
+            # Fall back to the standard DRF lookup if direct lookup fails
+            return super().get_object()
 
     def get_serializer_class(self) -> Type[Serializer]:
         if self.action == 'retrieve':
@@ -140,13 +177,16 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         else:
             queryset = self.model_class.objects.all()
 
-        if request.method == HttpMethod.GET and request.query_params:
-            queryset = self.filterset_class(request.query_params, queryset=queryset).qs
-
         ordering_fields = cast(BaseModel, self.model_class).objects.get_default_ordering()
         return queryset.order_by(*ordering_fields)
 
-    def get_file_response(self, file_path: str) -> FileResponse:
+    def filter_queryset(self, queryset):
+        for backend in list(self.filter_backends):
+            queryset = backend().filter_queryset(self.request, queryset, self)
+
+        return queryset
+
+    def get_file_response(self, file_path: str):
         return AppFileResponse.from_file(file_path=file_path, filename=file_path.split('/')[-1])
 
     def retrieve(self, *args, **kwargs) -> Response:

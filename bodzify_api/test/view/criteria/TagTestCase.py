@@ -8,21 +8,19 @@ from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
 class TagTestCase(AppTestCase[Tag]):
+    model_class = Tag
+    saved_object: Tag
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.detail_endpoint = 'tag-detail'
         self.list_endpoint = 'tag-list'
 
-    def _set_saved_object_from_response(self, response):
-        """Override base method to add user filter to query."""
-        uuid = response.json()[Fields.UUID]
-        self.saved_object = self.model_class.objects.get(user=self.test_user1, uuid=uuid)  # type: ignore
-
     def _retrieve_tag(self, uuid: UUID):
         return self.api_client.get(
             path=reverse(self.detail_endpoint, kwargs={'pk': uuid}), handle_response=self._set_results)
 
-    def _get_tags(self, **kwargs):
+    def _list_tags(self, **kwargs):
         return self.api_client.get(
             path=reverse(self.list_endpoint), data=kwargs, handle_response=self._set_results)
 

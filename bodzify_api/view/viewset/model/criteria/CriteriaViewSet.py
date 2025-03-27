@@ -1,6 +1,6 @@
-from django.db import transaction
 from drf_spectacular.types import OpenApiTypes  # type: ignore
 from drf_spectacular.utils import OpenApiParameter, extend_schema  # type: ignore
+from rest_framework import status  # type: ignore
 from rest_framework.response import Response  # type: ignore
 
 from bodzify_api.filtering.set.criteria.Fields import Fields as FilterFields
@@ -25,10 +25,22 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
                          update_serializer_class=CriteriaPutSerializer,
                          **kwargs)
 
-    @transaction.atomic
     @extend_schema(request=CriteriaPostSerializer, responses=CriteriaDetailedSerializer)
     def create(self, request, *args, **kwargs):
         return self._handle_post(request)
+
+    @extend_schema(responses={status.HTTP_204_NO_CONTENT: None})
+    def destroy(self, request, *args, **kwargs):
+        """
+        Delete a criteria.
+
+        When deleting a criteria:
+        - If it has children and a parent, children are reassigned to the parent
+        - If it has children but no parent, children become root criteria
+        - If it's a root criteria, tracks are moved to the criterialess playlist
+        - The criteria playlist is deleted along with the criteria
+        """
+        return self._handle_destroy()
 
     @extend_schema(parameters=[OpenApiParameter(name=FilterFields.NAME_PUBLIC,
                                                 type=OpenApiTypes.STR,
@@ -44,7 +56,6 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
     def retrieve(self, *args, **kwargs) -> Response:
         return self._handle_retrieve()
 
-    @transaction.atomic
     @extend_schema(request=CriteriaPutSerializer,
                    responses=CriteriaDetailedSerializer,
                    description="""Updates a criteria""")

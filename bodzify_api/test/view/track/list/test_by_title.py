@@ -11,7 +11,7 @@ class TestCase(LibTrackTestCase, NotNullableFreeCharFilterTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="Life")
         self.model_fixture_factory.create_lib_track_with_file(title="Hey")
 
-        response = self._get_lib_tracks()
+        response = self._list_lib_tracks()
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
@@ -20,7 +20,7 @@ class TestCase(LibTrackTestCase, NotNullableFreeCharFilterTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="Life")
         self.model_fixture_factory.create_lib_track_with_file(title="Hey")
 
-        response = self._get_lib_tracks(title='')
+        response = self._list_lib_tracks(title='')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
@@ -29,7 +29,7 @@ class TestCase(LibTrackTestCase, NotNullableFreeCharFilterTestCase):
         track = self.model_fixture_factory.create_lib_track_with_file(title="LIfe")
         self.model_fixture_factory.create_lib_track_with_file(title="Hey")
 
-        response = self._get_lib_tracks(title='Lif')
+        response = self._list_lib_tracks(title='Lif')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1

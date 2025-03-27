@@ -14,4 +14,8 @@ class CriteriaFilterSet(PrivateUniqueResourceFilterSet):
 
     class Meta:
         model = Criteria
-        fields = [Fields.NAME_PUBLIC, Fields.PARENT]
+        fields = [
+            Fields.NAME_PUBLIC,
+            Fields.PARENT,
+            *PrivateUniqueResourceFilterSet.get_date_fields()
+        ]

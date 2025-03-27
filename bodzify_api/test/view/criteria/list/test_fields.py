@@ -10,7 +10,7 @@ class TestCase(GenreTestCase):
         genre_name = "Rock"
         self.model_fixture_factory.create_genre(name=genre_name)
 
-        response = self._get_genres()
+        response = self._list_genres()
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1

@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 from django.contrib.auth.models import BaseUserManager
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db import transaction
 
 from bodzify_api import settings
 from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
@@ -47,7 +48,8 @@ class UserManager(BaseUserManager):
         return self.create_instance(username=username, email=email, password=password, **extra_fields)
 
     def delete_instance(self, instance: 'User'):
-        instance.delete()
+        with transaction.atomic():
+            instance.delete()
 
 
 @receiver(post_save, sender=settings.APP_NAME + '.User')

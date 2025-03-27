@@ -4,26 +4,31 @@ import uuid
 
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext as _
-from django_filters import CharFilter, FilterSet
+from django_filters import FilterSet
 
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.filtering.filter.AppFilter import AppFilter
+from bodzify_api.filtering.filter.char.EmptiableCharFilter import EmptiableCharFilter
 
 
-class ForeignKeyFilter(CharFilter, AppFilter):
+class ForeignKeyFilter(EmptiableCharFilter):
     def __init__(self, queryset=None, **kwargs):
         self._queryset = queryset
         kwargs.pop('queryset', None)
         super().__init__(**kwargs)
 
     def filter(self, queryset, value):
+        # Let the parent AppFilter handle None values and URL parameter checking for empty strings
+        if value is None or (value == '' and not self.is_param_in_request()):
+            return queryset
+
+        if value == '':
+            # Empty string was explicitly provided in the URL, filter for NULL
+            return queryset.filter(**{f"{self.field_name}__isnull": True})
+
         parent: FilterSet | None = getattr(self, 'parent', None)
         if not parent:
             raise ImproperlyConfigured('ForeignKeyFilter must be used within a FilterSet')
-
-        if value == '':  # Empty string explicitly provided
-            return queryset.filter(**{f"{self.field_name}__isnull": True})
 
         if re.match(r'{{.*}}', str(value)):
             raise AppValidationException(

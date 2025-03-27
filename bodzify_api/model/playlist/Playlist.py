@@ -6,7 +6,6 @@ from django.db import models
 from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
 from bodzify_api.model.playlist.PlaylistManager import PlaylistManager
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
-from bodzify_api.model.lib_track_playlist_rel.Fields import Fields as LibTrackPlaylistFields
 
 from .Fields import Fields
 
@@ -54,23 +53,36 @@ class Playlist(LibTrackMixin, TrackablePlayCount):
             raise ValueError('Playlist has no type')
 
     @property
-    def lib_tracks_not_archived_dict_by_position(self) -> dict[int, 'LibraryTrack']:
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+    def lib_tracks_not_archived_dict_by_position(self) -> dict[int | None, 'LibraryTrack']:
         """
         Returns a dictionary of LibraryTrack objects where dict[position] = lib_track.
-        Only includes non-archived tracks (position is not None).
-        Returns empty dict if no tracks or all tracks are archived.
+        Includes both non-archived tracks (with position) and archived tracks (position is None).
+        Archived tracks (null positions) are sorted last.
+        Returns empty dict if no tracks.
         """
-        relations = LibTrackPlaylistRel.objects.filter(user=self.user, playlist=self, position__isnull=False
-                                                       ).order_by(LibTrackPlaylistFields.POSITION)
+        return Playlist.get_ordered_relations_for_playlist(self)
+
+    @classmethod
+    def get_ordered_relations_for_playlist(cls, playlist: 'Playlist') -> dict[int | None, 'LibraryTrack']:
+        """
+        Returns a dictionary of LibraryTrack objects where dict[position] = lib_track.
+        Includes both non-archived tracks (with position) and archived tracks (position is None).
+        Archived tracks (null positions) are sorted last.
+        Returns empty dict if no tracks.
+        """
+        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        relations = LibTrackPlaylistRel.objects.get_ordered_relations_for_playlist(playlist)
 
         if not relations.exists():
             return {}
 
-        result: dict[int, 'LibraryTrack'] = {}
-        for relation in relations:
+        result: dict[int | None, 'LibraryTrack'] = {}
+        for relation in relations.filter(position__isnull=False):
             relation = cast(LibTrackPlaylistRel, relation)
-            result[cast(int, relation.position)] = relation.lib_track
+            result[relation.position] = relation.lib_track
+        for relation in relations.filter(position__isnull=True):
+            relation = cast(LibTrackPlaylistRel, relation)
+            result[len(result) + 1] = relation.lib_track
 
         return result
 

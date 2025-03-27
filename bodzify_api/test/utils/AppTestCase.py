@@ -35,8 +35,8 @@ class AppTestCase(TestCase, Generic[T]):
 
     def _login_as_user(self, user: User):
         self.api_client.force_authenticate(user=user)
-        AccessToken.for_user(user)
-        self.api_client.credentials(HTTP_AUTHORIZATION='Bearer {access}')
+        token = AccessToken.for_user(user)
+        self.api_client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
 
     def _login_as_test_user1(self):
         self._login_as_user(self.test_user1)
@@ -135,6 +135,17 @@ class AppTestCase(TestCase, Generic[T]):
 
             return self.api_client.post(
                 path=reverse('library-track-list'), data=kwargs, format='multipart', handle_response=self._set_results)
+
+    # Defined here and not in LibTrackTestCase because other views needs sometimes to put a track for testing purposes
+    # (testing Genre deletion for example)
+    def _put_lib_track(self, uuid, is_from_lib_track_test_case: bool = True, **kwargs):
+        if is_from_lib_track_test_case:
+            return self.api_client.put(
+                path=reverse('library-track-detail', kwargs={'pk': uuid}),
+                data=kwargs, handle_response=self._set_results)
+        else:
+            return self.api_client.put(
+                path=reverse('library-track-detail', kwargs={'pk': uuid}), data=kwargs)
 
     def _post_lib_track_being_logged_out(self):
         self._logout()

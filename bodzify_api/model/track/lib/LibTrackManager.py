@@ -1,4 +1,3 @@
-
 from typing import TYPE_CHECKING, Any, cast
 
 from django.db import transaction
@@ -8,7 +7,6 @@ from django.utils import timezone
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
-from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
 from bodzify_api.model.user.User import User
@@ -86,22 +84,23 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
     def create(self, **kwargs) -> 'LibraryTrack':
         from ..file.TrackFile import TrackFile
 
-        artists = kwargs.pop(Fields.ARTISTS, None)
-        track_file_model_data = dict()
-        track_file_model_data[TrackFileFields.FILE] = kwargs.pop(Fields.TRACK_FILE_INTERNAL)
+        with transaction.atomic():
+            artists = kwargs.pop(Fields.ARTISTS, None)
+            track_file_model_data = dict()
+            track_file_model_data[TrackFileFields.FILE] = kwargs.pop(Fields.TRACK_FILE_INTERNAL)
 
-        instance: LibraryTrack = super().create(**kwargs)
-        if artists:
-            instance.artists.set(artists)
+            instance: LibraryTrack = super().create(**kwargs)
+            if artists:
+                instance.artists.set(artists)
 
-        track_file_model_data[TrackFileFields.USER] = instance.user
-        track_file_model_data[TrackFileFields.LIB_TRACK] = instance
+            track_file_model_data[TrackFileFields.USER] = instance.user
+            track_file_model_data[TrackFileFields.LIB_TRACK] = instance
 
-        TrackFile.objects.create(**track_file_model_data)
+            TrackFile.objects.create(**track_file_model_data)
 
-        self._add_to_genre_playlists(instance)
-        instance.update_file_tags_from_lib_track_instance_values()
-        return instance
+            self._add_to_genre_playlists(instance)
+            instance.update_file_metadata_from_lib_track_instance_values()
+            return instance
 
     def create_instance_with_track_file(
             self, track_file_data: dict[str, Any], library_track_data: dict[str, Any]) -> 'LibraryTrack':
@@ -117,7 +116,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             track_file_data[TrackFileFields.LIB_TRACK] = lib_track
             TrackFile.objects.create(**track_file_data)
 
-        lib_track.update_file_tags_from_lib_track_instance_values()
+        lib_track.update_file_metadata_from_lib_track_instance_values()
 
         return lib_track
 
@@ -126,51 +125,55 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         from bodzify_api.model.artist.Artist import Artist
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 
-        old_album_artists_list = []
-        if old_instance.album:
+        with transaction.atomic():
+            old_album_artists_list = []
+            if old_instance.album:
 
-            # list() makes a copy of the QuerySet before the deletion
-            old_album_artists_list = list(old_instance.album.album_artists.all())
-            old_album = old_instance.album
-        else:
-            old_album = None
-
-        old_genre = old_instance.genre
-        old_artists_list = list(old_instance.artists.all())  # list() makes a copy of the QuerySet before the deletion
-
-        old_archived_state = old_instance.archived
-
-        updated_instance: LibraryTrack = super().update_instance(old_instance, **kwargs)
-
-        if old_genre != updated_instance.genre:
-            self._update_genre_playlists(updated_instance, old_genre=old_genre)
-
-        if old_album and updated_instance.album and old_album != updated_instance.album:
-            Album.objects.delete_instance_if_no_track_linked_with_potential_album_artist_deletion(old_album)
-            for album_artist in old_album_artists_list:
-                Artist.objects.delete_instance_if_nothing_linked(album_artist)
-
-        if len(old_artists_list) > 0:
-            current_track_artists_list = list(updated_instance.artists.all())
-            old_track_artists_list: list[Artist] = list(old_artists_list)
-            for old_track_artist in old_track_artists_list:
-                if old_track_artist not in current_track_artists_list:
-                    Artist.objects.delete_instance_if_nothing_linked(old_track_artist)
-
-        if old_archived_state != updated_instance.archived:
-            if updated_instance.archived:
-                LibTrackPlaylistRel.objects.archive_instances_of_lib_track(lib_track=updated_instance)
+                # list() makes a copy of the QuerySet before the deletion
+                old_album_artists_list = list(old_instance.album.album_artists.all())
+                old_album = old_instance.album
             else:
-                LibTrackPlaylistRel.objects.unarchive_instances_of_lib_track(lib_track=updated_instance)
+                old_album = None
 
-        return updated_instance
+            old_genre = old_instance.genre
+            # list() makes a copy of the QuerySet before the deletion
+            old_artists_list = list(old_instance.artists.all())
+
+            old_archived_state = old_instance.archived
+
+            updated_instance: LibraryTrack = super().update_instance(old_instance, **kwargs)
+            updated_instance.update_file_metadata_from_lib_track_instance_values()
+
+            if old_genre != updated_instance.genre:
+                self._update_genre_playlists(updated_instance, old_genre=old_genre)
+
+            if old_album and updated_instance.album and old_album != updated_instance.album:
+                Album.objects.delete_instance_if_no_track_linked_with_potential_album_artist_deletion(old_album)
+                for album_artist in old_album_artists_list:
+                    Artist.objects.delete_instance_if_nothing_linked(album_artist)
+
+            if len(old_artists_list) > 0:
+                current_track_artists_list = list(updated_instance.artists.all())
+                old_track_artists_list: list[Artist] = list(old_artists_list)
+                for old_track_artist in old_track_artists_list:
+                    if old_track_artist not in current_track_artists_list:
+                        Artist.objects.delete_instance_if_nothing_linked(old_track_artist)
+
+            if old_archived_state != updated_instance.archived:
+                if updated_instance.archived:
+                    LibTrackPlaylistRel.objects.archive_instances_of_lib_track(lib_track=updated_instance)
+                else:
+                    LibTrackPlaylistRel.objects.unarchive_instances_of_lib_track(lib_track=updated_instance)
+
+            return updated_instance
 
     def delete_instance(self, instance: 'LibraryTrack'):
-        old_playlists_with_positions = instance.playlists_with_positions
-        user = instance.user
-        self.delete_instance_with_checking_album_and_artists_potential_deletion(instance)
-        self._decrease_position_of_next_tracks_in_old_track_playlists(
-            user=user, playlists_with_old_position=old_playlists_with_positions)
+        with transaction.atomic():
+            old_playlists_with_positions = instance.playlists_with_positions
+            user = instance.user
+            self.delete_instance_with_checking_album_and_artists_potential_deletion(instance)
+            self._decrease_position_of_next_tracks_in_old_track_playlists(
+                user=user, playlists_with_old_position=old_playlists_with_positions)
 
     def delete_instance_with_checking_album_and_artists_potential_deletion(self, instance: 'LibraryTrack'):
         from bodzify_api.model.album.Album import Album

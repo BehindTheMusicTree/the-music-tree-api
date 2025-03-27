@@ -1,5 +1,6 @@
 from typing import TYPE_CHECKING
 
+from django.core.exceptions import ImproperlyConfigured
 from django.db import models
 
 from bodzify_api.model.criteria.Criteria import Criteria
@@ -17,21 +18,23 @@ from .CriterialessPlaylistNames import CriterialessPlaylistNames
 from .CriteriaPlaylistManager import CriteriaPlaylistManager
 from .Fields import Fields
 
+if TYPE_CHECKING:
+    from bodzify_api.model.criteria.Criteria import Criteria
+
 
 class CriteriaPlaylist(Playlist):
-    playlist = PrivateOneToOneField(Playlist,
-                                    on_delete=models.CASCADE,
-                                    parent_link=True,
-                                    related_name=PlayListFields.CRITERIA_PLAYLIST)
-    criteria = PrivateOneToOneField(Criteria,
-                                    on_delete=models.CASCADE,
-                                    blank=True,
-                                    null=True,
-                                    related_name=CriteriaFields.CRITERIA_PLAYLIST)
+    playlist = PrivateOneToOneField(
+        Playlist, on_delete=models.CASCADE, parent_link=True, related_name=PlayListFields.CRITERIA_PLAYLIST)
+
+    criteria: 'Criteria | None' = PrivateOneToOneField(  # type: ignore
+        Criteria, on_delete=models.CASCADE, blank=True, null=True, related_name=CriteriaFields.CRITERIA_PLAYLIST)
+
     parent: 'CriteriaPlaylist | None' = PrivateForeignKey(
         'self', on_delete=models.SET_NULL, null=True, related_name=Fields.CHILDREN)  # type: ignore
+
     root: 'CriteriaPlaylist' = PrivateForeignKey(
         'self', on_delete=models.DO_NOTHING, related_name=Fields.ROOT_DESCENDANTS)  # type: ignore
+
     type = AppForeignKey(CriteriaType, on_delete=models.CASCADE)
 
     if TYPE_CHECKING:
@@ -55,7 +58,7 @@ class CriteriaPlaylist(Playlist):
         if self.type.pk == CriteriaTypePks.TAG:
             return CriterialessPlaylistNames.TAG
         else:
-            raise ValueError(f'Unknown criteria type: {self.type.pk}')
+            raise ImproperlyConfigured(f'Unknown criteria type: {self.type.pk}')
 
     @property
     def name(self):
@@ -84,11 +87,11 @@ class CriteriaPlaylist(Playlist):
         return False
 
     def _set_root(self) -> bool:
-        current_root_pk = getattr(self, f"{Fields.ROOT}_pk", None)
-        new_root_pk = self.pk if not self.criteria or self.criteria.is_root else self.criteria.root.criteria_playlist.pk
+        current_root_id = getattr(self, f"{Fields.ROOT}_id", None)
+        new_root_id = self.pk if not self.criteria or self.criteria.is_root else self.criteria.root.criteria_playlist.pk
 
-        if current_root_pk != new_root_pk:
-            self.root_id = new_root_pk
+        if current_root_id != new_root_id:
+            self.root_id = new_root_id
             return True
         else:
             return False

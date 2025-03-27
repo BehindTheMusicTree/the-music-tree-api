@@ -1,7 +1,6 @@
-
 from typing import TYPE_CHECKING, cast
 
-from django.db.models import F
+from django.db.models import F, QuerySet
 
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from bodzify_api.model.user.User import User
@@ -19,13 +18,13 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
 
     def _decrement_positions_of_following_tracks(self, playlist: 'Playlist', position: int):
         self.filter(
-            user=playlist.user, playlist=playlist, position__gt=position
+            user=playlist.user, playlist=playlist, **{f'{Fields.POSITION}__gt': position}
         ).update(
             position=F(Fields.POSITION) - 1)
 
     def _increment_positions_of_following_tracks(self, playlist: 'Playlist', position: int):
         self.filter(
-            user=playlist.user, playlist=playlist, position__gte=position
+            user=playlist.user, playlist=playlist, **{f'{Fields.POSITION}__gte': position}
         ).update(
             position=F(Fields.POSITION) + 1)
 
@@ -33,7 +32,7 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
         tracks_positions_ordered_asc = self.filter(
             user=playlist.user, playlist=playlist
         ).exclude(
-            position__isnull=True
+            **{Fields.POSITION + '__isnull': True}
         ).order_by(
             Fields.POSITION)
 
@@ -62,3 +61,36 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
         if lib_track_playlist_rel.position is not None:  # if lib track not archived
             self._decrement_positions_of_following_tracks(playlist, lib_track_playlist_rel.position)
         lib_track_playlist_rel.delete()
+
+    def move_tracks_to_playlist_beginning(
+            self, source_rels: QuerySet['LibTrackPlaylistRel'], target_playlist: 'Playlist') -> None:
+        from .Fields import Fields
+
+        if not source_rels:
+            return
+
+        self.filter(
+            user=target_playlist.user,
+            playlist=target_playlist,
+            position__isnull=False
+        ).update(
+            position=F(Fields.POSITION) + source_rels.count()
+        )
+
+        for i, relation in enumerate(source_rels.order_by(Fields.POSITION), 1):
+            relation.playlist = target_playlist
+            relation.position = i
+            relation.save(update_fields=[Fields.POSITION, 'playlist'])
+
+    def get_ordered_relations_for_playlist(self, playlist: 'Playlist') -> QuerySet['LibTrackPlaylistRel']:
+        """
+        Returns ordered relations for a playlist, with non-archived tracks first (sorted by position)
+        followed by archived tracks (null positions).
+        """
+        return self.filter(
+            user=playlist.user,
+            playlist=playlist
+        ).select_related('lib_track').order_by(
+            F(Fields.POSITION).desc(nulls_last=True),
+            Fields.POSITION
+        )

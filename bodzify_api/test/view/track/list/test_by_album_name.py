@@ -11,7 +11,7 @@ class TestCase(LibTrackTestCase, NullableCharFilterTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="Life")
         self.model_fixture_factory.create_lib_track_with_file(title="Hey")
 
-        response = self._get_lib_tracks()
+        response = self._list_lib_tracks()
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
@@ -22,7 +22,7 @@ class TestCase(LibTrackTestCase, NullableCharFilterTestCase):
         album = self.model_fixture_factory.create_album(name="John")
         self.model_fixture_factory.create_lib_track_with_file(title="Hey", album=album)
 
-        response = self._get_lib_tracks(album_name='')
+        response = self._list_lib_tracks(album_name='')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
@@ -30,7 +30,7 @@ class TestCase(LibTrackTestCase, NullableCharFilterTestCase):
     def test_filter_not_empty_then_dont_return_track_with_no_album(self):
         self.model_fixture_factory.create_lib_track_with_file(title="Life")
 
-        response = self._get_lib_tracks(album_name='jo')
+        response = self._list_lib_tracks(album_name='jo')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 0
@@ -41,7 +41,7 @@ class TestCase(LibTrackTestCase, NullableCharFilterTestCase):
         album_hey = self.model_fixture_factory.create_album(name="Hey")
         self.model_fixture_factory.create_lib_track_with_file(title="Hey", album=album_hey)
 
-        response = self._get_lib_tracks(album_name='Lif')
+        response = self._list_lib_tracks(album_name='Lif')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1

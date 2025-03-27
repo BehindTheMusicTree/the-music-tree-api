@@ -14,5 +14,7 @@ class UuidModel(BaseModel):
     def _set_uuid_if_necessary(self):
         if self._state.adding and not self.pk:
             self.pk = uuid.uuid4()
+            self.uuid = self.pk
             while self.__class__.objects.filter(pk=self.pk).exists():
                 self.pk = uuid.uuid4()
+                self.uuid = self.pk

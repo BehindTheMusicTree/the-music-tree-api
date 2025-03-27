@@ -11,7 +11,7 @@ class TestCase(LibTrackTestCase, NullableCharFilterTestCase):
         self.model_fixture_factory.create_lib_track_with_file(title="Life")
         self.model_fixture_factory.create_lib_track_with_file(title="Hey")
 
-        response = self._get_lib_tracks()
+        response = self._list_lib_tracks()
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
@@ -22,7 +22,7 @@ class TestCase(LibTrackTestCase, NullableCharFilterTestCase):
         artist = self.model_fixture_factory.create_artist(name="John")
         self.model_fixture_factory.create_lib_track_with_file(title="Hey", artists=[artist])
 
-        response = self._get_lib_tracks(artists_name='')
+        response = self._list_lib_tracks(artists_name='')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
@@ -30,7 +30,7 @@ class TestCase(LibTrackTestCase, NullableCharFilterTestCase):
     def test_filter_not_empty_then_dont_return_track_with_no_artist(self):
         self.model_fixture_factory.create_lib_track_with_file(title="Life")
 
-        response = self._get_lib_tracks(artists_name='jo')
+        response = self._list_lib_tracks(artists_name='jo')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 0
@@ -42,7 +42,7 @@ class TestCase(LibTrackTestCase, NullableCharFilterTestCase):
         artist_mitch = self.model_fixture_factory.create_artist(name="Mitch")
         self.model_fixture_factory.create_lib_track_with_file(title="Hey", artists=[artist_mitch])
 
-        response = self._get_lib_tracks(artists_name='JoH')
+        response = self._list_lib_tracks(artists_name='JoH')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1

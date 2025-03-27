@@ -18,7 +18,7 @@ class TestCase(TagPlaylistTestCase, PrivateForeignKeyFilterTestCase):
         self.model_fixture_factory.create_tag(name="Fiestaabilly")
         self.model_fixture_factory.create_tag(name="Koko", parent=tag_fiesta)
 
-        response = self._get_tag_playlists()
+        response = self._list_tag_playlists()
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 4
@@ -26,7 +26,7 @@ class TestCase(TagPlaylistTestCase, PrivateForeignKeyFilterTestCase):
     def test_invalid_uuid_then_400(self):
         self.model_fixture_factory.create_tag(name="Fiesta")
 
-        response = self._get_tag_playlists(**{RietrieveFields.PARENT: 'invalid-uuid'})
+        response = self._list_tag_playlists(**{RietrieveFields.PARENT: 'invalid-uuid'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0]['field'] == RietrieveFields.PARENT
@@ -38,7 +38,7 @@ class TestCase(TagPlaylistTestCase, PrivateForeignKeyFilterTestCase):
         tag_fiestaabilly = self.model_fixture_factory.create_tag(name="Fiestaabilly")
         tag_koko = self.model_fixture_factory.create_tag(name="Koko", parent=tag_fiesta)
 
-        response = self._get_tag_playlists(**{RietrieveFields.PARENT: ''})
+        response = self._list_tag_playlists(**{RietrieveFields.PARENT: ''})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 3
@@ -52,7 +52,7 @@ class TestCase(TagPlaylistTestCase, PrivateForeignKeyFilterTestCase):
         tag_fiestaabilly = self.model_fixture_factory.create_tag(name="Fiestaabilly", parent=tag_fiesta)
         tag_punk = self.model_fixture_factory.create_tag(name="Punk", parent=tag_fiesta)
 
-        response = self._get_tag_playlists(**{RietrieveFields.PARENT: tag_fiesta.criteria_playlist.uuid})
+        response = self._list_tag_playlists(**{RietrieveFields.PARENT: tag_fiesta.criteria_playlist.uuid})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2

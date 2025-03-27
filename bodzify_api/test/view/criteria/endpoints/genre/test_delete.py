@@ -1,5 +1,6 @@
 from rest_framework import status
 
+from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 
@@ -10,4 +11,5 @@ class TestCase(GenreTestCase):
 
         response = self._delete_genre(uuid=genre.uuid)
 
-        assert response.status_code == status.HTTP_405_METHOD_NOT_ALLOWED
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert Genre.objects.filter(uuid=genre.uuid).count() == 0

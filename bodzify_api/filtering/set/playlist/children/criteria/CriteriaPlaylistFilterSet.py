@@ -1,14 +1,14 @@
 
 from bodzify_api.filtering.filter.char.CriteriaNameFilter import CriteriaNameFilter
 from bodzify_api.filtering.filter.foreign_key.ForeignKeyFilter import ForeignKeyFilter
-from bodzify_api.filtering.set.AppFilterSet import AppFilterSet
+from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import PrivateUniqueResourceFilterSet
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.criteria.Fields import Fields as ModelFields
 
 from .Fields import Fields
 
 
-class CriteriaPlaylistFilterSet(AppFilterSet):
+class CriteriaPlaylistFilterSet(PrivateUniqueResourceFilterSet):
     name = CriteriaNameFilter(field_name=f'{ModelFields.CRITERIA}__{ModelFields.NAME}',
                               field_name_public=Fields.NAME_PUBLIC,
                               lookup_expr="icontains")
@@ -16,4 +16,4 @@ class CriteriaPlaylistFilterSet(AppFilterSet):
 
     class Meta:
         model = CriteriaPlaylist
-        fields = [Fields.NAME_PUBLIC, Fields.PARENT]
+        fields = [Fields.NAME_PUBLIC, Fields.PARENT, *PrivateUniqueResourceFilterSet.get_date_fields()]

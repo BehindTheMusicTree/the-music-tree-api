@@ -18,7 +18,7 @@ class TestCase(GenrePlaylistTestCase, PrivateForeignKeyFilterTestCase):
         self.model_fixture_factory.create_genre(name="Rockabilly")
         self.model_fixture_factory.create_genre(name="Koko", parent=genre_rock)
 
-        response = self._get_genre_playlists()
+        response = self._list_genre_playlists()
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 4
@@ -26,19 +26,19 @@ class TestCase(GenrePlaylistTestCase, PrivateForeignKeyFilterTestCase):
     def test_invalid_uuid_then_400(self):
         self.model_fixture_factory.create_genre(name="Rock")
 
-        response = self._get_genre_playlists(**{RietrieveFields.PARENT: 'invalid-uuid'})
+        response = self._list_genre_playlists(**{RietrieveFields.PARENT: 'invalid-uuid'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0]['field'] == RietrieveFields.PARENT
-        assert self.bad_request_result_field_errors[0][
-            'code'] == FieldValidationErrorCode.FORMAT_INVALID
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == RietrieveFields.PARENT
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_empty_then_results(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_rockabilly = self.model_fixture_factory.create_genre(name="Rockabilly")
         genre_koko = self.model_fixture_factory.create_genre(name="Koko", parent=genre_rock)
 
-        response = self._get_genre_playlists(**{RietrieveFields.PARENT: ''})
+        response = self._list_genre_playlists(**{RietrieveFields.PARENT: ''})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 3
@@ -52,7 +52,7 @@ class TestCase(GenrePlaylistTestCase, PrivateForeignKeyFilterTestCase):
         genre_rockabilly = self.model_fixture_factory.create_genre(name="Rockabilly", parent=genre_rock)
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
 
-        response = self._get_genre_playlists(**{RietrieveFields.PARENT: genre_rock.criteria_playlist.uuid})
+        response = self._list_genre_playlists(**{RietrieveFields.PARENT: genre_rock.criteria_playlist.uuid})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2

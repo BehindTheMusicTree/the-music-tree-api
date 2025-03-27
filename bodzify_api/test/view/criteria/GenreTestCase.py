@@ -16,16 +16,11 @@ class GenreTestCase(AppTestCase[Genre]):
         self.detail_endpoint = 'genre-detail'
         self.list_endpoint = 'genre-list'
 
-    def _set_saved_object_from_response(self, response):
-        """Override base method to add user filter to query."""
-        uuid = response.json()[Fields.UUID]
-        self.saved_object = self.model_class.objects.get(user=self.test_user1, uuid=uuid)  # type: ignore
-
     def _retrieve_genre(self, uuid: UUID):
         return self.api_client.get(
             path=reverse(self.detail_endpoint, kwargs={'pk': uuid}), handle_response=self._set_results)
 
-    def _get_genres(self, **kwargs):
+    def _list_genres(self, **kwargs):
         return self.api_client.get(path=reverse(self.list_endpoint), data=kwargs, handle_response=self._set_results)
 
     def _post_genre(self, **kwargs):
