@@ -35,6 +35,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
     create_serializer_class: Type[Serializer] | None = None
     update_serializer_class: Type[Serializer] | None = None
     is_private_resource: bool = True
+    is_pk_uuid: bool = True
 
     def __init__(self, model_class: Type[T],
                  filterset_class: Type[AppFilterSet] = AppFilterSet,
@@ -43,6 +44,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
                  update_serializer_class: Type[Serializer] | None = None,
                  create_serializer_class: Type[Serializer] | None = None,
                  is_private_resource: bool = True,
+                 is_pk_uuid: bool = True,
                  **kwargs):
         super().__init__(**kwargs)
         self.model_class = model_class
@@ -52,6 +54,7 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         self.update_serializer_class = update_serializer_class
         self.create_serializer_class = create_serializer_class
         self.is_private_resource = is_private_resource
+        self.is_pk_uuid = is_pk_uuid
 
     def _require_serializer(self, serializer_type: SerializerType) -> Type[Union[ModelSerializer, Serializer]]:
         serializer = getattr(self, serializer_type.class_name, None)
@@ -133,8 +136,8 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
         lookup_value = self.kwargs[lookup_url_kwarg]
 
-        # Validate UUID format if the field is 'uuid'
-        if self.lookup_field == 'pk' and not UUID_PATTERN.match(lookup_value):
+        # Validate eventually UUID format if the field is 'pk'
+        if self.lookup_field == 'pk' and self.is_pk_uuid and not UUID_PATTERN.match(lookup_value):
             raise AppValidationException(
                 message=f"Invalid UUID format: {lookup_value}",
                 field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID,
@@ -142,10 +145,15 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             )
 
         try:
-            filter_kwargs = {
-                self.lookup_field: lookup_value,
-                'user': self.request.user
-            }
+            if self.is_private_resource:
+                filter_kwargs = {
+                    self.lookup_field: lookup_value,
+                    'user': self.request.user
+                }
+            else:
+                filter_kwargs = {
+                    self.lookup_field: lookup_value,
+                }
 
             obj = self.model_class.objects.get(**filter_kwargs)
             return obj
