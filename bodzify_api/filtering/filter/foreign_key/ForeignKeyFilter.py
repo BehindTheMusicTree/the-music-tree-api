@@ -18,22 +18,11 @@ class ForeignKeyFilter(EmptiableCharFilter):
         super().__init__(**kwargs)
 
     def filter(self, queryset, value):
-        if value is None:
+        # Let the parent AppFilter handle None values and URL parameter checking for empty strings
+        if value is None or (value == '' and not self.is_param_in_request()):
             return queryset
-        elif value == '':
-            # Check if the parameter was actually in the URL or if it's an artifact
-            parent: FilterSet | None = getattr(self, 'parent', None)
-            if not parent:
-                raise ImproperlyConfigured('ForeignKeyFilter must be used within a FilterSet')
 
-            # If we have a request and this parameter isn't in the original URL params,
-            # treat it as if the parameter wasn't provided (no filtering)
-            if hasattr(parent, 'request') and parent.request:
-                original_params = parent.request.GET if hasattr(parent.request, 'GET') else parent.request.query_params
-                if self.field_name not in original_params:
-                    # Parameter wasn't in the URL, so don't filter
-                    return queryset
-
+        if value == '':
             # Empty string was explicitly provided in the URL, filter for NULL
             return queryset.filter(**{f"{self.field_name}__isnull": True})
 

@@ -16,8 +16,16 @@ class EmptiableCharFilter(CharFilter, AppFilter):
         super().__init__(*args, **kwargs)
 
     def filter(self, qs: BaseQuerySet, value):
+        # Handle None values first, no filtering
+        if value is None:
+            return qs
+
         if not self.method_name:
             if value == '':
+                # Check if the parameter is in the URL before filtering
+                if not self.is_param_in_request():
+                    return qs
+                # Empty string was explicitly provided, filter for NULL
                 lookup = f"{self.field_name}__isnull"
                 return qs.filter(**{lookup: True})
             else:
