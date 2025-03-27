@@ -16,24 +16,20 @@ from .Fields import Fields
 
 class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
     title = CharFilter(field_name=ModelFields.TITLE, lookup_expr='icontains')
-    artists_name = RelatedObjectCharFilter(
-        primary_field=ArtistFields.NAME_INTERNAL,
-        field_name=ModelFields.ARTISTS,
-        field_name_public=Fields.ARTISTS_NAME,
-        lookup_expr='icontains'
-    )
-    album_name = RelatedObjectCharFilter(
-        primary_field=AlbumFields.NAME_INTERNAL,
-        field_name=ModelFields.ALBUM,
-        field_name_public=Fields.ALBUM_NAME,
-        lookup_expr='icontains'
-    )
-    genre_name = RelatedObjectCharFilter(
-        primary_field=CriteriaFields.NAME_INTERNAL,
-        field_name=ModelFields.GENRE,
-        field_name_public=Fields.GENRE_NAME,
-        lookup_expr='icontains'
-    )
+    artists_name = RelatedObjectCharFilter(primary_field=ArtistFields.NAME_INTERNAL,
+                                           field_name=ModelFields.ARTISTS,
+                                           field_name_public=Fields.ARTISTS_NAME,
+                                           lookup_expr='icontains')
+
+    album_name = RelatedObjectCharFilter(primary_field=AlbumFields.NAME_INTERNAL,
+                                         field_name=ModelFields.ALBUM,
+                                         field_name_public=Fields.ALBUM_NAME,
+                                         lookup_expr='icontains')
+
+    genre_name = RelatedObjectCharFilter(primary_field=CriteriaFields.NAME_INTERNAL,
+                                         field_name=ModelFields.GENRE,
+                                         field_name_public=Fields.GENRE_NAME,
+                                         lookup_expr='icontains')
     language = EmptiableCharFilter(
         field_name_public=ModelFields.LANGUAGE, field_name=ModelFields.LANGUAGE, lookup_expr='icontains')
 
@@ -41,9 +37,6 @@ class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
         model = LibraryTrack
         fields = [
             Fields.TITLE,
-            Fields.ARTISTS_NAME,
-            Fields.ALBUM_NAME,
-            Fields.GENRE_NAME,
             Fields.LANGUAGE,
             *PrivateUniqueResourceFilterSet.get_date_fields()
         ]
