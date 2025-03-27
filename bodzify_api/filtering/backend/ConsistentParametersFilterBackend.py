@@ -1,17 +1,4 @@
 from django_filters.rest_framework import DjangoFilterBackend
-import logging
-import sys
-
-# Configure a direct console logger to ensure visibility during tests
-logger = logging.getLogger('filter_backend_debug')
-if not logger.handlers:
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(logging.DEBUG)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
-    logger.setLevel(logging.DEBUG)
-    logger.propagate = False
 
 
 class ConsistentParametersFilterBackend(DjangoFilterBackend):
@@ -34,7 +21,6 @@ class ConsistentParametersFilterBackend(DjangoFilterBackend):
     def get_filterset_kwargs(self, request, queryset, view):
         query_params = self.get_query_params(request)
 
-        # Get the original query parameters from the request URL
         original_query_params = set(request.GET.keys() if hasattr(request, 'GET') else request.query_params.keys())
 
         # Reimplement parent's get_filterset_kwargs logic to avoid accessing request.query_params directly
@@ -48,5 +34,4 @@ class ConsistentParametersFilterBackend(DjangoFilterBackend):
             if field_name not in ['page', 'page_size'] and field_name not in original_query_params:
                 del kwargs['data'][field_name]
 
-        logger.debug(f"Final kwargs: {kwargs}")
         return kwargs
