@@ -1,5 +1,8 @@
 from django_filters.rest_framework import DjangoFilterBackend
 
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+
 
 class ConsistentParametersFilterBackend(DjangoFilterBackend):
     """
@@ -30,8 +33,17 @@ class ConsistentParametersFilterBackend(DjangoFilterBackend):
             'request': request,
         }
 
+        filterset_class = view.filterset_class if hasattr(view, 'filterset_class') else None
+
         for field_name in list(kwargs['data'].keys()):
-            if field_name not in ['page', 'page_size'] and field_name not in original_query_params:
-                del kwargs['data'][field_name]
+            if field_name not in ['page', 'page_size']:
+                if field_name not in original_query_params:
+                    del kwargs['data'][field_name]
+                else:
+                    if not filterset_class:
+                        raise AppValidationException(
+                            field_name=field_name,
+                            field_validation_error_code=FieldValidationErrorCode.INVALID_FILTER,
+                            message=f"Filter is not valid")
 
         return kwargs
