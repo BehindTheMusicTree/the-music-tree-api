@@ -9,6 +9,8 @@ from bodzify_api.filtering.set.criteria.CriteriaFilterSet import CriteriaFilterS
 from bodzify_api.filtering.set.lib_track.LibTrackFilterSet import LibTrackFilterSet
 from bodzify_api.filtering.set.play.PlayFilterSet import PlayFilterSet
 from bodzify_api.filtering.set.playlist.PlaylistFilterSet import PlaylistFilterSet
+from bodzify_api.filtering.set.playlist.children.criteria.CriteriaPlaylistFilterSet import CriteriaPlaylistFilterSet
+from bodzify_api.filtering.set.playlist.children.manual.ManualPlaylistFilterSet import ManualPlaylistFilterSet
 from bodzify_api.filtering.set.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
 from bodzify_api.test.utils.AppTestCase import AppTestCase
 
@@ -68,8 +70,14 @@ class TestFilterInheritance(AppTestCase):
     def test_criteria_filter_inheritance(self):
         self.assert_datetime_inherited_filters(CriteriaFilterSet)
 
-    def test_playlist_filter_inheritance(self):
+    def test_base_playlist_filter_inheritance(self):
         self.assert_datetime_inherited_filters(PlaylistFilterSet)
+
+    def test_manual_playlist_filter_inheritance(self):
+        self.assert_datetime_inherited_filters(ManualPlaylistFilterSet)
+
+    def test_criteria_playlist_filter_inheritance(self):
+        self.assert_datetime_inherited_filters(CriteriaPlaylistFilterSet)
 
     def test_play_filter_inheritance(self):
         self.assert_datetime_inherited_filters(PlayFilterSet)
