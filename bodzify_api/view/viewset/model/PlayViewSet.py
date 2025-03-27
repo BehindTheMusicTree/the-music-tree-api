@@ -1,9 +1,7 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework.response import Response
 
-from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import (
-    PrivateUniqueResourceFilterSet
-)
+from bodzify_api.filtering.set.play.PlayFilterSet import PlayFilterSet
 from bodzify_api.model.play.Play import Play
 from bodzify_api.serializer.model.play.input.schema.post import PlayPostSerializer
 from bodzify_api.serializer.model.play.output.detailed import PlayDetailedSerializer
@@ -13,7 +11,7 @@ from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 class PlayViewSet(AppModelViewSet[Play]):
     def __init__(self, **kwargs):
         super().__init__(model_class=Play,
-                         filterset_class=PrivateUniqueResourceFilterSet,
+                         filterset_class=PlayFilterSet,
                          simple_serializer_class=PlayDetailedSerializer,
                          detailed_serializer_class=PlayDetailedSerializer,
                          create_serializer_class=PlayPostSerializer,
