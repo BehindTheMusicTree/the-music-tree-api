@@ -17,6 +17,7 @@ class UserViewSet(AppModelViewSet[User]):
                          simple_serializer_class=UserDetailedSerializer,
                          detailed_serializer_class=UserDetailedSerializer,
                          is_private_resource=False,
+                         is_pk_uuid=False,
                          **kwargs)
 
     def list(self, *args: Any, **kwargs: Any) -> Response:
