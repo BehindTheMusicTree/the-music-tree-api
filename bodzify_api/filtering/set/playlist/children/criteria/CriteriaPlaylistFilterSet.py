@@ -2,7 +2,6 @@
 from bodzify_api.filtering.filter.char.CriteriaNameFilter import CriteriaNameFilter
 from bodzify_api.filtering.filter.foreign_key.ForeignKeyFilter import ForeignKeyFilter
 from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import PrivateUniqueResourceFilterSet
-from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.criteria.Fields import Fields as ModelFields
 
 from .Fields import Fields
@@ -15,5 +14,4 @@ class CriteriaPlaylistFilterSet(PrivateUniqueResourceFilterSet):
     parent = ForeignKeyFilter()
 
     class Meta:
-        model = CriteriaPlaylist
-        fields = [Fields.NAME_PUBLIC, Fields.PARENT, *PrivateUniqueResourceFilterSet.get_date_fields()]
+        abstract = True
