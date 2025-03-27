@@ -86,7 +86,6 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
     def _handle_list(self) -> Response:
         queryset = self.get_queryset()
-        # Apply filters using filter_queryset method which invokes the filter backends
         queryset = self.filter_queryset(queryset)
         page = self.paginate_queryset(queryset)
 
@@ -174,9 +173,6 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         return queryset.order_by(*ordering_fields)
 
     def filter_queryset(self, queryset):
-        """
-        Apply filtering to the queryset using configured filter backends.
-        """
         for backend in list(self.filter_backends):
             queryset = backend().filter_queryset(self.request, queryset, self)
 
