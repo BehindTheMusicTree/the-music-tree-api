@@ -12,6 +12,7 @@ from bodzify_api.exception.validation.app.AppValidationException import AppValid
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.filtering.set.criteria.Fields import Fields as FilterFields
 from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.criteria.Fields import Fields
 from bodzify_api.serializer.model.criteria.input.post import CriteriaPostSerializer
 from bodzify_api.serializer.model.criteria.input.put import CriteriaPutSerializer
 from bodzify_api.serializer.model.criteria.output.detailed import CriteriaDetailedSerializer
@@ -123,12 +124,12 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
         def validate_node(node):
             if not isinstance(node, dict):
                 raise ValueError("Each node must be a dictionary")
-            if "name" not in node:
-                raise ValueError("Each node must have a 'name' field")
-            if "children" in node and not isinstance(node["children"], list):
-                raise ValueError("Children must be an array")
-            if "children" in node:
-                for child in node["children"]:
+            if Fields.NAME_PUBLIC not in node:
+                raise ValueError(f"Each node must have a '{Fields.NAME_PUBLIC}' field")
+            if Fields.CHILDREN in node and not isinstance(node[Fields.CHILDREN], list):
+                raise ValueError(f"{Fields.CHILDREN} must be an array")
+            if Fields.CHILDREN in node:
+                for child in node[Fields.CHILDREN]:
                     validate_node(child)
 
         try:
