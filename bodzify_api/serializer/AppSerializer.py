@@ -225,6 +225,8 @@ class AppSerializer(serializers.Serializer, Generic[T]):
             raise AppValidationException(field_name=str(e),
                                          message=str(e),
                                          field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID)
+        except AppValidationException as e:
+            raise e
         except ValidationError as e:
             raise AppValidationException(field_name=str(e),
                                          message=str(e),
