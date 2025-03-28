@@ -1,4 +1,4 @@
-from typing import Type, cast, Any
+from typing import Type, cast
 
 from drf_spectacular.types import OpenApiTypes  # type: ignore
 from drf_spectacular.utils import OpenApiParameter, extend_schema  # type: ignore
@@ -88,9 +88,7 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
           ]
         }
         """
-        queryset = self.get_queryset()
-        manager = cast(Any, queryset)
-        tree = manager.build_criteria_tree(request.user)
+        tree = self.model_class.objects.build_criteria_tree(request.user)
         return Response(tree, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'], url_path='tree/import')
@@ -122,9 +120,7 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
             )
 
         try:
-            queryset = self.get_queryset()
-            manager = cast(Any, queryset)
-            manager.import_criteria_tree(request.user, request.data)
+            self.model_class.objects.import_criteria_tree(request.user, request.data)
         except ValueError as e:
             raise AppValidationException(
                 field_name="data",
