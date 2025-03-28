@@ -12,9 +12,9 @@ from bodzify_api.exception.validation.app.AppValidationException import AppValid
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.filtering.set.criteria.Fields import Fields as FilterFields
 from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.Fields import Fields
 from bodzify_api.serializer.model.criteria.input.post import CriteriaPostSerializer
 from bodzify_api.serializer.model.criteria.input.put import CriteriaPutSerializer
+from bodzify_api.serializer.model.criteria.input.tree_import import CriteriaTreeImportSerializer
 from bodzify_api.serializer.model.criteria.output.detailed import CriteriaDetailedSerializer
 from bodzify_api.serializer.model.criteria.output.simple import CriteriaSimpleSerializer
 
@@ -35,7 +35,7 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
 
     def get_serializer_class_for_non_standard_action(self) -> Type[Serializer]:
         if self.action == 'import_tree':
-            return CriteriaSimpleSerializer
+            return CriteriaTreeImportSerializer
         raise NotImplementedError(f"Action {self.action} not defined in viewset")
 
     @extend_schema(request=CriteriaPostSerializer, responses=CriteriaDetailedSerializer)
@@ -109,33 +109,10 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
           ]
         }
         """
-        data = request.data
-        if not isinstance(data, list):
-            raise AppValidationException(field_name="data",
-                                         message="Input must be an array of criteria trees",
-                                         field_validation_error_code=FieldValidationErrorCode.REQUIRED)
-
-        if not data:
-            raise AppValidationException(field_name="data",
-                                         message="At least one criteria must be provided",
-                                         field_validation_error_code=FieldValidationErrorCode.REQUIRED)
-
-        # Validate each node in the tree
-        def validate_node(node):
-            if not isinstance(node, dict):
-                raise ValueError("Each node must be a dictionary")
-            if Fields.NAME_PUBLIC not in node:
-                raise ValueError(f"Each node must have a '{Fields.NAME_PUBLIC}' field")
-            if Fields.CHILDREN in node and not isinstance(node[Fields.CHILDREN], list):
-                raise ValueError(f"{Fields.CHILDREN} must be an array")
-            if Fields.CHILDREN in node:
-                for child in node[Fields.CHILDREN]:
-                    validate_node(child)
-
         try:
-            for node in data:
-                validate_node(node)
-            self.model_class.objects.import_criteria_tree(request.user, data)
+            serializer = CriteriaTreeImportSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.model_class.objects.import_criteria_tree(request.user, serializer.validated_data['data'])
         except ValueError as e:
             raise AppValidationException(
                 field_name="data",
