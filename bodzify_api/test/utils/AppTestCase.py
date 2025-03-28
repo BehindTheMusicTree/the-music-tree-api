@@ -27,6 +27,7 @@ T = TypeVar('T', bound=models.Model)
 class AppTestCase(TestCase, Generic[T]):
     model_class: Type[T]  # Must be defined in child classes
     saved_object: T  # Must be defined in child classes
+    is_from_lib_track_test_case: bool = False
 
     api_client: AppApiClient
     saved_lib_track_metadata_with_raw_rating: dict
@@ -144,8 +145,8 @@ class AppTestCase(TestCase, Generic[T]):
 
     # Defined here and not in LibTrackTestCase because other views needs sometimes to put a track for testing purposes
     # (testing Genre deletion for example)
-    def _put_lib_track(self, uuid, is_from_lib_track_test_case: bool = True, **kwargs):
-        if is_from_lib_track_test_case:
+    def _put_lib_track(self, uuid, **kwargs):
+        if self.is_from_lib_track_test_case:
             return self.api_client.put(
                 path=reverse('library-track-detail', kwargs={'pk': uuid}),
                 data=kwargs, handle_response=self._set_results)
