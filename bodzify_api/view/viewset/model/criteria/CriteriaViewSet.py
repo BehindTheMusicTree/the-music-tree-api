@@ -1,9 +1,16 @@
+
+
+from typing import Type
+
 from drf_spectacular.types import OpenApiTypes  # type: ignore
 from drf_spectacular.utils import OpenApiParameter, extend_schema  # type: ignore
 from rest_framework import status  # type: ignore
 from rest_framework.decorators import action  # type: ignore
 from rest_framework.response import Response  # type: ignore
+from rest_framework.serializers import Serializer
 
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.filtering.set.criteria.Fields import Fields as FilterFields
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.model.criteria.input.post import CriteriaPostSerializer
@@ -25,6 +32,11 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
                          create_serializer_class=CriteriaPostSerializer,
                          update_serializer_class=CriteriaPutSerializer,
                          **kwargs)
+
+    def get_serializer_class_for_non_standard_action(self) -> Type[Serializer]:
+        if self.action == 'import_tree':
+            return CriteriaSimpleSerializer
+        raise NotImplementedError(f"Action {self.action} not defined in viewset")
 
     @extend_schema(request=CriteriaPostSerializer, responses=CriteriaDetailedSerializer)
     def create(self, request, *args, **kwargs):
@@ -111,3 +123,74 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
         tree = build_tree(None)
 
         return Response(tree, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'], url_path='tree/import')
+    def import_tree(self, request):
+        """
+        Imports a tree structure of criteria, replacing all existing criteria of the current type.
+        Returns a paginated list of created criteria.
+        The input should be an array of criteria trees, where each tree follows the format:
+        {
+          "name": "Criteria name",
+          "children": [
+            {
+              "name": "Child criteria name",
+              "children": []
+            }
+          ]
+        }
+        """
+        if not isinstance(request.data, list):
+            raise AppValidationException(field_name="data",
+                                         message="Input must be an array of criteria trees",
+                                         field_validation_error_code=FieldValidationErrorCode.REQUIRED)
+
+        if not request.data:
+            raise AppValidationException(
+                field_name="data",
+                message="At least one criteria must be provided",
+                field_validation_error_code=FieldValidationErrorCode.REQUIRED
+            )
+
+        # Delete all existing criteria of the current type
+        self.get_queryset().delete()
+
+        # Recursive function to create criteria and their children
+        def create_criteria_tree(nodes, parent=None):
+            for node in nodes:
+                if not isinstance(node, dict) or "name" not in node:
+                    raise AppValidationException(field_name="data",
+                                                 message="Each node must have a 'name' field",
+                                                 field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID)
+
+                # Create the criteria
+                criteria = self.model_class(
+                    _name=node["name"],
+                    parent=parent,
+                    user=request.user
+                )
+                # Use the specific model class's save method
+                self.model_class.objects.model.save(criteria)
+
+                # Create children if any
+                if "children" in node and node["children"]:
+                    if not isinstance(node["children"], list):
+                        raise AppValidationException(
+                            field_name="data",
+                            message="Children must be an array",
+                            field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
+                        )
+                    create_criteria_tree(node["children"], criteria)
+
+        # Create all criteria trees
+        create_criteria_tree(request.data)
+
+        # Get all created criteria
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

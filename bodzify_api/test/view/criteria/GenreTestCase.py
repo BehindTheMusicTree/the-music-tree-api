@@ -3,7 +3,6 @@ from uuid import UUID
 from django.urls import reverse
 
 from bodzify_api.model.criteria.children.genre.Genre import Genre
-from bodzify_api.serializer.model.criteria.output.Fields import Fields
 from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 
@@ -49,3 +48,9 @@ class GenreTestCase(AppTestCase[Genre]):
 
     def _delete_genre(self, uuid: UUID):
         return self.api_client.delete(path=reverse(self.detail_endpoint, kwargs={'pk': uuid}))
+
+    def _post_genres_tree_import(self, data):
+        return self.api_client.post(path=reverse(self.list_endpoint) + 'tree/import/',
+                                    data=data,
+                                    content_type='application/json',
+                                    handle_response=self._set_results_without_model_class)
