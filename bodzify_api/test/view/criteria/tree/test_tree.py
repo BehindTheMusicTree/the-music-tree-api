@@ -82,3 +82,20 @@ class TestCase(GenreTestCase):
         assert len(jazz_tree["children"]) == 1
         assert jazz_tree["children"][0]["name"] == genre_blues.name
         assert jazz_tree["children"][0]["children"] == []
+
+    def test_with_query_param_not_related_to_pagination_then_400(self):
+        response = self._list_genres(tree=True, limit=100)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+    def test_with_query_param_related_to_pagination_then_results_are_paginated_by_roots(self):
+        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
+        genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
+        genre_metal = self.model_fixture_factory.create_genre(name="Metal", parent=genre_rock)
+        genre_jazz = self.model_fixture_factory.create_genre(name="Jazz")
+        genre_blues = self.model_fixture_factory.create_genre(name="Blues", parent=genre_jazz)
+        genre_pop = self.model_fixture_factory.create_genre(name="Pop")
+
+        response = self._list_genres(page=2, page_size=1)
+        assert response.status_code == status.HTTP_200_OK
+        assert len(self.results) == 1
+        assert self.results[0]["name"] == genre_metal.name
