@@ -119,7 +119,7 @@ class Criteria(LibTrackMixin):
             elif 'unique_name_per_user' in error_message:
                 raise AppValidationException(
                     field_name=Fields.NAME_PUBLIC,
-                    message=_('A criteria with this name already exists for this user'),
+                    message=_(f'The name "{self.name}" is already used'),
                     field_validation_error_code=FieldValidationErrorCode.NAME_DUPLICATE
                 )
             # Let other database integrity errors propagate to be handled as system errors
