@@ -161,6 +161,9 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             # Fall back to the standard DRF lookup if direct lookup fails
             return super().get_object()
 
+    def get_serializer_class_for_non_standard_action(self) -> Type[Serializer]:
+        raise NotImplementedError(f"Action {self.action} not defined in viewset")
+
     def get_serializer_class(self) -> Type[Serializer]:
         if self.action == 'retrieve':
             return self._require_serializer(SerializerType.DETAILED)
@@ -168,7 +171,8 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             return self._require_serializer(SerializerType.CREATE)
         elif self.action in ['update', 'partial_update']:
             return self._require_serializer(SerializerType.UPDATE)
-        raise NotImplementedError(f"Action {self.action} not defined in viewset")
+        else:
+            return self.get_serializer_class_for_non_standard_action()
 
     def get_queryset(self):
         request: Request = cast(Request, self.request)
