@@ -67,6 +67,12 @@ class AppTestCase(TestCase, Generic[T]):
         else:
             raise NotImplementedError("Test case must define model_class")
 
+    def _set_results_without_model_class(self, response):
+        if response.status_code in [status.HTTP_200_OK, status.HTTP_201_CREATED]:
+            self._set_results_attributes(response)
+        else:
+            self._set_error_response_result(response)
+
     def _set_results(self, response):
         if response.status_code in [status.HTTP_200_OK, status.HTTP_201_CREATED]:
             if response.status_code is not status.HTTP_204_NO_CONTENT:
