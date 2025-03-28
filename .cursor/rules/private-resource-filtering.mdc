@@ -1,0 +1,7 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+Most os private resource filtering must be executed with the user, taking advantage of table indexing.

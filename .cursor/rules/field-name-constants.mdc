@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+
+# Your rule content
+
+Never use string field name but constants which are typically located in a Fields.py file in the same dir as the object it us desceibing.
