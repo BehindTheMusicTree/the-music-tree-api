@@ -1,7 +1,8 @@
-from typing import Type, cast
+from typing import Type
 
 from drf_spectacular.types import OpenApiTypes  # type: ignore
 from drf_spectacular.utils import OpenApiParameter, extend_schema  # type: ignore
+from bodzify_api.serializer.SerializerType import SerializerType
 from rest_framework import status  # type: ignore
 from rest_framework.decorators import action  # type: ignore
 from rest_framework.response import Response  # type: ignore
@@ -107,20 +108,35 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
           ]
         }
         """
-        if not isinstance(request.data, list):
+        data = request.data
+        if not isinstance(data, list):
             raise AppValidationException(field_name="data",
                                          message="Input must be an array of criteria trees",
                                          field_validation_error_code=FieldValidationErrorCode.REQUIRED)
 
-        if not request.data:
+        if not data:
             raise AppValidationException(
                 field_name="data",
                 message="At least one criteria must be provided",
                 field_validation_error_code=FieldValidationErrorCode.REQUIRED
             )
 
+        # Validate each node in the tree
+        def validate_node(node):
+            if not isinstance(node, dict):
+                raise ValueError("Each node must be a dictionary")
+            if "name" not in node:
+                raise ValueError("Each node must have a 'name' field")
+            if "children" in node and not isinstance(node["children"], list):
+                raise ValueError("Children must be an array")
+            if "children" in node:
+                for child in node["children"]:
+                    validate_node(child)
+
         try:
-            self.model_class.objects.import_criteria_tree(request.user, request.data)
+            for node in data:
+                validate_node(node)
+            self.model_class.objects.import_criteria_tree(request.user, data)
         except ValueError as e:
             raise AppValidationException(
                 field_name="data",
@@ -128,8 +144,6 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
                 field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
             )
 
-        # Get all created criteria
+        # Get all created criteria with pagination and 201 status code
         queryset = self.get_queryset()
-        serializer_class = cast(Type[Serializer], self.simple_serializer_class)
-        serializer = serializer_class(instance=queryset, many=True)
-        return self._get_post_created_response(serializer)
+        return self._get_paginated_list_response(queryset, SerializerType.SIMPLE, status.HTTP_201_CREATED)
