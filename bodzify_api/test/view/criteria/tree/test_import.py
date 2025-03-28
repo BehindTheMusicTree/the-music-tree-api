@@ -1,11 +1,15 @@
 from typing import cast
 
 from rest_framework import status
+from django.test import TestCase
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.serializer.model.criteria.output.Fields import Fields as GenreFields
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
+from bodzify_api.model.criteria.Criteria import Criteria
+from bodzify_api.model.criteria.Fields import Fields
+from bodzify_api.serializer.model.criteria.input.tree_import import CriteriaTreeImportSerializer
 
 
 class TestCase(GenreTestCase):
@@ -50,22 +54,21 @@ class TestCase(GenreTestCase):
         assert self.results_overall_total == 3  # Root + 2 children
         assert len(self.results) == 3
 
-        # Verify all genres are returned
-        result_names = [result[GenreFields.NAME] for result in self.results]
-        assert "Rock" in result_names
-        assert "Punk" in result_names
-        assert "Metal" in result_names
+        genres = Genre.objects.filter(user=self.test_user1)
+        genre_names = [genre.name for genre in genres]
+        assert "Rock" in genre_names
+        assert "Punk" in genre_names
+        assert "Metal" in genre_names
 
-        # Verify parent relationships
-        rock = next(result for result in self.results if result[GenreFields.NAME] == "Rock")
-        assert rock[GenreFields.PARENT] is None
+        # Verify parent relationships in DB
+        rock = genres.get(name="Rock")
+        assert rock.parent is None
 
-        punk = next(result for result in self.results if result[GenreFields.NAME] == "Punk")
-        metal = next(result for result in self.results if result[GenreFields.NAME] == "Metal")
-        assert punk[GenreFields.PARENT] == rock[GenreFields.UUID]
-        assert metal[GenreFields.PARENT] == rock[GenreFields.UUID]
+        punk = genres.get(name="Punk")
+        metal = genres.get(name="Metal")
+        assert punk.parent == rock
+        assert metal.parent == rock
 
-        # Verify database state
         genres = Genre.objects.filter(user=self.test_user1)
         assert genres.count() == 3
 
@@ -317,3 +320,125 @@ class TestCase(GenreTestCase):
         genre = cast(Genre, genres.first())
         assert genre.uuid == initial_genre_id
         assert genre.name == "Initial Rock"
+
+
+class TestImport(TestCase):
+    def setUp(self):
+        self.user = self.create_user()
+        self.serializer = CriteriaTreeImportSerializer()
+
+    def test_validate_empty_list(self):
+        data = []
+        serializer = CriteriaTreeImportSerializer(data=data)
+        assert not serializer.is_valid()
+        assert serializer.errors['data'][0] == "At least one criteria must be provided"
+
+    def test_validate_invalid_node(self):
+        data = [{"invalid": "node"}]
+        serializer = CriteriaTreeImportSerializer(data=data)
+        assert not serializer.is_valid()
+        assert serializer.errors['data'][0]['name'][0] == "This field is required."
+
+    def test_validate_valid_tree(self):
+        data = [
+            {
+                "name": "Root",
+                "children": [
+                    {
+                        "name": "Child 1",
+                        "children": []
+                    },
+                    {
+                        "name": "Child 2",
+                        "children": [
+                            {
+                                "name": "Grandchild",
+                                "children": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+        serializer = CriteriaTreeImportSerializer(data=data)
+        assert serializer.is_valid()
+        validated_data = serializer.validated_data
+
+        # Create the tree in the database
+        Criteria.objects.import_criteria_tree(self.user, validated_data['data'])
+
+        # Verify the tree structure in the database
+        root = Criteria.objects.get(name="Root", user=self.user)
+        assert root.name == "Root"
+
+        children = root.children.all()
+        assert children.count() == 2
+
+        child1 = children.get(name="Child 1")
+        assert child1.children.count() == 0
+
+        child2 = children.get(name="Child 2")
+        assert child2.children.count() == 1
+
+        grandchild = child2.children.get(name="Grandchild")
+        assert grandchild.children.count() == 0
+
+    def test_validate_invalid_children(self):
+        data = [
+            {
+                "name": "Root",
+                "children": "not a list"
+            }
+        ]
+        serializer = CriteriaTreeImportSerializer(data=data)
+        assert not serializer.is_valid()
+        assert serializer.errors['data'][0]['children'][0] == f"{Fields.CHILDREN} must be an array"
+
+    def test_import_tree(self):
+        # Test data
+        data = [
+            {
+                "name": "Rock",
+                "children": [
+                    {
+                        "name": "Punk",
+                        "children": []
+                    },
+                    {
+                        "name": "Metal",
+                        "children": []
+                    }
+                ]
+            }
+        ]
+
+        # Make the request
+        response = self.client.post(
+            f"/api/criteria/{self.model_class.__name__.lower()}/tree/import/",
+            data=data,
+            format="json",
+            HTTP_AUTHORIZATION=f"Bearer {self.token}"
+        )
+
+        # Verify response
+        assert response.status_code == 201
+        self.results = response.json()["results"]
+
+        # Verify all genres are returned
+        result_names = [result[Fields.NAME_PUBLIC] for result in self.results]
+        assert "Rock" in result_names
+        assert "Punk" in result_names
+        assert "Metal" in result_names
+
+        # Verify database structure
+        root = Criteria.objects.get(name="Rock", user=self.user)
+        assert root.name == "Rock"
+
+        children = root.children.all()
+        assert children.count() == 2
+
+        punk = children.get(name="Punk")
+        assert punk.children.count() == 0
+
+        metal = children.get(name="Metal")
+        assert metal.children.count() == 0
