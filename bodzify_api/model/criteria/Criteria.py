@@ -35,13 +35,12 @@ class Criteria(LibTrackMixin):
                                                               through_fields=(CriteriaLineageRelFields.DESCENDANT,
                                                                               CriteriaLineageRelFields.ASCENDANT),
                                                               symmetrical=False,)  # type: ignore
-    parent: 'Criteria | None' = PrivateForeignKey('self',
-                                                  on_delete=models.SET_NULL,
-                                                  null=True,
-                                                  related_name=Fields.CHILDREN)  # type: ignore
-    root: 'Criteria' = PrivateForeignKey('self',
-                                         on_delete=models.DO_NOTHING,
-                                         related_name=Fields.DESCENDANTS)  # type: ignore
+    parent: 'Criteria | None' = PrivateForeignKey(
+        'self', on_delete=models.SET_NULL, null=True, related_name=Fields.CHILDREN)  # type: ignore
+
+    root: 'Criteria' = PrivateForeignKey(
+        'self', on_delete=models.DO_NOTHING, related_name=Fields.DESCENDANTS)  # type: ignore
+
     type = AppForeignKey(CriteriaType, on_delete=models.CASCADE)
 
     if TYPE_CHECKING:
