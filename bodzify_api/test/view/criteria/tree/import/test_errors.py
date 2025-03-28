@@ -27,7 +27,7 @@ class TestErrors(GenreTestCase):
         tree_data = [{"name": "New Rock", "children": []}]
         response = self._post_genres_tree_import(tree_data)
 
-        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert response.status_code == status.HTTP_201_CREATED
 
         # Verify old genre is gone and new one exists
         genres = Genre.objects.filter(user=self.test_user1)
