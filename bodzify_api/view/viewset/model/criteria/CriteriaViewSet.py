@@ -115,11 +115,9 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
                                          field_validation_error_code=FieldValidationErrorCode.REQUIRED)
 
         if not data:
-            raise AppValidationException(
-                field_name="data",
-                message="At least one criteria must be provided",
-                field_validation_error_code=FieldValidationErrorCode.REQUIRED
-            )
+            raise AppValidationException(field_name="data",
+                                         message="At least one criteria must be provided",
+                                         field_validation_error_code=FieldValidationErrorCode.REQUIRED)
 
         # Validate each node in the tree
         def validate_node(node):
