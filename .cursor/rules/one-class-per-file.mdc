@@ -1,0 +1,7 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+- Only one class per file 
+- if a class file name the file in camelcase following the class name (except for serializer classes whose filename must be concise in camelcase)
