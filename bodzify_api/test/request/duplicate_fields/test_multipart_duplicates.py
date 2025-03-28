@@ -1,4 +1,3 @@
-
 from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
@@ -30,7 +29,7 @@ class TestMultipartDuplicateFields(LibTrackTestCase):
         data = {
             LibTrackFields.TITLE: ['Jo', 'steeve']  # Multiple values will be converted to separate form fields
         }
-        response = self._put_lib_track(lib_track.uuid, **data)
+        response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         self._set_error_response_result(response)
