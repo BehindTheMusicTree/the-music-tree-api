@@ -5,7 +5,7 @@ from bodzify_api.serializer.model.criteria.input.tree_node import CriteriaTreeNo
 
 
 class CriteriaTreeImportSerializer(AppSerializer):
-    data = ListField(child=DictField(), allow_empty=False)
+    data: ListField = ListField(child=DictField(), allow_empty=False)
 
     def to_internal_value(self, data):
         if isinstance(data, list):
