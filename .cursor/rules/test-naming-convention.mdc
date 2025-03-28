@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+test functions must be named test_{action}_{optionally initial conditions or relevant properties}_then_{expected results or status error code if error}
