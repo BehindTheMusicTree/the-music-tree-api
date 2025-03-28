@@ -3,5 +3,91 @@ description:
 globs: 
 alwaysApply: true
 ---
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Private Resource Filtering
 
-Most os private resource filtering must be executed with the user, taking advantage of table indexing.
+When filtering private resources, always include the user in the query to ensure proper access control and take advantage of database indexing.
+
+## Good Examples
+
+```python
+# Good - Using user in filter
+def get_user_genres(self, user: User) -> QuerySet:
+    return Genre.objects.filter(user=user)
+
+# Good - Using user in complex query
+def get_user_genres_by_name(self, user: User, name: str) -> QuerySet:
+    return Genre.objects.filter(
+        user=user,
+        name__icontains=name
+    ).select_related('parent')
+
+# Good - Using user in delete
+def delete_user_genre(self, user: User, genre_id: UUID) -> None:
+    Genre.objects.filter(user=user, id=genre_id).delete()
+```
+
+## Bad Examples
+
+```python
+# Bad - Missing user filter
+def get_genre(self, genre_id: UUID) -> Genre:
+    return Genre.objects.get(id=genre_id)  # Security risk!
+
+# Bad - User filter after other operations
+def get_genre(self, user: User, genre_id: UUID) -> Genre:
+    genre = Genre.objects.get(id=genre_id)  # Inefficient!
+    if genre.user != user:
+        raise PermissionError()
+    return genre
+
+# Bad - Using raw SQL without user filter
+def get_genres(self) -> QuerySet:
+    return Genre.objects.raw("SELECT * FROM genre")  # Security risk!
+```
+
+## Guidelines
+
+1. Always include `user` in the initial filter
+2. Use Django's ORM instead of raw SQL
+3. Take advantage of database indexes by:
+   - Putting `user` first in filter conditions
+   - Using indexed fields in filters
+   - Using `select_related` for foreign keys
+4. Never trust client-side filtering
+5. Use Django's built-in permission system when possible
+
+## Benefits
+
+- Ensures proper access control
+- Improves query performance through indexing
+- Prevents unauthorized access
+- Makes code more maintainable
+- Follows security best practices
+- Enables efficient database queries
+
+## Database Indexing
+
+Example of proper indexing:
+```python
+# Fields.py
+class Fields:
+    USER: str = "user"
+    NAME: str = "name"
+    PARENT: str = "parent"
+
+class Genre(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
+    name = models.CharField(max_length=100)
+    parent = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=[Fields.USER, Fields.NAME]),
+            models.Index(fields=[Fields.USER, Fields.PARENT]),
+        ]
+```

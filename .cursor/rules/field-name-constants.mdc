@@ -3,7 +3,79 @@ description:
 globs: 
 alwaysApply: true
 ---
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Field Name Constants
 
-# Your rule content
+Never use string literals for field names. Instead, use constants defined in a `Fields.py` file located in the same directory as the model/serializer it describes.
 
-Never use string field name but constants which are typically located in a Fields.py file in the same dir as the object it us desceibing.
+Good examples:
+```python
+# Fields.py
+from typing import TypedDict
+
+class Fields:
+    NAME: str = "name"
+    UUID: str = "uuid"
+    PARENT: str = "parent"
+
+class GenreFields(TypedDict):
+    name: str
+    uuid: str
+    parent: str | None
+
+# Usage in serializer
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genre
+        fields = [Fields.NAME, Fields.UUID, Fields.PARENT]
+
+# Usage in model
+class Genre(models.Model):
+    name = models.CharField(max_length=100)
+    uuid = models.UUIDField()
+    parent = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
+
+    def __str__(self) -> str:
+        return self.name
+
+# Usage in view
+def get_genre(self, request: Request) -> Response:
+    genre = Genre.objects.get(uuid=request.data[Fields.UUID])
+    return Response({Fields.NAME: genre.name})
+```
+
+Bad examples:
+```python
+# Using string literals
+assert result["name"] == "Rock"  # Bad
+assert result["parent"] is None  # Bad
+
+# Using wrong location
+from other_module.Fields import Fields  # Bad - should be in same directory
+
+# Not using type hints
+class Fields:  # Bad - missing type hints
+    NAME = "name"
+```
+
+Guidelines:
+1. Create a `Fields.py` file in the same directory as your model/serializer
+2. Define a `Fields` class containing all field name constants with type hints
+3. Use TypedDict for complex nested structures
+4. Use these constants instead of string literals
+5. Keep field names consistent between model and serializer
+6. Use descriptive constant names that match the field purpose
+7. Use UPPER_CASE for constant names
+
+Benefits:
+- Prevents typos in field names
+- Enables IDE autocompletion and type checking
+- Makes refactoring easier
+- Improves code maintainability
+- Makes field names more discoverable
+- Provides better type safety
+- Enables better static analysis

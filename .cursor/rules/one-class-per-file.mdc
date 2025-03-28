@@ -3,5 +3,74 @@ description:
 globs: 
 alwaysApply: true
 ---
-- Only one class per file 
-- if a class file name the file in camelcase following the class name (except for serializer classes whose filename must be concise in camelcase)
+# One Class Per File
+
+Each Python file should contain exactly one class, and the file name should follow the class name convention.
+
+## File Naming Rules
+
+1. For regular classes:
+   - Use PascalCase (camelCase with first letter capitalized)
+   - File name must match the class name exactly
+   - Example: `Genre.py` for `class Genre`
+
+2. For serializer classes:
+   - Use concise camelCase
+   - File name should be shorter than the class name
+   - Example: `genre.py` for `class GenreSerializer`
+
+## Examples
+
+Good examples:
+```
+# Genre.py
+class Genre(models.Model):
+    name = models.CharField(max_length=100)
+    uuid = models.UUIDField()
+
+# genre.py
+class GenreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Genre
+        fields = [Fields.NAME, Fields.UUID]
+
+# GenreTree.py
+class GenreTree:
+    def __init__(self, root: Genre):
+        self.root = root
+```
+
+Bad examples:
+```
+# genre_model.py (Bad - should be Genre.py)
+class Genre(models.Model):
+    pass
+
+# GenreSerializer.py (Bad - should be genre.py)
+class GenreSerializer(serializers.ModelSerializer):
+    pass
+
+# models.py (Bad - contains multiple classes)
+class Genre(models.Model):
+    pass
+
+class Artist(models.Model):
+    pass
+```
+
+## Guidelines
+
+1. Each file must contain exactly one class
+2. File name must match the class name convention
+3. Keep related classes in the same directory
+4. Use `__init__.py` to expose classes
+5. Follow the naming convention consistently across the project
+
+## Benefits
+
+- Improves code organization
+- Makes files easier to find
+- Simplifies version control
+- Makes refactoring easier
+- Improves code readability
+- Makes imports clearer

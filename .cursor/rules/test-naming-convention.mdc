@@ -3,5 +3,38 @@ description:
 globs: 
 alwaysApply: true
 ---
-- test functions must be named test_{action}_{optionally initial conditions or relevant properties}_then_{expected results or status error code if error}. 
-- It is ok if the name is long, the test goal must be understood with only the name
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Test Naming Convention
+
+This rule applies to pytest-style test functions. Test function names must follow the pattern: `test_{action}_{conditions}_then_{expected_result}`
+
+Components:
+- `action`: The operation being tested (e.g., import, create, update, delete)
+- `conditions`: Optional context or preconditions that affect the test
+- `expected_result`: The expected outcome or error code
+
+Examples:
+- `test_import_empty_tree_then_400_bad_request`
+- `test_create_genre_with_duplicate_name_then_400_bad_request`
+- `test_update_genre_with_invalid_parent_then_400_bad_request`
+- `test_delete_genre_with_children_then_400_bad_request`
+
+Guidelines:
+1. Use descriptive names that explain the test's purpose without reading the code
+2. Include relevant conditions that make the test case unique
+3. For error cases, specify the expected HTTP status code
+4. Use underscores to separate words
+5. Keep the name concise but informative
+6. Avoid generic terms like "test", "check", "verify" in the conditions part
+7. Test class names should be descriptive and follow the pattern `Test{Feature}` (e.g., `TestGenreImport`)
+
+Bad examples:
+- `test_import` (too generic)
+- `test_import_tree` (missing conditions and expected result)
+- `test_import_with_children` (missing expected result)
+- `test_import_fails` (missing specific error condition)
+- `TestStuff` (too generic class name)
