@@ -1,5 +1,6 @@
 from rest_framework import status
 
+from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
@@ -8,15 +9,15 @@ class TestMultiple(GenreTestCase):
     def test_multiple_roots_then_multiple_trees(self):
         tree_data = [
             {
-                "name": "Rock",
-                "children": [
-                    {"name": "Punk", "children": []}
+                CriteriaFields.NAME_PUBLIC: "Rock",
+                CriteriaFields.CHILDREN: [
+                    {CriteriaFields.NAME_PUBLIC: "Punk", CriteriaFields.CHILDREN: []}
                 ]
             },
             {
-                "name": "Jazz",
-                "children": [
-                    {"name": "Blues", "children": []}
+                CriteriaFields.NAME_PUBLIC: "Jazz",
+                CriteriaFields.CHILDREN: [
+                    {CriteriaFields.NAME_PUBLIC: "Blues", CriteriaFields.CHILDREN: []}
                 ]
             }
         ]
@@ -47,10 +48,10 @@ class TestMultiple(GenreTestCase):
         tree_data = []
         for i in range(5):
             tree_data.append({
-                "name": f"Root {i}",
-                "children": [
-                    {"name": f"Child {i}-1", "children": []},
-                    {"name": f"Child {i}-2", "children": []}
+                CriteriaFields.NAME_PUBLIC: f"Root {i}",
+                CriteriaFields.CHILDREN: [
+                    {CriteriaFields.NAME_PUBLIC: f"Child {i}-1", CriteriaFields.CHILDREN: []},
+                    {CriteriaFields.NAME_PUBLIC: f"Child {i}-2", CriteriaFields.CHILDREN: []}
                 ]
             })
 
