@@ -48,7 +48,7 @@ class AppApiClient(APIClient):
         Returns:
             Prepared data ready for the request
         """
-        if not data:
+        if data is None:
             # Initialize empty data for json/multipart to ensure proper content type
             return {} if format in ['json', 'multipart'] else None
 
