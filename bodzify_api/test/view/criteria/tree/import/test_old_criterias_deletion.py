@@ -17,7 +17,6 @@ class TestOldCriteriasDeletion(GenreTestCase):
         self.model_fixture_factory.create_lib_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
-        # Import new tree
         tree_data = [{"name": "New Rock", "children": []}]
         response = self._post_genres_tree_import(tree_data)
 
