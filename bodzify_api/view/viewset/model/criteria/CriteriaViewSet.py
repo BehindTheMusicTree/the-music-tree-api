@@ -1,6 +1,4 @@
-
-
-from typing import Type, cast
+from typing import Type, cast, Any
 
 from drf_spectacular.types import OpenApiTypes  # type: ignore
 from drf_spectacular.utils import OpenApiParameter, extend_schema  # type: ignore
@@ -90,38 +88,9 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
           ]
         }
         """
-        # Get all criteria for the current user
         queryset = self.get_queryset()
-
-        # Build a dictionary of criteria by parent ID for efficient lookup
-        criteria_by_parent = {}
-        for criteria in queryset:
-            # Handle both UUID and ID based parent references
-            parent_id = criteria.parent.uuid if hasattr(criteria.parent, 'uuid') else criteria.parent_id
-            if parent_id not in criteria_by_parent:
-                criteria_by_parent[parent_id] = []
-            criteria_by_parent[parent_id].append(criteria)
-
-        # Recursive function to build the tree
-        def build_tree(parent_id):
-            if parent_id not in criteria_by_parent:
-                return []
-
-            result = []
-            for criteria in criteria_by_parent[parent_id]:
-                # Get the appropriate ID for child references
-                child_id = criteria.uuid if hasattr(criteria, 'uuid') else criteria.id
-                node = {
-                    "name": criteria.name,
-                    "children": build_tree(child_id)
-                }
-                result.append(node)
-
-            return result
-
-        # Start with root criteria (parent_id is None)
-        tree = build_tree(None)
-
+        manager = cast(Any, queryset)
+        tree = manager.build_criteria_tree(request.user)
         return Response(tree, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'], url_path='tree/import')
@@ -152,40 +121,19 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
                 field_validation_error_code=FieldValidationErrorCode.REQUIRED
             )
 
-        # Delete all existing criteria of the current type
-        self.get_queryset().delete()
-
-        # Recursive function to create criteria and their children
-        def create_criteria_tree(nodes, parent=None):
-            for node in nodes:
-                if not isinstance(node, dict) or "name" not in node:
-                    raise AppValidationException(field_name="data",
-                                                 message="Each node must have a 'name' field",
-                                                 field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID)
-
-                # Create the criteria
-                criteria = self.model_class(
-                    _name=node["name"],
-                    parent=parent,
-                    user=request.user
-                )
-                # Use the specific model class's save method
-                self.model_class.objects.model.save(criteria)
-
-                # Create children if any
-                if "children" in node and node["children"]:
-                    if not isinstance(node["children"], list):
-                        raise AppValidationException(
-                            field_name="data",
-                            message="Children must be an array",
-                            field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
-                        )
-                    create_criteria_tree(node["children"], criteria)
-
-        # Create all criteria trees
-        create_criteria_tree(request.data)
+        try:
+            queryset = self.get_queryset()
+            manager = cast(Any, queryset)
+            manager.import_criteria_tree(request.user, request.data)
+        except ValueError as e:
+            raise AppValidationException(
+                field_name="data",
+                message=str(e),
+                field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
+            )
 
         # Get all created criteria
         queryset = self.get_queryset()
-        serializer = cast(Serializer, self.simple_serializer_class)(instance=queryset, many=True)
+        serializer_class = cast(Type[Serializer], self.simple_serializer_class)
+        serializer = serializer_class(instance=queryset, many=True)
         return self._get_post_created_response(serializer)

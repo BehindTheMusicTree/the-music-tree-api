@@ -178,3 +178,93 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
             children.update(root=new_root)
             for child in children:
                 self.update_children_root(child, new_root)
+
+    def build_criteria_tree(self, user: 'User') -> list[dict]:
+        """
+        Builds a tree structure of all criteria for a given user.
+        The structure follows the format:
+        {
+          "name": "Criteria name",
+          "children": [
+            {
+              "name": "Child criteria name",
+              "children": []
+            }
+          ]
+        }
+        """
+        # Get all criteria for the user
+        queryset = self.filter(user=user)
+
+        # Build a dictionary of criteria by parent ID for efficient lookup
+        criteria_by_parent = {}
+        for criteria in queryset:
+            # Handle both UUID and ID based parent references
+            parent_id = criteria.parent.uuid if hasattr(criteria.parent, 'uuid') else criteria.parent_id
+            if parent_id not in criteria_by_parent:
+                criteria_by_parent[parent_id] = []
+            criteria_by_parent[parent_id].append(criteria)
+
+        # Recursive function to build the tree
+        def build_tree(parent_id):
+            if parent_id not in criteria_by_parent:
+                return []
+
+            result = []
+            for criteria in criteria_by_parent[parent_id]:
+                # Get the appropriate ID for child references
+                child_id = criteria.uuid if hasattr(criteria, 'uuid') else criteria.id
+                node = {
+                    "name": criteria.name,
+                    "children": build_tree(child_id)
+                }
+                result.append(node)
+
+            return result
+
+        # Start with root criteria (parent_id is None)
+        return build_tree(None)
+
+    @transaction.atomic
+    def import_criteria_tree(self, user: 'User', tree_data: list[dict]) -> None:
+        """
+        Imports a tree structure of criteria, replacing all existing criteria.
+        The input should be an array of criteria trees, where each tree follows the format:
+        {
+          "name": "Criteria name",
+          "children": [
+            {
+              "name": "Child criteria name",
+              "children": []
+            }
+          ]
+        }
+        """
+        if not tree_data:
+            return
+
+        # Delete all existing criteria for the user
+        self.filter(user=user).delete()
+
+        # Recursive function to create criteria and their children
+        def create_criteria_tree(nodes, parent=None):
+            for node in nodes:
+                if not isinstance(node, dict) or "name" not in node:
+                    raise ValueError("Each node must have a 'name' field")
+
+                # Create the criteria
+                criteria = self.model(
+                    _name=node["name"],
+                    parent=parent,
+                    user=user
+                )
+                criteria.save()
+
+                # Create children if any
+                if "children" in node and node["children"]:
+                    if not isinstance(node["children"], list):
+                        raise ValueError("Children must be an array")
+                    create_criteria_tree(node["children"], criteria)
+
+        # Create all criteria trees
+        create_criteria_tree(tree_data)
