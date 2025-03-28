@@ -9,7 +9,7 @@ from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 
 class TestOldCriteriasDeletion(GenreTestCase):
-    def test_old_genre_is_deleted(self):
+    def test_import_new_tree_then_old_genre_deleted(self):
         old_genre = self.model_fixture_factory.create_genre(name="Old Rock")
         self.model_fixture_factory.create_lib_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
@@ -24,7 +24,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert not Genre.objects.filter(uuid=old_genre.uuid).exists()
 
-    def test_old_playlist_is_deleted(self):
+    def test_import_new_tree_then_old_playlist_deleted(self):
         old_genre = self.model_fixture_factory.create_genre(name="Old Rock")
         self.model_fixture_factory.create_lib_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
@@ -33,15 +33,13 @@ class TestOldCriteriasDeletion(GenreTestCase):
         self.model_fixture_factory.create_lib_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
-        # Import new tree
         tree_data = [{"name": "New Rock", "children": []}]
         response = self._post_genres_tree_import(tree_data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert not Playlist.objects.filter(uuid=old_genre.criteria_playlist.uuid).exists()
 
-    def test_tracks_are_moved_to_criterialess_playlist(self):
-        # Create initial genre with tracks
+    def test_import_new_tree_then_tracks_moved_to_criterialess_playlist(self):
         self.model_fixture_factory.create_genre(name="Old Rock")
         self.model_fixture_factory.create_lib_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
@@ -50,13 +48,11 @@ class TestOldCriteriasDeletion(GenreTestCase):
         self.model_fixture_factory.create_lib_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
-        # Import new tree
         tree_data = [{"name": "New Rock", "children": []}]
         response = self._post_genres_tree_import(tree_data)
 
         assert response.status_code == status.HTTP_201_CREATED
 
-        # Verify tracks are moved to criterialess playlist
         criterialess_playlist = GenrePlaylist.objects.get(user=self.test_user1, criteria=None)
         rels = LibTrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
             LibTrackPlaylistRelFields.LIB_TRACK_INTERNAL)
@@ -67,7 +63,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
         assert "Track 2" in track_titles
         assert "Track 3" in track_titles
 
-    def test_genre_metadata_is_cleared(self):
+    def test_import_new_tree_then_genre_metadata_cleared(self):
         self.model_fixture_factory.create_genre(name="Old Rock")
         self.model_fixture_factory.create_lib_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
@@ -88,28 +84,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
         for track in tracks:
             assert track.genre is None
 
-    def test_new_genre_is_created(self):
-        self.model_fixture_factory.create_genre(name="Old Rock")
-        self.model_fixture_factory.create_lib_track_with_file(
-            title="Track 1", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
-            title="Track 2", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
-            title="Track 3", use_manager_for_genre_playlist_adding=True)
-
-        # Import new tree
-        tree_data = [{"name": "New Rock", "children": []}]
-        response = self._post_genres_tree_import(tree_data)
-
-        assert response.status_code == status.HTTP_201_CREATED
-
-        # Verify new genre exists
-        new_genre = Genre.objects.get(name="New Rock")
-        assert new_genre is not None
-        assert new_genre.parent is None
-
-    def test_multiple_old_criterias_deletion(self):
-        # Create multiple genres with tracks
+    def test_import_new_tree_then_multiple_old_criterias_deleted(self):
         old_genre1 = self.model_fixture_factory.create_genre(name="Old Rock 1")
         old_genre2 = self.model_fixture_factory.create_genre(name="Old Rock 2")
 
@@ -118,7 +93,6 @@ class TestOldCriteriasDeletion(GenreTestCase):
         track2 = self.model_fixture_factory.create_lib_track_with_file(
             title="Track 2", use_manager_for_genre_playlist_adding=True)
 
-        # Import new tree
         tree_data = [{"name": "New Rock", "children": []}]
         response = self._post_genres_tree_import(tree_data)
 

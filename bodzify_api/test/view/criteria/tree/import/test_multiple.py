@@ -43,7 +43,7 @@ class TestMultiple(GenreTestCase):
         assert blues.parent == jazz
         assert blues.user == self.test_user1
 
-    def test_pagination(self):
+    def test_import_tree_then_pagination_works(self):
         # Create a tree with 15 nodes (5 roots with 2 children each)
         tree_data = []
         for i in range(5):

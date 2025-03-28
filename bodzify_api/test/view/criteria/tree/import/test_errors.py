@@ -19,7 +19,7 @@ class TestErrors(GenreTestCase):
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.NAME_DUPLICATE
         assert duplicate_name in self.bad_request_result_field_errors[0]["message"]
 
-    def test_import_overwrites_existing(self):
+    def test_import_new_tree_then_overwrites_existing(self):
         # Create initial genre
         self.model_fixture_factory.create_genre(name="Old Rock")
 
