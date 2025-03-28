@@ -87,20 +87,35 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         validated_data = self._get_validated_data(serializer)
         return self.model_class.objects.update_instance(instance, **validated_data)
 
-    def _handle_list(self) -> Response:
-        queryset = self.get_queryset()
+    def _get_paginated_list_response(self, queryset, serializer_type=SerializerType.SIMPLE,
+                                     status_code=status.HTTP_200_OK) -> Response:
+        """
+        Get a paginated response for a list view.
+
+        Args:
+            queryset: The queryset to paginate
+            serializer_type: The type of serializer to use (defaults to SIMPLE)
+            status_code: The HTTP status code to return (defaults to 200 OK)
+
+        Returns:
+            Response with pagination metadata and the specified status code
+        """
         queryset = self.filter_queryset(queryset)
         page = self.paginate_queryset(queryset)
 
-        if not queryset.exists():
-            data = []
-        elif page is not None:
-            serializer = self._require_serializer(SerializerType.SIMPLE)(page, many=True)
-            data = list(serializer.data)
-        else:
-            data = []
+        if page is not None:
+            serializer = self._require_serializer(serializer_type)(page, many=True)
+            response = self.get_paginated_response(serializer.data)
+            response.status_code = status_code
+            return response
 
-        return self.get_paginated_response(data)
+        # If pagination is disabled
+        serializer = self._require_serializer(serializer_type)(queryset, many=True)
+        return Response(serializer.data, status=status_code)
+
+    def _handle_list(self) -> Response:
+        queryset = self.get_queryset()
+        return self._get_paginated_list_response(queryset)
 
     def _get_post_created_response(self, serializer: Serializer) -> Response:
         headers = self.get_success_headers(serializer.data)
