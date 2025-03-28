@@ -191,36 +191,41 @@ class AppSerializer(serializers.Serializer, Generic[T]):
             raise ImproperlyConfigured('Cannot validate null data')
 
         try:
-            if not isinstance(data, dict):
-                raise ImproperlyConfigured('Data must be a dictionary')
+            # Handle both flat dictionaries and nested structures
+            if isinstance(data, dict):
+                # Get known fields and check for unknown fields
+                _, unknown_fields = self._collect_known_fields_and_malformed_array_fields_names(data)
+                if len(unknown_fields) == 1:
+                    raise AppValidationException(field_name=unknown_fields[0],
+                                                 message="Unknown field",
+                                                 field_validation_error_code=FieldValidationErrorCode.UNKNOWN)
+                elif len(unknown_fields) > 1:
+                    raise AppValidationException(field_name=", ".join(unknown_fields),
+                                                 message="Multiple unknown fields",
+                                                 field_validation_error_code=FieldValidationErrorCode.UNKNOWN)
 
-            # Get known fields and check for unknown fields
-            _, unknown_fields = self._collect_known_fields_and_malformed_array_fields_names(data)
-            if len(unknown_fields) == 1:
-                raise AppValidationException(field_name=unknown_fields[0],
-                                             message="Unknown field",
-                                             field_validation_error_code=FieldValidationErrorCode.UNKNOWN)
-            elif len(unknown_fields) > 1:
-                raise AppValidationException(field_name=", ".join(unknown_fields),
-                                             message="Multiple unknown fields",
-                                             field_validation_error_code=FieldValidationErrorCode.UNKNOWN)
+                self._check_duplicate_fields(self.context.get(self.REQUEST_FIELD))
 
-            self._check_duplicate_fields(self.context.get(self.REQUEST_FIELD))
+                # Use the properly transformed data from _collect_known_fields_and_malformed_array_fields_names
+                updated_data = dict(data)  # Create a copy to avoid modifying the input
+                for field_name, field in self.fields.items():
+                    if self._is_list_field(field) and f"{field_name}[]" in updated_data:
+                        updated_data[field_name] = updated_data.pop(f"{field_name}[]")
 
-            # Use the properly transformed data from _collect_known_fields_and_malformed_array_fields_names
-            updated_data = dict(data)  # Create a copy to avoid modifying the input
-            for field_name, field in self.fields.items():
-                if self._is_list_field(field) and f"{field_name}[]" in updated_data:
-                    updated_data[field_name] = updated_data.pop(f"{field_name}[]")
-
-            validated_data = self._validate_fields(updated_data)
-
-            validated_data = self._validate_object(validated_data)
+                validated_data = self._validate_fields(updated_data)
+                validated_data = self._validate_object(validated_data)
+            else:
+                # For non-dict data, let the serializer's to_internal_value handle it
+                validated_data = self.to_internal_value(data)
 
             self._errors = {}
             self._validated_data = validated_data
             return validated_data
-
-        except AppValidationException as exc:
-            self._validated_data = {}
-            raise exc
+        except (KeyError, TypeError) as e:
+            raise AppValidationException(field_name=str(e),
+                                         message=str(e),
+                                         field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID)
+        except ValidationError as e:
+            raise AppValidationException(field_name=str(e),
+                                         message=str(e),
+                                         field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID)
