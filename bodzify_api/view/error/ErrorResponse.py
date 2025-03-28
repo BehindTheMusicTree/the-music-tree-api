@@ -224,7 +224,9 @@ class ErrorResponse:
     @staticmethod
     def _from_method_not_allowed_exception(exception: MethodNotAllowed) -> JsonResponse:
         detail = exception.detail
-        message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+        message = str(detail) if isinstance(
+            detail, DRFErrorDetail) else detail['detail'] if isinstance(
+            detail, dict) and 'detail' in detail else exception.default_detail
         return ErrorResponse.create_error_response(error_detail={'message': message, 'code': 'method_not_allowed'},
                                                    api_error_code=ApiErrorCodeNumeric.VALIDATION_METHOD_NOT_ALLOWED)
 
