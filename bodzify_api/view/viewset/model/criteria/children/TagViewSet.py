@@ -1,3 +1,4 @@
+
 from bodzify_api.model.criteria.children.tag.Tag import Tag
 from bodzify_api.view.viewset.model.criteria.CriteriaViewSet import CriteriaViewSet
 

@@ -1,6 +1,7 @@
 from drf_spectacular.types import OpenApiTypes  # type: ignore
 from drf_spectacular.utils import OpenApiParameter, extend_schema  # type: ignore
 from rest_framework import status  # type: ignore
+from rest_framework.decorators import action  # type: ignore
 from rest_framework.response import Response  # type: ignore
 
 from bodzify_api.filtering.set.criteria.Fields import Fields as FilterFields
@@ -61,3 +62,52 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
                    description="""Updates a criteria""")
     def update(self, request, *args, **kwargs):
         return self._handle_update(request)
+
+    @action(detail=False, methods=['get'])
+    def tree(self, request):
+        """
+        Returns a tree structure of all criteria.
+        The structure follows the format:
+        {
+          "name": "Criteria name",
+          "children": [
+            {
+              "name": "Child criteria name",
+              "children": []
+            }
+          ]
+        }
+        """
+        # Get all criteria for the current user
+        queryset = self.get_queryset()
+
+        # Build a dictionary of criteria by parent ID for efficient lookup
+        criteria_by_parent = {}
+        for criteria in queryset:
+            # Handle both UUID and ID based parent references
+            parent_id = criteria.parent.uuid if hasattr(criteria.parent, 'uuid') else criteria.parent_id
+            if parent_id not in criteria_by_parent:
+                criteria_by_parent[parent_id] = []
+            criteria_by_parent[parent_id].append(criteria)
+
+        # Recursive function to build the tree
+        def build_tree(parent_id):
+            if parent_id not in criteria_by_parent:
+                return []
+
+            result = []
+            for criteria in criteria_by_parent[parent_id]:
+                # Get the appropriate ID for child references
+                child_id = criteria.uuid if hasattr(criteria, 'uuid') else criteria.id
+                node = {
+                    "name": criteria.name,
+                    "children": build_tree(child_id)
+                }
+                result.append(node)
+
+            return result
+
+        # Start with root criteria (parent_id is None)
+        tree = build_tree(None)
+
+        return Response(tree, status=status.HTTP_200_OK)
