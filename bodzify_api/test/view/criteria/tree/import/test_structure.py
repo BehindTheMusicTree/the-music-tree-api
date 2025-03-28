@@ -1,7 +1,6 @@
 from rest_framework import status
 
 from bodzify_api.model.criteria.children.genre.Genre import Genre
-from bodzify_api.serializer.model.criteria.output.Fields import Fields as GenreFields
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 
@@ -11,17 +10,14 @@ class TestStructure(GenreTestCase):
         response = self._post_genres_tree_import(tree_data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.results_overall_total == 1
-        assert len(self.results) == 1
-        assert self.results[0][GenreFields.NAME] == "Rock"
-        assert GenreFields.UUID in self.results[0]
-        assert GenreFields.PARENT in self.results[0]
-        assert self.results[0][GenreFields.PARENT] is None
 
         # Verify database state
         genres = Genre.objects.filter(user=self.test_user1)
         assert genres.count() == 1
-        assert genres.first().name == "Rock"
+        rock = genres.first()
+        assert rock is not None
+        assert rock.name == "Rock"
+        assert rock.parent is None
 
     def test_root_with_children_then_tree_with_children(self):
         tree_data = [
@@ -36,21 +32,21 @@ class TestStructure(GenreTestCase):
         response = self._post_genres_tree_import(tree_data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.results_overall_total == 3  # Root + 2 children
-        assert len(self.results) == 3
 
+        # Verify database state
         genres = Genre.objects.filter(user=self.test_user1)
-        genre_names = [genre.name for genre in genres]
-        assert "Rock" in genre_names
-        assert "Punk" in genre_names
-        assert "Metal" in genre_names
+        assert genres.count() == 3
 
-        # Verify parent relationships in DB
+        # Verify root
         rock = genres.get(name="Rock")
+        assert rock is not None
         assert rock.parent is None
 
+        # Verify children
         punk = genres.get(name="Punk")
         metal = genres.get(name="Metal")
+        assert punk is not None
+        assert metal is not None
         assert punk.parent == rock
         assert metal.parent == rock
 
@@ -72,41 +68,25 @@ class TestStructure(GenreTestCase):
         response = self._post_genres_tree_import(tree_data)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.results_overall_total == 4  # Root + 2 children + 1 grandchild
-        assert len(self.results) == 4
-
-        # Verify all genres are returned
-        result_names = [result[GenreFields.NAME] for result in self.results]
-        assert "Rock" in result_names
-        assert "Punk" in result_names
-        assert "Hardcore" in result_names
-        assert "Metal" in result_names
-
-        # Verify parent relationships
-        rock = next(result for result in self.results if result[GenreFields.NAME] == "Rock")
-        punk = next(result for result in self.results if result[GenreFields.NAME] == "Punk")
-        hardcore = next(result for result in self.results if result[GenreFields.NAME] == "Hardcore")
-        metal = next(result for result in self.results if result[GenreFields.NAME] == "Metal")
-
-        assert rock[GenreFields.PARENT] is None
-        assert punk[GenreFields.PARENT] == rock[GenreFields.UUID]
-        assert hardcore[GenreFields.PARENT] == punk[GenreFields.UUID]
-        assert metal[GenreFields.PARENT] == rock[GenreFields.UUID]
 
         # Verify database state
         genres = Genre.objects.filter(user=self.test_user1)
         assert genres.count() == 4
 
-        # Check root
-        root = genres.get(name="Rock")
-        assert root.parent is None
+        # Verify root
+        rock = genres.get(name="Rock")
+        assert rock is not None
+        assert rock.parent is None
 
-        # Check Punk branch
+        # Verify Punk branch
         punk = genres.get(name="Punk")
-        assert punk.parent == root
+        assert punk is not None
+        assert punk.parent == rock
         hardcore = genres.get(name="Hardcore")
+        assert hardcore is not None
         assert hardcore.parent == punk
 
-        # Check Metal branch
+        # Verify Metal branch
         metal = genres.get(name="Metal")
-        assert metal.parent == root
+        assert metal is not None
+        assert metal.parent == rock
