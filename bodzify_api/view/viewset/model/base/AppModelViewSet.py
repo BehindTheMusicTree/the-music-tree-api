@@ -102,11 +102,14 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
 
         return self.get_paginated_response(data)
 
+    def _get_post_created_response(self, serializer: Serializer) -> Response:
+        headers = self.get_success_headers(serializer.data)
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
     def _handle_post(self, request: Request) -> Response:
         instance = self._create_instance(request=request, create_data=request.data)
         serializer = self._require_serializer(SerializerType.DETAILED)(instance=instance)
-        headers = self.get_success_headers(serializer.data)
-        return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return self._get_post_created_response(serializer)
 
     def _handle_retrieve(self) -> Response:
         serializer = self._require_serializer(SerializerType.DETAILED)(self.get_object())

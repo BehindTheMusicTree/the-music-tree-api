@@ -1,6 +1,6 @@
 
 
-from typing import Type
+from typing import Type, cast
 
 from drf_spectacular.types import OpenApiTypes  # type: ignore
 from drf_spectacular.utils import OpenApiParameter, extend_schema  # type: ignore
@@ -187,10 +187,5 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
 
         # Get all created criteria
         queryset = self.get_queryset()
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = cast(Serializer, self.simple_serializer_class)(instance=queryset, many=True)
+        return self._get_post_created_response(serializer)
