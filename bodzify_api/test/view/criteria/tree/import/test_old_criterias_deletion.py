@@ -1,9 +1,10 @@
 from rest_framework import status
 
 from bodzify_api.model.criteria.children.genre.Genre import Genre
+from bodzify_api.model.lib_track_playlist_rel.Fields import Fields as LibTrackPlaylistRelFields
+from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.children.criteria.genre.GenrePlaylist import GenrePlaylist
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 
@@ -57,15 +58,16 @@ class TestOldCriteriasDeletion(GenreTestCase):
 
         # Verify tracks are moved to criterialess playlist
         criterialess_playlist = GenrePlaylist.objects.get(user=self.test_user1, criteria=None)
-        tracks = LibraryTrack.objects.filter(playlist=criterialess_playlist)
-        assert tracks.count() == 3
+        rels = LibTrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
+            LibTrackPlaylistRelFields.LIB_TRACK_INTERNAL)
+        tracks = [getattr(rel, LibTrackPlaylistRelFields.LIB_TRACK_INTERNAL) for rel in rels]
+        assert len(tracks) == 3
         track_titles = [track.title for track in tracks]
         assert "Track 1" in track_titles
         assert "Track 2" in track_titles
         assert "Track 3" in track_titles
 
     def test_genre_metadata_is_cleared(self):
-        # Create initial genre with tracks
         self.model_fixture_factory.create_genre(name="Old Rock")
         self.model_fixture_factory.create_lib_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
@@ -74,20 +76,19 @@ class TestOldCriteriasDeletion(GenreTestCase):
         self.model_fixture_factory.create_lib_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
-        # Import new tree
         tree_data = [{"name": "New Rock", "children": []}]
         response = self._post_genres_tree_import(tree_data)
 
         assert response.status_code == status.HTTP_201_CREATED
 
-        # Verify genre metadata is cleared
         criterialess_playlist = GenrePlaylist.objects.get(user=self.test_user1, criteria=None)
-        tracks = LibraryTrack.objects.filter(playlist=criterialess_playlist)
+        rels = LibTrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
+            LibTrackPlaylistRelFields.LIB_TRACK_INTERNAL)
+        tracks = [getattr(rel, LibTrackPlaylistRelFields.LIB_TRACK_INTERNAL) for rel in rels]
         for track in tracks:
             assert track.genre is None
 
     def test_new_genre_is_created(self):
-        # Create initial genre with tracks
         self.model_fixture_factory.create_genre(name="Old Rock")
         self.model_fixture_factory.create_lib_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
@@ -132,8 +133,10 @@ class TestOldCriteriasDeletion(GenreTestCase):
 
         # Verify all tracks are moved to criterialess playlist
         criterialess_playlist = GenrePlaylist.objects.get(user=self.test_user1, criteria=None)
-        tracks = LibraryTrack.objects.filter(playlist=criterialess_playlist)
-        assert tracks.count() == 2
+        rels = LibTrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
+            LibTrackPlaylistRelFields.LIB_TRACK_INTERNAL)
+        tracks = [getattr(rel, LibTrackPlaylistRelFields.LIB_TRACK_INTERNAL) for rel in rels]
+        assert len(tracks) == 2
         track_titles = [track.title for track in tracks]
         assert "Track 1" in track_titles
         assert "Track 2" in track_titles
