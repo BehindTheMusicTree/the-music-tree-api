@@ -1,5 +1,6 @@
 from typing import cast
 from rest_framework import status
+import pytest
 
 from bodzify_api import settings
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
@@ -38,10 +39,11 @@ class TestValidation(GenreTestCase, NotNullableListBodyDataTestCase):
         assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE_INTERNAL
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.LIST_TOO_LONG
 
+    @pytest.mark.slow
     def test_multiple_with_one_too_large_then_400_bad_request(self):
-        # Create a wide tree structure instead of a deep one
+        # Create a wide tree structure with too many children
         root1 = {Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []}
-        for i in range(settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT + 1):
+        for i in range(settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT - 1):
             root1[Fields.CHILDREN].append({
                 Fields.NAME_PUBLIC: f"Child {i}",
                 Fields.CHILDREN: []
@@ -53,13 +55,21 @@ class TestValidation(GenreTestCase, NotNullableListBodyDataTestCase):
         assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE_INTERNAL
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.LIST_TOO_LONG
 
+    @pytest.mark.slow
     def test_largest_then_ok(self):
-        data = [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []}]
-        current = data[0]
-        for i in range(settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT):
-            child = {Fields.NAME_PUBLIC: f"Child {i}", Fields.CHILDREN: []}
-            current[Fields.CHILDREN] = [child]
-            current = child
+        # Create a wide tree structure instead of a deep one
+        root = {Fields.NAME_PUBLIC: "Root", Fields.CHILDREN: []}
+        for i in range(settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT - 1):
+            root[Fields.CHILDREN].append({
+                Fields.NAME_PUBLIC: f"Child {i}",
+                Fields.CHILDREN: []
+            })
+
+        data = [root]
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: data})
+        assert response.status_code == status.HTTP_201_CREATED
+        genres_count = Genre.objects.filter(user=self.test_user1).count()
+        assert genres_count == settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT
 
     def test_multiple_with_one_empty_then_400_bad_request(self):
         data = [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []},
