@@ -165,7 +165,7 @@ class TestStructure(GenreTestCase):
         assert response.status_code == status.HTTP_201_CREATED
 
         genres = Genre.objects.filter(user=self.test_user1)
-        assert genres.count() == 8
+        assert genres.count() == 10
         rock = genres.get(name="Rock")
         metal = genres.get(name="Metal")
         heavy_metal = genres.get(name="Heavy Metal")
