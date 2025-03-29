@@ -24,27 +24,30 @@ class TestValidation(GenreTestCase, NotNullableListBodyDataTestCase):
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.REQUIRED
 
     def test_one_too_large_then_400_bad_request(self):
-        data = [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []}]
-        current = data[0]
-        for i in range(settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT + 1):
-            child = {Fields.NAME_PUBLIC: f"Child {i}", Fields.CHILDREN: []}
-            current[Fields.CHILDREN] = [child]
-            current = child
+        # Create a wide tree structure instead of a deep one
+        root = {Fields.NAME_PUBLIC: "Root", Fields.CHILDREN: []}
+        for i in range(settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT):
+            root[Fields.CHILDREN].append({
+                Fields.NAME_PUBLIC: f"Child {i}",
+                Fields.CHILDREN: []
+            })
 
+        data = [root]
         response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: data})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE_INTERNAL
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.LIST_TOO_LONG
 
     def test_multiple_with_one_too_large_then_400_bad_request(self):
-        data = [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []},
-                {Fields.NAME_PUBLIC: "Punk", Fields.CHILDREN: []}]
-        current = data[0]
+        # Create a wide tree structure instead of a deep one
+        root1 = {Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []}
         for i in range(settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT + 1):
-            child = {Fields.NAME_PUBLIC: f"Child {i}", Fields.CHILDREN: []}
-            current[Fields.CHILDREN] = [child]
-            current = child
+            root1[Fields.CHILDREN].append({
+                Fields.NAME_PUBLIC: f"Child {i}",
+                Fields.CHILDREN: []
+            })
 
+        data = [root1, {Fields.NAME_PUBLIC: "Punk", Fields.CHILDREN: []}]
         response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: data})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE_INTERNAL
