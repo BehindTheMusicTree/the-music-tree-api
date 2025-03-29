@@ -112,7 +112,7 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
         try:
             serializer = CriteriaTreeImportSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            self.model_class.objects.import_criteria_tree(request.user, serializer.validated_data['data'])
+            self.model_class.objects.import_criteria_tree(request.user, serializer.validated_data)
         except ValueError as e:
             raise AppValidationException(
                 field_name="data",
