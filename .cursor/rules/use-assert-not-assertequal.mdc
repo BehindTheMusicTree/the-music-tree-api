@@ -3,11 +3,6 @@ description:
 globs: 
 alwaysApply: true
 ---
----
-description: 
-globs: 
-alwaysApply: true
----
 # Use assert Instead of assertEqual
 
 In tests, use the `assert` statement instead of `assertEqual` for better readability and consistency.
@@ -60,4 +55,4 @@ def test_genre_hierarchy(self):
 - Consistent testing style
 - Better error messages
 - Simpler test maintenance
-- Follows Python's built-in assertion style§
+- Follows Python's built-in assertion style
