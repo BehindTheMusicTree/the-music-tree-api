@@ -72,7 +72,7 @@ class AppTestCase(TestCase, Generic[T]):
         if response.status_code in [status.HTTP_200_OK, status.HTTP_201_CREATED]:
             self._set_results_attributes(response)
         else:
-            self._set_error_response_result(response)
+            self._set_error_response_result_if_failure(response)
 
     def _set_results(self, response):
         if response.status_code in [status.HTTP_200_OK, status.HTTP_201_CREATED]:
@@ -83,9 +83,9 @@ class AppTestCase(TestCase, Generic[T]):
                 else:
                     self._set_single_result(response)
         else:
-            self._set_error_response_result(response)
+            self._set_error_response_result_if_failure(response)
 
-    def _set_error_response_result(self, response):
+    def _set_error_response_result_if_failure(self, response):
         """
         Handles responses with field errors in the format:
         {
@@ -102,6 +102,9 @@ class AppTestCase(TestCase, Generic[T]):
             }]
         }
         """
+        if response.status_code in [status.HTTP_200_OK, status.HTTP_201_CREATED]:
+            return
+
         self.bad_request_result = response.json()
         bad_request_result_details = self.bad_request_result[ErrorResponseFields.DETAILS]
         self.bad_request_result_field_errors_json = bad_request_result_details.get(ErrorResponseFields.FIELD_ERRORS)

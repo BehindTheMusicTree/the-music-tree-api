@@ -24,7 +24,7 @@ class GenreTestCase(AppTestCase[Genre]):
 
     def _get_genres_tree(self):
         return self.api_client.get(path=reverse(self.list_endpoint) + 'tree/',
-                                   handle_response=self._set_error_response_result)
+                                   handle_response=self._set_error_response_result_if_failure)
 
     def _post_genre(self, **kwargs):
         return self.api_client.post(path=reverse(self.list_endpoint),
