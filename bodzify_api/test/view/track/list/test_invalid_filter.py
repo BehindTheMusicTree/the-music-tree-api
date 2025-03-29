@@ -6,7 +6,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 class TestCase(LibTrackTestCase):
 
-    def test_filter_not_existing_then_400(self):
+    def test_filter_not_existing_then_400_bad_request(self):
         invalid_filter = "invalidFilter"
         response = self._list_lib_tracks(**{invalid_filter: 'invalid_filter'})
 

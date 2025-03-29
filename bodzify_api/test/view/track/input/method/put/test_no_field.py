@@ -7,7 +7,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 class TestCase(LibTrackTestCase):
 
-    def test_no_field_specified_then_400(self):
+    def test_no_field_specified_then_400_bad_request(self):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Polo")
 
         response = self._put_lib_track(uuid=lib_track.uuid)

@@ -8,7 +8,7 @@ from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
 
-    def test_multi_value_then_400(self):
+    def test_multi_value_then_400_bad_request(self):
         response = self._post_genre(**{CriteriaInputFields.NAME_PUBLIC: "Punk",
                                     CriteriaInputFields.PARENT: ["value", "value2"]})
 
@@ -33,7 +33,7 @@ class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.parent == genre_rock
 
-    def test_invalid_uuid_then_400(self):
+    def test_invalid_uuid_then_400_bad_request(self):
         response = self._post_genre(**{CriteriaInputFields.NAME_PUBLIC: "Punk",
                                     CriteriaInputFields.PARENT: "invalid"})
 
@@ -43,7 +43,7 @@ class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
         assert error['field'] == CriteriaInputFields.PARENT
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
-    def test_non_existing_then_400(self):
+    def test_non_existing_then_400_bad_request(self):
         self.model_fixture_factory.create_genre(name="Rock")
 
         response = self._post_genre(**{CriteriaInputFields.NAME_PUBLIC: "Punk",

@@ -8,7 +8,7 @@ from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 
 class TestCase(AlbumTestCase, NotNullableFreeCharFilterTestCase):
 
-    def test_empty_then_400(self):
+    def test_empty_then_400_bad_request(self):
         response = self._list_albums(name='')
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

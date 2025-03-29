@@ -9,7 +9,7 @@ from bodzify_api.utils.data_transformer import to_camel_case
 
 class TestCase(ArtistTestCase, NotNullableFreeCharFilterTestCase):
 
-    def test_empty_then_400(self):
+    def test_empty_then_400_bad_request(self):
         response = self._get_artists(**{ArtistFields.NAME_PUBLIC: ''})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

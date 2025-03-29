@@ -10,7 +10,7 @@ from bodzify_api.test.view.playlist.children.criteria.genre.GenrePlaylistTestCas
 
 class TestCase(GenrePlaylistTestCase, NotNullableFreeCharFilterTestCase):
 
-    def test_empty_then_400(self):
+    def test_empty_then_400_bad_request(self):
         self.model_fixture_factory.create_genre(name="Rock")
 
         response = self._list_genre_playlists(**{FilterFields.NAME: ''})

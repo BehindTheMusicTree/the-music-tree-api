@@ -29,7 +29,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_number == 5
 
-    def test_string_not_castable_then_400(self):
+    def test_string_not_castable_then_400_bad_request(self):
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.TRACK_NUMBER: 'five'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -44,7 +44,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_number == 5
 
-    def test_zero_then_400(self):
+    def test_zero_then_400_bad_request(self):
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.TRACK_NUMBER: 0})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -68,7 +68,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_number == track_number
 
-    def test_too_large_then_400(self):
+    def test_too_large_then_400_bad_request(self):
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3,
                                         album_name='album', track_number=settings.LIB_TRACK_TRACK_NUMBER_MAX + 1)
 
@@ -78,7 +78,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert error['field'] == to_camel_case(PostFields.TRACK_NUMBER)
         assert error['code'] == FieldValidationErrorCode.TRACK_NUMBER_TOO_LARGE
 
-    def test_negative_then_400(self):
+    def test_negative_then_400_bad_request(self):
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, track_number=-1)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -87,7 +87,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert error['field'] == to_camel_case(PostFields.TRACK_NUMBER)
         assert error['code'] == FieldValidationErrorCode.TRACK_NUMBER_TOO_SMALL
 
-    def test_float_then_400(self):
+    def test_float_then_400_bad_request(self):
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.TRACK_NUMBER: 5.5})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -96,7 +96,7 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert error['field'] == to_camel_case(PostFields.TRACK_NUMBER)
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
-    def test_multi_value_then_400(self):
+    def test_multi_value_then_400_bad_request(self):
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.TRACK_NUMBER: [1, 2]})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

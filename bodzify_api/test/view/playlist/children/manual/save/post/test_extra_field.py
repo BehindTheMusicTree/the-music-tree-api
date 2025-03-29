@@ -6,7 +6,7 @@ from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase impor
 
 class TestCase(ManualPlaylistTestCase):
 
-    def test_extra_field_then_400(self):
+    def test_extra_field_then_400_bad_request(self):
         invalid_field = 'nonExistingField'
         response = self._post_manual_playlist(**{invalid_field: 'oifjqoif'})
 

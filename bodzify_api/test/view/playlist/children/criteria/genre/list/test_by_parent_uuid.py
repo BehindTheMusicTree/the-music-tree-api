@@ -23,7 +23,7 @@ class TestCase(GenrePlaylistTestCase, PrivateForeignKeyFilterTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 4
 
-    def test_invalid_uuid_then_400(self):
+    def test_invalid_uuid_then_400_bad_request(self):
         self.model_fixture_factory.create_genre(name="Rock")
 
         response = self._list_genre_playlists(**{RietrieveFields.PARENT: 'invalid-uuid'})

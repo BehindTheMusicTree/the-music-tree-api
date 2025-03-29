@@ -8,7 +8,7 @@ from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 class TestJsonDuplicateFields(GenreTestCase):
 
-    def test_duplicate_fields_on_json_post_then_400(self):
+    def test_duplicate_fields_on_json_post_then_400_bad_request(self):
         raw_json = '{"name": "test", "name": "test2"}'
         response = self.api_client.post(path=reverse(self.list_endpoint),
                                         data=raw_json,
@@ -23,7 +23,7 @@ class TestJsonDuplicateFields(GenreTestCase):
         assert error['field'] == CriteriaPostFields.NAME_PUBLIC
         assert error['code'] == FieldValidationErrorCode.DUPLICATE
 
-    def test_duplicate_fields_on_json_put_then_400(self):
+    def test_duplicate_fields_on_json_put_then_400_bad_request(self):
         genre = self.model_fixture_factory.create_genre(name="rock")
 
         raw_json = '{"name": "test", "name": "test2"}'
@@ -40,6 +40,6 @@ class TestJsonDuplicateFields(GenreTestCase):
         assert error['field'] == CriteriaPostFields.NAME_PUBLIC
         assert error['code'] == FieldValidationErrorCode.DUPLICATE
 
-    def test_duplicate_fields_on_json_patch_then_400(self):
+    def test_duplicate_fields_on_json_patch_then_400_bad_request(self):
         # PATCH is not supported
         pass

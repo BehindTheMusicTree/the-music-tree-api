@@ -9,7 +9,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 class TestCase(ForeignKeyBodyDataTestCase, LibTrackTestCase):
 
-    def test_non_existing_then_400(self):
+    def test_non_existing_then_400_bad_request(self):
         non_exisintg_uuid = "00000000-0000-0000-0000-000000000000"
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.GENRE: non_exisintg_uuid})
 
@@ -33,7 +33,7 @@ class TestCase(ForeignKeyBodyDataTestCase, LibTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.genre is None
 
-    def test_multi_value_then_400(self):
+    def test_multi_value_then_400_bad_request(self):
         genre = self.model_fixture_factory.create_genre(name="rock")
 
         response = self._post_lib_track(
@@ -45,7 +45,7 @@ class TestCase(ForeignKeyBodyDataTestCase, LibTrackTestCase):
         assert error['field'] == PostFields.GENRE
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
-    def test_invalid_uuid_then_400(self):
+    def test_invalid_uuid_then_400_bad_request(self):
         invalid_uuid = "036aa19e-d5ae-425a-93f2-125ccd145a15"
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.GENRE: invalid_uuid})
 

@@ -50,7 +50,7 @@ class TestCase(LibTrackTestCase):
         assert album_artist
         assert album_artist.name == data_album_artists_str
 
-    def test_only_album_artists_in_data_and_album_in_metadata_then_400(self):
+    def test_only_album_artists_in_data_and_album_in_metadata_then_400_bad_request(self):
         data_album_artists_name = "Muse"
         data = {PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [data_album_artists_name]}
         response = self._post_lib_track(LibTrackTestFilename.METADATA_LONG_A_ID3V2_SMALL_MP3, **data)
@@ -60,7 +60,7 @@ class TestCase(LibTrackTestCase):
         assert error["field"] == to_camel_case(PostFields.ALBUM_NAME)
         assert error["code"] == FieldValidationErrorCode.DEPENDENCY_MISSING
 
-    def test_only_album_name_in_data_and_album_artists_in_metadata_then_400(self):
+    def test_only_album_name_in_data_and_album_artists_in_metadata_then_400_bad_request(self):
         data_album_name = "Best of"
         data = {PostFields.ALBUM_NAME: data_album_name}
         response = self._post_lib_track(LibTrackTestFilename.METADATA_LONG_A_ID3V1_SMALL_MP3, **data)

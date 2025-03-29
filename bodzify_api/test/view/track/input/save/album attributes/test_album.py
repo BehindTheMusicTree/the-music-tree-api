@@ -20,7 +20,7 @@ class TestCase(LibTrackTestCase, NullableCharBodyDataTestCase):
         assert self.saved_object.album
         assert self.saved_object.album.name == album_name
 
-    def test_too_large_then_400(self):
+    def test_too_large_then_400_bad_request(self):
         album_name = "a" * (settings.ALBUM_NAME_LEN_MAX + 1)
         data = {PostFields.ALBUM_NAME: album_name, PostFields.ARTISTS_NAMES_ARRAY: ["muse"]}
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
@@ -58,7 +58,7 @@ class TestCase(LibTrackTestCase, NullableCharBodyDataTestCase):
         assert self.saved_object.album
         assert self.saved_object.album.name == album_name
 
-    def test_multi_value_then_400(self):
+    def test_multi_value_then_400_bad_request(self):
         data = {PostFields.ALBUM_NAME: ['a', 'b'], PostFields.ARTISTS_NAMES_ARRAY: ["muse"]}
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 

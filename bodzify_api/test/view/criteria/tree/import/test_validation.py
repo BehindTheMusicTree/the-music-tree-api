@@ -2,9 +2,10 @@ from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
+from bodzify_api.test.utils.field.body_data.type.NullableListBodyDataTestCase import NullableListBodyDataTestCase
 
 
-class TestValidation(GenreTestCase):
+class TestValidation(GenreTestCase, ListFieldTestCase):
     def test_no_data_then_400_bad_request(self):
         response = self._post_genres_tree_import()
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -35,7 +36,7 @@ class TestValidation(GenreTestCase):
         assert "must have a 'name' field" in self.bad_request_result_field_errors[0]["message"]
 
     def test_non_array_input_then_400_bad_request(self):
-        response = self._post_genres_tree_import({"name": "Rock"})
+        response = self._post_genres_tree_import(**{'data[]': {"name": "Rock"}})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0]["field"] == "data"
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.FORMAT_INVALID

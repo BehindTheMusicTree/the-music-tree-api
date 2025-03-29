@@ -12,7 +12,7 @@ from bodzify_api.utils.data_transformer import to_camel_case
 
 class TestCase(PlayTestCase):
 
-    def test_extra_field_then_400(self) -> None:
+    def test_extra_field_then_400_bad_request(self) -> None:
         extra_field = 'extraField'
         response = self._post_play(**{extra_field: 'value'})
 
@@ -22,7 +22,7 @@ class TestCase(PlayTestCase):
         assert error['field'] == extra_field
         assert error['code'] == FieldValidationErrorCode.UNKNOWN
 
-    def test_multiple_values_for_content_then_400(self) -> None:
+    def test_multiple_values_for_content_then_400_bad_request(self) -> None:
         playlist1_uuid = self.model_fixture_factory.create_manual_playlist(name='test').uuid
         playlist2_uuid = self.model_fixture_factory.create_manual_playlist(name='test').uuid
 
@@ -35,7 +35,7 @@ class TestCase(PlayTestCase):
         assert error['field'] == to_camel_case(Fields.CONTENT)
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
-    def test_non_existant_content_then_400(self):
+    def test_non_existant_content_then_400_bad_request(self):
         response = self._post_play(**{to_camel_case(Fields.CONTENT): '88978e5e-5238-442b-bd24-dbbde478e090'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

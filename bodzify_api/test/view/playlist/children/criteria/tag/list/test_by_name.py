@@ -10,7 +10,7 @@ from bodzify_api.test.view.playlist.children.criteria.tag.TagPlaylistTestCase im
 
 class TestCase(TagPlaylistTestCase, NotNullableFreeCharFilterTestCase):
 
-    def test_empty_then_400(self):
+    def test_empty_then_400_bad_request(self):
         self.model_fixture_factory.create_tag(name="Fiesta")
 
         response = self._list_tag_playlists(**{FilterFields.NAME: ''})

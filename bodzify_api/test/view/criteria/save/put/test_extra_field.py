@@ -7,7 +7,7 @@ from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 class TestCase(GenreTestCase):
 
-    def test_extra_field_then_400(self):
+    def test_extra_field_then_400_bad_request(self):
         genre = self.model_fixture_factory.create_genre(name="Rock")
 
         extra_field = "extraField"

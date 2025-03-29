@@ -23,7 +23,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(artists_list) > 0
         assert artists_list[0].name == artist_name
 
-    def test_one_too_large_then_400(self):
+    def test_one_too_large_then_400_bad_request(self):
         artist_name = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
         data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: artist_name}
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
@@ -34,7 +34,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert error['field'] == to_camel_case(PostFields.ALBUM_ARTISTS_NAMES_ARRAY)
         assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
-    def test_malformed_array_then_400(self) -> None:
+    def test_malformed_array_then_400_bad_request(self) -> None:
         malformed_field_name = "album_artists_names"
         data = {PostFields.ALBUM_NAME: "Best Of", malformed_field_name: ['muse']}
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
@@ -127,7 +127,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert new_artist1_name in artists_names
         assert new_artist2_name in artists_names
 
-    def test_multiple_with_one_too_long_then_400(self) -> None:
+    def test_multiple_with_one_too_long_then_400_bad_request(self) -> None:
         valid_artist = "ValidArtist"
         too_long_artist = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
 
@@ -140,7 +140,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert error['field'] == to_camel_case(PostFields.ALBUM_ARTISTS_NAMES_ARRAY)
         assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
-    def test_multiple_with_one_empty_then_400(self) -> None:
+    def test_multiple_with_one_empty_then_400_bad_request(self) -> None:
         data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: ['', 'Muse']}
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
@@ -161,7 +161,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert len(artists_list) == 1
         assert artists_list[0].name == artist_name
 
-    def test_duplicate_values_then_400(self) -> None:
+    def test_duplicate_values_then_400_bad_request(self) -> None:
         data = {PostFields.ALBUM_NAME: "Best Of", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: ['Muse', 'Muse']}
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 

@@ -8,7 +8,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 class TestCase(LibTrackTestCase):
 
-    def test_jpeg_then_400(self):
+    def test_jpeg_then_400_bad_request(self):
         response = self._post_lib_track(LibTrackTestFilename.FORMAT_IMAGE_JPEG)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -17,7 +17,7 @@ class TestCase(LibTrackTestCase):
         assert error['field'] == LibTrackPostFields.TRACK_FILE_PUBLIC
         assert error['code'] == FieldValidationErrorCode.TRACK_FILE_EXTENSION_INVALID
 
-    def test_mp4_then_400(self):
+    def test_mp4_then_400_bad_request(self):
         response = self._post_lib_track(LibTrackTestFilename.FORMAT_BAD_EXTENSION_MP4)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

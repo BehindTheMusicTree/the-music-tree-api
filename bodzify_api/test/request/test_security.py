@@ -10,7 +10,7 @@ class TestCase(AppTestCase):
         super().setUp()
         self.logger = logging.getLogger('exceptions')
 
-    def test_disallowed_host_then_400(self):
+    def test_disallowed_host_then_400_bad_request(self):
         """Test that requests with invalid Host headers return appropriate error response"""
         with self.assertLogs('exceptions', level='ERROR') as log:
             self.api_client.credentials(HTTP_HOST='malicious.example.com')

@@ -107,7 +107,7 @@ class TestCase(GenreTestCase):
         assert blues is not None
         assert blues.parent == jazz
 
-    def test_with_query_param_not_related_to_pagination_then_400(self):
+    def test_with_query_param_not_related_to_pagination_then_400_bad_request(self):
         response = self._get_genres_tree()
         assert response.status_code == status.HTTP_200_OK  # Tree endpoint doesn't support pagination
 

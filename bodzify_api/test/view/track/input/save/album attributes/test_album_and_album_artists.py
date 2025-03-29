@@ -14,7 +14,7 @@ from bodzify_api.utils.data_transformer import to_camel_case
 
 
 class TestCase(LibTrackTestCase):
-    def test_album_provided_but_album_artists_not_then_400(self):
+    def test_album_provided_but_album_artists_not_then_400_bad_request(self):
         data = {PostFields.ALBUM_NAME: "Koko"}
         response = self._post_lib_track(
             title="Time", test_lib_track_filename=LibTrackTestFilename.SIZE_SMALL_0_01_MO_MP3, **data)
@@ -24,7 +24,7 @@ class TestCase(LibTrackTestCase):
         assert error["field"] == to_camel_case(PostFields.ALBUM_ARTISTS_NAMES_ARRAY)
         assert error["code"] == FieldValidationErrorCode.DEPENDENCY_MISSING
 
-    def test_album_artists_provided_but_album_not_then_400(self):
+    def test_album_artists_provided_but_album_not_then_400_bad_request(self):
         data = {PostFields.ALBUM_ARTISTS_NAMES_ARRAY: ["Koko"]}
         response = self._post_lib_track(
             title="time", test_lib_track_filename=LibTrackTestFilename.SIZE_SMALL_0_01_MO_MP3, **data)
@@ -34,7 +34,7 @@ class TestCase(LibTrackTestCase):
         assert error["field"] == to_camel_case(PostFields.ALBUM_NAME)
         assert error["code"] == FieldValidationErrorCode.DEPENDENCY_MISSING
 
-    def test_album_artists_provided_but_album_empty_then_400(self):
+    def test_album_artists_provided_but_album_empty_then_400_bad_request(self):
         data = {PostFields.ALBUM_NAME: "", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: ["Koko"]}
         response = self._post_lib_track(test_lib_track_filename=LibTrackTestFilename.SIZE_SMALL_0_01_MO_MP3, **data)
 

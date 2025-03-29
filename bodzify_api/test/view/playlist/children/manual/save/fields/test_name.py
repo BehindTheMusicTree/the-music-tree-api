@@ -8,7 +8,7 @@ from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase impor
 
 class TestCase(ManualPlaylistTestCase):
 
-    def test_multi_value_then_400(self):
+    def test_multi_value_then_400_bad_request(self):
         response = self._post_manual_playlist(**{Fields.NAME_PUBLIC: ["value", "value2"]})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -33,7 +33,7 @@ class TestCase(ManualPlaylistTestCase):
         assert error['field'] == Fields.NAME_PUBLIC
         assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
-    def test_already_exists_then_400(self):
+    def test_already_exists_then_400_bad_request(self):
         name = "value"
         self.model_fixture_factory.create_manual_playlist(name=name)
 

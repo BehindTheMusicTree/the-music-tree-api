@@ -8,7 +8,7 @@ from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields
 
 class TestCase(LibTrackTestCase):
 
-    def test_invalid_url_then_400(self):
+    def test_invalid_url_then_400_bad_request(self):
         response = self._post_lib_track_from_url(LibTracTestkUrl.INVALID)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

@@ -8,7 +8,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 class TestMultipartDuplicateFields(LibTrackTestCase):
 
-    def test_duplicate_fields_on_multipart_post_then_400(self):
+    def test_duplicate_fields_on_multipart_post_then_400_bad_request(self):
         data = {
             LibTrackFields.TITLE: ['Jo', 'steeve']  # Multiple values will be converted to separate form fields
         }
@@ -23,7 +23,7 @@ class TestMultipartDuplicateFields(LibTrackTestCase):
         # a list
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
-    def test_duplicate_fields_on_multipart_put_then_400(self):
+    def test_duplicate_fields_on_multipart_put_then_400_bad_request(self):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Hey Ho")
 
         data = {
@@ -38,7 +38,7 @@ class TestMultipartDuplicateFields(LibTrackTestCase):
         assert error['field'] == LibTrackFields.TITLE
         assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
 
-    def test_duplicate_fields_on_multipart_patch_then_400(self):
+    def test_duplicate_fields_on_multipart_patch_then_400_bad_request(self):
         # PATCH is not supported yet by the app
         pass
 
