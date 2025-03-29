@@ -6,3 +6,4 @@ class Fields:
     NAME_INTERNAL = ModelFields.NAME_INTERNAL
     PARENT = ModelFields.PARENT
     CHILDREN = ModelFields.CHILDREN
+    DATA_INTERNAL = ModelFields.DATA_INTERNAL

@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, TypeVar
 from django.db import transaction
 from django.db.models import QuerySet
 
-from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
+from bodzify_api.model.criteria.Fields import Fields as ModelFields
 from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
 
 from .Fields import Fields
@@ -46,7 +46,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
             self._refresh_ascendants_of_instance_and_children(child)
 
     def get_default_ordering(self) -> list[str]:
-        return [LibTrackMixinFields.NAME_INTERNAL]
+        return [ModelFields.NAME_INTERNAL]
 
     @transaction.atomic
     def create(self, type_id: int, **kwargs) -> T:
@@ -226,7 +226,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         return build_tree(None)
 
     @transaction.atomic
-    def import_criteria_tree(self, user: 'User', tree_data: list[dict]) -> None:
+    def import_criteria_tree(self, user: 'User', data: dict) -> None:
         """
         Imports a tree structure of criteria, replacing all existing criteria.
         The input should be an array of criteria trees, where each tree follows the format:
@@ -240,7 +240,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
           ]
         }
         """
-        if not tree_data:
+        if not data:
             return
 
         # Delete all existing criteria for the user
@@ -267,4 +267,4 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
                     create_criteria_tree(node["children"], criteria)
 
         # Create all criteria trees
-        create_criteria_tree(tree_data)
+        create_criteria_tree(data[Fields.DATA_INTERNAL])

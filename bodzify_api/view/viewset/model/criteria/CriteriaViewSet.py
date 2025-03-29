@@ -114,11 +114,9 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
             serializer.is_valid(raise_exception=True)
             self.model_class.objects.import_criteria_tree(request.user, serializer.validated_data)
         except ValueError as e:
-            raise AppValidationException(
-                field_name="data",
-                message=str(e),
-                field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
-            )
+            raise AppValidationException(field_name="data",
+                                         message=str(e),
+                                         field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID)
 
         # Get all created criteria with pagination and 201 status code
         queryset = self.get_queryset()
