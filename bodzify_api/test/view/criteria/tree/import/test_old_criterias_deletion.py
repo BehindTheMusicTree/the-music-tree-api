@@ -6,6 +6,7 @@ from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrac
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.children.criteria.genre.GenrePlaylist import GenrePlaylist
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
+from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields
 
 
 class TestOldCriteriasDeletion(GenreTestCase):
@@ -18,8 +19,8 @@ class TestOldCriteriasDeletion(GenreTestCase):
         self.model_fixture_factory.create_lib_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
-        tree_data = [{"name": "New Rock", "children": []}]
-        response = self._post_genres_tree_import(tree_data)
+        tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert not Genre.objects.filter(uuid=old_genre.uuid).exists()
@@ -33,8 +34,8 @@ class TestOldCriteriasDeletion(GenreTestCase):
         self.model_fixture_factory.create_lib_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
-        tree_data = [{"name": "New Rock", "children": []}]
-        response = self._post_genres_tree_import(tree_data)
+        tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert not Playlist.objects.filter(uuid=old_genre.criteria_playlist.uuid).exists()
@@ -48,8 +49,8 @@ class TestOldCriteriasDeletion(GenreTestCase):
         self.model_fixture_factory.create_lib_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
-        tree_data = [{"name": "New Rock", "children": []}]
-        response = self._post_genres_tree_import(tree_data)
+        tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -72,8 +73,8 @@ class TestOldCriteriasDeletion(GenreTestCase):
         self.model_fixture_factory.create_lib_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
-        tree_data = [{"name": "New Rock", "children": []}]
-        response = self._post_genres_tree_import(tree_data)
+        tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -93,8 +94,8 @@ class TestOldCriteriasDeletion(GenreTestCase):
         track2 = self.model_fixture_factory.create_lib_track_with_file(
             title="Track 2", use_manager_for_genre_playlist_adding=True)
 
-        tree_data = [{"name": "New Rock", "children": []}]
-        response = self._post_genres_tree_import(tree_data)
+        tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -123,3 +124,73 @@ class TestOldCriteriasDeletion(GenreTestCase):
         new_genre = Genre.objects.get(name="New Rock")
         assert new_genre is not None
         assert new_genre.parent is None
+
+    def test_import_new_tree_then_deletes_old(self):
+        self.model_fixture_factory.create_genre(name="Old Rock")
+
+        tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: tree_data})
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+        genres = Genre.objects.filter(user=self.test_user1)
+        assert genres.count() == 1
+        new_genre = genres.first()
+        assert new_genre is not None
+        assert new_genre.name == "New Rock"
+
+    def test_import_new_tree_with_children_then_deletes_old(self):
+        self.model_fixture_factory.create_genre(name="Old Rock")
+
+        tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: tree_data})
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+        genres = Genre.objects.filter(user=self.test_user1)
+        assert genres.count() == 1
+        new_genre = genres.first()
+        assert new_genre is not None
+        assert new_genre.name == "New Rock"
+
+    def test_import_new_tree_with_deep_children_then_deletes_old(self):
+        self.model_fixture_factory.create_genre(name="Old Rock")
+
+        tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: tree_data})
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+        genres = Genre.objects.filter(user=self.test_user1)
+        assert genres.count() == 1
+        new_genre = genres.first()
+        assert new_genre is not None
+        assert new_genre.name == "New Rock"
+
+    def test_import_new_tree_with_multiple_roots_then_deletes_old(self):
+        self.model_fixture_factory.create_genre(name="Old Rock")
+
+        tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: tree_data})
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+        genres = Genre.objects.filter(user=self.test_user1)
+        assert genres.count() == 1
+        new_genre = genres.first()
+        assert new_genre is not None
+        assert new_genre.name == "New Rock"
+
+    def test_import_new_tree_with_complex_structure_then_deletes_old(self):
+        self.model_fixture_factory.create_genre(name="Old Rock")
+
+        tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: tree_data})
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+        genres = Genre.objects.filter(user=self.test_user1)
+        assert genres.count() == 1
+        new_genre = genres.first()
+        assert new_genre is not None
+        assert new_genre.name == "New Rock"

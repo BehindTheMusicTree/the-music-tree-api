@@ -81,25 +81,26 @@ class TestValidation(GenreTestCase, NotNullableListBodyDataTestCase):
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_non_array_input_then_400_bad_request(self):
-        response = self._post_genres_tree_import(**{'data[]': {Fields.NAME_PUBLIC: "Rock"}})
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: {Fields.NAME_PUBLIC: "Rock"}})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0]["field"] == Fields.DATA_INTERNAL
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_malformed_array_then_400_bad_request(self):
-        response = self._post_genres_tree_import(**{'data[]': {Fields.NAME_PUBLIC: "Rock"}})
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: {Fields.NAME_PUBLIC: "Rock"}})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0]["field"] == Fields.DATA_INTERNAL
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.LIST_MALFORMED
 
     def test_invalid_node_structure_then_400_bad_request(self):
-        response = self._post_genres_tree_import([{"invalid": "Rock"}])
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: [{"invalid": "Rock"}]})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0]["field"] == Fields.DATA_INTERNAL
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_invalid_children_structure_then_400_bad_request(self):
-        response = self._post_genres_tree_import([{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: "invalid"}])
+        response = self._post_genres_tree_import(
+            **{Fields.DATA_PUBLIC: [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: "invalid"}]})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0]["field"] == Fields.CHILDREN
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.FORMAT_INVALID
@@ -108,7 +109,7 @@ class TestValidation(GenreTestCase, NotNullableListBodyDataTestCase):
         data = [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []},
                 {Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []}]
 
-        response = self._post_genres_tree_import(data)
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: data})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0]["field"] == Fields.DATA_INTERNAL
@@ -117,8 +118,8 @@ class TestValidation(GenreTestCase, NotNullableListBodyDataTestCase):
     def test_import_new_tree_then_overwrites_existing(self):
         self.model_fixture_factory.create_genre(name="Old Rock")
 
-        tree_data = [{"name": "New Rock", "children": []}]
-        response = self._post_genres_tree_import(tree_data)
+        tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -132,17 +133,17 @@ class TestValidation(GenreTestCase, NotNullableListBodyDataTestCase):
 
         tree_data = [
             {
-                "name": "Rock",
-                "children": [
-                    {"name": "Punk", "children": []},
-                    {"name": "Rock", "children": []}  # This will cause a duplicate name error
+                Fields.NAME_PUBLIC: "Rock",
+                Fields.CHILDREN: [
+                    {Fields.NAME_PUBLIC: "Punk", Fields.CHILDREN: []},
+                    {Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []}  # This will cause a duplicate name error
                 ]
             }
         ]
-        response = self._post_genres_tree_import(tree_data)
+        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0]["field"] == "name"
+        assert self.bad_request_result_field_errors[0]["field"] == Fields.NAME_PUBLIC
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.NAME_DUPLICATE
         assert Fields.NAME_PUBLIC in self.bad_request_result_field_errors[0]["message"]
 
