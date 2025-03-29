@@ -160,7 +160,7 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert artists_list[1].name == new_artist1
         assert artists_list[2].name == new_artist2
 
-    def test_multiple_with_one_too_long_then_400_bad_request(self) -> None:
+    def test_multiple_with_one_too_large_then_400_bad_request(self) -> None:
         valid_artist = "ValidArtist"
         too_long_artist = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
 
