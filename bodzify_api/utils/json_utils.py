@@ -1,5 +1,5 @@
 from json import JSONEncoder
-from typing import Any
+from typing import Any, Union, Tuple
 from uuid import UUID
 
 
@@ -15,12 +15,27 @@ def transform_uuids(obj: Any) -> Any:
     Returns:
         The transformed object with all UUIDs converted to strings.
     """
-    if isinstance(obj, dict):
-        return {key: transform_uuids(value) for key, value in obj.items()}
-    elif isinstance(obj, list):
-        return [transform_uuids(item) for item in obj]
-    elif isinstance(obj, UUID):
+    if isinstance(obj, UUID):
         return str(obj)
+
+    stack: list[Tuple[Union[dict, list], Union[dict, list, None], Union[str, int, None]]] = [(obj, None, None)]
+
+    while stack:
+        current, parent, key = stack.pop()
+
+        if isinstance(current, dict):
+            for k, v in current.items():
+                if isinstance(v, (dict, list)):
+                    stack.append((v, current, k))
+                elif isinstance(v, UUID):
+                    current[k] = str(v)
+        elif isinstance(current, list):
+            for i, v in enumerate(current):
+                if isinstance(v, (dict, list)):
+                    stack.append((v, current, i))
+                elif isinstance(v, UUID):
+                    current[i] = str(v)
+
     return obj
 
 
