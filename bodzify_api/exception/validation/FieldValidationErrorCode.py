@@ -14,7 +14,7 @@ class FieldValidationErrorCode(str, Enum):
     UNKNOWN = 'unknown'
     UNKNOWN_FIELDS = 'fields_unknown'
 
-    # list Validation
+    # List Validation
     LIST_EXPECTED = 'list_expected'
     LIST_MALFORMED = 'list_malformed'
     LIST_EMPTY = 'list_empty'
@@ -24,6 +24,11 @@ class FieldValidationErrorCode(str, Enum):
     LIST_ITEM_INVALID = 'list_item_invalid'
     LIST_VALUE_EMPTY = 'list_value_empty'
     LIST_VALUE_DUPLICATE = 'list_value_duplicate'
+
+    # Tree Validation
+    TREE_TOO_LONG = 'tree_too_long'
+    TREE_MALFORMED = 'tree_malformed'
+    TREE_VALUE_DUPLICATE = 'tree_value_duplicate'
 
     # Reference Validation
     REFERENCE_INVALID = 'reference_invalid'
