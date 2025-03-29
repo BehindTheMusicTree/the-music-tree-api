@@ -8,7 +8,7 @@ from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 class TestResults(GenreTestCase):
     def test_single_root_then_returns_correct_structure(self):
         data = [{TreeImportFields.NAME_PUBLIC: "Rock", TreeImportFields.CHILDREN: []}]
-        response = self._post_genres_tree_import(data={TreeImportFields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={TreeImportFields.TREE_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         assert len(self.results) == 1
@@ -20,7 +20,7 @@ class TestResults(GenreTestCase):
             {TreeImportFields.NAME_PUBLIC: "Rock", TreeImportFields.CHILDREN: []},
             {TreeImportFields.NAME_PUBLIC: "Jazz", TreeImportFields.CHILDREN: []}
         ]
-        response = self._post_genres_tree_import(data={TreeImportFields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={TreeImportFields.TREE_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         assert len(self.results) == 2
@@ -42,7 +42,7 @@ class TestResults(GenreTestCase):
                 }
             ]
         }]
-        response = self._post_genres_tree_import(data={TreeImportFields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={TreeImportFields.TREE_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         assert len(self.results) == 3
@@ -76,7 +76,7 @@ class TestResults(GenreTestCase):
                 }
             ]
         }]
-        response = self._post_genres_tree_import(data={TreeImportFields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={TreeImportFields.TREE_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         assert len(self.results) == 5
@@ -101,7 +101,7 @@ class TestResults(GenreTestCase):
                 {TreeImportFields.NAME_PUBLIC: "Blues", TreeImportFields.CHILDREN: []}
             ]
         }]
-        response = self._post_genres_tree_import(data={TreeImportFields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={TreeImportFields.TREE_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         assert len(self.results) == 4
@@ -144,7 +144,7 @@ class TestResults(GenreTestCase):
                 ]
             }
         ]
-        response = self._post_genres_tree_import(data={TreeImportFields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={TreeImportFields.TREE_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         assert len(self.results) == 10

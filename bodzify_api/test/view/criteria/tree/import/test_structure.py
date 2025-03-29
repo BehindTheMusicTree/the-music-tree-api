@@ -8,7 +8,7 @@ from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 class TestStructure(GenreTestCase):
     def test_single_root_then_ok(self):
         data = [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         genres = Genre.objects.filter(user=self.test_user1)
@@ -23,7 +23,7 @@ class TestStructure(GenreTestCase):
             {Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []},
             {Fields.NAME_PUBLIC: "Jazz", Fields.CHILDREN: []}
         ]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         genres = Genre.objects.filter(user=self.test_user1)
@@ -47,7 +47,7 @@ class TestStructure(GenreTestCase):
                 }
             ]
         }]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         genres = Genre.objects.filter(user=self.test_user1)
@@ -84,7 +84,7 @@ class TestStructure(GenreTestCase):
                 }
             ]
         }]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         genres = Genre.objects.filter(user=self.test_user1)
@@ -114,7 +114,7 @@ class TestStructure(GenreTestCase):
                 {Fields.NAME_PUBLIC: "Blues", Fields.CHILDREN: []}
             ]
         }]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         genres = Genre.objects.filter(user=self.test_user1)
@@ -161,7 +161,7 @@ class TestStructure(GenreTestCase):
                 ]
             }
         ]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         genres = Genre.objects.filter(user=self.test_user1)

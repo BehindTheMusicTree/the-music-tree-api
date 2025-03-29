@@ -20,7 +20,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert not Genre.objects.filter(uuid=old_genre.uuid).exists()
@@ -35,7 +35,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert not Playlist.objects.filter(uuid=old_genre.criteria_playlist.uuid).exists()
@@ -50,7 +50,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -74,7 +74,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -95,7 +95,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
             title="Track 2", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -129,7 +129,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
         self.model_fixture_factory.create_genre(name="Old Rock")
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -143,7 +143,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
         self.model_fixture_factory.create_genre(name="Old Rock")
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -157,7 +157,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
         self.model_fixture_factory.create_genre(name="Old Rock")
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -171,7 +171,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
         self.model_fixture_factory.create_genre(name="Old Rock")
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -185,7 +185,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
         self.model_fixture_factory.create_genre(name="Old Rock")
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 
