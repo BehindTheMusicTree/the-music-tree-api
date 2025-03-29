@@ -1,71 +1,72 @@
 from rest_framework import status
 
-from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields
-from bodzify_api.test.utils.field.body_data.type.NotNullableListBodyDataTestCase import NotNullableListBodyDataTestCase
+from bodzify_api.serializer.model.criteria.input.Fields import Fields as InputFields
+from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields as TreeImportFields
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 
-class TestResults(GenreTestCase, NotNullableListBodyDataTestCase):
+class TestResults(GenreTestCase):
     def test_single_root_then_returns_correct_structure(self):
-        data = [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
+        data = [{TreeImportFields.NAME_PUBLIC: "Rock", TreeImportFields.CHILDREN: []}]
+        response = self._post_genres_tree_import(data={TreeImportFields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
-        assert len(response.data) == 1
-        assert response.data[0][Fields.NAME_PUBLIC] == "Rock"
-        assert len(response.data[0][Fields.CHILDREN]) == 0
+        assert len(self.results) == 1
+        assert self.results[0][InputFields.NAME_PUBLIC] == "Rock"
+        assert self.results[0][InputFields.PARENT] is None
 
     def test_multiple_roots_then_returns_correct_structure(self):
         data = [
-            {Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []},
-            {Fields.NAME_PUBLIC: "Jazz", Fields.CHILDREN: []}
+            {TreeImportFields.NAME_PUBLIC: "Rock", TreeImportFields.CHILDREN: []},
+            {TreeImportFields.NAME_PUBLIC: "Jazz", TreeImportFields.CHILDREN: []}
         ]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={TreeImportFields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
-        assert len(response.data) == 2
-        assert response.data[0][Fields.NAME_PUBLIC] == "Rock"
-        assert response.data[1][Fields.NAME_PUBLIC] == "Jazz"
-        assert len(response.data[0][Fields.CHILDREN]) == 0
-        assert len(response.data[1][Fields.CHILDREN]) == 0
+        assert len(self.results) == 2
+        assert self.results[0][InputFields.NAME_PUBLIC] == "Rock"
+        assert self.results[1][InputFields.NAME_PUBLIC] == "Jazz"
+        assert self.results[0][InputFields.PARENT] is None
+        assert self.results[1][InputFields.PARENT] is None
 
     def test_nested_structure_then_returns_correct_structure(self):
         data = [{
-            Fields.NAME_PUBLIC: "Rock",
-            Fields.CHILDREN: [
+            TreeImportFields.NAME_PUBLIC: "Rock",
+            TreeImportFields.CHILDREN: [
                 {
-                    Fields.NAME_PUBLIC: "Metal",
-                    Fields.CHILDREN: [
-                        {Fields.NAME_PUBLIC: "Heavy Metal", Fields.CHILDREN: []}
+                    TreeImportFields.NAME_PUBLIC: "Metal",
+                    TreeImportFields.CHILDREN: [
+                        {TreeImportFields.NAME_PUBLIC: "Heavy Metal", TreeImportFields.CHILDREN: []}
                     ]
                 }
             ]
         }]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={TreeImportFields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
-        assert len(response.data) == 1
-        assert response.data[0][Fields.NAME_PUBLIC] == "Rock"
-        assert len(response.data[0][Fields.CHILDREN]) == 1
-        assert response.data[0][Fields.CHILDREN][0][Fields.NAME_PUBLIC] == "Metal"
-        assert len(response.data[0][Fields.CHILDREN][0][Fields.CHILDREN]) == 1
-        assert response.data[0][Fields.CHILDREN][0][Fields.CHILDREN][0][Fields.NAME_PUBLIC] == "Heavy Metal"
-        assert len(response.data[0][Fields.CHILDREN][0][Fields.CHILDREN][0][Fields.CHILDREN]) == 0
+        assert len(self.results) == 3
+        rock = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Rock")
+        metal = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Metal")
+        heavy_metal = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Heavy Metal")
+
+        assert rock[InputFields.PARENT] is None
+        assert metal[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Rock"
+        assert heavy_metal[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Metal"
 
     def test_deep_nesting_then_returns_correct_structure(self):
         data = [{
-            Fields.NAME_PUBLIC: "Rock",
-            Fields.CHILDREN: [
+            TreeImportFields.NAME_PUBLIC: "Rock",
+            TreeImportFields.CHILDREN: [
                 {
-                    Fields.NAME_PUBLIC: "Metal",
-                    Fields.CHILDREN: [
+                    TreeImportFields.NAME_PUBLIC: "Metal",
+                    TreeImportFields.CHILDREN: [
                         {
-                            Fields.NAME_PUBLIC: "Heavy Metal",
-                            Fields.CHILDREN: [
+                            TreeImportFields.NAME_PUBLIC: "Heavy Metal",
+                            TreeImportFields.CHILDREN: [
                                 {
-                                    Fields.NAME_PUBLIC: "Classic Metal",
-                                    Fields.CHILDREN: [
-                                        {Fields.NAME_PUBLIC: "Power Metal", Fields.CHILDREN: []}
+                                    TreeImportFields.NAME_PUBLIC: "Classic Metal",
+                                    TreeImportFields.CHILDREN: [
+                                        {TreeImportFields.NAME_PUBLIC: "Power Metal", TreeImportFields.CHILDREN: []}
                                     ]
                                 }
                             ]
@@ -74,97 +75,96 @@ class TestResults(GenreTestCase, NotNullableListBodyDataTestCase):
                 }
             ]
         }]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={TreeImportFields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
-        assert len(response.data) == 1
-        assert response.data[0][Fields.NAME_PUBLIC] == "Rock"
-        assert len(response.data[0][Fields.CHILDREN]) == 1
-        assert response.data[0][Fields.CHILDREN][0][Fields.NAME_PUBLIC] == "Metal"
-        assert len(response.data[0][Fields.CHILDREN][0][Fields.CHILDREN]) == 1
-        assert response.data[0][Fields.CHILDREN][0][Fields.CHILDREN][0][Fields.NAME_PUBLIC] == "Heavy Metal"
-        assert len(response.data[0][Fields.CHILDREN][0][Fields.CHILDREN][0][Fields.CHILDREN]) == 1
-        assert response.data[0][
-            Fields.CHILDREN][0][
-            Fields.CHILDREN][0][
-            Fields.CHILDREN][0][
-            Fields.NAME_PUBLIC] == "Classic Metal"
-        assert len(response.data[0][Fields.CHILDREN][0][Fields.CHILDREN][0][Fields.CHILDREN][0][Fields.CHILDREN]) == 1
-        assert response.data[0][
-            Fields.CHILDREN][0][
-            Fields.CHILDREN][0][
-            Fields.CHILDREN][0][
-            Fields.CHILDREN][0][
-            Fields.NAME_PUBLIC] == "Power Metal"
-        assert len(response.data[0][Fields.CHILDREN][0][Fields.CHILDREN][0]
-                   [Fields.CHILDREN][0][Fields.CHILDREN][0][Fields.CHILDREN]) == 0
+        assert len(self.results) == 5
+        rock = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Rock")
+        metal = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Metal")
+        heavy_metal = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Heavy Metal")
+        classic_metal = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Classic Metal")
+        power_metal = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Power Metal")
+
+        assert rock[InputFields.PARENT] is None
+        assert metal[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Rock"
+        assert heavy_metal[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Metal"
+        assert classic_metal[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Heavy Metal"
+        assert power_metal[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Classic Metal"
 
     def test_multiple_children_then_returns_correct_structure(self):
         data = [{
-            Fields.NAME_PUBLIC: "Rock",
-            Fields.CHILDREN: [
-                {Fields.NAME_PUBLIC: "Metal", Fields.CHILDREN: []},
-                {Fields.NAME_PUBLIC: "Punk", Fields.CHILDREN: []},
-                {Fields.NAME_PUBLIC: "Blues", Fields.CHILDREN: []}
+            TreeImportFields.NAME_PUBLIC: "Rock",
+            TreeImportFields.CHILDREN: [
+                {TreeImportFields.NAME_PUBLIC: "Metal", TreeImportFields.CHILDREN: []},
+                {TreeImportFields.NAME_PUBLIC: "Punk", TreeImportFields.CHILDREN: []},
+                {TreeImportFields.NAME_PUBLIC: "Blues", TreeImportFields.CHILDREN: []}
             ]
         }]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={TreeImportFields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
-        assert len(response.data) == 1
-        assert response.data[0][Fields.NAME_PUBLIC] == "Rock"
-        assert len(response.data[0][Fields.CHILDREN]) == 3
-        assert response.data[0][Fields.CHILDREN][0][Fields.NAME_PUBLIC] == "Metal"
-        assert response.data[0][Fields.CHILDREN][1][Fields.NAME_PUBLIC] == "Punk"
-        assert response.data[0][Fields.CHILDREN][2][Fields.NAME_PUBLIC] == "Blues"
-        assert len(response.data[0][Fields.CHILDREN][0][Fields.CHILDREN]) == 0
-        assert len(response.data[0][Fields.CHILDREN][1][Fields.CHILDREN]) == 0
-        assert len(response.data[0][Fields.CHILDREN][2][Fields.CHILDREN]) == 0
+        assert len(self.results) == 4
+        rock = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Rock")
+        metal = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Metal")
+        punk = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Punk")
+        blues = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Blues")
+
+        assert rock[InputFields.PARENT] is None
+        assert metal[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Rock"
+        assert punk[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Rock"
+        assert blues[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Rock"
 
     def test_complex_structure_then_returns_correct_structure(self):
         data = [
             {
-                Fields.NAME_PUBLIC: "Rock",
-                Fields.CHILDREN: [
+                TreeImportFields.NAME_PUBLIC: "Rock",
+                TreeImportFields.CHILDREN: [
                     {
-                        Fields.NAME_PUBLIC: "Metal",
-                        Fields.CHILDREN: [
-                            {Fields.NAME_PUBLIC: "Heavy Metal", Fields.CHILDREN: []},
-                            {Fields.NAME_PUBLIC: "Death Metal", Fields.CHILDREN: []}
+                        TreeImportFields.NAME_PUBLIC: "Metal",
+                        TreeImportFields.CHILDREN: [
+                            {TreeImportFields.NAME_PUBLIC: "Heavy Metal", TreeImportFields.CHILDREN: []},
+                            {TreeImportFields.NAME_PUBLIC: "Death Metal", TreeImportFields.CHILDREN: []}
                         ]
                     },
                     {
-                        Fields.NAME_PUBLIC: "Punk",
-                        Fields.CHILDREN: [
-                            {Fields.NAME_PUBLIC: "Hardcore", Fields.CHILDREN: []},
-                            {Fields.NAME_PUBLIC: "Pop Punk", Fields.CHILDREN: []}
+                        TreeImportFields.NAME_PUBLIC: "Punk",
+                        TreeImportFields.CHILDREN: [
+                            {TreeImportFields.NAME_PUBLIC: "Hardcore", TreeImportFields.CHILDREN: []},
+                            {TreeImportFields.NAME_PUBLIC: "Pop Punk", TreeImportFields.CHILDREN: []}
                         ]
                     }
                 ]
             },
             {
-                Fields.NAME_PUBLIC: "Jazz",
-                Fields.CHILDREN: [
-                    {Fields.NAME_PUBLIC: "Bebop", Fields.CHILDREN: []},
-                    {Fields.NAME_PUBLIC: "Fusion", Fields.CHILDREN: []}
+                TreeImportFields.NAME_PUBLIC: "Jazz",
+                TreeImportFields.CHILDREN: [
+                    {TreeImportFields.NAME_PUBLIC: "Bebop", TreeImportFields.CHILDREN: []},
+                    {TreeImportFields.NAME_PUBLIC: "Fusion", TreeImportFields.CHILDREN: []}
                 ]
             }
         ]
-        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={TreeImportFields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
-        assert len(response.data) == 2
-        assert response.data[0][Fields.NAME_PUBLIC] == "Rock"
-        assert len(response.data[0][Fields.CHILDREN]) == 2
-        assert response.data[0][Fields.CHILDREN][0][Fields.NAME_PUBLIC] == "Metal"
-        assert len(response.data[0][Fields.CHILDREN][0][Fields.CHILDREN]) == 2
-        assert response.data[0][Fields.CHILDREN][0][Fields.CHILDREN][0][Fields.NAME_PUBLIC] == "Heavy Metal"
-        assert response.data[0][Fields.CHILDREN][0][Fields.CHILDREN][1][Fields.NAME_PUBLIC] == "Death Metal"
-        assert response.data[0][Fields.CHILDREN][1][Fields.NAME_PUBLIC] == "Punk"
-        assert len(response.data[0][Fields.CHILDREN][1][Fields.CHILDREN]) == 2
-        assert response.data[0][Fields.CHILDREN][1][Fields.CHILDREN][0][Fields.NAME_PUBLIC] == "Hardcore"
-        assert response.data[0][Fields.CHILDREN][1][Fields.CHILDREN][1][Fields.NAME_PUBLIC] == "Pop Punk"
-        assert response.data[1][Fields.NAME_PUBLIC] == "Jazz"
-        assert len(response.data[1][Fields.CHILDREN]) == 2
-        assert response.data[1][Fields.CHILDREN][0][Fields.NAME_PUBLIC] == "Bebop"
-        assert response.data[1][Fields.CHILDREN][1][Fields.NAME_PUBLIC] == "Fusion"
+        assert len(self.results) == 10
+        rock = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Rock")
+        metal = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Metal")
+        heavy_metal = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Heavy Metal")
+        death_metal = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Death Metal")
+        punk = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Punk")
+        hardcore = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Hardcore")
+        pop_punk = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Pop Punk")
+        jazz = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Jazz")
+        bebop = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Bebop")
+        fusion = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Fusion")
+
+        assert rock[InputFields.PARENT] is None
+        assert metal[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Rock"
+        assert heavy_metal[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Metal"
+        assert death_metal[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Metal"
+        assert punk[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Rock"
+        assert hardcore[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Punk"
+        assert pop_punk[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Punk"
+        assert jazz[InputFields.PARENT] is None
+        assert bebop[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Jazz"
+        assert fusion[InputFields.PARENT][InputFields.NAME_PUBLIC] == "Jazz"

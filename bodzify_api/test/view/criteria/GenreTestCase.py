@@ -57,4 +57,4 @@ class GenreTestCase(AppTestCase[Genre]):
         return self.api_client.post(path=reverse(self.list_endpoint) + 'tree/import/',
                                     data=data,
                                     content_type='application/json',
-                                    handle_response=self._set_results_without_model_class)
+                                    handle_response=self._set_results)
