@@ -59,19 +59,6 @@ class AppSerializer(serializers.Serializer, Generic[T]):
         except (UnicodeDecodeError, AttributeError, json.JSONDecodeError):
             return []
 
-    def _validate_field_format(self, field_name: str, field, data: dict) -> None:
-        if self._is_list_field(field):
-            if field_name in data:
-                raise AppValidationException(
-                    field_name=field_name,
-                    message=_(f"list field '{field_name} ' must be specified as '{field_name} []'"),
-                    field_validation_error_code=FieldValidationErrorCode.LIST_MALFORMED
-                )
-        elif field_name in data and isinstance(data[field_name], list):
-            raise AppValidationException(field_name=field_name,
-                                         message=_("The field does not accept list values"),
-                                         field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID)
-
     def _collect_known_fields_and_malformed_array_fields_names(self, data: dict) -> tuple[set, list]:
         known_fields = set()
         unknown_fields = []
@@ -87,7 +74,7 @@ class AppSerializer(serializers.Serializer, Generic[T]):
             if field_name in data and is_list_field:
                 raise AppValidationException(
                     field_name=field_name,
-                    message=_(f"list field '{field_name} ' must be specified as '{array_field_name} '"),
+                    message=_(f"list field '{field_name}' must be specified as '{array_field_name}'"),
                     field_validation_error_code=FieldValidationErrorCode.LIST_MALFORMED)
 
             # Add to known fields without [] suffix
