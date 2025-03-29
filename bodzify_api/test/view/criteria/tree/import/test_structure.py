@@ -2,14 +2,13 @@ from rest_framework import status
 
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields
-from bodzify_api.test.utils.field.body_data.type.NotNullableListBodyDataTestCase import NotNullableListBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 
-class TestStructure(GenreTestCase, NotNullableListBodyDataTestCase):
+class TestStructure(GenreTestCase):
     def test_single_root_then_ok(self):
         data = [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         genres = Genre.objects.filter(user=self.test_user1)
@@ -24,7 +23,7 @@ class TestStructure(GenreTestCase, NotNullableListBodyDataTestCase):
             {Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []},
             {Fields.NAME_PUBLIC: "Jazz", Fields.CHILDREN: []}
         ]
-        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         genres = Genre.objects.filter(user=self.test_user1)
@@ -48,7 +47,7 @@ class TestStructure(GenreTestCase, NotNullableListBodyDataTestCase):
                 }
             ]
         }]
-        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         genres = Genre.objects.filter(user=self.test_user1)
@@ -85,7 +84,7 @@ class TestStructure(GenreTestCase, NotNullableListBodyDataTestCase):
                 }
             ]
         }]
-        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         genres = Genre.objects.filter(user=self.test_user1)
@@ -115,7 +114,7 @@ class TestStructure(GenreTestCase, NotNullableListBodyDataTestCase):
                 {Fields.NAME_PUBLIC: "Blues", Fields.CHILDREN: []}
             ]
         }]
-        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         genres = Genre.objects.filter(user=self.test_user1)
@@ -162,7 +161,7 @@ class TestStructure(GenreTestCase, NotNullableListBodyDataTestCase):
                 ]
             }
         ]
-        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         genres = Genre.objects.filter(user=self.test_user1)

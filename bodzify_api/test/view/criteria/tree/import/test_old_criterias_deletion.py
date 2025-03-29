@@ -20,7 +20,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert not Genre.objects.filter(uuid=old_genre.uuid).exists()
