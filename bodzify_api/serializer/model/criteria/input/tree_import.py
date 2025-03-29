@@ -7,18 +7,20 @@ from bodzify_api.serializer.model.criteria.input.tree_node import CriteriaTreeNo
 
 
 class CriteriaTreeImportSerializer(AppSerializer):
-    data: ListField = ListField(child=DictField())
+    data: ListField = ListField(child=DictField(), allow_empty=False)
 
     def to_internal_value(self, data):
         if isinstance(data, list):
+            if not data:
+                raise AppValidationException(
+                    field_name="data",
+                    message="At least one criteria must be provided",
+                    field_validation_error_code=FieldValidationErrorCode.REQUIRED
+                )
             return {'data': data}
         return super().to_internal_value(data)
 
     def validate_data(self, value):
-        if not value:
-            raise AppValidationException(field_name="data",
-                                         message="At least one criteria must be provided",
-                                         field_validation_error_code=FieldValidationErrorCode.REQUIRED)
         for node in value:
             CriteriaTreeNodeSerializer(data=node).is_valid(raise_exception=True)
         return value
