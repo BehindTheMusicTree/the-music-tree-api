@@ -8,7 +8,7 @@ from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 class TestResults(GenreTestCase, NotNullableListBodyDataTestCase):
     def test_single_root_then_returns_correct_structure(self):
         data = [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         assert len(response.data) == 1
@@ -20,7 +20,7 @@ class TestResults(GenreTestCase, NotNullableListBodyDataTestCase):
             {Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []},
             {Fields.NAME_PUBLIC: "Jazz", Fields.CHILDREN: []}
         ]
-        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         assert len(response.data) == 2
@@ -41,7 +41,7 @@ class TestResults(GenreTestCase, NotNullableListBodyDataTestCase):
                 }
             ]
         }]
-        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         assert len(response.data) == 1
@@ -74,7 +74,7 @@ class TestResults(GenreTestCase, NotNullableListBodyDataTestCase):
                 }
             ]
         }]
-        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         assert len(response.data) == 1
@@ -108,7 +108,7 @@ class TestResults(GenreTestCase, NotNullableListBodyDataTestCase):
                 {Fields.NAME_PUBLIC: "Blues", Fields.CHILDREN: []}
             ]
         }]
-        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         assert len(response.data) == 1
@@ -150,7 +150,7 @@ class TestResults(GenreTestCase, NotNullableListBodyDataTestCase):
                 ]
             }
         ]
-        response = self._post_genres_tree_import(**{Fields.DATA_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.DATA_PUBLIC: data})
         assert response.status_code == status.HTTP_201_CREATED
 
         assert len(response.data) == 2

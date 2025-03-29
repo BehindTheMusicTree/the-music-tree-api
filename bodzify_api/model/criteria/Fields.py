@@ -12,4 +12,4 @@ class Fields(LibTrackMixinFields):
     CHILD = 'child'
     CHILDREN = 'children'
     CRITERIA_PLAYLIST = 'criteria_playlist'
-    DATA_INTERNAL = 'data'
+    TREE_INTERNAL = 'tree'

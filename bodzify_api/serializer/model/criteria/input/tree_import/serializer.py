@@ -9,17 +9,17 @@ from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Field
 
 
 class CriteriaTreeImportSerializer(AppSerializer):
-    data: ListField = ListField(
+    tree: ListField = ListField(
         child=DictField(), allow_empty=False, max_length=settings.CRITERIA_TREE_IMPORT_MAX_ROOT_COUNT)
 
     def to_internal_value(self, data):
         if isinstance(data, list):
             if not data:
-                raise AppValidationException(field_name=Fields.DATA_INTERNAL,
+                raise AppValidationException(field_name=Fields.TREE_INTERNAL,
                                              message="At least one criteria must be provided",
                                              field_validation_error_code=FieldValidationErrorCode.REQUIRED)
-            return {Fields.DATA_INTERNAL: data}
-        raise AppValidationException(field_name=Fields.DATA_INTERNAL,
+            return {Fields.TREE_INTERNAL: data}
+        raise AppValidationException(field_name=Fields.TREE_INTERNAL,
                                      message="Input must be an array",
                                      field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID)
 
@@ -33,7 +33,7 @@ class CriteriaTreeImportSerializer(AppSerializer):
 
         if total_count > settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT:
             raise AppValidationException(
-                field_name=Fields.DATA_INTERNAL,
+                field_name=Fields.TREE_INTERNAL,
                 message=(f"Total number of elements ({total_count}) exceeds maximum allowed "
                          f"({settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT})"),
                 field_validation_error_code=FieldValidationErrorCode.LIST_TOO_LONG

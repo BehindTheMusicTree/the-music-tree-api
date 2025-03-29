@@ -267,4 +267,4 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
                     create_criteria_tree(node["children"], criteria)
 
         # Create all criteria trees
-        create_criteria_tree(data[Fields.DATA_INTERNAL])
+        create_criteria_tree(data[Fields.TREE_INTERNAL])
