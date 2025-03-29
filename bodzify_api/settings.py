@@ -61,9 +61,8 @@ MB_ARTIST_NAME_LEN_MAX: int
 PAGINATION_PAGE_SIZE_DEFAULT: int
 PAGINATION_PAGE_SIZE_MULTIMODEL_DEFAULT: int
 PAGINATION_PAGE_SIZE_MAX: int  # Security measure to avoid a DoS attack if a user requests a huge page size
-CRITERIA_TREE_IMPORT_MAX_ROOT_COUNT: int  # Maximum number of root genres allowed in a tree import
-CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT: int  # Maximum total number of elements allowed in a tree import hierarchy
-
+CRITERIA_TREE_IMPORT_MAX_ROOT_COUNT: int
+CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT: int
 # AFP Connection
 AFP_POST_FULL_URL: str
 
@@ -464,9 +463,9 @@ def setup_app_constants():
     PAGINATION_PAGE_SIZE_MAX = 100
 
     global CRITERIA_TREE_IMPORT_MAX_ROOT_COUNT
-    CRITERIA_TREE_IMPORT_MAX_ROOT_COUNT = 1000  # Maximum number of root genres allowed in a tree import
+    CRITERIA_TREE_IMPORT_MAX_ROOT_COUNT = 1000
     global CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT
-    CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT = 30000  # Maximum total number of elements allowed in a tree import hierarchy
+    CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT = 300
 
 
 def setup_afp_connection():
