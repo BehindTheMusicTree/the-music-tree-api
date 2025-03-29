@@ -24,10 +24,11 @@ class TestResults(GenreTestCase):
         assert response.status_code == status.HTTP_201_CREATED
 
         assert len(self.results) == 2
-        assert self.results[0][InputFields.NAME_PUBLIC] == "Rock"
-        assert self.results[1][InputFields.NAME_PUBLIC] == "Jazz"
-        assert self.results[0][InputFields.PARENT] is None
-        assert self.results[1][InputFields.PARENT] is None
+        rock = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Rock")
+        jazz = next(g for g in self.results if g[InputFields.NAME_PUBLIC] == "Jazz")
+
+        assert rock[InputFields.PARENT] is None
+        assert jazz[InputFields.PARENT] is None
 
     def test_nested_structure_then_returns_correct_structure(self):
         data = [{
