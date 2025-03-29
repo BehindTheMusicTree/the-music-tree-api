@@ -12,13 +12,13 @@ class CriteriaTreeImportSerializer(AppSerializer):
     def to_internal_value(self, data):
         if isinstance(data, list):
             if not data:
-                raise AppValidationException(
-                    field_name="data",
-                    message="At least one criteria must be provided",
-                    field_validation_error_code=FieldValidationErrorCode.REQUIRED
-                )
+                raise AppValidationException(field_name="data",
+                                             message="At least one criteria must be provided",
+                                             field_validation_error_code=FieldValidationErrorCode.REQUIRED)
             return {'data': data}
-        return super().to_internal_value(data)
+        raise AppValidationException(field_name="data",
+                                     message="Input must be an array",
+                                     field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID)
 
     def validate_data(self, value):
         for node in value:
