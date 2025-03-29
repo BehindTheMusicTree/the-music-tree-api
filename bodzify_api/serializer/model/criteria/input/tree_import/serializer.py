@@ -18,7 +18,7 @@ class CriteriaTreeImportSerializer(AppSerializer):
                 raise AppValidationException(field_name=Fields.TREE_INTERNAL,
                                              message="At least one criteria must be provided",
                                              field_validation_error_code=FieldValidationErrorCode.REQUIRED)
-            return {Fields.TREE_INTERNAL: data}
+            return super().to_internal_value({Fields.TREE_INTERNAL: data})
         raise AppValidationException(field_name=Fields.TREE_INTERNAL,
                                      message="Input must be an array",
                                      field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID)
