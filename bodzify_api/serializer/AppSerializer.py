@@ -195,12 +195,21 @@ class AppSerializer(serializers.Serializer, Generic[T]):
 
                 # Use the properly transformed data from _collect_known_fields_and_malformed_array_fields_names
                 updated_data = dict(data)  # Create a copy to avoid modifying the input
+                field_name_mapping = {}  # Keep track of original field names
                 for field_name, field in self.fields.items():
                     if self._is_list_field(field) and f"{field_name}[]" in updated_data:
+                        field_name_mapping[field_name] = f"{field_name}[]"
                         updated_data[field_name] = updated_data.pop(f"{field_name}[]")
 
-                validated_data = self._validate_fields(updated_data)
-                validated_data = self._validate_object(validated_data)
+                try:
+                    validated_data = self._validate_fields(updated_data)
+                    validated_data = self._validate_object(validated_data)
+                except AppValidationException as e:
+                    # Map back to original field name if it was transformed
+                    if e.field in field_name_mapping:
+                        e.errors = {field_name_mapping[e.field]: e.errors[e.field]}
+                        e.field = field_name_mapping[e.field]
+                    raise e
             else:
                 # For non-dict data, let the serializer's to_internal_value handle it
                 validated_data = self.to_internal_value(data)

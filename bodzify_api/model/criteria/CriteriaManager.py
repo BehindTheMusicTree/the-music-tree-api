@@ -5,6 +5,7 @@ from django.db.models import QuerySet
 
 from bodzify_api.model.criteria.Fields import Fields as ModelFields
 from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
+from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields as TreeImportFields
 
 from .Fields import Fields
 from .type.CriteriaType import CriteriaType
@@ -246,6 +247,11 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         # Delete all existing criteria for the user
         self.filter(user=user).delete()
 
+        # Get tree data from either TREE_PUBLIC or TREE_INTERNAL
+        tree_data = data.get(TreeImportFields.TREE_PUBLIC, data.get(TreeImportFields.TREE_INTERNAL, []))
+        if not tree_data:
+            return
+
         # Recursive function to create criteria and their children
         def create_criteria_tree(nodes, parent=None):
             for node in nodes:
@@ -267,4 +273,4 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
                     create_criteria_tree(node["children"], criteria)
 
         # Create all criteria trees
-        create_criteria_tree(data[Fields.TREE_INTERNAL])
+        create_criteria_tree(tree_data)

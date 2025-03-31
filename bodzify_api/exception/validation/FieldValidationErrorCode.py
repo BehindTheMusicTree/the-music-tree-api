@@ -26,7 +26,7 @@ class FieldValidationErrorCode(str, Enum):
     LIST_VALUE_DUPLICATE = 'list_value_duplicate'
 
     # Tree Validation
-    TREE_TOO_LONG = 'tree_too_long'
+    TREE_TOO_LARGE = 'tree_too_long'
     TREE_MALFORMED = 'tree_malformed'
     TREE_VALUE_DUPLICATE = 'tree_value_duplicate'
 
