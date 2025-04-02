@@ -10,7 +10,7 @@ from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 class TestNodeCount(GenreTestCase):
     def test_no_data_then_400_bad_request(self):
-        response = self._post_genres_tree_import()
+        response = self._post_genres_tree_import(data={Fields.TREE: None})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.REQUIRED
