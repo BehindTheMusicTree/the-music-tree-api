@@ -15,7 +15,7 @@ class TestName(GenreTestCase):
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.NAME_EMPTY
 
     def test_missing_name_then_400_bad_request(self):
-        tree_data = [{Fields.CHILDREN: []}]  # Missing name field
+        tree_data = [{Fields.CHILDREN: []}]
         response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
