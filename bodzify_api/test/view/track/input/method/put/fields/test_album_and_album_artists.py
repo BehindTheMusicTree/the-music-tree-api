@@ -22,7 +22,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         album_old = self.model_fixture_factory.create_album(name="Jojo")
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="koko", album=album_old)
 
-        data = {PutFields.ALBUM_NAME: '', PutFields.ALBUM_ARTISTS_NAMES_MULTIPART: []}
+        data = {PutFields.ALBUM_NAME: '', PutFields.ALBUM_ARTISTS_NAMES: []}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
@@ -35,7 +35,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         album_artist_new = self.model_fixture_factory.create_artist(name="Harden")
         album_new = self.model_fixture_factory.create_album(name="koko", album_artists=[album_artist_new])
 
-        data = {PutFields.ALBUM_NAME: album_new.name, PutFields.ALBUM_ARTISTS_NAMES_MULTIPART: [album_artist_new.name]}
+        data = {PutFields.ALBUM_NAME: album_new.name, PutFields.ALBUM_ARTISTS_NAMES: [album_artist_new.name]}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
@@ -51,7 +51,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         album_artist_new_2 = self.model_fixture_factory.create_artist(name="Koko")
 
         data = {PutFields.ALBUM_NAME: album_new_name,
-                PutFields.ALBUM_ARTISTS_NAMES_MULTIPART: [album_artist_new_1.name, album_artist_new_2.name]}
+                PutFields.ALBUM_ARTISTS_NAMES: [album_artist_new_1.name, album_artist_new_2.name]}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
@@ -65,7 +65,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         old_album = self.model_fixture_factory.create_album(name="Le Noir", album_artists=[old_album_artist])
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Foire", album=old_album)
 
-        data = {PutFields.ALBUM_NAME: "Paul", PutFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["James"]}
+        data = {PutFields.ALBUM_NAME: "Paul", PutFields.ALBUM_ARTISTS_NAMES: ["James"]}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
@@ -76,7 +76,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         old_album = self.model_fixture_factory.create_album(name="Le Noir", album_artists=[old_album_artist])
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Foire", album=old_album)
 
-        data = {PutFields.ALBUM_NAME: "Paul", PutFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["James"]}
+        data = {PutFields.ALBUM_NAME: "Paul", PutFields.ALBUM_ARTISTS_NAMES: ["James"]}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
@@ -88,7 +88,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Foire", album=album)
         self.model_fixture_factory.create_lib_track_with_file(title="Josie", album=album)
 
-        data = {PutFields.ALBUM_NAME: "Paul", PutFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["James"]}
+        data = {PutFields.ALBUM_NAME: "Paul", PutFields.ALBUM_ARTISTS_NAMES: ["James"]}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
@@ -100,7 +100,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         album = self.model_fixture_factory.create_album(name="Jojo", album_artists=[album_artist])
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Foire", album=album)
 
-        data = {PutFields.ALBUM_NAME: "Best of", PutFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["Other artist"]}
+        data = {PutFields.ALBUM_NAME: "Best of", PutFields.ALBUM_ARTISTS_NAMES: ["Other artist"]}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
@@ -112,7 +112,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Foire", album=album)
         self.model_fixture_factory.create_lib_track_with_file(title="Josie", album=album)
 
-        data = {PutFields.ALBUM_NAME: "Best of", PutFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["Other artist"]}
+        data = {PutFields.ALBUM_NAME: "Best of", PutFields.ALBUM_ARTISTS_NAMES: ["Other artist"]}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
@@ -125,7 +125,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         album2 = self.model_fixture_factory.create_album(name="Jojo2", album_artists=[old_album_artist])
         self.model_fixture_factory.create_lib_track_with_file(title="Josie", album=album2)
 
-        data = {PutFields.ALBUM_NAME: "Best of", PutFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["Other artist"]}
+        data = {PutFields.ALBUM_NAME: "Best of", PutFields.ALBUM_ARTISTS_NAMES: ["Other artist"]}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
@@ -138,7 +138,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         album2 = self.model_fixture_factory.create_album(name="Jojo2", album_artists=[old_album_artist])
         self.model_fixture_factory.create_lib_track_with_file(title="Josie", album=album2)
 
-        data = {PutFields.ALBUM_NAME: "Best of", PutFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["Other artist"]}
+        data = {PutFields.ALBUM_NAME: "Best of", PutFields.ALBUM_ARTISTS_NAMES: ["Other artist"]}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
