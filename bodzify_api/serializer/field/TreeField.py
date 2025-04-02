@@ -59,7 +59,7 @@ class TreeField(AppListField):
             return None
 
         if not data:
-            if not self.allow_empty:
+            if not self._allow_empty:
                 self.fail('required')
             return []
 
@@ -70,6 +70,7 @@ class TreeField(AppListField):
                 field_validation_error_code=FieldValidationErrorCode.TREE_MALFORMED
             )
 
+        # Count total nodes for max_nodes validation
         total_count = 0
         for node in data:
             if not isinstance(node, dict):
@@ -88,17 +89,13 @@ class TreeField(AppListField):
                 field_validation_error_code=FieldValidationErrorCode.TREE_TOO_LARGE
             )
 
-        # Then run AppListField's validation to skip AppField's to_internal_value
-        try:
-            AppListField.to_internal_value(self, data)
-            AppListField.run_validators(self, data)
-        except Exception as e:
-            return None
+        # Use AppListField's validation for the list and each node
+        validated_data = super().run_validation(data)
 
         # Process children recursively
-        for node in data:
+        for node in validated_data:
             children = node.get(Fields.CHILDREN)
             if children:
                 node[Fields.CHILDREN] = self.children_field.run_validation(children)
 
-        return data
+        return validated_data
