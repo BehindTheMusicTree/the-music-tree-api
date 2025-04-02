@@ -56,14 +56,18 @@ class TreeField(AppListField):
             # First count all descendants
             if Fields.CHILDREN in child:
                 children_list = child[Fields.CHILDREN]
-                if not isinstance(children_list, list):
+                # Allow None children values
+                if children_list is None:
+                    # Treat None as empty list (no descendants to count)
+                    pass
+                elif not isinstance(children_list, list):
                     print(f"Invalid children type: {type(children_list)}")
                     raise AppValidationException(
                         field_name=self.get_error_field_name(),
                         message=f"Invalid tree structure: {Fields.CHILDREN} must be an array, null, or not provided",
                         field_validation_error_code=FieldValidationErrorCode.TREE_MALFORMED
                     )
-                if children_list:  # Only count if there are children
+                elif children_list:  # Only count if there are non-empty children
                     count += self._count_descendants(children_list)
 
             # Then count this node

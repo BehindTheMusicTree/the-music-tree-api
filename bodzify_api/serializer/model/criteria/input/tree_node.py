@@ -11,7 +11,7 @@ from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Field
 
 class CriteriaTreeNodeSerializer(AppSerializer):
     name = AppCharField(max_length=settings.CRITERIA_NAME_LEN_MAX, allow_blank=False, required=True)
-    children = AppListField(child=DictField(), required=False, default=list)
+    children = AppListField(child=DictField(), required=False, default=list, allow_null=True)
 
     def __init__(self, structure_field_name: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -27,6 +27,10 @@ class CriteriaTreeNodeSerializer(AppSerializer):
         return super().to_internal_value(data)
 
     def validate_children(self, value):
+        # Handle None values by converting to empty list
+        if value is None:
+            return []
+
         if not isinstance(value, list):
             raise ValueError(f"{Fields.CHILDREN} must be an array")
 
@@ -38,8 +42,6 @@ class CriteriaTreeNodeSerializer(AppSerializer):
         validated_children = []
 
         for child in value:
-            print(
-                f"TREE NODE - Validating child with keys: {child.keys() if isinstance(child, dict) else 'NOT A DICT'}")
 
             # Create a serializer for this child node
             serializer = CriteriaTreeNodeSerializer(structure_field_name=self.structure_field_name,
@@ -48,16 +50,12 @@ class CriteriaTreeNodeSerializer(AppSerializer):
 
             # Get validated data for this child
             validated_child = serializer.validated_data
-            print(f"TREE NODE - Child validated with keys: {validated_child.keys()}")
 
             # Make sure children field exists and is preserved
             if Fields.CHILDREN not in validated_child:
                 validated_child[Fields.CHILDREN] = []
             elif validated_child[Fields.CHILDREN] is None:
                 validated_child[Fields.CHILDREN] = []
-
-            # Log the children structure
-            print(f"TREE NODE - Child has children: {validated_child[Fields.CHILDREN]}")
 
             validated_children.append(validated_child)
 
