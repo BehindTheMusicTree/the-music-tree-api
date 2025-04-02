@@ -57,15 +57,15 @@ class TestCase(NullableListBodyDataTestCase, LibTrackTestCase):
         assert error['field'] == to_camel_case(malformed_post_multipart_field_name)
         assert error['code'] == FieldValidationErrorCode.LIST_MALFORMED
 
+        track = self.model_fixture_factory.create_lib_track_with_file(title="koko")
         malformed_put_json_field_name = "artists_names[]"
-        response = self._put_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **
-                                       {malformed_put_json_field_name: ['muse']})
+        response = self._put_lib_track(track.uuid, **{malformed_put_json_field_name: ['muse']})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == to_camel_case(malformed_put_json_field_name)
-        assert error['code'] == FieldValidationErrorCode.LIST_MALFORMED
+        assert error['code'] == FieldValidationErrorCode.UNKNOWN
 
     def test_comma_separated_then_only_one_value(self):
         data = {PostFields.ARTISTS_NAMES_MULTIPART: "Muse, Kopoe"}
