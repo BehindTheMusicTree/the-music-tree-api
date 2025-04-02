@@ -1,21 +1,19 @@
 from typing import Any
 
-from rest_framework.fields import ListField
-
 from bodzify_api import settings
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.serializer.field.AppField import AppField
+from bodzify_api.serializer.field.AppListField import AppListField
 from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields
 from bodzify_api.serializer.model.criteria.input.tree_node import CriteriaTreeNodeSerializer
 
 
-class TreeField(AppField, ListField):
+class TreeField(AppListField):
     def __init__(self,
                  allow_empty: bool = False,
                  max_nodes_count: int = settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT,
                  **kwargs):
-        ListField.__init__(self, child=CriteriaTreeNodeSerializer(), allow_empty=allow_empty, **kwargs)
+        AppListField.__init__(self, child=CriteriaTreeNodeSerializer(), allow_empty=allow_empty, **kwargs)
         self.max_nodes = max_nodes_count
         self._allow_empty = allow_empty
         self._max_nodes_count = max_nodes_count
@@ -90,11 +88,10 @@ class TreeField(AppField, ListField):
                 field_validation_error_code=FieldValidationErrorCode.TREE_TOO_LARGE
             )
 
-        # Then run ListField's validation to skip AppField's to_internal_value
+        # Then run AppListField's validation to skip AppField's to_internal_value
         try:
-            # Call ListField's validation chain directly
-            value = ListField.to_internal_value(self, data)
-            ListField.run_validators(self, value)
+            value = AppListField.to_internal_value(self, data)
+            AppListField.run_validators(self, value)
         except Exception as e:
             return None
 
