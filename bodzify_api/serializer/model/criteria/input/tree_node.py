@@ -29,8 +29,36 @@ class CriteriaTreeNodeSerializer(AppSerializer):
     def validate_children(self, value):
         if not isinstance(value, list):
             raise ValueError(f"{Fields.CHILDREN} must be an array")
+
+        # Handle empty list case
+        if not value:
+            return []
+
         from bodzify_api.serializer.model.criteria.input.tree_node import CriteriaTreeNodeSerializer
+        validated_children = []
+
         for child in value:
-            CriteriaTreeNodeSerializer(structure_field_name=self.structure_field_name,
-                                       data=child).is_valid(raise_exception=True)
-        return value
+            print(
+                f"TREE NODE - Validating child with keys: {child.keys() if isinstance(child, dict) else 'NOT A DICT'}")
+
+            # Create a serializer for this child node
+            serializer = CriteriaTreeNodeSerializer(structure_field_name=self.structure_field_name,
+                                                    data=child)
+            serializer.is_valid(raise_exception=True)
+
+            # Get validated data for this child
+            validated_child = serializer.validated_data
+            print(f"TREE NODE - Child validated with keys: {validated_child.keys()}")
+
+            # Make sure children field exists and is preserved
+            if Fields.CHILDREN not in validated_child:
+                validated_child[Fields.CHILDREN] = []
+            elif validated_child[Fields.CHILDREN] is None:
+                validated_child[Fields.CHILDREN] = []
+
+            # Log the children structure
+            print(f"TREE NODE - Child has children: {validated_child[Fields.CHILDREN]}")
+
+            validated_children.append(validated_child)
+
+        return validated_children
