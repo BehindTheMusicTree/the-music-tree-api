@@ -13,7 +13,9 @@ class TreeField(AppListField):
                  allow_empty: bool = False,
                  max_nodes_count: int = settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT,
                  **kwargs):
-        AppListField.__init__(self, child=CriteriaTreeNodeSerializer(), allow_empty=allow_empty, **kwargs)
+        AppListField.__init__(self, child=CriteriaTreeNodeSerializer(
+            structure_field_name=self.get_error_field_name()),
+            allow_empty=allow_empty, **kwargs)
         self.max_nodes = max_nodes_count
         self._allow_empty = allow_empty
         self._max_nodes_count = max_nodes_count
@@ -90,7 +92,20 @@ class TreeField(AppListField):
             )
 
         # Use AppListField's validation for the list and each node
-        validated_data = super().run_validation(data)
+        try:
+            validated_data = super().run_validation(data)
+            if validated_data is None:
+                raise AppValidationException(
+                    field_name=self.get_error_field_name(),
+                    message="Invalid tree structure: each node must have a name",
+                    field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
+                )
+        except Exception as e:
+            raise AppValidationException(
+                field_name=self.get_error_field_name(),
+                message=str(e),
+                field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
+            )
 
         # Process children recursively
         for node in validated_data:
