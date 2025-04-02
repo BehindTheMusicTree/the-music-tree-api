@@ -1,27 +1,28 @@
 from rest_framework import status
 
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
+from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields
 
 
 class TestCase(GenreTestCase):
 
     def test_duplicates_not_in_same_object_then_ok(self):
-        json_data = [
+        tree_data = [
             {
-                "name": "Test Criteria 1",
-                "children": [
+                Fields.NAME_PUBLIC: "Test Criteria 1",
+                Fields.CHILDREN: [
                     {
-                        "name": "Test Criteria 2",
-                        "children": []
+                        Fields.NAME_PUBLIC: "Test Criteria 2",
+                        Fields.CHILDREN: []
                     }
                 ]
             },
             {
-                "name": "Test Criteria 3",
-                "children": []
+                Fields.NAME_PUBLIC: "Test Criteria 3",
+                Fields.CHILDREN: []
             }
         ]
 
-        response = self._post_genres_tree_import(json_data)
+        response = self._post_genres_tree_import(data={Fields.TREE: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
