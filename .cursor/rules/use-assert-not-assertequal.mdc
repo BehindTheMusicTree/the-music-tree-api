@@ -1,0 +1,58 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Use assert Instead of assertEqual
+
+In tests, use the `assert` statement instead of `assertEqual` for better readability and consistency.
+
+## Good Examples
+
+```python
+# Good - Using assert
+def test_create_genre(self):
+    genre = Genre.objects.create(name="Rock")
+    assert genre.name == "Rock"
+    assert genre.parent is None
+
+# Good - Using assert with complex conditions
+def test_genre_hierarchy(self):
+    rock = Genre.objects.create(name="Rock")
+    metal = Genre.objects.create(name="Metal", parent=rock)
+    assert metal.parent == rock
+    assert rock.parent is None
+    assert metal.name == "Metal"
+```
+
+## Bad Examples
+
+```python
+# Bad - Using assertEqual
+def test_create_genre(self):
+    genre = Genre.objects.create(name="Rock")
+    self.assertEqual(genre.name, "Rock")  # Bad
+    self.assertEqual(genre.parent, None)  # Bad
+
+# Bad - Using assertNotEqual
+def test_genre_hierarchy(self):
+    rock = Genre.objects.create(name="Rock")
+    metal = Genre.objects.create(name="Metal", parent=rock)
+    self.assertNotEqual(metal.parent, None)  # Bad
+```
+
+## Guidelines
+
+1. Use `assert` for all equality checks
+2. Use `assert` with `is` for identity checks
+3. Use `assert` with `in` for membership checks
+4. Keep assertions simple and readable
+5. Use descriptive variable names to make assertions clear
+
+## Benefits
+
+- More readable test code
+- Consistent testing style
+- Better error messages
+- Simpler test maintenance
+- Follows Python's built-in assertion style

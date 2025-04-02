@@ -1,31 +1,30 @@
-#!/usr/bin/env python
+from typing import Any
 
-from rest_framework import status, viewsets
-from django.contrib.auth.models import User
-from rest_framework.response import Response
-from bodzify_api.serializer.user.detailed import UserSerializer
 from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+
+from bodzify_api.model.user.User import User
+from bodzify_api.serializer.model.user.output.detailed import UserDetailedSerializer
+from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 
-class PARAMETER_NAME:
-    USERNAME = 'username'
-    PASSWORD = 'password'
-    EMAIL = 'email'
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class UserViewSet(AppModelViewSet[User]):
+    serializer_class = UserDetailedSerializer
     permission_classes = [IsAdminUser]
 
-    def create(self, request, *args, **kwargs):
-        requestSerializer = UserSerializer(data=request.data)
-        requestSerializer.is_valid(raise_exception=True)
-        user = User.objects.create_user(
-            username=request.data[PARAMETER_NAME.USERNAME],
-            password=request.data[PARAMETER_NAME.PASSWORD],
-            email=request.data[PARAMETER_NAME.EMAIL])
-        response_serializer = UserSerializer(user)
-        headers = self.get_success_headers(response_serializer.data)
-        return Response(
-            response_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    def __init__(self, **kwargs):
+        super().__init__(model_class=User,
+                         simple_serializer_class=UserDetailedSerializer,
+                         detailed_serializer_class=UserDetailedSerializer,
+                         is_private_resource=False,
+                         is_pk_uuid=False,
+                         **kwargs)
+
+    def list(self, *args: Any, **kwargs: Any) -> Response:
+        return self._handle_list()
+
+    def retrieve(self, *args, **kwargs):
+        return self._handle_retrieve()
+
+    def destroy(self, *args, **kwargs):
+        return self._handle_destroy()

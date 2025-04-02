@@ -1,33 +1,30 @@
-#!/usr/bin/env python
+from drf_spectacular.utils import OpenApiParameter  # type: ignore
+from drf_spectacular.types import OpenApiTypes  # type: ignore
+from drf_spectacular.utils import extend_schema
 
-from django.db import transaction
-
-from bodzify_api.model.Album import ATTRIBUTES_LABEL
-from bodzify_api.model.Artist import Artist
-from bodzify_api.serializer.artist.detailed import ArtistDetailedSerializer
-from bodzify_api.service.ArtistService import ArtistService
-from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+from bodzify_api.filtering.set.artist.ArtistFilterSet import ArtistFilterSet
+from bodzify_api.filtering.set.artist.ArtistFilterSet import Fields as FilterFields
+from bodzify_api.model.artist.Artist import Artist
+from bodzify_api.serializer.model.artist.detailed import ArtistDetailedSerializer
+from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 
-class ArtistViewSet(AppModelViewSet):
-
-    queryset = Artist.objects.all()
-    serializers = {
-        'default': ArtistDetailedSerializer,
-        'list':  ArtistDetailedSerializer,
-        'retrieve':  ArtistDetailedSerializer,
-        'update':  ArtistDetailedSerializer,
-    }
-
+class ArtistViewSet(AppModelViewSet[Artist]):
     def __init__(self, **kwargs):
-        super().__init__(ArtistService(), **kwargs)
+        super().__init__(model_class=Artist,
+                         filterset_class=ArtistFilterSet,
+                         simple_serializer_class=ArtistDetailedSerializer,
+                         detailed_serializer_class=ArtistDetailedSerializer,
+                         **kwargs)
 
-    def get_queryset(self):
-        return Artist.objects.filter(user=self.request.user).order_by(ATTRIBUTES_LABEL.NAME)
+    @extend_schema(parameters=[
+        OpenApiParameter(name=FilterFields.NAME_PUBLIC, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+    ])
+    def list(self, *args, **kwargs):
+        return self._handle_list()
 
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
+    def retrieve(self, *args, **kwargs):
+        return self._handle_retrieve()
 
-    @transaction.atomic
-    def destroy(self, request, *args, **kwargs):
-        return self._destroy(request, *args, **kwargs)
+    def destroy(self, *args, **kwargs):
+        return self._handle_destroy()

@@ -1,0 +1,25 @@
+meta {
+  name: teuf
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}tags/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}
+
+body:json {
+  {
+    "name": "teuf"
+  }
+}
+
+vars:post-response {
+  tagTeufUuid: res.body.uuid
+}

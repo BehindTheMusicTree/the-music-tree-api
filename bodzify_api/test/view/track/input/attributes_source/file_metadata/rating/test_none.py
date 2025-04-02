@@ -1,25 +1,22 @@
-#!/usr/bin/env python
-
-import pytest
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@pytest.mark.django_db
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_mp3_then_none(self):
-        response = self.post_lib_track_with_generic_sample_no_tags(extension="mp3")
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == None
+        assert self.saved_object.rating == None
 
     def test_wav_then_none(self):
-        response = self.post_lib_track_with_generic_sample_no_tags(extension="wav")
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_WAV)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == None
+        assert self.saved_object.rating == None
 
     def test_flac_then_none(self):
-        response = self.post_lib_track_with_generic_sample_no_tags(extension="flac")
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_FLAC)
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.rating == None
+        assert self.saved_object.rating == None

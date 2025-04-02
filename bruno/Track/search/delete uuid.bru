@@ -1,0 +1,15 @@
+meta {
+  name: delete uuid
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{BASE_URL}}search/
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  type: genre
+}

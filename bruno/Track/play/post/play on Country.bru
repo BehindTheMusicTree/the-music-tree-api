@@ -1,0 +1,21 @@
+meta {
+  name: play on Country
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}plays/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}
+
+body:json {
+  {
+    "contentObjectUuid": "{{genreCountryPlaylistUuid}}"
+  }
+}

@@ -1,0 +1,15 @@
+meta {
+  name: *
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}plays/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}

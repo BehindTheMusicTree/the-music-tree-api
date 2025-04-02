@@ -1,0 +1,15 @@
+meta {
+  name: parent null
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}genres/?parent
+  body: multipartForm
+  auth: inherit
+}
+
+params:query {
+  parent: 
+}

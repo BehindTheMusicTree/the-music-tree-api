@@ -1,14 +1,47 @@
-#!/usr/bin/env python
+from rest_framework import status
 
-import logging
-
-import pytest
-
-from bodzify_api.test import conftest
-from bodzify_api.test.view.track.input.update_file_metadata.genre.TestCase \
-    import Mp3TestCase, WavTestCase, FlacTestCase
+from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 
 
-@pytest.fixture(params=[Mp3TestCase, WavTestCase, FlacTestCase])
-def child_instance(request, db):
-    yield from conftest.base_child_instance(request, db)
+class TestCase(LibTrackTestCase):
+
+    def test_mp3_then_ok(self):
+        genre_name = 'metal'
+        data = {PostFields.GENRE: genre_name}
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_LONG_A_ID3V1_SMALL_MP3, **data)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_lib_track_metadata_with_raw_rating[AppMetadataKey.GENRE_NAME] == genre_name
+
+    def test_flac_then_ok(self):
+        genre_name = 'metal'
+        data = {PostFields.GENRE: genre_name}
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_LONG_A_VORBIS_SMALL_FLAC, **data)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_lib_track_metadata_with_raw_rating[AppMetadataKey.GENRE_NAME] == genre_name
+
+    def test_wav_with_handled_genre_code_then_ok(self):
+        genre_name = 'Pop'
+        data = {PostFields.GENRE: genre_name}
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_LONG_A_RIFF_SMALL_WAV, **data)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_lib_track_metadata_with_raw_rating[AppMetadataKey.GENRE_NAME] == genre_name
+
+    def test_wav_with_handled_genre_code_but_with_different_case_then_ok(self):
+        data = {PostFields.GENRE: 'pop'}
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_LONG_A_RIFF_SMALL_WAV, **data)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_lib_track_metadata_with_raw_rating[AppMetadataKey.GENRE_NAME] == 'Pop'
+
+    def test_wav_with_not_handled_genre_code_then_other(self):
+        data = {PostFields.GENRE: 'Liquid Techno'}
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_LONG_A_RIFF_SMALL_WAV, **data)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_lib_track_metadata_with_raw_rating[AppMetadataKey.GENRE_NAME] == 'Other'

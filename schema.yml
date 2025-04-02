@@ -78,7 +78,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PaginatedGroupList'
+                $ref: '#/components/schemas/PaginatedGrouplist'
           description: ''
     post:
       operationId: groups_create
@@ -390,7 +390,7 @@ components:
           maxLength: 150
       required:
       - name
-    PaginatedGroupList:
+    PaginatedGrouplist:
       type: object
       properties:
         count:

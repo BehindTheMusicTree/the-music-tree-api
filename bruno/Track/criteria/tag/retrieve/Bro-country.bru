@@ -1,0 +1,11 @@
+meta {
+  name: Bro-country
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}genres/{{genreBroCountryUuid}}/
+  body: json
+  auth: inherit
+}

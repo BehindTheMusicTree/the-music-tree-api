@@ -1,0 +1,17 @@
+meta {
+  name: Rock | no updates
+  type: http
+  seq: 15
+}
+
+put {
+  url: {{BASE_URL}}genres/{{genreRockUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Rock2"
+  }
+}

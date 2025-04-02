@@ -1,0 +1,15 @@
+meta {
+  name: parent invalid
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}genre-playlists/?parent=58155a38-27a4-40e2-8c5f-cd2b61ffa766
+  body: multipartForm
+  auth: inherit
+}
+
+params:query {
+  parent: 58155a38-27a4-40e2-8c5f-cd2b61ffa766
+}

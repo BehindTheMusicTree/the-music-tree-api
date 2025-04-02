@@ -1,0 +1,17 @@
+meta {
+  name: Bro new parent country
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{BASE_URL}}genres/{{genreBroCountryUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "parent": "{{genreCountryUuid}}"
+  }
+}

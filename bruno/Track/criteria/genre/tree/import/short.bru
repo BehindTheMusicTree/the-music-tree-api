@@ -1,0 +1,31 @@
+meta {
+  name: short
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}genres/tree/import/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "tree[]": [
+    {
+      "name": "Rock",
+      "children": [
+        {
+          "name": "(Hard rock)",
+          "children": [
+            {
+              "name": "Emo",
+              "children": []
+            }
+          ]
+        }
+      ]
+    }
+  ]}
+}

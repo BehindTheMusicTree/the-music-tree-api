@@ -1,0 +1,20 @@
+meta {
+  name: created_on gt dec 24
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}genres/?createdOnGte=2024-12-22T19:27:28.772834Z&createdOnLte=2024-12-22T19:27:28.772834Z
+  body: json
+  auth: inherit
+}
+
+params:query {
+  createdOnGte: 2024-12-22T19:27:28.772834Z
+  createdOnLte: 2024-12-22T19:27:28.772834Z
+}
+
+vars:post-response {
+  genreCountryUuid: res.body.results[0].uuid
+}

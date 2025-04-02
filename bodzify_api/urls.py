@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
@@ -7,35 +5,41 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from bodzify_api.settings import settings
-from bodzify_api.view.viewset.MineTrackViewSet import MineTrackViewSet
-from bodzify_api.view.viewset.model.AlbumViewSet import AlbumViewSet
-from bodzify_api.view.viewset.model.ArtistViewSet import ArtistViewSet
-from bodzify_api.view.viewset.model.criteria.GenreViewSet import GenreViewSet
-from bodzify_api.view.viewset.model.criteria.TagViewSet import TagViewSet
-from bodzify_api.view.viewset.model.PlayViewSet import PlayViewSet
-from bodzify_api.view.viewset.model.playlist.PlaylistViewSet import PlaylistViewSet
-from bodzify_api.view.viewset.model.playlist.GenrePlaylistViewSet import GenrePlaylistViewSet
-from bodzify_api.view.viewset.model.playlist.SimplePlaylistViewSet import SimplePlaylistViewSet
-from bodzify_api.view.viewset.model.TrackViewSet import TrackViewSet
-from bodzify_api.view.viewset.model.UserViewSet import UserViewSet
-from bodzify_api.view.viewset.SearchApiViewSet import SearchApiViewSet
+from bodzify_api.utils.AppStaticFileStates import StaticFileStates
+from bodzify_api.view.viewset.model.AllLibTracksMixinViewSet import AllLibTracksViewSet
+
+from . import settings
+from .view.viewset.model.AlbumViewSet import AlbumViewSet
+from .view.viewset.model.ArtistViewSet import ArtistViewSet
+from .view.viewset.model.criteria.children.GenreViewSet import GenreViewSet
+from .view.viewset.model.criteria.children.TagViewSet import TagViewSet
+from .view.viewset.model.lib_track.LibTrackViewSet import LibTrackViewSet
+from .view.viewset.model.playlist.children.criteria.GenrePlaylistViewSet import GenrePlaylistViewSet
+from .view.viewset.model.playlist.children.criteria.TagPlaylistViewSet import TagPlaylistViewSet
+from .view.viewset.model.playlist.children.ManualPlaylistViewSet import ManualPlaylistViewSet
+from .view.viewset.model.playlist.PlaylistViewSet import PlaylistViewSet
+from .view.viewset.model.PlayViewSet import PlayViewSet
+from .view.viewset.model.UserViewSet import UserViewSet
+from .view.viewset.SearchViewSet import SearchViewSet
+
 
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet)
-router.register(r'tracks', TrackViewSet)
-router.register(r'artists', ArtistViewSet)
-router.register(r'albums', AlbumViewSet)
-router.register(r'tags', TagViewSet)
+router.register(r'users', UserViewSet, basename='user')
+router.register(r'tracks', LibTrackViewSet, basename='library-track')
+router.register(r'artists', ArtistViewSet, basename='artist')
+router.register(r'albums', AlbumViewSet, basename='album')
+router.register(r'tags', TagViewSet, basename='tag')
 router.register(r'genres', GenreViewSet, basename='genre')
-router.register(r'mine/tracks', MineTrackViewSet, basename='mine-track')
-router.register(r'plays', PlayViewSet)
+router.register(r'plays', PlayViewSet, basename='play')
 
-# Do not move after GenrePlaylistViewSet or SimplePlaylistViewSet or it will cause confusion resolving reverse urls
+# Do not move PlaylistViewSet after GenrePlaylistViewSet or ManualPlaylistViewSet or it will cause confusion resolving
+# reverse urls.
 router.register(r'playlists', PlaylistViewSet, basename='playlist')
-router.register(r'simple-playlists', SimplePlaylistViewSet, basename='simple-playlist')
+router.register(r'manual-playlists', ManualPlaylistViewSet, basename='manual-playlist')
 router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
-router.register(r'search', SearchApiViewSet, basename='search')
+router.register(r'tag-playlists', TagPlaylistViewSet, basename='tag-playlist')
+router.register(r'all-tracks', AllLibTracksViewSet, basename='all-library-tracks')
+router.register(r'search', SearchViewSet, basename='search')
 
 urlpatterns = [path(settings.API_ROOT_BASE, include(router.urls)),
 
@@ -49,5 +53,6 @@ urlpatterns = [path(settings.API_ROOT_BASE, include(router.urls)),
                path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
                path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc')]
 
-if settings.DEBUG:
+
+if settings.STATIC_FILES_STATE in [StaticFileStates.COLLECTING, StaticFileStates.SERVING]:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

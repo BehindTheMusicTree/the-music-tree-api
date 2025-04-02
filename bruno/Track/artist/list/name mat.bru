@@ -1,0 +1,19 @@
+meta {
+  name: name mat
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}artists/?name=mat
+  body: json
+  auth: inherit
+}
+
+params:query {
+  name: mat
+}
+
+vars:post-response {
+  artistMatUuid: res.body.results[0].uuid
+}

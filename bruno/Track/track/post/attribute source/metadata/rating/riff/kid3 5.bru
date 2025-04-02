@@ -1,0 +1,20 @@
+meta {
+  name: kid3 5
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}tracks/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/rating_riff_kid3=5 star.wav)
+  rating: 2
+}

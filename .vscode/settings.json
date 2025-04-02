@@ -1,14 +1,33 @@
+
+
 {
+    "workbench.colorCustomizations": {
+        "editorCursor.foreground": "#2E8B57",
+        "terminalCursor.foreground": "#2E8B57",
+        "titleBar.activeBackground": "#2E8B57",
+        "titleBar.activeForeground": "#ffffff",
+        "activityBar.background": "#1d5737",
+        "statusBar.background": "#1d5737"
+    },
+    "python.languageServer": "Pylance",
 	"python.analysis.typeCheckingMode": "basic",
 	"editor.rulers": [
 		120
 	],
 	"python.testing.pytestEnabled": true,
+	"python.testing.pytestArgs": [
+		"bodzify_api"
+	],
 	"python.analysis.autoImportCompletions": true,
 	"editor.defaultFormatter": "ms-python.autopep8",
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": true,  
+    "python.analysis.fixAll": [
+        "source.unusedImports"
+      ],
     "editor.codeActionsOnSave": {
-		"source.fixAll": "explicit"
+		"source.fixAll": "explicit",
 	},
-    "files.autoSave": "onFocusChange",
+	"files.autoSave": "onFocusChange",
+	"python.testing.unittestEnabled": false,
+	"python.pythonPath": "/Users/mignot/git/bodzify-api-django/.venv/bin/python",
 }

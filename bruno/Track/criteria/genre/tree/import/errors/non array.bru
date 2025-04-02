@@ -1,0 +1,17 @@
+meta {
+  name: non array
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}genres/tree/import/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "data[]": {}
+  }
+}

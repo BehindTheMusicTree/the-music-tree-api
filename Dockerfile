@@ -1,55 +1,116 @@
 # syntax=docker/dockerfile:1
-
+# Base Image: Debian Buster (a full Debian distribution).
+# Size: Larger, as it includes more tools and libraries by default.
+# Use Case: Suitable when you need a full Debian environment with more pre-installed tools and libraries.
 FROM python:3.11-buster
 
-ARG DJANGO_LOG_DIR
+ARG PROJECT_DIR
+ARG APP_NAME
+ARG APP_VERSION
+ARG DB_CONNECTION_TEST_MAX_ATTEMPTS
+ARG DB_CONNECTION_TEST_SLEEP_INTERVAL
+ARG TMP_UPLOADED_FILES_EXTERNAL
+ARG MEDIA_DIR_EXTERNAL
+ARG MEDIA_URL
+ARG LIBRARIES_DIR_NAME
+ARG STATIC_FILES_EXTERNAL
+ARG STATIC_FILES_INTERNAL
+ARG STATIC_FILES_URL
+ARG DJANGO_LOG_DIR_EXTERNAL
+ARG DJANGO_LOG_GENERAL_FILENAME
+ARG DJANGO_LOG_INFO_FILENAME
+ARG DJANGO_LOG_REQUESTS_FILENAME
+ARG DJANGO_LOG_REQUESTS_DEBUG_FILENAME
+ARG DJANGO_LOG_EXCEPTIONS_FILENAME
+ARG DJANGO_LOG_DJANGO_FILENAME
+ARG DJANGO_LOG_APP_FILENAME
 ARG GUNICORN_LOG_DIR
-ARG LIBRARIES_DIR
-ARG TEMP_UPLOADED_FILES_DIR
-ARG STATIC_FILES_DIR
+ARG GUNICORN_LOG_ERROR_FILENAME
+ARG GUNICORN_LOG_ACCESS_FILENAME
 
-RUN if [ -z "$DJANGO_LOG_DIR" ]; then echo "The DJANGO_LOG_DIR argument is not provided" >&2; exit 1; fi
-RUN if [ -z "$GUNICORN_LOG_DIR" ]; then echo "The GUNICORN_LOG_DIR argument is not provided" >&2; exit 1; fi
-RUN if [ -z "$LIBRARIES_DIR" ]; then echo "The LIBRARIES_DIR argument is not provided" >&2; exit 1; fi
-RUN if [ -z "$TEMP_UPLOADED_FILES_DIR" ]; then echo "The TEMP_UPLOADED_FILES_DIR argument is not provided" >&2; exit 1; fi
-RUN if [ -z "$STATIC_FILES_DIR" ]; then echo "The STATIC_FILES_DIR argument is not provided" >&2; exit 1; fi
+RUN for var in \
+		PROJECT_DIR \
+		APP_NAME \
+		APP_VERSION \
+		DB_CONNECTION_TEST_MAX_ATTEMPTS \
+		DB_CONNECTION_TEST_SLEEP_INTERVAL \
+		TMP_UPLOADED_FILES_EXTERNAL \
+		MEDIA_DIR_EXTERNAL \
+		MEDIA_URL \
+		LIBRARIES_DIR_NAME \
+		STATIC_FILES_EXTERNAL \
+		STATIC_FILES_INTERNAL \
+		STATIC_FILES_URL \
+		DJANGO_LOG_DIR_EXTERNAL \
+		DJANGO_LOG_GENERAL_FILENAME \
+		DJANGO_LOG_INFO_FILENAME \
+		DJANGO_LOG_REQUESTS_FILENAME \
+		DJANGO_LOG_REQUESTS_DEBUG_FILENAME \
+		DJANGO_LOG_EXCEPTIONS_FILENAME \
+		DJANGO_LOG_DJANGO_FILENAME \
+		DJANGO_LOG_APP_FILENAME \
+		GUNICORN_LOG_DIR \
+		GUNICORN_LOG_ERROR_FILENAME \
+		GUNICORN_LOG_ACCESS_FILENAME; do \
+	if [ -z "$(eval echo \$$var)" ]; then \
+		echo "ERROR: The $var argument is not provided" >&2; \
+		exit 1; \
+	fi; \
+done
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    DockerHome=/home/app/webapp \
-    LibrariesDir=$LIBRARIES_DIR \
-    DjangoLogDir=$DJANGO_LOG_DIR \
-    GunicornLogDir=$GUNICORN_LOG_DIR \
-    TempUploadedFilesDir=$TEMP_UPLOADED_FILES_DIR \
-    StaticFilesDir=$STATIC_FILES_DIR
+    PROJECT_DIR=$PROJECT_DIR \
+    ENV=TEST \
+    APP_NAME=$APP_NAME \
+    APP_DIR=${PROJECT_DIR}${APP_NAME}/ \
+    APP_VERSION=$APP_VERSION \
+    DEBUG=true \
+    APP_IS_EXPOSED=true \
+    DB_IS_NEEDED=true \
+    DB_CONNECTION_TEST_MAX_ATTEMPTS=$DB_CONNECTION_TEST_MAX_ATTEMPTS \
+    DB_CONNECTION_TEST_SLEEP_INTERVAL=$DB_CONNECTION_TEST_SLEEP_INTERVAL \
+    TMP_UPLOADED_FILES_EXTERNAL=$TMP_UPLOADED_FILES_EXTERNAL \
+    MEDIA_DIR_EXTERNAL=$MEDIA_DIR_EXTERNAL \
+	MEDIA_URL=$MEDIA_URL \
+    LIBRARIES_DIR_NAME=$LIBRARIES_DIR_NAME \
+    STATIC_FILES_EXTERNAL=$STATIC_FILES_EXTERNAL \
+    STATIC_FILES_INTERNAL=$STATIC_FILES_INTERNAL \
+    STATIC_FILES_URL=$STATIC_FILES_URL \
+    DJANGO_LOG_DIR_EXTERNAL=$DJANGO_LOG_DIR_EXTERNAL \
+    DJANGO_LOG_GENERAL_FILENAME=$DJANGO_LOG_GENERAL_FILENAME \
+    DJANGO_LOG_INFO_FILENAME=$DJANGO_LOG_INFO_FILENAME \
+    DJANGO_LOG_REQUESTS_FILENAME=$DJANGO_LOG_REQUESTS_FILENAME \
+    DJANGO_LOG_REQUESTS_DEBUG_FILENAME=$DJANGO_LOG_REQUESTS_DEBUG_FILENAME \
+    DJANGO_LOG_EXCEPTIONS_FILENAME=$DJANGO_LOG_EXCEPTIONS_FILENAME \
+    DJANGO_LOG_DJANGO_FILENAME=$DJANGO_LOG_DJANGO_FILENAME \
+    DJANGO_LOG_APP_FILENAME=$DJANGO_LOG_APP_FILENAME \
+    GUNICORN_LOG_DIR=$GUNICORN_LOG_DIR \
+    GUNICORN_LOG_ERROR_FILENAME=$GUNICORN_LOG_ERROR_FILENAME \
+    GUNICORN_LOG_ACCESS_FILENAME=$GUNICORN_LOG_ACCESS_FILENAME
 
 RUN apt-get update && \
     apt-get install -y gosu && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p $DockerHome $LibrariesDir $DjangoLogDir $GunicornLogDir $TempUploadedFilesDir $StaticFilesDir && \
-    touch ${DjangoLogDir}requests.log \
-    ${DjangoLogDir}requests.debug.log \
-    ${DjangoLogDir}general.log \
-    ${DjangoLogDir}info.log \
-    ${DjangoLogDir}django.log \
-    ${DjangoLogDir}bodzify-api.log \
-    ${GunicornLogDir}error.log \
-    ${GunicornLogDir}access.log && \
-    chmod 777 -R $LibrariesDir $DjangoLogDir $GunicornLogDir $TempUploadedFilesDir
+COPY . $PROJECT_DIR
 
-COPY . $DockerHome
-
-WORKDIR $DockerHome
+WORKDIR $PROJECT_DIR
 
 RUN apt update && \
-    apt install -y flac ffmpeg libchromaprint-tools && \
+    bash scripts/install-dependencies.sh && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --upgrade pip && \
     # The env packages could have been simply copied but the executables wouldn't have been added to the PATH.
-    pip install -r requirements.txt
+    pip install -r requirements.txt && \
+    bash scripts/setup-filesystem.sh && \
+    chmod +x ${PROJECT_DIR}scripts/entrypoint.sh && \
+    FIXTURES_DIR=${APP_DIR}fixtures/ && \
+    cp ${FIXTURES_DIR}app/* ${FIXTURES_DIR} && \
+    cp ${FIXTURES_DIR}users/test/* ${FIXTURES_DIR} && \
+    cp ${FIXTURES_DIR}users/umg/* ${FIXTURES_DIR}
 
-RUN pip list | grep gunicorn
-RUN echo $PATH && which gunicorn
+# Set the entrypoint using shell form to allow environment variable expansion
+ENTRYPOINT ["bash", "-c", "${PROJECT_DIR}scripts/entrypoint.sh"]

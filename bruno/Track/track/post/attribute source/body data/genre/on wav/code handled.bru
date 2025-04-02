@@ -1,0 +1,27 @@
+meta {
+  name: code handled
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}tracks/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/lib_track/files/metadata=none.wav)
+  genre: Outlaw
+}
+
+vars:post-response {
+  libTrackHorsesUuid: res.body.uuid
+  genreOutlawUuid: res.body.genre.uuid
+  genreOutlawPlaylistUuid: res.body.playlists[0].uuid
+  title: horses
+}

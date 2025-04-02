@@ -1,0 +1,22 @@
+meta {
+  name: refresh
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}auth/token/refresh/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc0MjA0ODc5NCwiaWF0IjoxNzQxOTYyMzk0LCJqdGkiOiI2YTFiZDE5ZmI4NzI0M2UyOWVmZTk2ZjA3YzVmZmU1MyIsInVzZXJfaWQiOjZ9.I_Nzu7JlP6RyUWcRj4KOkFXptxiVpNzgKYS2_v2cqbQ"
+  }
+}
+
+vars:post-response {
+  jwtAccessToken: res.body.access
+  jwtRefreshToken: res.body.refresh
+}

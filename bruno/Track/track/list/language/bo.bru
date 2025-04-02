@@ -1,0 +1,15 @@
+meta {
+  name: bo
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}tracks/?albumName=bo
+  body: json
+  auth: inherit
+}
+
+params:query {
+  albumName: bo
+}

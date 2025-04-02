@@ -1,0 +1,20 @@
+[
+    {
+        "model": "bodzify_api.user", 
+        "id": 5, 
+        "fields": {
+            "password": "pbkdf2_sha256$720000$nuIG0CXMkoFqde1VC0uMiI$EupSzDq05vHKRvs75bkpSPWfHA+tGfsVEwdvQLW9AmE=", 
+            "last_login": null, 
+            "is_superuser": false, 
+            "username": "pytest_user2", 
+            "first_name": "test_firstname2", 
+            "last_name": "test_lastname2", 
+            "email": "user2@test.com", 
+            "is_staff": false, 
+            "is_active": true, 
+            "date_joined": "2022-12-01T17:18:13.767Z", 
+            "groups": [], 
+            "user_permissions": []
+        }
+    }
+]

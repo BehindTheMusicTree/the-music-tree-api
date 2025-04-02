@@ -1,0 +1,25 @@
+meta {
+  name: sport
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}tags/
+  body: json
+  auth: inherit
+}
+
+headers {
+  Authorization: Bearer {{tokenAccess}}
+}
+
+body:json {
+  {
+    "name": "Sport"
+  }
+}
+
+vars:post-response {
+  tagSportUuid: res.body.uuid
+}

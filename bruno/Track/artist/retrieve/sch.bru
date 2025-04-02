@@ -1,0 +1,11 @@
+meta {
+  name: sch
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}artists/{{artistSchUuid}}/
+  body: json
+  auth: inherit
+}

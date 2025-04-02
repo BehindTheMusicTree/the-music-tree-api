@@ -1,0 +1,11 @@
+meta {
+  name: Jo
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}albums/{{albumJoUuid}}/
+  body: json
+  auth: inherit
+}

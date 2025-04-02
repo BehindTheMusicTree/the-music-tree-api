@@ -1,0 +1,25 @@
+meta {
+  name: Beer | genre Country
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}tracks/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/utils/lib_track/files/metadata=none.mp3)
+  title: Beer
+  genre: Country
+}
+
+vars:post-response {
+  trackBeerUuid: res.body.uuid
+}

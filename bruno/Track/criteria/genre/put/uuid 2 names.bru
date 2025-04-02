@@ -1,0 +1,17 @@
+meta {
+  name: uuid 2 names
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{BASE_URL}}genres/{{genreAUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": ["rock1", "rock2"]
+  }
+}

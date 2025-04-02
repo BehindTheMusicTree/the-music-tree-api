@@ -1,0 +1,19 @@
+meta {
+  name: *
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}search/?query=feu
+  body: multipartForm
+  auth: inherit
+}
+
+params:query {
+  query: feu
+}
+
+body:multipart-form {
+  : 
+}

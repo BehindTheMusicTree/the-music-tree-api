@@ -1,29 +1,43 @@
 from django.contrib import admin
 
-from bodzify_api.model.PlaylistLibTrackRelation import PlaylistLibTrackRelation
-from bodzify_api.model.musicbrainz.MusicbrainzArtist import MusicbrainzArtist
-from bodzify_api.model.musicbrainz.MusicbrainzRecording import MusicbrainzRecording
-from bodzify_api.model.playlist.BasePlaylist import BasePlaylist
-from bodzify_api.model.criteria.CriteriaAscendantRelation import CriteriaAscendantRelation
-from bodzify_api.model.playlist.children.SimplePlaylist import SimplePlaylist
-from bodzify_api.model.playlist.children.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.model.criteria.Criteria import Criteria
-from bodzify_api.model.criteria.CriteriaType import CriteriaType
-from bodzify_api.model.Album import Album
-from bodzify_api.model.Artist import Artist
-from bodzify_api.model.TrackFile import TrackFile
+from .model.album.Album import Album
+from .model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
+from .model.artist.Artist import Artist
+from .model.criteria.Criteria import Criteria
+from .model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
+from .model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+from .model.musicbrainz_resource.children.artist.MbArtist import MbArtist
+from .model.musicbrainz_resource.children.recording.MbRecording import MusicbrainzRecording
+from .model.musicbrainz_resource.children.recording.missing_cause.code.MbRecordingMissingCauseCode import (
+    MbRecordingMissingCauseCode
+)
+from .model.musicbrainz_resource.children.recording.missing_cause.MbRecordingMissingCause import MbRecordingMissingCause
+from .model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
+from .model.playlist.children.manual.ManualPlaylist import ManualPlaylist
+from .model.playlist.Playlist import Playlist
+from .model.track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import FingerprintMissingCauseCode
+from .model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
+from .model.track.file.TrackFile import TrackFile
+from .model.track.lib.LibraryTrack import LibraryTrack
+from .model.user.admin.UserAdmin import UserAdmin
+from .model.user.User import User
 
-admin.site.register(Criteria)
-admin.site.register(CriteriaAscendantRelation)
-admin.site.register(CriteriaType)
-admin.site.register(BasePlaylist)
-admin.site.register(PlaylistLibTrackRelation)
-admin.site.register(SimplePlaylist)
-admin.site.register(CriteriaPlaylist)
+
+admin.site.register(User, UserAdmin)
 admin.site.register(LibraryTrack)
-admin.site.register(Album)
-admin.site.register(Artist)
 admin.site.register(TrackFile)
-admin.site.register(MusicbrainzArtist)
+admin.site.register(FingerprintMissingCause)
+admin.site.register(FingerprintMissingCauseCode)
+admin.site.register(AllLibTracksMixin)
+admin.site.register(Artist)
+admin.site.register(Album)
+admin.site.register(Criteria)
+admin.site.register(CriteriaLineageRel)
+admin.site.register(Playlist)
+admin.site.register(ManualPlaylist)
+admin.site.register(CriteriaPlaylist)
+admin.site.register(LibTrackPlaylistRel)
 admin.site.register(MusicbrainzRecording)
+admin.site.register(MbRecordingMissingCause)
+admin.site.register(MbRecordingMissingCauseCode)
+admin.site.register(MbArtist)

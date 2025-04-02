@@ -1,30 +1,20 @@
-#!/usr/bin/env python
-
-from pathlib import Path
-import pytest
 from rest_framework import status
-from bodzify_api.model.TrackFile import TrackFile
-from bodzify_api.model.track.LibraryTrack import LibraryTrack
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
+
+from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-@pytest.mark.django_db
-class TrackDeleteViewTestCase(TrackTestCase):
+class TrackDeleteViewTestCase(LibTrackTestCase):
 
-    def test_file_deletion(self):
-        filename = "sample.mp3"
-        track_file = self.model_fixture_factory.create_file(filename=filename)
-        track = self.model_fixture_factory.create_lib_track(track_file=track_file, title="We're All To Blame")
-        assert self.test_user.does_track_filename_exist_in_lib(filename) == True
+    def test_delete_then_delete_file(self):
+        track = self.model_fixture_factory.create_lib_track_with_file(
+            title="We're All To Blame", test_lib_track_filename=LibTrackTestFilename.RECORDING_KEMAR_FRANCE_MP3)
+        assert self.test_user1.does_track_filename_exist_in_lib(LibTrackTestFilename.RECORDING_KEMAR_FRANCE_MP3)
         assert track.track_file.file
-        response = self.delete_lib_track(lib_track_uuid=track.uuid)
-        assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert LibraryTrack.objects.filter(uuid=track.uuid).exists() == False
-        assert self.test_user.does_track_filename_exist_in_lib(filename) == False
 
-    def test_when_no_file_linked(self):
-        track_title = "We"
-        track = self.model_fixture_factory.create_lib_track(title=track_title)
-        response = self.delete_lib_track(lib_track_uuid=track.uuid)
+        response = self._delete_lib_track(uuid=track.uuid)
+
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert LibraryTrack.objects.filter(title=track_title).exists() == False
+        assert not LibraryTrack.objects.filter(user=self.test_user1, uuid=track.uuid).exists()
+        assert not self.test_user1.does_track_filename_exist_in_lib(LibTrackTestFilename.RECORDING_KEMAR_FRANCE_MP3)

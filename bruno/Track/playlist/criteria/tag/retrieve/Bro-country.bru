@@ -1,0 +1,11 @@
+meta {
+  name: Bro-country
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}tag-playlists/{{tagFootPlaylistUuid}}/
+  body: json
+  auth: inherit
+}

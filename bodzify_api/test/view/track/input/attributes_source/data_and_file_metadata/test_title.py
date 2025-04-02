@@ -1,16 +1,16 @@
-#!/usr/bin/env python
-
 from rest_framework import status
 
-from bodzify_api.test.view.track.TrackTestCase import TrackTestCase
-from bodzify_api.serializer.track.input.endpoint.post import FIELDS as POST_FIELDS
+from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
-class TestCase(TrackTestCase):
+class TestCase(LibTrackTestCase):
 
     def test_title_in_both_then_take_data(self):
         data_title = "Rock"
-        data_dict = {POST_FIELDS.TITLE: data_title}
-        response = self.post_lib_track_with_generic_sample_tags_max_length_of_a(data_dict=data_dict)
+        data_dict = {PostFields.TITLE: data_title}
+        response = self._post_lib_track(LibTrackTestFilename.METADATA_LONG_A_ID3V2_SMALL_MP3, **data_dict)
+
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_lib_track.title == data_title
+        assert self.saved_object.title == data_title
