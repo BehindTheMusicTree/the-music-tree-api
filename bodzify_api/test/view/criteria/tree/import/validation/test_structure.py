@@ -3,7 +3,7 @@ from rest_framework import status
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields
-from bodzify_api.test.utils.field.body_data.type.NotNullableListBodyDataTestCase import NotNullableListBodyDataTestCase
+from bodzify_api.test.utils.field.body_data.type.list.NotNullableListBodyDataTestCase import NotNullableListBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 
