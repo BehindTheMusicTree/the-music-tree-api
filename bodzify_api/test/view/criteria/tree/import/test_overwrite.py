@@ -3,11 +3,10 @@ from rest_framework import status
 
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields
-from bodzify_api.test.utils.field.body_data.type.NotNullableListBodyDataTestCase import NotNullableListBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 
-class TestOverwrite(GenreTestCase, NotNullableListBodyDataTestCase):
+class TestOverwrite(GenreTestCase):
     def test_import_new_tree_then_overwrites_existing(self):
         self.model_fixture_factory.create_genre(name="Old Rock")
 
