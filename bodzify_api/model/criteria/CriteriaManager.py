@@ -248,25 +248,73 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         # Delete all existing criteria for the user
         self.filter(user=user).delete()
 
-        # Get tree data from either TREE or TREE_INTERNAL
-        tree_data = data.get(TreeImportFields.TREE, data.get(TreeImportFields.TREE, []))
+        # Extract tree data from the validated data with debug printing
+        print("IMPORT DEBUG - Data type:", type(data))
+        if isinstance(data, dict):
+            print("IMPORT DEBUG - Dict keys:", data.keys())
+
+        # Handle serializer.validated_data which will be a dict with a 'tree' key
+        if isinstance(data, dict) and TreeImportFields.TREE in data:
+            # Get the tree data from serializer's validated_data
+            tree_data = data[TreeImportFields.TREE]
+            print(
+                f"IMPORT DEBUG - Found '{TreeImportFields.TREE}' key in data, extracted tree with length: {len(tree_data)}")
+        # If data is directly a list, use it as tree_data
+        elif isinstance(data, list):
+            tree_data = data
+            print("IMPORT DEBUG - Data is already a list with length:", len(tree_data))
+        else:
+            # Fallback to empty list if no tree data found
+            tree_data = []
+            print("IMPORT DEBUG - No valid tree data found, using empty list")
+
         if not tree_data:
+            print("IMPORT DEBUG - No tree data found")
             return
 
+        # Print the first node to see its structure
+        if tree_data and len(tree_data) > 0:
+            print("IMPORT DEBUG - First node structure:", tree_data[0])
+            if 'children' in tree_data[0]:
+                print("IMPORT DEBUG - Children in first node:", tree_data[0]['children'])
+
         # Recursive function to create criteria and their children
-        def create_criteria_tree(nodes, parent=None):
-            for node in nodes:
+        def create_criteria_tree(nodes, parent=None, level=0):
+            print(f"IMPORT DEBUG - Level {level} has {len(nodes)} nodes")
+            for i, node in enumerate(nodes):
+                print(f"IMPORT DEBUG - Processing level {level} node {i}")
+                # Debug print the node keys
+                print(f"IMPORT DEBUG - Node keys: {node.keys()}")
+
                 # Create the criteria
+                name_field = InputFields.NAME_PUBLIC
+                name = node.get(name_field)
+                print(f"IMPORT DEBUG - Creating node with name '{name}', parent: {parent}")
+
                 criteria = self.model(
-                    _name=node[InputFields.NAME_PUBLIC],
+                    _name=name,
                     parent=parent,
                     user=user
                 )
                 criteria.save()
+                print(f"IMPORT DEBUG - Created node with UUID {criteria.uuid}")
 
                 # Create children if any
-                if InputFields.CHILDREN in node and node[InputFields.CHILDREN]:
-                    create_criteria_tree(node[InputFields.CHILDREN], criteria)
+                # Check both string key and constant for robustness
+                children = node.get('children', [])
+
+                # Handle None children (convert to empty list)
+                if children is None:
+                    children = []
+                    print(f"IMPORT DEBUG - Node has None children, converting to empty list")
+
+                print(f"IMPORT DEBUG - Node has {len(children)} children")
+
+                if children:
+                    print(f"IMPORT DEBUG - Processing {len(children)} children for node {criteria.uuid}")
+                    create_criteria_tree(children, criteria, level+1)
+                else:
+                    print(f"IMPORT DEBUG - No children for node {criteria.uuid}")
 
         # Create all criteria trees
         create_criteria_tree(tree_data)
