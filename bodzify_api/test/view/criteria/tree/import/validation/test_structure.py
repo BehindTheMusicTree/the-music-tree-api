@@ -3,18 +3,17 @@ from rest_framework import status
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields
-from bodzify_api.test.utils.field.body_data.type.list.NotNullableListBodyDataTestCase import NotNullableListBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 
-class TestStructure(GenreTestCase, NotNullableListBodyDataTestCase):
+class TestStructure(GenreTestCase):
     def test_multiple_with_one_empty_then_400_bad_request(self):
         data = [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []}, {}]
-        response = self._post_genres_tree_import(data)
+        response = self._post_genres_tree_import(data={Fields.TREE: data})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE
-        assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.TREE_MALFORMED
+        assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_non_array_input_then_400_bad_request(self):
         response = self._post_genres_tree_import(data={Fields.TREE: {Fields.NAME_PUBLIC: "Rock"}})
@@ -35,7 +34,7 @@ class TestStructure(GenreTestCase, NotNullableListBodyDataTestCase):
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE
-        assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.TREE_MALFORMED
+        assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.FORMAT_INVALID
 
     def test_children_is_str_then_400_bad_request(self):
         response = self._post_genres_tree_import(
