@@ -32,7 +32,15 @@ class TreeField(AppListField):
     @property
     def children_field(self) -> 'TreeField':
         if self._children_field is None:
-            self._children_field = TreeField(allow_empty=True)
+            # Create a children field with no max_nodes_count param to skip node counting for children
+            from bodzify_api.serializer.field.TreeField import TreeField
+            # Use keyword arguments to exclude max_nodes_count entirely
+            kwargs = {
+                'allow_empty': True,
+            }
+            self._children_field = TreeField(**kwargs)
+            # Ensure the children field has the same child serializer
+            self._children_field.child = self.child
         return self._children_field
 
     def _count_descendants(self, children: list) -> int:
@@ -67,6 +75,14 @@ class TreeField(AppListField):
         return super().get_error_field_name()
 
     def run_validation(self, data: Any = None) -> Any:
+        print(f"TREE FIELD - Starting validation with data type: {type(data)}")
+        if isinstance(data, list) and len(data) > 0:
+            print(f"TREE FIELD - First node: {data[0]}")
+            if isinstance(data[0], dict) and 'children' in data[0]:
+                print(f"TREE FIELD - First node's children: {data[0]['children']}")
+                if isinstance(data[0]['children'], list) and len(data[0]['children']) > 0:
+                    print(f"TREE FIELD - First node's first child: {data[0]['children'][0]}")
+
         if data is None:
             if not self.allow_null:
                 self.fail('null')
@@ -106,23 +122,36 @@ class TreeField(AppListField):
         # Check for duplicate values before detailed validation
         self._check_for_duplicate_names(data)
 
+        # Create a deep copy of the data to preserve child structure
+        import copy
+        data_copy = copy.deepcopy(data)
+
         # Validate each node with CriteriaTreeNodeSerializer
         validated_data = []
-        for node in data:
+        for i, node in enumerate(data):
+            node_children = None
+
+            # Store the original children before validation
+            if isinstance(node, dict) and Fields.CHILDREN in node:
+                print(f"TREE FIELD - Node {i} has children before validation: {node[Fields.CHILDREN]}")
+                node_children = copy.deepcopy(node[Fields.CHILDREN])
+
             # Check for missing or empty name fields directly before passing to serializer
             if isinstance(node, dict):
+                from bodzify_api.serializer.model.criteria.input.Fields import Fields as InputFields
+
                 # Handle missing name
-                if Fields.NAME_PUBLIC not in node:
+                if InputFields.NAME_PUBLIC not in node:
                     raise AppValidationException(
-                        field_name=Fields.TREE,
+                        field_name=self.field_name,  # Use serializer field name for public-facing errors
                         message="Invalid tree structure: each node must have a name",
                         field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
                     )
 
                 # Handle empty name (special case with specific field name and error code)
-                if Fields.NAME_PUBLIC in node and node[Fields.NAME_PUBLIC] == "":
+                if InputFields.NAME_PUBLIC in node and node[InputFields.NAME_PUBLIC] == "":
                     raise AppValidationException(
-                        field_name=Fields.NAME_PUBLIC,  # Use 'name' field for empty name errors
+                        field_name=InputFields.NAME_PUBLIC,  # Use 'name' field for empty name errors
                         message="The field cannot be empty",
                         field_validation_error_code=FieldValidationErrorCode.NAME_EMPTY
                     )
@@ -130,30 +159,53 @@ class TreeField(AppListField):
             try:
                 validated_node = self.child.run_validation(node)
                 if validated_node is None:
-                    # Use the tree public field for validation errors
+                    # Use the serializer field name for validation errors
                     raise AppValidationException(
-                        field_name=Fields.TREE,
-                        message=f'Invalid tree structure: each node must have a {Fields.NAME_PUBLIC}',
+                        field_name=self.field_name,
+                        message="Invalid tree structure: each node must have a name",
                         field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
                     )
+
+                print(f"TREE FIELD - Node {i} validated with keys: {validated_node.keys()}")
+
+                # Ensure children field exists with original data
+                if node_children is not None:
+                    print(f"TREE FIELD - Restoring original children for node {i}")
+                    validated_node[Fields.CHILDREN] = node_children
+                elif Fields.CHILDREN not in validated_node:
+                    validated_node[Fields.CHILDREN] = []
+
+                # Handle None children
+                if validated_node[Fields.CHILDREN] is None:
+                    validated_node[Fields.CHILDREN] = []
+
                 validated_data.append(validated_node)
             except Exception as e:
-                # Let errors from the child serializer pass through as-is
-                # This ensures empty name validation has the correct field name
-                if not isinstance(e, AppValidationException):
-                    # Only wrap non-AppValidationException errors
+                # Only propagate validation errors for specific cases
+                if isinstance(e, AppValidationException):
+                    # Let specific AppValidationException pass through
+                    raise
+                else:
+                    # Wrap other exceptions with appropriate field name
                     raise AppValidationException(
-                        field_name=self.get_error_field_name(),
+                        field_name=self.field_name,
                         message=str(e),
                         field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
                     )
-                raise
 
         # Process children recursively
-        for node in validated_data:
-            children = node.get(Fields.CHILDREN)
-            if children:
-                node[Fields.CHILDREN] = self.children_field.run_validation(children)
+        for i, node in enumerate(validated_data):
+            # Process non-empty children recursively
+            if Fields.CHILDREN in node and node[Fields.CHILDREN]:
+                print(f"TREE FIELD - Processing children for node {i}: {node[Fields.CHILDREN]}")
+                node[Fields.CHILDREN] = self.children_field.run_validation(node[Fields.CHILDREN])
+                print(f"TREE FIELD - Children after validation: {node[Fields.CHILDREN]}")
+
+        print(f"TREE FIELD - Returning {len(validated_data)} validated nodes")
+        if validated_data and len(validated_data) > 0:
+            print(f"TREE FIELD - First validated node: {validated_data[0]}")
+            if Fields.CHILDREN in validated_data[0]:
+                print(f"TREE FIELD - First node children after validation: {validated_data[0][Fields.CHILDREN]}")
 
         return validated_data
 
@@ -161,13 +213,15 @@ class TreeField(AppListField):
         if not data or not isinstance(data, list):
             return
 
+        from bodzify_api.serializer.model.criteria.input.Fields import Fields as InputFields
         names = []
+
         for node in data:
-            if isinstance(node, dict) and Fields.NAME_PUBLIC in node:
-                name = node[Fields.NAME_PUBLIC]
+            if isinstance(node, dict) and InputFields.NAME_PUBLIC in node:
+                name = node[InputFields.NAME_PUBLIC]
                 if name in names:
                     raise AppValidationException(
-                        field_name=Fields.TREE,
+                        field_name=self.field_name,  # Use serializer field name
                         message="Tree contains duplicate values",
                         field_validation_error_code=FieldValidationErrorCode.TREE_VALUE_DUPLICATE
                     )
