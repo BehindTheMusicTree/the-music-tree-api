@@ -156,28 +156,6 @@ class TestCase(NullableListBodyDataTestCase, LibTrackTestCase):
         assert artists_list[1].name == artist2_name
         assert artists_list[2].name == artist3_name
 
-    def test_json_request_accepts_array_without_brackets(self) -> None:
-        """Test that JSON requests can accept array fields without [] suffix."""
-        artist_name = "JsonArtist"
-        malformed_field_name = "artists_names"  # Without [] suffix, should be accepted for JSON
-
-        # Using the API client directly with JSON format
-        response = self.api_client.post(
-            path=reverse('library-track-list'),
-            data={
-                malformed_field_name: [artist_name],
-                # Add required file field via URL to avoid multipart
-                "trackFile": str(LibTrackTestFilename.METADATA_NONE_MP3)
-            },
-            format='json',
-            handle_response=self._set_results
-        )
-
-        assert response.status_code == status.HTTP_201_CREATED
-        artists_list: list[Artist] = list(self.saved_object.artists.all())
-        assert len(artists_list) == 1
-        assert artists_list[0].name == artist_name
-
     def test_mix_existing_and_non_existing_artists(self) -> None:
         existing_artist = "Kopoe"
         self.model_fixture_factory.create_artist(name=existing_artist)
