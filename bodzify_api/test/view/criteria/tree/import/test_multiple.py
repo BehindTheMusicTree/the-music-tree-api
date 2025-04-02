@@ -21,7 +21,7 @@ class TestMultiple(GenreTestCase):
                 ]
             }
         ]
-        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -55,7 +55,7 @@ class TestMultiple(GenreTestCase):
                 ]
             })
 
-        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 

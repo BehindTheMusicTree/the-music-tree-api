@@ -114,7 +114,7 @@ class TreeField(AppListField):
                 # Handle missing name
                 if Fields.NAME_PUBLIC not in node:
                     raise AppValidationException(
-                        field_name=Fields.TREE_PUBLIC,
+                        field_name=Fields.TREE,
                         message="Invalid tree structure: each node must have a name",
                         field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
                     )
@@ -132,7 +132,7 @@ class TreeField(AppListField):
                 if validated_node is None:
                     # Use the tree public field for validation errors
                     raise AppValidationException(
-                        field_name=Fields.TREE_PUBLIC,
+                        field_name=Fields.TREE,
                         message=f'Invalid tree structure: each node must have a {Fields.NAME_PUBLIC}',
                         field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
                     )
@@ -167,7 +167,7 @@ class TreeField(AppListField):
                 name = node[Fields.NAME_PUBLIC]
                 if name in names:
                     raise AppValidationException(
-                        field_name=Fields.TREE_PUBLIC,
+                        field_name=Fields.TREE,
                         message="Tree contains duplicate values",
                         field_validation_error_code=FieldValidationErrorCode.TREE_VALUE_DUPLICATE
                     )

@@ -13,33 +13,33 @@ class TestStructure(GenreTestCase, NotNullableListBodyDataTestCase):
         response = self._post_genres_tree_import(data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE_PUBLIC
+        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.TREE_MALFORMED
 
     def test_non_array_input_then_400_bad_request(self):
-        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: {Fields.NAME_PUBLIC: "Rock"}})
+        response = self._post_genres_tree_import(data={Fields.TREE: {Fields.NAME_PUBLIC: "Rock"}})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE_PUBLIC
+        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.TREE_MALFORMED
 
     def test_malformed_array_then_400_bad_request(self):
-        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: {Fields.NAME_PUBLIC: "Rock"}})
+        response = self._post_genres_tree_import(data={Fields.TREE: {Fields.NAME_PUBLIC: "Rock"}})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE_PUBLIC
+        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.TREE_MALFORMED
 
     def test_invalid_node_structure_then_400_bad_request(self):
-        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: [{"invalid": "Rock"}]})
+        response = self._post_genres_tree_import(data={Fields.TREE: [{"invalid": "Rock"}]})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE_PUBLIC
+        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.TREE_MALFORMED
 
     def test_children_is_str_then_400_bad_request(self):
         response = self._post_genres_tree_import(
-            data={Fields.TREE_PUBLIC: [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: "invalid"}]})
+            data={Fields.TREE: [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: "invalid"}]})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.bad_request_result_field_errors[0]["field"] == Fields.CHILDREN
@@ -47,7 +47,7 @@ class TestStructure(GenreTestCase, NotNullableListBodyDataTestCase):
 
     def test_children_is_none_then_ok(self):
         response = self._post_genres_tree_import(
-            data={Fields.TREE_PUBLIC: [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: None}]})
+            data={Fields.TREE: [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: None}]})
 
         assert response.status_code == status.HTTP_201_CREATED
         genres = Genre.objects.filter(user=self.test_user1)
@@ -59,7 +59,7 @@ class TestStructure(GenreTestCase, NotNullableListBodyDataTestCase):
 
     def test_children_is_empty_list_then_ok(self):
         response = self._post_genres_tree_import(
-            data={Fields.TREE_PUBLIC: [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []}]})
+            data={Fields.TREE: [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: []}]})
 
         assert response.status_code == status.HTTP_201_CREATED
         genres = Genre.objects.filter(user=self.test_user1)
@@ -71,7 +71,7 @@ class TestStructure(GenreTestCase, NotNullableListBodyDataTestCase):
 
     def test_missing_children_then_ok(self):
         tree_data = [{Fields.NAME_PUBLIC: "Rock"}]  # No children field
-        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE: tree_data})
         assert response.status_code == status.HTTP_201_CREATED
         genres = Genre.objects.filter(user=self.test_user1)
         assert genres.count() == 1
@@ -82,7 +82,7 @@ class TestStructure(GenreTestCase, NotNullableListBodyDataTestCase):
 
     def test_null_children_then_ok(self):
         tree_data = [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: None}]  # Null children
-        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE: tree_data})
         assert response.status_code == status.HTTP_201_CREATED
         genres = Genre.objects.filter(user=self.test_user1)
         assert genres.count() == 1
@@ -98,7 +98,7 @@ class TestStructure(GenreTestCase, NotNullableListBodyDataTestCase):
             {Fields.NAME_PUBLIC: "Metal", Fields.CHILDREN: []},  # Empty list
             {Fields.NAME_PUBLIC: "Punk", Fields.CHILDREN: [{Fields.NAME_PUBLIC: "Hardcore"}]}  # With children
         ]
-        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE: tree_data})
         assert response.status_code == status.HTTP_201_CREATED
         genres = Genre.objects.filter(user=self.test_user1)
         assert genres.count() == 5  # 4 roots + 1 child

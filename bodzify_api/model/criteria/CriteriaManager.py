@@ -248,8 +248,8 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         # Delete all existing criteria for the user
         self.filter(user=user).delete()
 
-        # Get tree data from either TREE_PUBLIC or TREE_INTERNAL
-        tree_data = data.get(TreeImportFields.TREE_PUBLIC, data.get(TreeImportFields.TREE_INTERNAL, []))
+        # Get tree data from either TREE or TREE_INTERNAL
+        tree_data = data.get(TreeImportFields.TREE, data.get(TreeImportFields.TREE, []))
         if not tree_data:
             return
 

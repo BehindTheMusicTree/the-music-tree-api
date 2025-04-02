@@ -11,7 +11,7 @@ class TestOverwrite(GenreTestCase):
         self.model_fixture_factory.create_genre(name="Old Rock")
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})
+        response = self._post_genres_tree_import(data={Fields.TREE: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 

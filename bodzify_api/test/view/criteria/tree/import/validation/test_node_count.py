@@ -12,14 +12,14 @@ class TestNodeCount(GenreTestCase):
     def test_no_data_then_400_bad_request(self):
         response = self._post_genres_tree_import()
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE_PUBLIC
+        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.REQUIRED
 
     def test_empty_then_400_bad_request(self):
         data = []
         response = self._post_genres_tree_import(data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE_PUBLIC
+        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.REQUIRED
 
     def test_one_too_large_then_400_bad_request(self):
@@ -31,9 +31,9 @@ class TestNodeCount(GenreTestCase):
             })
 
         data = [root, {Fields.NAME_PUBLIC: "Root2", Fields.CHILDREN: []}]
-        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.TREE: data})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE_PUBLIC
+        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.TREE_TOO_LARGE
 
     @pytest.mark.slow
@@ -44,9 +44,9 @@ class TestNodeCount(GenreTestCase):
 
         data[0][Fields.CHILDREN].append({Fields.NAME_PUBLIC: 'Extra Child', Fields.CHILDREN: []})
 
-        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.TREE: data})
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE_PUBLIC
+        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.TREE_TOO_LARGE
 
     @pytest.mark.slow
@@ -59,7 +59,7 @@ class TestNodeCount(GenreTestCase):
             })
 
         data = [root]
-        response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: data})
+        response = self._post_genres_tree_import(data={Fields.TREE: data})
         assert response.status_code == status.HTTP_201_CREATED
         genres_count = Genre.objects.filter(user=self.test_user1).count()
         assert genres_count == settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT
