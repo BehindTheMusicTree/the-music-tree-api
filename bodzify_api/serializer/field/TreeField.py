@@ -90,15 +90,15 @@ class TreeField(AppListField):
 
         # Then run AppListField's validation to skip AppField's to_internal_value
         try:
-            value = AppListField.to_internal_value(self, data)
-            AppListField.run_validators(self, value)
+            AppListField.to_internal_value(self, data)
+            AppListField.run_validators(self, data)
         except Exception as e:
             return None
 
         # Process children recursively
-        for node in value:
+        for node in data:
             children = node.get(Fields.CHILDREN)
             if children:
                 node[Fields.CHILDREN] = self.children_field.run_validation(children)
 
-        return value
+        return data
