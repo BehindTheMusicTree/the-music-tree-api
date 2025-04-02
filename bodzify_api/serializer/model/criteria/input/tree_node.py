@@ -1,11 +1,12 @@
 from rest_framework.serializers import ListField, DictField, CharField
 
+from bodzify_api import settings
 from bodzify_api.serializer.AppSerializer import AppSerializer
 from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields
 
 
 class CriteriaTreeNodeSerializer(AppSerializer):
-    name = CharField(max_length=100, allow_blank=False)
+    name = CharField(max_length=settings.CRITERIA_NAME_LEN_MAX, allow_blank=False)
     children = ListField(child=DictField(), required=False, default=list, source=Fields.CHILDREN)
 
     def to_internal_value(self, data):

@@ -5,9 +5,9 @@ from rest_framework.fields import ListField
 from bodzify_api import settings
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.serializer.field.AppDictField import AppDictField
 from bodzify_api.serializer.field.AppField import AppField
 from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields
+from bodzify_api.serializer.model.criteria.input.tree_node import CriteriaTreeNodeSerializer
 
 
 class TreeField(AppField, ListField):
@@ -15,7 +15,7 @@ class TreeField(AppField, ListField):
                  allow_empty: bool = False,
                  max_nodes_count: int = settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT,
                  **kwargs):
-        ListField.__init__(self, child=AppDictField(), allow_empty=allow_empty, **kwargs)
+        ListField.__init__(self, child=CriteriaTreeNodeSerializer(), allow_empty=allow_empty, **kwargs)
         self.max_nodes = max_nodes_count
         self._allow_empty = allow_empty
         self._max_nodes_count = max_nodes_count
@@ -96,7 +96,6 @@ class TreeField(AppField, ListField):
             value = ListField.to_internal_value(self, data)
             ListField.run_validators(self, value)
         except Exception as e:
-            print(f"ListField validation error: {e}")
             return None
 
         # Process children recursively
