@@ -109,24 +109,31 @@ class TreeField(AppListField):
         # Validate each node with CriteriaTreeNodeSerializer
         validated_data = []
         for node in data:
-            # Check for missing 'name' field directly before passing to serializer
-            if isinstance(node, dict) and 'name' not in node:
-                # Use the tree public field for missing name errors
-                from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields as TreeImportFields
-                raise AppValidationException(
-                    field_name=TreeImportFields.TREE_PUBLIC,
-                    message="Invalid tree structure: each node must have a name",
-                    field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
-                )
+            # Check for missing or empty name fields directly before passing to serializer
+            if isinstance(node, dict):
+                # Handle missing name
+                if Fields.NAME_PUBLIC not in node:
+                    raise AppValidationException(
+                        field_name=Fields.TREE_PUBLIC,
+                        message="Invalid tree structure: each node must have a name",
+                        field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
+                    )
+
+                # Handle empty name (special case with specific field name and error code)
+                if Fields.NAME_PUBLIC in node and node[Fields.NAME_PUBLIC] == "":
+                    raise AppValidationException(
+                        field_name=Fields.NAME_PUBLIC,  # Use 'name' field for empty name errors
+                        message="The field cannot be empty",
+                        field_validation_error_code=FieldValidationErrorCode.NAME_EMPTY
+                    )
 
             try:
                 validated_node = self.child.run_validation(node)
                 if validated_node is None:
                     # Use the tree public field for validation errors
-                    from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields as TreeImportFields
                     raise AppValidationException(
-                        field_name=TreeImportFields.TREE_PUBLIC,
-                        message="Invalid tree structure: each node must have a name",
+                        field_name=Fields.TREE_PUBLIC,
+                        message=f'Invalid tree structure: each node must have a {Fields.NAME_PUBLIC}',
                         field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
                     )
                 validated_data.append(validated_node)
@@ -151,23 +158,16 @@ class TreeField(AppListField):
         return validated_data
 
     def _check_for_duplicate_names(self, data: list) -> None:
-        """
-        Check if there are duplicate names in the tree nodes
-        """
         if not data or not isinstance(data, list):
             return
 
-        from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields as TreeImportFields
-
-        # Extract all names from the tree
         names = []
         for node in data:
-            if isinstance(node, dict) and TreeImportFields.NAME_PUBLIC in node:
-                name = node[TreeImportFields.NAME_PUBLIC]
+            if isinstance(node, dict) and Fields.NAME_PUBLIC in node:
+                name = node[Fields.NAME_PUBLIC]
                 if name in names:
-                    # Found a duplicate name
                     raise AppValidationException(
-                        field_name=TreeImportFields.TREE_PUBLIC,
+                        field_name=Fields.TREE_PUBLIC,
                         message="Tree contains duplicate values",
                         field_validation_error_code=FieldValidationErrorCode.TREE_VALUE_DUPLICATE
                     )
