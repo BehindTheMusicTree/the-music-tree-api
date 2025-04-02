@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, cast
 
 from bodzify_api import settings
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
@@ -13,13 +13,21 @@ class TreeField(AppListField):
                  allow_empty: bool = False,
                  max_nodes_count: int = settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT,
                  **kwargs):
-        AppListField.__init__(self, child=CriteriaTreeNodeSerializer(
-            structure_field_name=self.get_error_field_name()),
-            allow_empty=allow_empty, **kwargs)
+        # Set these before calling parent initializer
+        self._children_field = None
         self.max_nodes = max_nodes_count
         self._allow_empty = allow_empty
         self._max_nodes_count = max_nodes_count
-        self._children_field = None
+
+        # Initialize with a basic serializer as a temporary child
+        from rest_framework import serializers
+        init_child = serializers.DictField()
+
+        # Call parent initializer
+        AppListField.__init__(self, child=init_child, allow_empty=allow_empty, **kwargs)
+
+        # Now that field_name is set by parent initializer, set the real child
+        self.child = CriteriaTreeNodeSerializer(structure_field_name=cast(str, self.field_name))
 
     @property
     def children_field(self) -> 'TreeField':
@@ -53,6 +61,11 @@ class TreeField(AppListField):
             # Then count this node
             count += 1
         return count
+
+    def get_error_field_name(self) -> str:
+        # Override to return the public field name (with array suffix)
+        from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields as TreeImportFields
+        return TreeImportFields.TREE_PUBLIC
 
     def run_validation(self, data: Any = None) -> Any:
         if data is None:
@@ -91,21 +104,32 @@ class TreeField(AppListField):
                 field_validation_error_code=FieldValidationErrorCode.TREE_TOO_LARGE
             )
 
-        # Use AppListField's validation for the list and each node
-        try:
-            validated_data = super().run_validation(data)
-            if validated_data is None:
+        # Validate each node with CriteriaTreeNodeSerializer
+        validated_data = []
+        for node in data:
+            # Check for missing 'name' field directly before passing to serializer
+            if isinstance(node, dict) and 'name' not in node:
                 raise AppValidationException(
                     field_name=self.get_error_field_name(),
                     message="Invalid tree structure: each node must have a name",
                     field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
                 )
-        except Exception as e:
-            raise AppValidationException(
-                field_name=self.get_error_field_name(),
-                message=str(e),
-                field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
-            )
+
+            try:
+                validated_node = self.child.run_validation(node)
+                if validated_node is None:
+                    raise AppValidationException(
+                        field_name=self.get_error_field_name(),
+                        message="Invalid tree structure: each node must have a name",
+                        field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
+                    )
+                validated_data.append(validated_node)
+            except Exception as e:
+                raise AppValidationException(
+                    field_name=self.get_error_field_name(),
+                    message=str(e),
+                    field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID
+                )
 
         # Process children recursively
         for node in validated_data:
