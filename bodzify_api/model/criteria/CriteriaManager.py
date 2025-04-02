@@ -266,8 +266,6 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
 
                 # Create children if any
                 if InputFields.CHILDREN in node and node[InputFields.CHILDREN]:
-                    if not isinstance(node[InputFields.CHILDREN], list):
-                        raise ValueError(f"{InputFields.CHILDREN} must be an array")
                     create_criteria_tree(node[InputFields.CHILDREN], criteria)
 
         # Create all criteria trees
