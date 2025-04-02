@@ -6,7 +6,6 @@ from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 class TestCase(GenreTestCase):
 
     def test_duplicates_not_in_same_object_then_ok(self):
-        """Test that duplicate fields in different objects are not detected as errors."""
         json_data = [
             {
                 "name": "Test Criteria 1",
