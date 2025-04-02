@@ -22,7 +22,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         artist_old = self.model_fixture_factory.create_artist(name="a-ha")
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="koko", artists=[artist_old])
 
-        response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.ARTISTS_NAMES_ARRAY: []})
+        response = self._put_lib_track(uuid=lib_track.uuid, **{PutFields.ARTISTS_NAMES: []})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_object.artists.count() == 0
@@ -32,7 +32,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         lib_track = self.model_fixture_factory.create_lib_track_with_file(title="koko", artists=[artist_old])
         artist_new = self.model_fixture_factory.create_artist(name="Koko")
 
-        data = {PutFields.ARTISTS_NAMES_ARRAY: [artist_new.name]}
+        data = {PutFields.ARTISTS_NAMES: [artist_new.name]}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
@@ -45,7 +45,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         artist_new_1 = self.model_fixture_factory.create_artist(name="Chopin")
         artist_new_2 = self.model_fixture_factory.create_artist(name="Lopato")
 
-        data = {PutFields.ARTISTS_NAMES_ARRAY: [artist_new_1.name, artist_new_2.name]}
+        data = {PutFields.ARTISTS_NAMES: [artist_new_1.name, artist_new_2.name]}
         response = self._put_lib_track(uuid=lib_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
@@ -59,7 +59,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         artist = self.model_fixture_factory.create_artist(name=artist_name)
         track = self.model_fixture_factory.create_lib_track_with_file(title="Foire", artists=[artist])
 
-        data = {PutFields.ARTISTS_NAMES_ARRAY: ["Other artist"]}
+        data = {PutFields.ARTISTS_NAMES: ["Other artist"]}
         response = self._put_lib_track(uuid=track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
@@ -71,7 +71,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         track = self.model_fixture_factory.create_lib_track_with_file(title="Foire", artists=[artist])
         self.model_fixture_factory.create_lib_track_with_file(title="Josie", artists=[artist])
 
-        response = self._put_lib_track(uuid=track.uuid, **{PutFields.ARTISTS_NAMES_ARRAY: [artist_name]})
+        response = self._put_lib_track(uuid=track.uuid, **{PutFields.ARTISTS_NAMES: [artist_name]})
         assert response.status_code == status.HTTP_200_OK
         assert Artist.objects.filter(user=self.test_user1, name=artist_name).exists()
 
@@ -82,7 +82,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         album = self.model_fixture_factory.create_album(name="Hunting High and Low", album_artists=[artist])
         self.model_fixture_factory.create_lib_track_with_file(title="Josie", album=album)
 
-        response = self._put_lib_track(uuid=track.uuid, **{PutFields.ARTISTS_NAMES_ARRAY: artist_name})
+        response = self._put_lib_track(uuid=track.uuid, **{PutFields.ARTISTS_NAMES: artist_name})
 
         assert response.status_code == status.HTTP_200_OK
         assert Artist.objects.filter(user=self.test_user1, name=artist_name).exists()

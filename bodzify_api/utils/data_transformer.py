@@ -29,14 +29,20 @@ def to_snake_case(name: str) -> str:
     return re.sub('([a-z0-9])([A-Z])', r'\1_\2', name).lower()
 
 
-def to_dict(data: Any) -> Union[QueryDict, dict[str, Any], Mapping[str, Any]]:
+def to_dict(data: Any) -> Union[QueryDict, dict[str, Any], Mapping[str, Any], str]:
     if isinstance(data, (QueryDict, dict, Mapping)):
         return cast(Union[QueryDict, dict[str, Any], Mapping[str, Any]], data)
+    if isinstance(data, str):
+        return data
     return dict(data)
 
 
-def dict_to_snake_case(data: Any) -> dict[str, Any]:
+def dict_to_snake_case(data: Any) -> dict[str, Any] | str:
+    if isinstance(data, str):
+        return data
     data_dict = to_dict(data)
+    if isinstance(data_dict, str):
+        return data_dict
     return {to_snake_case(key): value for key, value in data_dict.items()}
 
 

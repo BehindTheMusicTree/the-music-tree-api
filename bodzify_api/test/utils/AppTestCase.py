@@ -27,6 +27,7 @@ T = TypeVar('T', bound=models.Model)
 class AppTestCase(TestCase, Generic[T]):
     model_class: Type[T]  # Must be defined in child classes
     saved_object: T  # Must be defined in child classes
+    is_from_lib_track_test_case: bool = False
 
     api_client: AppApiClient
     saved_lib_track_metadata_with_raw_rating: dict
@@ -67,6 +68,12 @@ class AppTestCase(TestCase, Generic[T]):
         else:
             raise NotImplementedError("Test case must define model_class")
 
+    def _set_results_without_model_class(self, response):
+        if response.status_code in [status.HTTP_200_OK, status.HTTP_201_CREATED]:
+            self._set_results_attributes(response)
+        else:
+            self._set_error_response_result_if_failure(response)
+
     def _set_results(self, response):
         if response.status_code in [status.HTTP_200_OK, status.HTTP_201_CREATED]:
             if response.status_code is not status.HTTP_204_NO_CONTENT:
@@ -76,9 +83,9 @@ class AppTestCase(TestCase, Generic[T]):
                 else:
                     self._set_single_result(response)
         else:
-            self._set_error_response_result(response)
+            self._set_error_response_result_if_failure(response)
 
-    def _set_error_response_result(self, response):
+    def _set_error_response_result_if_failure(self, response):
         """
         Handles responses with field errors in the format:
         {
@@ -95,6 +102,9 @@ class AppTestCase(TestCase, Generic[T]):
             }]
         }
         """
+        if response.status_code in [status.HTTP_200_OK, status.HTTP_201_CREATED]:
+            return
+
         self.bad_request_result = response.json()
         bad_request_result_details = self.bad_request_result[ErrorResponseFields.DETAILS]
         self.bad_request_result_field_errors_json = bad_request_result_details.get(ErrorResponseFields.FIELD_ERRORS)
@@ -138,8 +148,8 @@ class AppTestCase(TestCase, Generic[T]):
 
     # Defined here and not in LibTrackTestCase because other views needs sometimes to put a track for testing purposes
     # (testing Genre deletion for example)
-    def _put_lib_track(self, uuid, is_from_lib_track_test_case: bool = True, **kwargs):
-        if is_from_lib_track_test_case:
+    def _put_lib_track(self, uuid, **kwargs):
+        if self.is_from_lib_track_test_case:
             return self.api_client.put(
                 path=reverse('library-track-detail', kwargs={'pk': uuid}),
                 data=kwargs, handle_response=self._set_results)

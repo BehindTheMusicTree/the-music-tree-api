@@ -7,7 +7,7 @@ from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase impor
 
 class TestCase(ManualPlaylistTestCase):
 
-    def test_no_field_specified_then_400(self):
+    def test_no_field_specified_then_400_bad_request(self):
         manual_playlist = self.model_fixture_factory.create_manual_playlist(name="Kitchen")
 
         response = self._put_manual_playlist(uuid=manual_playlist.uuid)

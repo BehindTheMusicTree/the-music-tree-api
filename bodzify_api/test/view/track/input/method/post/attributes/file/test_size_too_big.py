@@ -14,5 +14,5 @@ class TestCase(LibTrackTestCase):
     assert response.status_code == status.HTTP_201_CREATED
     """
 
-    def test_too_big_then_400(self):
+    def test_too_big_then_400_bad_request(self):
         ""

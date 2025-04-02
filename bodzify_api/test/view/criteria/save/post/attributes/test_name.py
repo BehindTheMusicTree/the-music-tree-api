@@ -7,7 +7,7 @@ from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 class TestCase(GenreTestCase):
 
-    def test_not_provided_then_400(self):
+    def test_not_provided_then_400_bad_request(self):
         response = self._post_genre(**{})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -16,7 +16,7 @@ class TestCase(GenreTestCase):
         assert error['field'] == PostFields.NAME_PUBLIC
         assert error['code'] == FieldValidationErrorCode.REQUIRED
 
-    def test_empty_then_400(self):
+    def test_empty_then_400_bad_request(self):
         response = self._post_genre(**{PostFields.NAME_PUBLIC: ""})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

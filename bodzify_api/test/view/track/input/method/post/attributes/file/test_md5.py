@@ -9,7 +9,7 @@ from bodzify_api.utils import audio_metadata
 
 class TestCase(LibTrackTestCase):
 
-    def test_flac_md5_not_valid_and_corrupted_then_400(self):
+    def test_flac_md5_not_valid_and_corrupted_then_400_bad_request(self):
         response = self._post_lib_track(LibTrackTestFilename.FORMAT_MD5_NOT_VALID_AND_CORRUPTED_FLAC)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

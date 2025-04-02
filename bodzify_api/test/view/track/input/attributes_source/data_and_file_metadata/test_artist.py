@@ -9,7 +9,7 @@ class TestCase(LibTrackTestCase):
 
     def test_artist_in_both_then_take_data(self):
         data_artist_name = "Queen"
-        data_dict = {PostFields.ARTISTS_NAMES_ARRAY: [data_artist_name]}
+        data_dict = {PostFields.ARTISTS_NAMES_MULTIPART: [data_artist_name]}
         response = self._post_lib_track(LibTrackTestFilename.METADATA_LONG_A_ID3V2_SMALL_MP3, **data_dict)
 
         assert response.status_code == status.HTTP_201_CREATED

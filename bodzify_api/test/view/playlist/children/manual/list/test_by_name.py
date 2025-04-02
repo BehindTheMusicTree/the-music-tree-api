@@ -9,7 +9,7 @@ from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase impor
 
 class TestCase(ManualPlaylistTestCase, NotNullableFreeCharFilterTestCase):
 
-    def test_empty_then_400(self):
+    def test_empty_then_400_bad_request(self):
         self.model_fixture_factory.create_manual_playlist(name="foot")
         self.model_fixture_factory.create_manual_playlist(name="cuisine")
 

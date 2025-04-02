@@ -1,13 +1,20 @@
+from typing import Type
+
 from drf_spectacular.types import OpenApiTypes  # type: ignore
 from drf_spectacular.utils import OpenApiParameter, extend_schema  # type: ignore
+from bodzify_api.serializer.SerializerType import SerializerType
 from rest_framework import status  # type: ignore
 from rest_framework.decorators import action  # type: ignore
 from rest_framework.response import Response  # type: ignore
+from rest_framework.serializers import Serializer
 
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.filtering.set.criteria.Fields import Fields as FilterFields
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.serializer.model.criteria.input.post import CriteriaPostSerializer
 from bodzify_api.serializer.model.criteria.input.put import CriteriaPutSerializer
+from bodzify_api.serializer.model.criteria.input.tree_import import CriteriaTreeImportSerializer
 from bodzify_api.serializer.model.criteria.output.detailed import CriteriaDetailedSerializer
 from bodzify_api.serializer.model.criteria.output.simple import CriteriaSimpleSerializer
 
@@ -25,6 +32,11 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
                          create_serializer_class=CriteriaPostSerializer,
                          update_serializer_class=CriteriaPutSerializer,
                          **kwargs)
+
+    def get_serializer_class_for_non_standard_action(self) -> Type[Serializer]:
+        if self.action == 'import_tree':
+            return CriteriaTreeImportSerializer
+        raise NotImplementedError(f"Action {self.action} not defined in viewset")
 
     @extend_schema(request=CriteriaPostSerializer, responses=CriteriaDetailedSerializer)
     def create(self, request, *args, **kwargs):
@@ -78,36 +90,34 @@ class CriteriaViewSet(AppModelViewSet[Criteria]):
           ]
         }
         """
-        # Get all criteria for the current user
-        queryset = self.get_queryset()
-
-        # Build a dictionary of criteria by parent ID for efficient lookup
-        criteria_by_parent = {}
-        for criteria in queryset:
-            # Handle both UUID and ID based parent references
-            parent_id = criteria.parent.uuid if hasattr(criteria.parent, 'uuid') else criteria.parent_id
-            if parent_id not in criteria_by_parent:
-                criteria_by_parent[parent_id] = []
-            criteria_by_parent[parent_id].append(criteria)
-
-        # Recursive function to build the tree
-        def build_tree(parent_id):
-            if parent_id not in criteria_by_parent:
-                return []
-
-            result = []
-            for criteria in criteria_by_parent[parent_id]:
-                # Get the appropriate ID for child references
-                child_id = criteria.uuid if hasattr(criteria, 'uuid') else criteria.id
-                node = {
-                    "name": criteria.name,
-                    "children": build_tree(child_id)
-                }
-                result.append(node)
-
-            return result
-
-        # Start with root criteria (parent_id is None)
-        tree = build_tree(None)
-
+        tree = self.model_class.objects.build_criteria_tree(request.user)
         return Response(tree, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'], url_path='tree/import')
+    def import_tree(self, request):
+        """
+        Imports a tree structure of criteria, replacing all existing criteria of the current type.
+        Returns a paginated list of created criteria.
+        The input should be an array of criteria trees, where each tree follows the format:
+        {
+          "name": "Criteria name",
+          "children": [
+            {
+              "name": "Child criteria name",
+              "children": []
+            }
+          ]
+        }
+        """
+        try:
+            serializer = CriteriaTreeImportSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.model_class.objects.import_criteria_tree(request.user, serializer.validated_data)
+        except ValueError as e:
+            raise AppValidationException(field_name="data",
+                                         message=str(e),
+                                         field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID)
+
+        # Get all created criteria with pagination and 201 status code
+        queryset = self.get_queryset()
+        return self._get_paginated_list_response(queryset, SerializerType.SIMPLE, status.HTTP_201_CREATED)

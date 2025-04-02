@@ -112,13 +112,13 @@ class TestCase(GenreTestCase):
         rock_archived_third = self.model_fixture_factory.create_lib_track_with_file(
             title='rock archived third', genre=rock, use_manager_for_genre_playlist_adding=True)
 
-        response = self._put_lib_track(uuid=rock_archived_third.uuid, is_from_lib_track_test_case=False, archived=True)
+        response = self._put_lib_track(uuid=rock_archived_third.uuid, archived=True)
         assert response.status_code == status.HTTP_200_OK
 
         rock_archived_fourth = self.model_fixture_factory.create_lib_track_with_file(
             title='rock archived fourth', genre=rock, use_manager_for_genre_playlist_adding=True)
 
-        response = self._put_lib_track(uuid=rock_archived_fourth.uuid, is_from_lib_track_test_case=False, archived=True)
+        response = self._put_lib_track(uuid=rock_archived_fourth.uuid, archived=True)
         assert response.status_code == status.HTTP_200_OK
 
         response = self._delete_genre(uuid=rock.uuid)

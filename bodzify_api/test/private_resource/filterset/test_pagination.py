@@ -7,7 +7,7 @@ from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 
 class TestCase(AlbumTestCase):
 
-    def test_page_invalid_then_400(self):
+    def test_page_invalid_then_400_bad_request(self):
         try:
             response = self._list_albums(page=0)
             assert False, "Expected exception was not raised!"

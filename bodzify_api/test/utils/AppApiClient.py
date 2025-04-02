@@ -38,7 +38,7 @@ class AppApiClient(APIClient):
             return None
         return content_type
 
-    def _prepare_data(self, data: dict | str | None, format: str | None) -> Any:
+    def _prepare_data(self, data: dict | str | list | None, format: str | None) -> Any:
         """Prepare data for the request based on format and type.
 
         Args:
@@ -48,13 +48,20 @@ class AppApiClient(APIClient):
         Returns:
             Prepared data ready for the request
         """
-        if not data:
+        if data is None:
             # Initialize empty data for json/multipart to ensure proper content type
             return {} if format in ['json', 'multipart'] else None
 
         if isinstance(data, str):
             return data
 
+        if isinstance(data, list):
+            # For lists, we don't need to transform None values
+            if format == 'json':
+                return transform_uuids(data)
+            return data
+
+        # For dictionaries, handle None values
         prepared_data = data_transformer.replace_none_with_empty_string(**data)
         if format == 'json' and isinstance(prepared_data, dict):
             return transform_uuids(prepared_data)  # Only convert UUIDs to strings, let client handle JSON encoding
@@ -153,10 +160,14 @@ class AppApiClient(APIClient):
                     }
             else:
                 # For success responses, maintain strict JSON checking
-                if not content_type.startswith('application/json'):
-                    raise ValueError(
-                        f'Content-Type header is "{content_type}", not "application/json"'
-                    )
-                response._json = json.loads(response.content)
+                if response.status_code == 204:
+                    # 204 No Content responses don't have content to parse
+                    response._json = {}
+                else:
+                    if not content_type.startswith('application/json'):
+                        raise ValueError(
+                            f'Content-Type header is "{content_type}", not "application/json"'
+                        )
+                    response._json = json.loads(response.content)
 
         return response._json

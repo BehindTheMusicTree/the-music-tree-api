@@ -1,4 +1,3 @@
-
 from typing import TYPE_CHECKING, Any
 
 from django.db import IntegrityError, models
@@ -35,13 +34,12 @@ class Criteria(LibTrackMixin):
                                                               through_fields=(CriteriaLineageRelFields.DESCENDANT,
                                                                               CriteriaLineageRelFields.ASCENDANT),
                                                               symmetrical=False,)  # type: ignore
-    parent: 'Criteria | None' = PrivateForeignKey('self',
-                                                  on_delete=models.SET_NULL,
-                                                  null=True,
-                                                  related_name=Fields.CHILDREN)  # type: ignore
-    root: 'Criteria' = PrivateForeignKey('self',
-                                         on_delete=models.DO_NOTHING,
-                                         related_name=Fields.DESCENDANTS)  # type: ignore
+    parent: 'Criteria | None' = PrivateForeignKey(
+        'self', on_delete=models.SET_NULL, null=True, related_name=Fields.CHILDREN)  # type: ignore
+
+    root: 'Criteria' = PrivateForeignKey(
+        'self', on_delete=models.DO_NOTHING, related_name=Fields.DESCENDANTS)  # type: ignore
+
     type = AppForeignKey(CriteriaType, on_delete=models.CASCADE)
 
     if TYPE_CHECKING:
@@ -64,6 +62,17 @@ class Criteria(LibTrackMixin):
     @property
     def is_root(self) -> bool:
         return not self.parent
+
+    @property
+    def descendant_list(self) -> list['Criteria']:
+        """
+        Get all descendants of this criteria using the lineage system.
+        This is more efficient than recursive traversal as it uses the pre-computed relationships.
+
+        Returns:
+            A list of all descendant criteria
+        """
+        return list(self.descendants.all())
 
     class Meta:
         verbose_name = 'Criteria'
@@ -120,7 +129,7 @@ class Criteria(LibTrackMixin):
             elif 'unique_name_per_user' in error_message:
                 raise AppValidationException(
                     field_name=Fields.NAME_PUBLIC,
-                    message=_('A criteria with this name already exists for this user'),
+                    message=_(f'The name "{self.name}" is already used'),
                     field_validation_error_code=FieldValidationErrorCode.NAME_DUPLICATE
                 )
             # Let other database integrity errors propagate to be handled as system errors

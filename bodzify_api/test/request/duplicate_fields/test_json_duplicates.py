@@ -8,7 +8,7 @@ from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 class TestJsonDuplicateFields(GenreTestCase):
 
-    def test_duplicate_fields_on_json_post_then_400(self):
+    def test_duplicate_fields_on_json_post_then_400_bad_request(self):
         raw_json = '{"name": "test", "name": "test2"}'
         response = self.api_client.post(path=reverse(self.list_endpoint),
                                         data=raw_json,
@@ -17,13 +17,13 @@ class TestJsonDuplicateFields(GenreTestCase):
                                         handle_response=self._set_results)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        self._set_error_response_result(response)
+        self._set_error_response_result_if_failure(response)
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == CriteriaPostFields.NAME_PUBLIC
         assert error['code'] == FieldValidationErrorCode.DUPLICATE
 
-    def test_duplicate_fields_on_json_put_then_400(self):
+    def test_duplicate_fields_on_json_put_then_400_bad_request(self):
         genre = self.model_fixture_factory.create_genre(name="rock")
 
         raw_json = '{"name": "test", "name": "test2"}'
@@ -34,12 +34,12 @@ class TestJsonDuplicateFields(GenreTestCase):
                                        handle_response=self._set_results)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        self._set_error_response_result(response)
+        self._set_error_response_result_if_failure(response)
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == CriteriaPostFields.NAME_PUBLIC
         assert error['code'] == FieldValidationErrorCode.DUPLICATE
 
-    def test_duplicate_fields_on_json_patch_then_400(self):
+    def test_duplicate_fields_on_json_patch_then_400_bad_request(self):
         # PATCH is not supported
         pass

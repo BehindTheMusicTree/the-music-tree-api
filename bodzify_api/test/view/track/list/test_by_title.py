@@ -16,7 +16,7 @@ class TestCase(LibTrackTestCase, NotNullableFreeCharFilterTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
 
-    def test_empty_then_400(self):
+    def test_empty_then_400_bad_request(self):
         self.model_fixture_factory.create_lib_track_with_file(title="Life")
         self.model_fixture_factory.create_lib_track_with_file(title="Hey")
 

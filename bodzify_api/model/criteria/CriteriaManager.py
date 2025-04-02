@@ -3,8 +3,10 @@ from typing import TYPE_CHECKING, TypeVar
 from django.db import transaction
 from django.db.models import QuerySet
 
-from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
+from bodzify_api.model.criteria.Fields import Fields as ModelFields
 from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
+from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields as TreeImportFields
+from bodzify_api.serializer.model.criteria.input.Fields import Fields as InputFields
 
 from .Fields import Fields
 from .type.CriteriaType import CriteriaType
@@ -46,7 +48,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
             self._refresh_ascendants_of_instance_and_children(child)
 
     def get_default_ordering(self) -> list[str]:
-        return [LibTrackMixinFields.NAME_INTERNAL]
+        return [ModelFields.NAME_INTERNAL]
 
     @transaction.atomic
     def create(self, type_id: int, **kwargs) -> T:
@@ -108,22 +110,6 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
 
         return None
 
-    def get_all_descendants(self, criteria: 'Criteria') -> list:
-        """
-        Recursively get all descendants of a criteria.
-
-        Args:
-            criteria: The criteria whose descendants to retrieve
-
-        Returns:
-            A list of all descendant criteria
-        """
-        result = []
-        for child in criteria.children.all():
-            result.append(child)
-            result.extend(self.get_all_descendants(child))
-        return result
-
     @transaction.atomic
     def delete_instance(self, instance: T) -> None:
         """
@@ -178,3 +164,141 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
             children.update(root=new_root)
             for child in children:
                 self.update_children_root(child, new_root)
+
+    def build_criteria_tree(self, user: 'User') -> list[dict]:
+        """
+        Builds a tree structure of all criteria for a given user.
+        The structure follows the format:
+        {
+          "name": "Criteria name",
+          "children": [
+            {
+              "name": "Child criteria name",
+              "children": []
+            }
+          ]
+        }
+        """
+        # Get all criteria for the user
+        queryset = self.filter(user=user)
+
+        # Build a dictionary of criteria by parent ID for efficient lookup
+        criteria_by_parent = {}
+        for criteria in queryset:
+            # Handle both UUID and ID based parent references
+            parent_id = criteria.parent.uuid if hasattr(criteria.parent, 'uuid') else criteria.parent_id
+            if parent_id not in criteria_by_parent:
+                criteria_by_parent[parent_id] = []
+            criteria_by_parent[parent_id].append(criteria)
+
+        # Recursive function to build the tree
+        def build_tree(parent_id):
+            if parent_id not in criteria_by_parent:
+                return []
+
+            result = []
+            for criteria in criteria_by_parent[parent_id]:
+                # Get the appropriate ID for child references
+                child_id = criteria.uuid if hasattr(criteria, 'uuid') else criteria.id
+                node = {
+                    InputFields.NAME_PUBLIC: criteria.name,
+                    InputFields.CHILDREN: build_tree(child_id)
+                }
+                result.append(node)
+
+            return result
+
+        # Start with root criteria (parent_id is None)
+        return build_tree(None)
+
+    @transaction.atomic
+    def import_criteria_tree(self, user: 'User', data: dict) -> None:
+        """
+        Imports a tree structure of criteria, replacing all existing criteria.
+        The input should be an array of criteria trees, where each tree follows the format:
+        {
+          "name": "Criteria name",
+          "children": [
+            {
+              "name": "Child criteria name",
+              "children": []
+            }
+          ]
+        }
+        """
+        if not data:
+            return
+
+        # Delete all existing criteria for the user
+        self.filter(user=user).delete()
+
+        # Extract tree data from the validated data with debug printing
+        print("IMPORT DEBUG - Data type:", type(data))
+        if isinstance(data, dict):
+            print("IMPORT DEBUG - Dict keys:", data.keys())
+
+        # Handle serializer.validated_data which will be a dict with a 'tree' key
+        if isinstance(data, dict) and TreeImportFields.TREE in data:
+            # Get the tree data from serializer's validated_data
+            tree_data = data[TreeImportFields.TREE]
+            print(
+                f"IMPORT DEBUG - Found '{TreeImportFields.TREE}' key in data, extracted tree with length: {len(tree_data)}")
+        # If data is directly a list, use it as tree_data
+        elif isinstance(data, list):
+            tree_data = data
+            print("IMPORT DEBUG - Data is already a list with length:", len(tree_data))
+        else:
+            # Fallback to empty list if no tree data found
+            tree_data = []
+            print("IMPORT DEBUG - No valid tree data found, using empty list")
+
+        if not tree_data:
+            print("IMPORT DEBUG - No tree data found")
+            return
+
+        # Print the first node to see its structure
+        if tree_data and len(tree_data) > 0:
+            print("IMPORT DEBUG - First node structure:", tree_data[0])
+            if 'children' in tree_data[0]:
+                print("IMPORT DEBUG - Children in first node:", tree_data[0]['children'])
+
+        # Recursive function to create criteria and their children
+        def create_criteria_tree(nodes, parent=None, level=0):
+            print(f"IMPORT DEBUG - Level {level} has {len(nodes)} nodes")
+            for i, node in enumerate(nodes):
+                print(f"IMPORT DEBUG - Processing level {level} node {i}")
+                # Debug print the node keys
+                print(f"IMPORT DEBUG - Node keys: {node.keys()}")
+
+                # Create the criteria
+                name_field = InputFields.NAME_PUBLIC
+                name = node.get(name_field)
+                print(f"IMPORT DEBUG - Creating node with name '{name}', parent: {parent}")
+
+                criteria = self.model(
+                    _name=name,
+                    parent=parent,
+                    user=user
+                )
+                criteria.save()
+                print(f"IMPORT DEBUG - Created node with UUID {criteria.uuid}")
+
+                # Create children if any
+                # Check both string key and constant for robustness
+                children = node.get('children', [])
+
+                # Handle None children (convert to empty list)
+                if children is None:
+                    children = []
+                    print(f"IMPORT DEBUG - Node has None children, converting to empty list")
+
+                print(f"IMPORT DEBUG - Node has {len(children)} children")
+
+                if children:
+                    print(f"IMPORT DEBUG - Processing {len(children)} children for node {criteria.uuid}")
+                    create_criteria_tree(children, criteria, level+1)
+                else:
+                    print(f"IMPORT DEBUG - No children for node {criteria.uuid}")
+
+        # Create all criteria trees
+        create_criteria_tree(tree_data)

@@ -14,7 +14,7 @@ class TestCase(LibTrackTestCase):
         value = 'outkast'
         data = {
             PostFields.ALBUM_NAME: 'albumito',
-            PostFields.ALBUM_ARTISTS_NAMES_ARRAY: value
+            PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: value
         }
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
@@ -25,7 +25,7 @@ class TestCase(LibTrackTestCase):
         assert artist.name == value
 
     def test_empty_then_none(self):
-        data = {PostFields.ALBUM_NAME: "albumito", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: []}
+        data = {PostFields.ALBUM_NAME: "albumito", PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: []}
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED

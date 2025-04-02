@@ -7,7 +7,7 @@ from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 
 class TestCase(AlbumTestCase):
 
-    def test_filter_not_existing_then_400(self):
+    def test_filter_not_existing_then_400_bad_request(self):
         invalid_filter = 'invalidFilter'
         response = self._list_albums(**{invalid_filter: 'value'})
 

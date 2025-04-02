@@ -6,7 +6,7 @@ from bodzify_api.test.view.artist.ArtistTestCase import ArtistTestCase
 
 class TestCase(ArtistTestCase):
 
-    def test_filter_not_existing_then_400(self):
+    def test_filter_not_existing_then_400_bad_request(self):
         invalid_filter_name = 'invalidFilter'
 
         response = self._get_artists(**{invalid_filter_name: 'invalidFilter'})

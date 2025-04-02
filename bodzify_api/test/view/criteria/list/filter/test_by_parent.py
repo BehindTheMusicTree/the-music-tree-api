@@ -14,7 +14,7 @@ class TestCase(GenreTestCase, PrivateForeignKeyFilterTestCase):
     def setUp(self):
         super().setUp(allow_empty_value=True)
 
-    def test_invalid_uuid_then_400(self):
+    def test_invalid_uuid_then_400_bad_request(self):
         self.model_fixture_factory.create_genre(name="Rock")
 
         response = self._list_genres(**{FilterfFields.PARENT: 'invalid-uuid'})

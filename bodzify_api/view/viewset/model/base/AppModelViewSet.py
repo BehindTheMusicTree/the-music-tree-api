@@ -87,26 +87,44 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
         validated_data = self._get_validated_data(serializer)
         return self.model_class.objects.update_instance(instance, **validated_data)
 
-    def _handle_list(self) -> Response:
-        queryset = self.get_queryset()
+    def _get_paginated_list_response(self, queryset, serializer_type=SerializerType.SIMPLE,
+                                     status_code=status.HTTP_200_OK) -> Response:
+        """
+        Get a paginated response for a list view.
+
+        Args:
+            queryset: The queryset to paginate
+            serializer_type: The type of serializer to use (defaults to SIMPLE)
+            status_code: The HTTP status code to return (defaults to 200 OK)
+
+        Returns:
+            Response with pagination metadata and the specified status code
+        """
         queryset = self.filter_queryset(queryset)
         page = self.paginate_queryset(queryset)
 
-        if not queryset.exists():
-            data = []
-        elif page is not None:
-            serializer = self._require_serializer(SerializerType.SIMPLE)(page, many=True)
-            data = list(serializer.data)
-        else:
-            data = []
+        if page is not None:
+            serializer = self._require_serializer(serializer_type)(page, many=True)
+            response = self.get_paginated_response(serializer.data)
+            response.status_code = status_code
+            return response
 
-        return self.get_paginated_response(data)
+        # If pagination is disabled
+        serializer = self._require_serializer(serializer_type)(queryset, many=True)
+        return Response(serializer.data, status=status_code)
+
+    def _handle_list(self) -> Response:
+        queryset = self.get_queryset()
+        return self._get_paginated_list_response(queryset)
+
+    def _get_post_created_response(self, serializer: Serializer) -> Response:
+        headers = self.get_success_headers(serializer.data)
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def _handle_post(self, request: Request) -> Response:
         instance = self._create_instance(request=request, create_data=request.data)
         serializer = self._require_serializer(SerializerType.DETAILED)(instance=instance)
-        headers = self.get_success_headers(serializer.data)
-        return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return self._get_post_created_response(serializer)
 
     def _handle_retrieve(self) -> Response:
         serializer = self._require_serializer(SerializerType.DETAILED)(self.get_object())
@@ -161,6 +179,9 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             # Fall back to the standard DRF lookup if direct lookup fails
             return super().get_object()
 
+    def get_serializer_class_for_non_standard_action(self) -> Type[Serializer]:
+        raise NotImplementedError(f"Action {self.action} not defined in viewset")
+
     def get_serializer_class(self) -> Type[Serializer]:
         if self.action == 'retrieve':
             return self._require_serializer(SerializerType.DETAILED)
@@ -168,7 +189,8 @@ class AppModelViewSet(viewsets.ModelViewSet, Generic[T]):
             return self._require_serializer(SerializerType.CREATE)
         elif self.action in ['update', 'partial_update']:
             return self._require_serializer(SerializerType.UPDATE)
-        raise NotImplementedError(f"Action {self.action} not defined in viewset")
+        else:
+            return self.get_serializer_class_for_non_standard_action()
 
     def get_queryset(self):
         request: Request = cast(Request, self.request)

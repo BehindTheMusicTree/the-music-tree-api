@@ -9,7 +9,7 @@ class ForeignKeyFilterTestCase(FilterTestCase):
         class_methods_to_implement = ['test_exists_then_ok',
                                       'test_does_not_exist_then_no_results',
                                       'test_empty_then_none_results',
-                                      'test_invalid_uuid_then_400',]
+                                      'test_invalid_uuid_then_400_bad_request',]
         if methods_names_to_implement:
             class_methods_to_implement += methods_names_to_implement
         return super().setUp(methods_names_to_implement=methods_names_to_implement)

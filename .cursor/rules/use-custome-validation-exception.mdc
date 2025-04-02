@@ -1,0 +1,127 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Use AppValidationException Instead of DRF Validation
+
+Never raise DRF validation exceptions but use `AppValidationException` for consistent error handling across the application.
+
+## Good Examples
+
+```python
+# Fields.py
+class Fields:
+    NAME: str = "name"
+    PARENT: str = "parent"
+    ID: str = "id"
+    USER: str = "user"
+
+# Good - Using AppValidationException with all required parameters
+def validate_genre_name(self, name: str, user: User) -> None:
+    if not name:
+        raise AppValidationException(
+            field_name=Fields.NAME,
+            message="Genre name cannot be empty",
+            field_validation_error_code=FieldValidationErrorCode.BLANK
+        )
+    
+    if Genre.objects.filter(user=user, name=name).exists():
+        raise AppValidationException(
+            field_name=Fields.NAME,
+            message=f"Genre with name '{name}' already exists",
+            field_validation_error_code=FieldValidationErrorCode.NAME_DUPLICATE
+        )
+
+# Good - Using AppValidationException with field errors
+def validate_genre(self, data: dict, user: User) -> None:
+    errors = {}
+    if not data.get(Fields.NAME):
+        errors[Fields.NAME] = {
+            "message": "Genre name cannot be empty",
+            "code": FieldValidationErrorCode.BLANK
+        }
+    if data.get(Fields.PARENT) == data.get(Fields.ID):
+        errors[Fields.PARENT] = {
+            "message": "Genre cannot be its own parent",
+            "code": FieldValidationErrorCode.SELF_REFERENCE
+        }
+    
+    if errors:
+        raise AppValidationException(
+            field_name=",".join(errors.keys()),
+            message="Validation failed",
+            field_validation_error_code=FieldValidationErrorCode.DEFAULT
+        )
+```
+
+## Bad Examples
+
+```python
+# Bad - Missing required parameters
+def validate_genre_name(self, name: str) -> None:
+    if not name:
+        raise AppValidationException("Genre name cannot be empty")  # Bad - missing field_name and code
+
+# Bad - Using DRF ValidationError
+def validate_genre(self, data: dict) -> None:
+    if not data.get("name"):  # Bad - using string literal
+        raise ValidationError("Genre name cannot be empty")  # Bad
+
+# Bad - Using wrong error code
+def validate_genre_name(self, name: str) -> None:
+    if not name:
+        raise AppValidationException(
+            field_name="name",  # Bad - using string literal
+            message="Genre name cannot be empty",
+            field_validation_error_code="invalid"  # Bad - should use FieldValidationErrorCode enum
+        )
+
+# Bad - Using string literals in errors dict
+def validate_genre(self, data: dict) -> None:
+    errors = {}
+    if not data.get("name"):  # Bad - using string literal
+        errors["name"] = {  # Bad - using string literal
+            "message": "Genre name cannot be empty",
+            "code": FieldValidationErrorCode.BLANK
+        }
+
+# Bad - Missing user in filter
+def validate_genre_name(self, name: str) -> None:
+    if Genre.objects.filter(name=name).exists():  # Bad - missing user filter
+        raise AppValidationException(
+            field_name=Fields.NAME,
+            message=f"Genre with name '{name}' already exists",
+            field_validation_error_code=FieldValidationErrorCode.NAME_DUPLICATE
+        )
+```
+
+## Guidelines
+
+1. Always include all required parameters:
+   - `field_name`: The field that caused the validation error
+   - `message`: A descriptive error message
+   - `field_validation_error_code`: A specific error code from `FieldValidationErrorCode`
+2. Use appropriate error codes from `FieldValidationErrorCode` enum
+3. Keep error messages clear and descriptive
+4. Use field-specific errors when appropriate
+5. Handle `AppValidationException` in the view layer
+6. Always use `Fields` constants for field names, never string literals
+7. Always include user in filters for private resources
+
+## Benefits
+
+- Consistent error handling across the application
+- Better error messages for clients
+- Easier error handling in views
+- Clear separation between validation and other errors
+- Better maintainability of error handling logic
+- Type-safe error codes through enum
+- Prevents typos in field names
+- Ensures proper access control
+- Improves query performance through indexing

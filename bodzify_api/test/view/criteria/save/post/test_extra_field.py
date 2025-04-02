@@ -7,7 +7,7 @@ from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 class TestCase(GenreTestCase):
 
-    def test_extra_field_then_400(self):
+    def test_extra_field_then_400_bad_request(self):
         extra_field = "extraField"
         response = self._post_genre(**{PostFields.NAME_PUBLIC: "Rock", extra_field: "extra_value"})
 

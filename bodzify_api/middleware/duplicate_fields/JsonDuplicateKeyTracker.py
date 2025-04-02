@@ -1,15 +1,26 @@
-
 class JsonDuplicateKeyTracker:
 
     def __init__(self):
-        self.seen_keys = {}
+        self.object_stack = []  # Stack to track current object context
         self.duplicates = []
 
-    def check_key(self, key: str, path: str = '') -> None:
-        """Check if a key is duplicate at its current path."""
-        full_path = f"{path}.{key}" if path else key
-        if full_path in self.seen_keys:
-            if full_path not in self.duplicates:
+    def check_key(self, key: str) -> None:
+        """Check if a key is duplicate within the current object context."""
+        if not self.object_stack:
+            return
+
+        current_object = self.object_stack[-1]
+        if key in current_object:
+            if key not in self.duplicates:
                 self.duplicates.append(key)
         else:
-            self.seen_keys[full_path] = True
+            current_object.add(key)
+
+    def enter_object(self) -> None:
+        """Called when entering a new object context."""
+        self.object_stack.append(set())
+
+    def exit_object(self) -> None:
+        """Called when exiting an object context."""
+        if self.object_stack:
+            self.object_stack.pop()

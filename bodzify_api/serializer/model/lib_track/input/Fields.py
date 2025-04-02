@@ -10,10 +10,10 @@ class InputFields:
     TITLE = ModelFields.TITLE
     FORCE_TITLE_GENERATION = 'force_title_generation'
     ARTISTS_NAMES = f'{ModelFields.ARTISTS}_{ArtistFields.NAME_PUBLIC}s'
-    ARTISTS_NAMES_ARRAY = f'{ARTISTS_NAMES}[]'
+    ARTISTS_NAMES_MULTIPART = f'{ARTISTS_NAMES}[]'
     ALBUM_NAME = f'{ModelFields.ALBUM}_{AlbumFields.NAME_PUBLIC}'
     ALBUM_ARTISTS_NAMES = f'{AlbumFields.ALBUM_ARTISTS}_{ArtistFields.NAME_PUBLIC}s'
-    ALBUM_ARTISTS_NAMES_ARRAY = f'{ALBUM_ARTISTS_NAMES}[]'
+    ALBUM_ARTISTS_NAMES_MULTIPART = f'{ALBUM_ARTISTS_NAMES}[]'
     TRACK_NUMBER = ModelFields.TRACK_NUMBER
     GENRE = ModelFields.GENRE
     RATING = ModelFields.RATING
