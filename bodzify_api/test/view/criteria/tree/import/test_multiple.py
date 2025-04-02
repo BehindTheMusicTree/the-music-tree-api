@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
+from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
@@ -9,19 +9,19 @@ class TestMultiple(GenreTestCase):
     def test_multiple_roots_then_multiple_trees(self):
         tree_data = [
             {
-                CriteriaFields.NAME_PUBLIC: "Rock",
-                CriteriaFields.CHILDREN: [
-                    {CriteriaFields.NAME_PUBLIC: "Punk", CriteriaFields.CHILDREN: []}
+                Fields.NAME_PUBLIC: "Rock",
+                Fields.CHILDREN: [
+                    {Fields.NAME_PUBLIC: "Punk", Fields.CHILDREN: []}
                 ]
             },
             {
-                CriteriaFields.NAME_PUBLIC: "Jazz",
-                CriteriaFields.CHILDREN: [
-                    {CriteriaFields.NAME_PUBLIC: "Blues", CriteriaFields.CHILDREN: []}
+                Fields.NAME_PUBLIC: "Jazz",
+                Fields.CHILDREN: [
+                    {Fields.NAME_PUBLIC: "Blues", Fields.CHILDREN: []}
                 ]
             }
         ]
-        response = self._post_genres_tree_import(tree_data)
+        response = self._post_genres_tree_import(**{Fields.TREE_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -48,14 +48,14 @@ class TestMultiple(GenreTestCase):
         tree_data = []
         for i in range(5):
             tree_data.append({
-                CriteriaFields.NAME_PUBLIC: f"Root {i}",
-                CriteriaFields.CHILDREN: [
-                    {CriteriaFields.NAME_PUBLIC: f"Child {i}-1", CriteriaFields.CHILDREN: []},
-                    {CriteriaFields.NAME_PUBLIC: f"Child {i}-2", CriteriaFields.CHILDREN: []}
+                Fields.NAME_PUBLIC: f"Root {i}",
+                Fields.CHILDREN: [
+                    {Fields.NAME_PUBLIC: f"Child {i}-1", Fields.CHILDREN: []},
+                    {Fields.NAME_PUBLIC: f"Child {i}-2", Fields.CHILDREN: []}
                 ]
             })
 
-        response = self._post_genres_tree_import(tree_data)
+        response = self._post_genres_tree_import(**{Fields.TREE_PUBLIC: tree_data})
 
         assert response.status_code == status.HTTP_201_CREATED
 

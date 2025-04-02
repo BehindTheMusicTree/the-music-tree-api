@@ -6,7 +6,7 @@ from bodzify_api.test.utils.field.body_data.type.NotNullableListBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 
-class TestName(GenreTestCase, NotNullableListBodyDataTestCase):
+class TestName(GenreTestCase):
     def test_empty_name_then_400_bad_request(self):
         tree_data = [{Fields.NAME_PUBLIC: "", Fields.CHILDREN: []}]
         response = self._post_genres_tree_import(data={Fields.TREE_PUBLIC: tree_data})

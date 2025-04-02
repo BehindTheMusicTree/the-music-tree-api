@@ -5,11 +5,10 @@ from bodzify_api import settings
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields
-from bodzify_api.test.utils.field.body_data.type.NotNullableListBodyDataTestCase import NotNullableListBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
 
-class TestNodeCount(GenreTestCase, NotNullableListBodyDataTestCase):
+class TestNodeCount(GenreTestCase):
     def test_no_data_then_400_bad_request(self):
         response = self._post_genres_tree_import()
         assert response.status_code == status.HTTP_400_BAD_REQUEST
