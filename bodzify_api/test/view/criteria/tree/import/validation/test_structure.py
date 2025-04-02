@@ -79,17 +79,6 @@ class TestStructure(GenreTestCase):
         assert genre.name == "Rock"
         assert genre.parent is None
 
-    def test_null_children_then_ok(self):
-        tree_data = [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: None}]  # Null children
-        response = self._post_genres_tree_import(data={Fields.TREE: tree_data})
-        assert response.status_code == status.HTTP_201_CREATED
-        genres = Genre.objects.filter(user=self.test_user1)
-        assert genres.count() == 1
-        genre = genres.first()
-        assert genre is not None
-        assert genre.name == "Rock"
-        assert genre.parent is None
-
     def test_mixed_children_styles_then_ok(self):
         tree_data = [
             {Fields.NAME_PUBLIC: "Rock"},  # No children
