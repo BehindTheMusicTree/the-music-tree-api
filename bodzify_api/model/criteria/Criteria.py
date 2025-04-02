@@ -1,4 +1,3 @@
-
 from typing import TYPE_CHECKING, Any
 
 from django.db import IntegrityError, models
@@ -63,6 +62,17 @@ class Criteria(LibTrackMixin):
     @property
     def is_root(self) -> bool:
         return not self.parent
+
+    @property
+    def descendant_list(self) -> list['Criteria']:
+        """
+        Get all descendants of this criteria using the lineage system.
+        This is more efficient than recursive traversal as it uses the pre-computed relationships.
+
+        Returns:
+            A list of all descendant criteria
+        """
+        return list(self.descendants.all())
 
     class Meta:
         verbose_name = 'Criteria'
