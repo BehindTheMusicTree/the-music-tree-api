@@ -28,11 +28,9 @@ class TreeField(AppField, ListField):
         return self._children_field
 
     def _count_descendants(self, children: list) -> int:
-        """Count total number of descendants in the tree"""
         count = 0
         for child in children:
             if not isinstance(child, dict):
-                print(f"Invalid child type: {type(child)}")
                 raise AppValidationException(
                     field_name=self.get_error_field_name(),
                     message="Invalid tree structure: each node must be a dictionary",
@@ -57,50 +55,34 @@ class TreeField(AppField, ListField):
         return count
 
     def run_validation(self, data: Any = None) -> Any:
-        print("\n=== TreeField.run_validation ===")
-        print(f"Max nodes allowed: {self.max_nodes}")
-
         if data is None:
-            print("Data is None")
             if not self.allow_null:
                 self.fail('null')
             return None
 
         if not data:
-            print("Data is empty")
             if not self.allow_empty:
                 self.fail('required')
             return []
 
-        # First validate basic structure
         if not isinstance(data, list):
-            print(f"Invalid data type: {type(data)}")
             raise AppValidationException(
                 field_name=self.get_error_field_name(),
                 message="Invalid tree structure: root must be an array",
                 field_validation_error_code=FieldValidationErrorCode.TREE_MALFORMED
             )
 
-        # Then validate structure and count nodes
-        print("Validating tree structure and counting nodes...")
-        print(f"Max allowed nodes: {self.max_nodes}")
         total_count = 0
         for node in data:
             if not isinstance(node, dict):
-                print(f"Invalid node type: {type(node)}")
                 raise AppValidationException(
                     field_name=self.get_error_field_name(),
                     message="Invalid tree structure: each node must be a dictionary",
                     field_validation_error_code=FieldValidationErrorCode.TREE_MALFORMED
                 )
             if self._max_nodes_count is not None:
-                print('Counting descendants...')
                 total_count += self._count_descendants([node])
-                print('calculated descendants count:', total_count)
-            print(f"Running total: {total_count}")
-        print(f"Total node count: {total_count}")
         if self._max_nodes_count is not None and total_count > self._max_nodes_count:
-            print(f"Too many nodes: {total_count} > {self.max_nodes}")
             raise AppValidationException(
                 field_name=self.get_error_field_name(),
                 message=(f"Total number of elements ({total_count}) exceeds maximum allowed "
@@ -109,7 +91,6 @@ class TreeField(AppField, ListField):
             )
 
         # Then run ListField's validation to skip AppField's to_internal_value
-        print("Running ListField validation...")
         try:
             # Call ListField's validation chain directly
             value = ListField.to_internal_value(self, data)
@@ -119,7 +100,6 @@ class TreeField(AppField, ListField):
             return None
 
         # Process children recursively
-        print("Processing children recursively...")
         for node in value:
             children = node.get(Fields.CHILDREN)
             if children:
