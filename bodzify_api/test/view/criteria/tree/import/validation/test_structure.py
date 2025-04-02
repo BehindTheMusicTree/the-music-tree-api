@@ -41,7 +41,7 @@ class TestStructure(GenreTestCase):
             data={Fields.TREE: [{Fields.NAME_PUBLIC: "Rock", Fields.CHILDREN: "invalid"}]})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert self.bad_request_result_field_errors[0]["field"] == Fields.CHILDREN
+        assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.TREE_MALFORMED
 
     def test_children_is_none_then_ok(self):
