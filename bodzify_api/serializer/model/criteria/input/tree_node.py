@@ -11,7 +11,7 @@ from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Field
 
 class CriteriaTreeNodeSerializer(AppSerializer):
     name = AppCharField(max_length=settings.CRITERIA_NAME_LEN_MAX, allow_blank=False, required=True)
-    children = AppListField(child=DictField(), required=False, default=list, source=Fields.CHILDREN)
+    children = AppListField(child=DictField(), required=False, default=list)
 
     def __init__(self, structure_field_name: str, *args, **kwargs):
         super().__init__(*args, **kwargs)
