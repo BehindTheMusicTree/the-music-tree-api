@@ -45,7 +45,7 @@ class TestMultipartDuplicateFields(LibTrackTestCase):
     def test_list_fields_allowed_duplicates_on_multipart_then_ok(self):
         data = {
             LibTrackFields.TITLE: 'test',
-            LibTrackFields.ARTISTS_NAMES_ARRAY: ['artist1', 'artist2', 'artist3']
+            LibTrackFields.ARTISTS_NAMES_MULTIPART: ['artist1', 'artist2', 'artist3']
         }
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 

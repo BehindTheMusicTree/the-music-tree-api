@@ -7,7 +7,7 @@ from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 
 
 class TestCase(LibTrackFileMetadataUpdateStrTestCase):
-    save_field = InputFields.ARTISTS_NAMES_ARRAY
+    save_field = InputFields.ARTISTS_NAMES_MULTIPART
     lib_track_app_metadata_key = AppMetadataKey.ARTISTS_NAMES
     length_max = settings.ARTIST_NAME_LEN_MAX
     value_expected_in_metadata_is_list = True

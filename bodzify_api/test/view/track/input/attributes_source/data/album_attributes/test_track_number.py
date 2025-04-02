@@ -10,7 +10,7 @@ class TestCase(LibTrackTestCase):
     def test_value_then_ok(self):
         value = 1
         data = {PostFields.ALBUM_NAME: 'albumito',
-                PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [],
+                PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: [],
                 PostFields.TRACK_NUMBER: value}
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
@@ -19,7 +19,7 @@ class TestCase(LibTrackTestCase):
 
     def test_empty_then_none(self):
         data = {PostFields.ALBUM_NAME: "albumito",
-                PostFields.ALBUM_ARTISTS_NAMES_ARRAY: [],
+                PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: [],
                 PostFields.TRACK_NUMBER: None}
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
@@ -27,7 +27,7 @@ class TestCase(LibTrackTestCase):
         assert self.saved_object.track_number == None
 
     def test_not_provided_then_none(self):
-        data = {PostFields.ALBUM_NAME: "albumito", PostFields.ALBUM_ARTISTS_NAMES_ARRAY: []}
+        data = {PostFields.ALBUM_NAME: "albumito", PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: []}
         response = self._post_lib_track(LibTrackTestFilename.METADATA_NONE_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
