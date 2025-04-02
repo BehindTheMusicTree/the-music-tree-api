@@ -6,6 +6,7 @@ from django.db.models import QuerySet
 from bodzify_api.model.criteria.Fields import Fields as ModelFields
 from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
 from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields as TreeImportFields
+from bodzify_api.serializer.model.criteria.input.Fields import Fields as InputFields
 
 from .Fields import Fields
 from .type.CriteriaType import CriteriaType
@@ -216,8 +217,8 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
                 # Get the appropriate ID for child references
                 child_id = criteria.uuid if hasattr(criteria, 'uuid') else criteria.id
                 node = {
-                    "name": criteria.name,
-                    "children": build_tree(child_id)
+                    InputFields.NAME_PUBLIC: criteria.name,
+                    InputFields.CHILDREN: build_tree(child_id)
                 }
                 result.append(node)
 
@@ -255,22 +256,19 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         # Recursive function to create criteria and their children
         def create_criteria_tree(nodes, parent=None):
             for node in nodes:
-                if not isinstance(node, dict) or "name" not in node:
-                    raise ValueError("Each node must have a 'name' field")
-
                 # Create the criteria
                 criteria = self.model(
-                    _name=node["name"],
+                    _name=node[InputFields.NAME_PUBLIC],
                     parent=parent,
                     user=user
                 )
                 criteria.save()
 
                 # Create children if any
-                if "children" in node and node["children"]:
-                    if not isinstance(node["children"], list):
-                        raise ValueError("Children must be an array")
-                    create_criteria_tree(node["children"], criteria)
+                if InputFields.CHILDREN in node and node[InputFields.CHILDREN]:
+                    if not isinstance(node[InputFields.CHILDREN], list):
+                        raise ValueError(f"{InputFields.CHILDREN} must be an array")
+                    create_criteria_tree(node[InputFields.CHILDREN], criteria)
 
         # Create all criteria trees
         create_criteria_tree(tree_data)
