@@ -110,22 +110,6 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
 
         return None
 
-    def get_all_descendants(self, criteria: 'Criteria') -> list:
-        """
-        Recursively get all descendants of a criteria.
-
-        Args:
-            criteria: The criteria whose descendants to retrieve
-
-        Returns:
-            A list of all descendant criteria
-        """
-        result = []
-        for child in criteria.children.all():
-            result.append(child)
-            result.extend(self.get_all_descendants(child))
-        return result
-
     @transaction.atomic
     def delete_instance(self, instance: T) -> None:
         """
