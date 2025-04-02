@@ -1,16 +1,17 @@
+from django.urls import reverse
 from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
-from bodzify_api.test.utils.field.body_data.type.NullableListBodyDataTestCase import NullablelistBodyDataTestCase
+from bodzify_api.test.utils.field.body_data.type.NullableListBodyDataTestCase import NullableListBodyDataTestCase
 from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 
 
-class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
+class TestCase(NullableListBodyDataTestCase, LibTrackTestCase):
 
     def test_largest_then_ok(self) -> None:
         artist_name = "a" * settings.ARTIST_NAME_LEN_MAX
@@ -143,6 +144,28 @@ class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
         assert artists_list[0].name == artist1_name
         assert artists_list[1].name == artist2_name
         assert artists_list[2].name == artist3_name
+
+    def test_json_request_accepts_array_without_brackets(self) -> None:
+        """Test that JSON requests can accept array fields without [] suffix."""
+        artist_name = "JsonArtist"
+        malformed_field_name = "artists_names"  # Without [] suffix, should be accepted for JSON
+
+        # Using the API client directly with JSON format
+        response = self.api_client.post(
+            path=reverse('library-track-list'),
+            data={
+                malformed_field_name: [artist_name],
+                # Add required file field via URL to avoid multipart
+                "trackFile": str(LibTrackTestFilename.METADATA_NONE_MP3)
+            },
+            format='json',
+            handle_response=self._set_results
+        )
+
+        assert response.status_code == status.HTTP_201_CREATED
+        artists_list: list[Artist] = list(self.saved_object.artists.all())
+        assert len(artists_list) == 1
+        assert artists_list[0].name == artist_name
 
     def test_mix_existing_and_non_existing_artists(self) -> None:
         existing_artist = "Kopoe"

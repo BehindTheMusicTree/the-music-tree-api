@@ -4,13 +4,13 @@ from bodzify_api import settings
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
-from bodzify_api.test.utils.field.body_data.type.NullableListBodyDataTestCase import NullablelistBodyDataTestCase
+from bodzify_api.test.utils.field.body_data.type.NullableListBodyDataTestCase import NullableListBodyDataTestCase
 from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 
 
-class TestCase(NullablelistBodyDataTestCase, LibTrackTestCase):
+class TestCase(NullableListBodyDataTestCase, LibTrackTestCase):
 
     def test_largest_then_ok(self) -> None:
         artist_name = "a" * settings.ARTIST_NAME_LEN_MAX

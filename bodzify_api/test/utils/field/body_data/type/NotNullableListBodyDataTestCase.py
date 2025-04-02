@@ -1,7 +1,7 @@
 """
-This module provides a base test case for fields that accept multiple values in multipart/form-data.
+This module provides a base test case for required fields that accept multiple values in multipart/form-data.
 
-Array notation is the only supported way to send multiple values in multipart/form-data:
+In multipart/form-data requests, array notation with the [] suffix is REQUIRED:
 
 Example for multiple values:
 ```bash
@@ -12,16 +12,16 @@ curl --request POST \\
   --form 'field[]=value2'
 ```
 
-To send a null value using array notation, you can:
-a) Omit the field completely
-b) Send an empty array:
+Since this test case is for non-nullable fields, sending null values will result in validation errors:
+a) Omitting the field completely
+b) Sending an empty array:
 ```bash
 curl --request POST \\
   --url http://127.0.0.1:8000/api/vX.Y.Z/endpoint/ \\
   --header 'content-type: multipart/form-data' \\
   --form 'field[]='
 ```
-c) Send an explicit empty array:
+c) Sending an explicit empty array:
 ```bash
 curl --request POST \\
   --url http://127.0.0.1:8000/api/vX.Y.Z/endpoint/ \\
@@ -29,14 +29,7 @@ curl --request POST \\
   --form 'field[]=[]'
 ```
 
-Advantages of array notation:
-- Explicit about sending multiple values
-- Follows REST API best practices
-- Makes it easier to add/remove values
-- Avoids potential issues with comma escaping
-- Consistent with HTML form handling
-
-Other methods like repeated fields or comma-separated values are not supported and will result in validation errors.
+For JSON requests, use NotNullableJsonListBodyDataTestCase which does NOT use the [] suffix.
 """
 
 from bodzify_api.test.utils.AppTestCase import AppTestCase

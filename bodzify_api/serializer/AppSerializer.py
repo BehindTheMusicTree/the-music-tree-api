@@ -65,30 +65,45 @@ class AppSerializer(serializers.Serializer, Generic[T]):
         # Use shallow copy to avoid issues with unpicklable objects like file handles
         updated_data = dict(data)
 
-        # First pass: check for malformed arrays and build known fields
+        # Get request and content type
+        request = self.context.get(self.REQUEST_FIELD)
+        is_multipart = request and getattr(request, 'content_type', '').startswith('multipart/form-data')
+
+        # First pass: process fields based on content type
         for field_name, field in self.fields.items():
             is_list_field = self._is_list_field(field)
             array_field_name = f"{field_name}[]"
 
-            # Check if field exists in data but missing [] suffix
-            if field_name in data and is_list_field:
-                raise AppValidationException(
-                    field_name=field_name,
-                    message=_(f"list field '{field_name}' must be specified as '{array_field_name}'"),
-                    field_validation_error_code=FieldValidationErrorCode.LIST_MALFORMED)
-
-            # Add to known fields without [] suffix
+            # Add to known fields (both with and without [] suffix for list fields)
             known_fields.add(field_name)
+            if is_list_field:
+                known_fields.add(array_field_name)
 
-            # If it's a list field and has [] suffix in data, update the data to remove []
-            if is_list_field and array_field_name in data:
-                updated_data[field_name] = data[array_field_name]
-                del updated_data[array_field_name]
+            # For multipart requests: enforce [] suffix for list fields
+            if is_multipart and is_list_field:
+                # Error if field is in data without [] suffix
+                if field_name in data:
+                    raise AppValidationException(
+                        field_name=field_name,
+                        message=_(f"For multipart requests, list field '{field_name}' must be specified as '{array_field_name}'"),
+                        field_validation_error_code=FieldValidationErrorCode.LIST_MALFORMED)
 
-        # Second pass: collect unknown fields from updated data
+                # Process field with [] suffix if present
+                if array_field_name in data:
+                    updated_data[field_name] = data[array_field_name]
+                    del updated_data[array_field_name]
+
+            # For JSON requests: support fields without [] suffix
+            # Any field with [] suffix is just passed through as an unknown field
+
+        # Second pass: collect unknown fields
         for field_name in data.keys():
-            base_field_name = field_name[:-2] if field_name.endswith('[]') else field_name
-            if base_field_name not in known_fields:
+            # For non-multipart (JSON), we don't recognize fields with [] suffix
+            # For multipart, we expect list fields to have [] suffix
+            if not is_multipart and field_name.endswith('[]'):
+                unknown_fields.append(field_name)
+            # For any field without [] suffix or with [] suffix in multipart
+            elif field_name not in known_fields:
                 unknown_fields.append(field_name)
 
         return known_fields, unknown_fields
