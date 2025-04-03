@@ -3,7 +3,7 @@ from spotipy.exceptions import SpotifyException as SpotipyException
 
 from bodzify_api.exception.spotify import (
     SpotifyResourceNotFoundException,
-    SpotifyAPIException
+    SpotifyNetworkException
 )
 from bodzify_api.model.spotify_resource.children.track.SpotifyTrack import SpotifyTrack
 from bodzify_api.test.utils.AppTestCase import AppTestCase
@@ -89,7 +89,7 @@ class TestSpotifyAPIOperations(AppTestCase):
 
         # Test the search function raises the appropriate exception
         service = SpotifyAPIService()
-        with self.assertRaises(SpotifyAPIException):
+        with self.assertRaises(SpotifyNetworkException):
             service.search_track("Test Query")
 
     def test_get_track_by_id_with_valid_id_then_returns_track(self):
