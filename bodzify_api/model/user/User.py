@@ -42,6 +42,10 @@ class User(AbstractUser, BaseModel):
         output_field=AppCharField(max_length=256),
         db_persist=True)
 
+    spotify_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
+    spotify_access_token = models.CharField(max_length=500, null=True, blank=True)
+    spotify_refresh_token = models.CharField(max_length=500, null=True, blank=True)
+
     objects: UserManager = UserManager()
 
     @property
@@ -62,3 +66,7 @@ class User(AbstractUser, BaseModel):
             shutil.rmtree(self.lib_abs_path)
 
         super().delete(*args, **kwargs)
+
+    class Meta:
+        verbose_name = 'User'
+        verbose_name_plural = 'Users'

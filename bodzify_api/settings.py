@@ -95,6 +95,12 @@ MEDIA_URL: str
 LIBRARIES_DIR_NAME: str
 LIBRARIES_DIR: Path
 
+# API Keys
+SPOTIFY_CLIENT_ID: str
+SPOTIFY_CLIENT_SECRET: str
+# Must match what's registered in Spotify Dashboard
+SPOTIFY_REDIRECT_URI: str = "http://127.0.0.1:5000/auth/spotify/callback"
+
 # Secret Key
 SECRET_KEY: str
 
@@ -668,6 +674,13 @@ def setup_media_dirs():
 
     global ACOUSTID_API_KEY
     ACOUSTID_API_KEY = load_required_secret_env_var('ACOUSTID_API_KEY')
+
+    # Load Spotify API credentials
+    global SPOTIFY_CLIENT_ID
+    global SPOTIFY_CLIENT_SECRET
+    SPOTIFY_CLIENT_ID = load_required_secret_env_var('SPOTIFY_CLIENT_ID')
+    SPOTIFY_CLIENT_SECRET = load_required_secret_env_var('SPOTIFY_CLIENT_SECRET')
+    print_django("Spotify API credentials loaded.")
 
     global MEDIA_ROOT  # Django constant, do not rename.
     MEDIA_ROOT = load_required_path_env_var('MEDIA_DIR')
