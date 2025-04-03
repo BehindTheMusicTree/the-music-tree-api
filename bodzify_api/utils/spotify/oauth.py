@@ -1,0 +1,84 @@
+from typing import Optional
+import logging
+
+import spotipy
+from django.conf import settings
+from spotipy.oauth2 import SpotifyOAuth
+
+from bodzify_api.exception import spotify as spotify_exception
+
+logger = logging.getLogger(settings.APP_NAME)
+
+
+class SpotifyOAuthService:
+    """Service class for handling Spotify OAuth authentication"""
+
+    def __init__(self):
+        """Initialize with Spotify OAuth configuration"""
+        self.oauth = SpotifyOAuth(
+            client_id=settings.SPOTIFY_CLIENT_ID,
+            client_secret=settings.SPOTIFY_CLIENT_SECRET,
+            redirect_uri=settings.SPOTIFY_REDIRECT_URI,
+            scope='user-read-email user-read-private'
+        )
+
+    def get_auth_url(self, state: Optional[str] = None) -> str:
+        """
+        Get the Spotify authorization URL
+
+        Args:
+            state: Optional state parameter for CSRF protection
+
+        Returns:
+            The authorization URL
+        """
+        return self.oauth.get_authorize_url(state=state)
+
+    def get_access_token(self, code: str) -> dict:
+        """
+        Exchange authorization code for access token
+
+        Args:
+            code: The authorization code from Spotify
+
+        Returns:
+            Dictionary containing access token and refresh token
+        """
+        try:
+            return self.oauth.get_access_token(code)
+        except Exception as e:
+            logger.error(f"Failed to get access token: {str(e)}")
+            raise spotify_exception.SpotifyAuthenticationException(f"Failed to get access token: {str(e)}")
+
+    def refresh_access_token(self, refresh_token: str) -> dict:
+        """
+        Refresh an expired access token
+
+        Args:
+            refresh_token: The refresh token
+
+        Returns:
+            Dictionary containing new access token
+        """
+        try:
+            return self.oauth.refresh_access_token(refresh_token)
+        except Exception as e:
+            logger.error(f"Failed to refresh access token: {str(e)}")
+            raise spotify_exception.SpotifyAuthenticationException(f"Failed to refresh access token: {str(e)}")
+
+    def get_user_info(self, access_token: str) -> dict:
+        """
+        Get user information from Spotify
+
+        Args:
+            access_token: The access token
+
+        Returns:
+            Dictionary containing user information
+        """
+        try:
+            sp = spotipy.Spotify(auth=access_token)
+            return sp.current_user()
+        except Exception as e:
+            logger.error(f"Failed to get user info: {str(e)}")
+            raise spotify_exception.SpotifyAPIException(f"Failed to get user info: {str(e)}")
