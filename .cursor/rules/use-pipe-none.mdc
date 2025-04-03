@@ -1,0 +1,58 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Use | None Instead of Optional
+
+Always use `| None` instead of `Optional` for type hints in Python.
+
+## Good Examples
+
+```python
+# Good - Using | None
+def get_genre(self, name: str) -> Genre | None:
+    return Genre.objects.filter(name=name).first()
+
+# Good - Using | None with complex types
+def get_genres(self) -> list[Genre] | None:
+    return Genre.objects.all()
+
+# Good - Using | None with dict
+def get_genre_data(self) -> dict[str, str] | None:
+    return {"name": "Rock"}
+```
+
+## Bad Examples
+
+```python
+# Bad - Using Optional
+from typing import Optional  # Bad
+
+def get_genre(self, name: str) -> Optional[Genre]:  # Bad
+    return Genre.objects.filter(name=name).first()
+
+# Bad - Using Optional with complex types
+def get_genres(self) -> Optional[list[Genre]]:  # Bad
+    return Genre.objects.all()
+
+# Bad - Using Optional with dict
+def get_genre_data(self) -> Optional[dict[str, str]]:  # Bad
+    return {"name": "Rock"}
+```
+
+## Guidelines
+
+1. Always use `| None` instead of `Optional`
+2. Use `| None` for all nullable types
+3. Keep type hints consistent across the codebase
+4. Use `| None` with complex types like lists and dicts
+5. Avoid importing `Optional` from typing
+
+## Benefits
+
+- More concise type hints
+- Better readability
+- Consistent type hinting style
+- Modern Python syntax
+- Reduced imports 
