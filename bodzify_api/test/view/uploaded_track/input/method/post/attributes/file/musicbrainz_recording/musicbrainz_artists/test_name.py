@@ -3,7 +3,7 @@ from django.db.models import QuerySet
 from rest_framework import status
 
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -11,7 +11,7 @@ from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCa
 class TestCase(LibTrackTestCase):
 
     def test_one_then_ok(self):
-        response = self._post_uploaded_track(LibTrackTestFilename.RECORDING_QUEEN_WEARETHECHAMPIONS_MP3)
+        response = self._post_uploaded_track(UploadedTrackTestFilename.RECORDING_QUEEN_WEARETHECHAMPIONS_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording
@@ -20,7 +20,7 @@ class TestCase(LibTrackTestCase):
 
     def test_multiple_then_ok(self):
         response = self._post_uploaded_track(
-            LibTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
+            UploadedTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording

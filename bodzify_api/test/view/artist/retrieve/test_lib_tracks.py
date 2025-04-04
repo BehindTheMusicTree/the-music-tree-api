@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.serializer.model.artist.detailed import Fields as ArtistFields
-from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.artist.ArtistTestCase import ArtistTestCase
 from bodzify_api.utils import data_transformer
 
@@ -11,9 +11,9 @@ class TestCase(ArtistTestCase):
     def test_duration(self):
         artist = self.model_fixture_factory.create_artist(name="Sum 41")
         self.model_fixture_factory.create_uploaded_track_with_file(
-            title="celine", test_uploaded_track_filename=LibTrackTestFilename.DURATION_277S_MP3, artists=[artist])
+            title="celine", test_uploaded_track_filename=UploadedTrackTestFilename.DURATION_277S_MP3, artists=[artist])
         self.model_fixture_factory.create_uploaded_track_with_file(
-            title="tokyo", test_uploaded_track_filename=LibTrackTestFilename.DURATION_472S_WAV, artists=[artist])
+            title="tokyo", test_uploaded_track_filename=UploadedTrackTestFilename.DURATION_472S_WAV, artists=[artist])
 
         response = self._retrieve_artist(artist.uuid)
 

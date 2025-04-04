@@ -2,7 +2,7 @@ import pytest
 from rest_framework import status
 
 from bodzify_api.model.musicbrainz_resource.children.artist.MbArtist import MbArtist
-from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -10,7 +10,7 @@ from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCa
 class TestCase(LibTrackTestCase):
 
     def test_musicbrainz_link(self):
-        response = self._post_uploaded_track(LibTrackTestFilename.RECORDING_QUEEN_WEARETHECHAMPIONS_MP3)
+        response = self._post_uploaded_track(UploadedTrackTestFilename.RECORDING_QUEEN_WEARETHECHAMPIONS_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording

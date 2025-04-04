@@ -3,7 +3,7 @@ from rest_framework import status
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
-from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 
 
@@ -18,18 +18,18 @@ class TestCase(AlbumTestCase):
         black_holes_album = self.model_fixture_factory.create_album(name="Black Holes And Revelations")
         assassin_track = self.model_fixture_factory.create_uploaded_track_with_file(
             title="Allumer le feu",
-            test_uploaded_track_filename=LibTrackTestFilename.
+            test_uploaded_track_filename=UploadedTrackTestFilename.
             RECORDING_ALLUMERLEFEU_2_MATCHES_ONE_WITH_MORE_RELEASE_GROUPS_MP3,
             album=black_holes_album)
 
         starlight_track = self.model_fixture_factory.create_uploaded_track_with_file(
             title="Starlight",
-            test_uploaded_track_filename=LibTrackTestFilename.RECORDING_KEMAR_FRANCE_MP3,
+            test_uploaded_track_filename=UploadedTrackTestFilename.RECORDING_KEMAR_FRANCE_MP3,
             album=black_holes_album)
 
         assert self.test_user1.does_track_filename_exist_in_lib(
-            LibTrackTestFilename.RECORDING_ALLUMERLEFEU_2_MATCHES_ONE_WITH_MORE_RELEASE_GROUPS_MP3)
-        assert self.test_user1.does_track_filename_exist_in_lib(LibTrackTestFilename.RECORDING_KEMAR_FRANCE_MP3)
+            UploadedTrackTestFilename.RECORDING_ALLUMERLEFEU_2_MATCHES_ONE_WITH_MORE_RELEASE_GROUPS_MP3)
+        assert self.test_user1.does_track_filename_exist_in_lib(UploadedTrackTestFilename.RECORDING_KEMAR_FRANCE_MP3)
 
         response = self._delete_album(uuid=black_holes_album.uuid)
 
@@ -38,8 +38,9 @@ class TestCase(AlbumTestCase):
         assert not UploadedTrack.objects.filter(title=assassin_track.title).exists()
         assert not UploadedTrack.objects.filter(title=starlight_track.title).exists()
         assert not self.test_user1.does_track_filename_exist_in_lib(
-            LibTrackTestFilename.RECORDING_ALLUMERLEFEU_2_MATCHES_ONE_WITH_MORE_RELEASE_GROUPS_MP3)
-        assert not self.test_user1.does_track_filename_exist_in_lib(LibTrackTestFilename.RECORDING_KEMAR_FRANCE_MP3)
+            UploadedTrackTestFilename.RECORDING_ALLUMERLEFEU_2_MATCHES_ONE_WITH_MORE_RELEASE_GROUPS_MP3)
+        assert not self.test_user1.does_track_filename_exist_in_lib(
+            UploadedTrackTestFilename.RECORDING_KEMAR_FRANCE_MP3)
 
     def test_delete_then_delete_track_artist_as_nothing_linked_to_it_anymore(self):
         muse_artist = self.model_fixture_factory.create_artist(name="Muse")

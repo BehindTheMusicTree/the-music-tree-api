@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as LibTrackPostFields
-from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.utils import audio_metadata
 
@@ -10,7 +10,7 @@ from bodzify_api.utils import audio_metadata
 class TestCase(LibTrackTestCase):
 
     def test_flac_md5_not_valid_and_corrupted_then_400_bad_request(self):
-        response = self._post_uploaded_track(LibTrackTestFilename.FORMAT_MD5_NOT_VALID_AND_CORRUPTED_FLAC)
+        response = self._post_uploaded_track(UploadedTrackTestFilename.FORMAT_MD5_NOT_VALID_AND_CORRUPTED_FLAC)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -20,20 +20,21 @@ class TestCase(LibTrackTestCase):
 
     def test_flac_md5_not_valid_not_because_of_id3v2_metadata_then_corrected(self):
         response = self._post_uploaded_track(
-            LibTrackTestFilename.FORMAT_MD5_NOT_VALID_NOT_BECAUSE_OF_ID3V2_METADATA_FLAC)
+            UploadedTrackTestFilename.FORMAT_MD5_NOT_VALID_NOT_BECAUSE_OF_ID3V2_METADATA_FLAC)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.md5_has_been_corrected
         assert audio_metadata.is_flac_md5_valid(self.saved_object.track_file.file)
 
     def test_flac_md5_not_valid_because_of_id3v2_metadata_then_corrected(self):
-        response = self._post_uploaded_track(LibTrackTestFilename.FORMAT_MD5_NOT_VALID_BECAUSE_OF_ID3V2_METADATA_FLAC)
+        response = self._post_uploaded_track(
+            UploadedTrackTestFilename.FORMAT_MD5_NOT_VALID_BECAUSE_OF_ID3V2_METADATA_FLAC)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.md5_has_been_corrected
 
     def test_flac_md5_is_valid(self):
-        response = self._post_uploaded_track(LibTrackTestFilename.RECORDING_DANS_LA_LEGENDE_FLAC)
+        response = self._post_uploaded_track(UploadedTrackTestFilename.RECORDING_DANS_LA_LEGENDE_FLAC)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file

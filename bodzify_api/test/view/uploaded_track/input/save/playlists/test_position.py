@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as PostFields
-from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -10,7 +10,8 @@ class TestCase(LibTrackTestCase):
 
     def test_new_genre_then_first_position(self):
         genre_name = "Rock"
-        response = self._post_uploaded_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.GENRE: genre_name})
+        response = self._post_uploaded_track(
+            UploadedTrackTestFilename.METADATA_NONE_MP3, **{PostFields.GENRE: genre_name})
 
         assert response.status_code == status.HTTP_201_CREATED
         genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria__name=genre_name)
@@ -24,7 +25,8 @@ class TestCase(LibTrackTestCase):
         uploaded_track2 = self.model_fixture_factory.create_uploaded_track_with_file(
             title="We're All To Blame", genre=genre, use_manager_for_genre_playlist_adding=True)
 
-        response = self._post_uploaded_track(LibTrackTestFilename.METADATA_NONE_MP3, **{PostFields.GENRE: genre_name})
+        response = self._post_uploaded_track(
+            UploadedTrackTestFilename.METADATA_NONE_MP3, **{PostFields.GENRE: genre_name})
 
         assert response.status_code == status.HTTP_201_CREATED
         genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(criteria__name=genre_name)

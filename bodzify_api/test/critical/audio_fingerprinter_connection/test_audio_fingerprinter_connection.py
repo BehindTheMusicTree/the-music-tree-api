@@ -1,7 +1,7 @@
 import pytest
 from rest_framework import status
 
-from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -12,7 +12,7 @@ class TestCase(LibTrackTestCase):
     def test_audio_fingerprinter_connection_ok(self):
         print("test_audio_fingerprinter_connection_ok")
         response = self._post_uploaded_track(
-            LibTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
+            UploadedTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
         is_reponse_ok = response.status_code == status.HTTP_201_CREATED
         if not is_reponse_ok:
             print(self.bad_request_result)

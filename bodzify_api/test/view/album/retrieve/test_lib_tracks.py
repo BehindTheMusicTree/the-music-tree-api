@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api.serializer.model.album.detailed import Fields as RetrieveFields
 from bodzify_api.serializer.model.uploaded_track.output.simple.simple_without_album import Fields as LibTrackOutputFields
-from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 
@@ -57,9 +57,9 @@ class TestCase(AlbumTestCase):
     def test_duration(self):
         album = self.model_fixture_factory.create_album(name="Chuck")
         self.model_fixture_factory.create_uploaded_track_with_file(
-            title='ciline', album=album, test_uploaded_track_filename=LibTrackTestFilename.DURATION_277S_MP3)
+            title='ciline', album=album, test_uploaded_track_filename=UploadedTrackTestFilename.DURATION_277S_MP3)
         self.model_fixture_factory.create_uploaded_track_with_file(
-            title='tokyo', album=album, test_uploaded_track_filename=LibTrackTestFilename.DURATION_472S_WAV)
+            title='tokyo', album=album, test_uploaded_track_filename=UploadedTrackTestFilename.DURATION_472S_WAV)
 
         response = self._retrieve_album(album.uuid)
 

@@ -2,7 +2,7 @@
 import pytest
 from rest_framework import status
 
-from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -10,14 +10,15 @@ from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCa
 class TestCase(LibTrackTestCase):
 
     def test_no_matching_recording_then_none(self):
-        response = self._post_uploaded_track(LibTrackTestFilename.RECORDING_TOKYO_DRIFT_NO_MUSICBRAINZ_RECORDING_MP3)
+        response = self._post_uploaded_track(
+            UploadedTrackTestFilename.RECORDING_TOKYO_DRIFT_NO_MUSICBRAINZ_RECORDING_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert not self.saved_object.track_file.musicbrainz_recording
 
     def test_with_9_matches_then_the_one_with_duration_field(self):
         response = self._post_uploaded_track(
-            LibTrackTestFilename.RECORDING_TOTAL_ECLIPSE_9_MATCHES_BUT_ONE_WITH_DURATION_FLAC)
+            UploadedTrackTestFilename.RECORDING_TOTAL_ECLIPSE_9_MATCHES_BUT_ONE_WITH_DURATION_FLAC)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording
@@ -26,7 +27,7 @@ class TestCase(LibTrackTestCase):
 
     def test_with_2_matches_then_the_one_with_closest_duration(self):
         response = self._post_uploaded_track(
-            LibTrackTestFilename.RECORDING_LORIE_2_MATCHES_BUT_ONE_WITH_CLOSEST_DURATION_MP3)
+            UploadedTrackTestFilename.RECORDING_LORIE_2_MATCHES_BUT_ONE_WITH_CLOSEST_DURATION_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording
@@ -35,7 +36,7 @@ class TestCase(LibTrackTestCase):
 
     def test_with_2_matches_with_same_duration_and_same_number_of_fields_then_the_one_with_the_most_release_groups(self):
         response = self._post_uploaded_track(
-            LibTrackTestFilename.RECORDING_ALLUMERLEFEU_2_MATCHES_ONE_WITH_MORE_RELEASE_GROUPS_MP3)
+            UploadedTrackTestFilename.RECORDING_ALLUMERLEFEU_2_MATCHES_ONE_WITH_MORE_RELEASE_GROUPS_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording

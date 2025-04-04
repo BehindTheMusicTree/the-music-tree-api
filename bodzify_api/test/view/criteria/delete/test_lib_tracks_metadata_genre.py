@@ -1,7 +1,7 @@
 
 from rest_framework import status
 
-from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.utils import audio_metadata
 from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
@@ -14,7 +14,7 @@ class TestCase(GenreTestCase):
         punk = self.model_fixture_factory.create_genre(name='criteria', parent=rock)
         uploaded_track = self.model_fixture_factory.create_uploaded_track_with_file(
             title='lib track first', genre=punk,
-            test_uploaded_track_filename=LibTrackTestFilename.METADATA_LONG_A_ID3V1_SMALL_MP3)
+            test_uploaded_track_filename=UploadedTrackTestFilename.METADATA_LONG_A_ID3V1_SMALL_MP3)
 
         response = self._delete_genre(uuid=punk.uuid)
 
@@ -28,7 +28,7 @@ class TestCase(GenreTestCase):
         uploaded_track = self.model_fixture_factory.create_uploaded_track_with_file(
             title='lib track first',
             genre=rock,
-            test_uploaded_track_filename=LibTrackTestFilename.METADATA_LONG_A_ID3V2_SMALL_MP3)
+            test_uploaded_track_filename=UploadedTrackTestFilename.METADATA_LONG_A_ID3V2_SMALL_MP3)
 
         metadata = audio_metadata.get_merged_app_metadata(file=uploaded_track.track_file.file)
         assert metadata.get(AppMetadataKey.GENRE_NAME) is not None
