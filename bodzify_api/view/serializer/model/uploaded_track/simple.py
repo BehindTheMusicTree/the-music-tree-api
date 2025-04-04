@@ -9,12 +9,6 @@ class UploadedTrackSimpleSerializer(serializers.ModelSerializer):
         model = UploadedTrack
         fields = [
             Fields.UUID,
-            Fields.NAME,
-            Fields.ARTIST,
-            Fields.ALBUM,
-            Fields.GENRE,
-            Fields.TAG,
-            Fields.DURATION_MS,
-            Fields.CREATED_AT,
-            Fields.UPDATED_AT,
+            Fields.TITLE,
+            Fields.ARTISTS
         ]
