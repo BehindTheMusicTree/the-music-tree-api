@@ -1,0 +1,20 @@
+from rest_framework import status
+
+from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
+from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+
+
+class TrackDeleteViewTestCase(LibTrackTestCase):
+
+    def test_delete_then_delete_file(self):
+        track = self.model_fixture_factory.create_uploaded_track_with_file(
+            title="We're All To Blame", test_uploaded_track_filename=LibTrackTestFilename.RECORDING_KEMAR_FRANCE_MP3)
+        assert self.test_user1.does_track_filename_exist_in_lib(LibTrackTestFilename.RECORDING_KEMAR_FRANCE_MP3)
+        assert track.track_file.file
+
+        response = self._delete_uploaded_track(uuid=track.uuid)
+
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert not UploadedTrack.objects.filter(user=self.test_user1, uuid=track.uuid).exists()
+        assert not self.test_user1.does_track_filename_exist_in_lib(LibTrackTestFilename.RECORDING_KEMAR_FRANCE_MP3)
