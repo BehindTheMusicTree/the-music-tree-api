@@ -8,6 +8,8 @@ from bodzify_api.utils.spotify.oauth import SpotifyOAuthService
 from bodzify_api.model.user.User import User
 from bodzify_api.utils.jwt import create_jwt_token
 from bodzify_api.utils.spotify.service import quick_sync_spotify_library
+from bodzify_api.model.user.Fields import Fields
+from bodzify_api.model.spotify.Fields import Fields as SpotifyFields
 
 
 @api_view(['GET'])
@@ -64,26 +66,26 @@ def spotify_auth_api(request):
             user.save()
 
         print(f"User authenticated: {user.username}")
-        print("Attempting to sync user's library...")
+        print("Syncing user's library...")
 
         # Quick sync user's Spotify library (only new additions)
         try:
             tracks = quick_sync_spotify_library(user)
             sync_message = f"Successfully quick-synced {len(tracks)} new tracks"
-            print(sync_message)
         except Exception as e:
             sync_message = f"Failed to sync library: {str(e)}"
-            print(f"Sync error: {str(e)}")
 
         # Create JWT token
         jwt_token = create_jwt_token(user)
 
+        print(f"JWT token: {jwt_token}")
+        print("Sync complete.")
         return Response({
             'accessToken': jwt_token,
             'user': {
-                'id': user.id,
-                'email': user.email,
-                'spotify_id': user.spotify_id
+                Fields.ID: user.id,
+                Fields.EMAIL: user.email,
+                SpotifyFields.SPOTIFY_ID: user.spotify_id
             },
             'sync_message': sync_message
         })
@@ -147,9 +149,9 @@ def spotify_callback(request):
         return Response({
             'accessToken': jwt_token,
             'user': {
-                'id': user.id,
-                'email': user.email,
-                'spotify_id': user.spotify_id
+                Fields.ID: user.id,
+                Fields.EMAIL: user.email,
+                SpotifyFields.SPOTIFY_ID: user.spotify_id
             },
             'sync_message': sync_message
         })
