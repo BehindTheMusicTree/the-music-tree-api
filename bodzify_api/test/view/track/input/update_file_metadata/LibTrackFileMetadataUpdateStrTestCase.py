@@ -22,7 +22,7 @@ class LibTrackFileMetadataUpdateStrTestCase(LibTrackFileMetadataUpdateTestCase):
         if additional_data:
             data.update(additional_data)
 
-        response = self._post_lib_track(file_has_metadata=file_has_metadata, extension=self.file_extension, **data)
+        response = self._post_uploaded_track(file_has_metadata=file_has_metadata, extension=self.file_extension, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
 
@@ -30,13 +30,13 @@ class LibTrackFileMetadataUpdateStrTestCase(LibTrackFileMetadataUpdateTestCase):
             value_expected_in_metadata = value
 
         if value_expected_in_metadata is None:
-            if self.lib_track_app_metadata_key in self.saved_lib_track_metadata_with_raw_rating:
-                assert not self.saved_lib_track_metadata_with_raw_rating[self.lib_track_app_metadata_key]
+            if self.uploaded_track_app_metadata_key in self.saved_uploaded_track_metadata_with_raw_rating:
+                assert not self.saved_uploaded_track_metadata_with_raw_rating[self.uploaded_track_app_metadata_key]
             else:
                 assert True
         else:
-            assert self.lib_track_app_metadata_key in self.saved_lib_track_metadata_with_raw_rating
-            metadata_value = self.saved_lib_track_metadata_with_raw_rating[self.lib_track_app_metadata_key]
+            assert self.uploaded_track_app_metadata_key in self.saved_uploaded_track_metadata_with_raw_rating
+            metadata_value = self.saved_uploaded_track_metadata_with_raw_rating[self.uploaded_track_app_metadata_key]
             if self.value_expected_in_metadata_is_list:
                 if not isinstance(value_expected_in_metadata, list):
                     value_expected_in_metadata = [value_expected_in_metadata]

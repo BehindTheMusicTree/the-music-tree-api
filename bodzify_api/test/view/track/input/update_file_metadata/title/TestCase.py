@@ -1,5 +1,5 @@
 from bodzify_api import settings
-from bodzify_api.serializer.model.lib_track.input.Fields import InputFields as InputFields
+from bodzify_api.serializer.model.uploaded_track.input.Fields import InputFields as InputFields
 from bodzify_api.test.view.track.input.update_file_metadata.LibTrackFileMetadataUpdateStrTestCase import (
     LibTrackFileMetadataUpdateStrTestCase
 )
@@ -8,7 +8,7 @@ from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 
 class TestCase(LibTrackFileMetadataUpdateStrTestCase):
     save_field = InputFields.TITLE
-    lib_track_app_metadata_key = AppMetadataKey.TITLE
+    uploaded_track_app_metadata_key = AppMetadataKey.TITLE
     length_max = settings.LIB_TRACK_TITLE_LEN_MAX
 
 

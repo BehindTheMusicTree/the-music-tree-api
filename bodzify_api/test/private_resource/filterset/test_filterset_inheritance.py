@@ -6,7 +6,7 @@ from django_filters import FilterSet
 from bodzify_api.filtering.set.album.AlbumFilterSet import AlbumFilterSet
 from bodzify_api.filtering.set.artist.ArtistFilterSet import ArtistFilterSet
 from bodzify_api.filtering.set.criteria.CriteriaFilterSet import CriteriaFilterSet
-from bodzify_api.filtering.set.lib_track.LibTrackFilterSet import UploadedTrackFilterSet
+from bodzify_api.filtering.set.uploaded_track.LibTrackFilterSet import UploadedTrackFilterSet
 from bodzify_api.filtering.set.play.PlayFilterSet import PlayFilterSet
 from bodzify_api.filtering.set.playlist.PlaylistFilterSet import PlaylistFilterSet
 from bodzify_api.filtering.set.playlist.children.criteria.CriteriaPlaylistFilterSet import CriteriaPlaylistFilterSet
@@ -64,7 +64,7 @@ class TestFilterInheritance(AppTestCase):
     def test_artist_filter_inheritance(self):
         self.assert_datetime_inherited_filters(ArtistFilterSet)
 
-    def test_lib_track_filter_inheritance(self):
+    def test_uploaded_track_filter_inheritance(self):
         self.assert_datetime_inherited_filters(UploadedTrackFilterSet)
 
     def test_criteria_filter_inheritance(self):

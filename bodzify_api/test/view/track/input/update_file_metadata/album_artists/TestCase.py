@@ -1,5 +1,5 @@
 from bodzify_api import settings
-from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
+from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as PostFields
 from bodzify_api.test.view.track.input.update_file_metadata.LibTrackFileMetadataUpdateStrTestCase import (
     LibTrackFileMetadataUpdateStrTestCase
 )
@@ -8,7 +8,7 @@ from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 
 class TestCase(LibTrackFileMetadataUpdateStrTestCase):
     save_field = PostFields.ALBUM_ARTISTS_NAMES_MULTIPART
-    lib_track_app_metadata_key = AppMetadataKey.ALBUM_ARTISTS_NAMES
+    uploaded_track_app_metadata_key = AppMetadataKey.ALBUM_ARTISTS_NAMES
     length_max = settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX
     album_data = {PostFields.ALBUM_NAME: "The Great Twenty-Eight"}
     value_expected_in_metadata_is_list = True
