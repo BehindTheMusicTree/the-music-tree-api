@@ -18,7 +18,7 @@ from bodzify_api.serializer.model.criteria.input.tree_import import CriteriaTree
 from bodzify_api.serializer.model.criteria.output.detailed import CriteriaDetailedSerializer
 from bodzify_api.serializer.model.criteria.output.simple import CriteriaSimpleSerializer
 
-from ..base.AppModelViewSet import AppModelViewSet
+from ..AppModelViewSet import AppModelViewSet
 
 
 class CriteriaViewSet(AppModelViewSet[Criteria]):

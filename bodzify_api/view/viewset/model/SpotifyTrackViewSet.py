@@ -6,12 +6,11 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from bodzify_api.model.spotify.children.track.SpotifyTrack import SpotifyTrack
 from bodzify_api.model.spotify.children.track.Fields import Fields
 from bodzify_api.utils.spotify.service import sync_user_spotify_library
-from bodzify_api.view.serializer.model.spotify_track.detailed import SpotifyTrackDetailedSerializer
-from bodzify_api.view.serializer.model.spotify_track.simple import SpotifyTrackSimpleSerializer
+from bodzify_api.serializer.model.spotify_track.output.detailed import SpotifyTrackDetailedSerializer
+from bodzify_api.serializer.model.spotify_track.output.simple import SpotifyTrackSimpleSerializer
 
 
 class SpotifyTrackViewSet(ReadOnlyModelViewSet):
-    """ViewSet for managing Spotify tracks in the user's library."""
 
     queryset = SpotifyTrack.objects.all()
     serializer_class = SpotifyTrackSimpleSerializer

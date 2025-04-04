@@ -6,7 +6,7 @@ from bodzify_api.model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import A
 from bodzify_api.model.user.User import User
 from bodzify_api.serializer.model.uploaded_track.output.minimum import UploadedTrackMinimumSerializer
 from bodzify_api.serializer.SerializerType import SerializerType
-from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
 class AllUploadedTracksViewSet(AppModelViewSet[AllUploadedTracksMixin]):

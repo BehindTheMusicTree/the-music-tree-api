@@ -7,7 +7,7 @@ from bodzify_api.filtering.set.album.Fields import Fields as FilterFields
 from bodzify_api.model.album.Album import Album
 from bodzify_api.serializer.model.album.detailed import AlbumDetailedSerializer
 from bodzify_api.serializer.model.album.simple import AlbumSimpleSerializer
-from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
 class AlbumViewSet(AppModelViewSet[Album]):

@@ -8,7 +8,7 @@ from bodzify_api.serializer.model.playlist.children.manual.input.post import Man
 from bodzify_api.serializer.model.playlist.children.manual.input.put import ManualPlaylistPutSerializer
 from bodzify_api.serializer.model.playlist.children.manual.output.detailed import ManualPlaylistDetailedSerializer
 from bodzify_api.serializer.model.playlist.children.manual.output.simple import ManualPlaylistSimpleSerializer
-from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
 class ManualPlaylistViewSet(AppModelViewSet[ManualPlaylist]):
