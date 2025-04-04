@@ -2,7 +2,7 @@ from bodzify_api.model.private_standard_resource.Fields import Fields as Private
 
 
 class Fields(PrivateStandardResourceFields):
-    LIB_TRACK = 'lib_track'
+    UPLOADED_TRACK = 'lib_track'
     FILE = 'file'
     FILENAME = 'filename'
     EXTENSION = 'extension'

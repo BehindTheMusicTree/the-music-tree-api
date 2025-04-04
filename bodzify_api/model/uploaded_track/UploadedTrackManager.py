@@ -18,7 +18,7 @@ from .Fields import Fields
 if TYPE_CHECKING:
     from bodzify_api.model.criteria.children.genre.Genre import Genre
 
-    from .LibraryTrack import UploadedTrack
+    from .UploadedTrack import UploadedTrack
 
 
 class LibTrackManager(StandardResourceManager['LibraryTrack']):

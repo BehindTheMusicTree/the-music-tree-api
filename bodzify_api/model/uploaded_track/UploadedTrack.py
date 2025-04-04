@@ -22,7 +22,7 @@ from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 
 from ..file.TrackFile import TrackFile
 from .Fields import Fields
-from .LibTrackManager import LibTrackManager
+from .UploadedTrackManager import LibTrackManager
 
 
 if TYPE_CHECKING:
