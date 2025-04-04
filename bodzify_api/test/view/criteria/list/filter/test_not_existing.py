@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.test.view.track.UploadedTrackTestCase import UploadedTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
 class TestCase(UploadedTrackTestCase):

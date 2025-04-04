@@ -2,7 +2,7 @@ import pytest
 from rest_framework import status
 
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.track.UploadedTrackTestCase import UploadedTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
 @pytest.mark.usefixtures("enable_audio_metadata_analysis")
