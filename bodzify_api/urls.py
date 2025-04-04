@@ -14,7 +14,7 @@ from .view.viewset.model.AlbumViewSet import AlbumViewSet
 from .view.viewset.model.ArtistViewSet import ArtistViewSet
 from .view.viewset.model.criteria.children.GenreViewSet import GenreViewSet
 from .view.viewset.model.criteria.children.TagViewSet import TagViewSet
-from .view.viewset.model.uploaded_track.UploadedTrackViewSet import UploadedTrackViewSet
+from .view.viewset.model.UploadedTrackViewSet import UploadedTrackViewSet
 from .view.viewset.model.playlist.children.criteria.GenrePlaylistViewSet import GenrePlaylistViewSet
 from .view.viewset.model.playlist.children.criteria.TagPlaylistViewSet import TagPlaylistViewSet
 from .view.viewset.model.playlist.children.ManualPlaylistViewSet import ManualPlaylistViewSet
