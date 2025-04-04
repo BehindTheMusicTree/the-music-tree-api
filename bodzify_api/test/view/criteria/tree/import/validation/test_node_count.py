@@ -21,6 +21,7 @@ class TestNodeCount(GenreTestCase):
         assert self.bad_request_result_field_errors[0]["field"] == Fields.TREE
         assert self.bad_request_result_field_errors[0]["code"] == FieldValidationErrorCode.REQUIRED
 
+    @pytest.mark.slow
     def test_one_too_large_then_400_bad_request(self):
         root = {Fields.NAME_PUBLIC: "Root1", Fields.CHILDREN: []}
         for i in range(settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT - 1):
