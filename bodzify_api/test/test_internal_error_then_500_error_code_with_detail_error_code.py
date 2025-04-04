@@ -14,7 +14,7 @@ class TestCase(UploadedTrackTestCase):
 
     @override_settings(DEBUG=False)
     def test_internal_error_then_500_with_response_error_code(self):
-        with patch('bodzify_api.model.uploaded_track.UploadedTrack.LibraryTrack.save') as mock:
+        with patch('bodzify_api.model.uploaded_track.UploadedTrack.UploadedTrack.save') as mock:
             exception_message = "DB Integrity Error"
             mock.side_effect = IntegrityError(exception_message)
 

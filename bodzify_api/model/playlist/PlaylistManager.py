@@ -64,7 +64,7 @@ class PlaylistManager(StandardResourceManager):
 
     def get_ordered_relations_for_playlist(self, playlist: 'Playlist') -> dict[int | None, 'UploadedTrack']:
         """
-        Returns a dictionary of LibraryTrack objects where dict[position] = uploaded_track.
+        Returns a dictionary of UploadedTrack objects where dict[position] = uploaded_track.
         Includes both non-archived tracks (with position) and archived tracks (position is None).
         Archived tracks (null positions) are sorted last.
         Returns empty dict if no tracks.

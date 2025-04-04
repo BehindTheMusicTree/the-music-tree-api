@@ -39,7 +39,7 @@ from .fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMis
 
 class TrackFile(PrivateStandardResource):
     uploaded_track = PrivateOneToOneField(  # type: ignore
-        'LibraryTrack', on_delete=models.CASCADE, related_name=UploadedTrackFields.TRACK_FILE_INTERNAL)
+        'UploadedTrack', on_delete=models.CASCADE, related_name=UploadedTrackFields.TRACK_FILE_INTERNAL)
     file: TemporaryUploadedFile | FieldFile = models.FileField(  # type: ignore
         upload_to=model_utils.get_user_lib_path,
         storage=PreserveSpacesStorage(),

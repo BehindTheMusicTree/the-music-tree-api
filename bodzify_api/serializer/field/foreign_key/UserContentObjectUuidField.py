@@ -11,11 +11,11 @@ from bodzify_api.serializer.field.foreign_key.PrivateUuidField import PrivateUui
 
 class PrivateContentUuidField(PrivateUuidField):
     """
-    Special case of UserOwnedUuidField that allows references to either Playlists or LibraryTracks.
+    Special case of UserOwnedUuidField that allows references to either Playlists or UploadedTracks.
     Used when a field can accept either type of user content.
 
     This field is used when:
-    1. The UUID could point to either a Playlist or LibraryTrack
+    1. The UUID could point to either a Playlist or UploadedTrack
     2. Both model types are treated as valid options
     3. The referenced object must belong to the current user
 

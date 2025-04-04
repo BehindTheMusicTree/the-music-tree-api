@@ -55,7 +55,7 @@ class Playlist(UploadedTrackMixin, TrackablePlayCount):
     @property
     def uploaded_tracks_not_archived_dict_by_position(self) -> dict[int | None, 'UploadedTrack']:
         """
-        Returns a dictionary of LibraryTrack objects where dict[position] = uploaded_track.
+        Returns a dictionary of UploadedTrack objects where dict[position] = uploaded_track.
         Includes both non-archived tracks (with position) and archived tracks (position is None).
         Archived tracks (null positions) are sorted last.
         Returns empty dict if no tracks.
@@ -65,7 +65,7 @@ class Playlist(UploadedTrackMixin, TrackablePlayCount):
     @classmethod
     def get_ordered_relations_for_playlist(cls, playlist: 'Playlist') -> dict[int | None, 'UploadedTrack']:
         """
-        Returns a dictionary of LibraryTrack objects where dict[position] = uploaded_track.
+        Returns a dictionary of UploadedTrack objects where dict[position] = uploaded_track.
         Includes both non-archived tracks (with position) and archived tracks (position is None).
         Archived tracks (null positions) are sorted last.
         Returns empty dict if no tracks.

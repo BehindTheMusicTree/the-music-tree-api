@@ -11,7 +11,7 @@ class TestCase(UploadedTrackTestCase):
         track = self.model_fixture_factory.create_uploaded_track_with_file(title="joie", genre=original_genre)
         new_genre_name = "Rock"
 
-        with patch('bodzify_api.model.uploaded_track.UploadedTrack.LibraryTrack.save') as mock:
+        with patch('bodzify_api.model.uploaded_track.UploadedTrack.UploadedTrack.save') as mock:
             exception_message = "Save failed!"
             mock.side_effect = Exception(exception_message)
 

@@ -12,7 +12,7 @@ class TestCase(ArtistTestCase):
         self.model_fixture_factory.create_album(name=album_name, album_artists=[artist])
         self.model_fixture_factory.create_uploaded_track_with_file(title="Starlight")
 
-        with patch('bodzify_api.model.uploaded_track.UploadedTrack.LibraryTrack.delete') as mock_delete:
+        with patch('bodzify_api.model.uploaded_track.UploadedTrack.UploadedTrack.delete') as mock_delete:
             exception_message = "Delete failed!"
             mock_delete.side_effect = Exception(exception_message)
 

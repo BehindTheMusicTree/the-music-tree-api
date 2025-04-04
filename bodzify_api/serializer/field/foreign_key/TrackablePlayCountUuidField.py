@@ -14,7 +14,7 @@ from bodzify_api.serializer.field.foreign_key.PrivateUuidField import PrivateUui
 
 class TrackablePlayCountUuidField(PrivateUuidField):
     """
-    A field that validates a UUID refers to a trackable play count object (Playlist or LibraryTrack)
+    A field that validates a UUID refers to a trackable play count object (Playlist or UploadedTrack)
     owned by the current user.
     """
 

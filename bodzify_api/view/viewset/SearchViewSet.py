@@ -59,7 +59,7 @@ class SearchViewSet(ObjectMultipleModelAPIViewSet):
                 - Playlist (searched and ordered by name);
                 - Artist (searched and ordered by name);
                 - Album (searched and ordered by name);
-                - LibraryTrack (searched and ordered by title).
+                - UploadedTrack (searched and ordered by title).
             """)
     )
     def get_querylist(self):

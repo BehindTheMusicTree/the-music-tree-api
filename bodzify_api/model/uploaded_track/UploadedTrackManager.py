@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from .UploadedTrack import UploadedTrack
 
 
-class UploadedTrackManager(StandardResourceManager['LibraryTrack']):
+class UploadedTrackManager(StandardResourceManager['UploadedTrack']):
     model: type['UploadedTrack']
 
     def _remove_from_genre_playlists(self, instance: 'UploadedTrack', old_genre: 'Genre | None', genre_limit=None):
