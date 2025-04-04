@@ -1,7 +1,7 @@
 import pytest
 from rest_framework import status
 
-from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -9,7 +9,7 @@ from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 class TestCase(LibTrackTestCase):
 
     def test_musicbrainz_link(self):
-        response = self._post_lib_track(LibTrackTestFilename.RECORDING_DANS_LA_LEGENDE_FLAC)
+        response = self._post_uploaded_track(LibTrackTestFilename.RECORDING_DANS_LA_LEGENDE_FLAC)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording
         assert self.saved_object.track_file.musicbrainz_recording.musicbrainz_link == (

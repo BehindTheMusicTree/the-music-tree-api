@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.serializer.model.lib_track.input.put.Fields import Fields as PutFields
+from bodzify_api.serializer.model.uploaded_track.input.put.Fields import Fields as PutFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -9,9 +9,9 @@ class TestCase(LibTrackTestCase):
 
     def test_newly_created_genre_then_in_new_genre_playlist(self):
         genre_name = "Rock"
-        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
+        uploaded_track = self.model_fixture_factory.create_uploaded_track_with_file(title="Love")
 
-        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: genre_name})
+        response = self._put_uploaded_track(uploaded_track.uuid, **{PutFields.GENRE: genre_name})
 
         assert response.status_code == status.HTTP_200_OK
         track_playlists_uuids = [playlist.uuid for playlist in self.saved_object.playlists.all()]
@@ -23,9 +23,9 @@ class TestCase(LibTrackTestCase):
     def test_existing_then_ok_genre_then_track_in_existing_playlist(self):
         genre_name = "Rock"
         self.model_fixture_factory.create_genre(name=genre_name)
-        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
+        uploaded_track = self.model_fixture_factory.create_uploaded_track_with_file(title="Love")
 
-        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: genre_name})
+        response = self._put_uploaded_track(uploaded_track.uuid, **{PutFields.GENRE: genre_name})
 
         assert response.status_code == status.HTTP_200_OK
 
@@ -44,9 +44,9 @@ class TestCase(LibTrackTestCase):
         genre_rock = self.model_fixture_factory.create_genre(name=genre_rock_name)
         hardgenre_rock = self.model_fixture_factory.create_genre(name=genre_hard_rock_name, parent=genre_rock)
         self.model_fixture_factory.create_genre(name=genre_emo_name, parent=hardgenre_rock)
-        lib_track = self.model_fixture_factory.create_lib_track_with_file(title="Love")
+        uploaded_track = self.model_fixture_factory.create_uploaded_track_with_file(title="Love")
 
-        response = self._put_lib_track(lib_track.uuid, **{PutFields.GENRE: genre_emo_name})
+        response = self._put_uploaded_track(uploaded_track.uuid, **{PutFields.GENRE: genre_emo_name})
 
         assert response.status_code == status.HTTP_200_OK
         track_playlists_uuids = [playlist.uuid for playlist in self.saved_object.playlists.all()]

@@ -10,7 +10,7 @@ from bodzify_api import settings
 from bodzify_api.model.track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import (
     FingerprintMissingCauseCode
 )
-from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -53,7 +53,7 @@ class TestCase(LibTrackTestCase):
             self.skipTest("The Audio Fingerprinter is not accessed through a Docker container.")
 
         stop_docker_container(settings.AFP_CONTAINER_NAME)
-        response = self._post_lib_track(LibTrackTestFilename.RECORDING_SHOWMUSTGOON_MP3)
+        response = self._post_uploaded_track(LibTrackTestFilename.RECORDING_SHOWMUSTGOON_MP3)
         restart_docker_container(settings.AFP_CONTAINER_NAME)
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -64,7 +64,7 @@ class TestCase(LibTrackTestCase):
         ]
 
     def test_audio_fingerprinter_service_ok_then_no_missing_cause(self):
-        response = self._post_lib_track(LibTrackTestFilename.RECORDING_SHOWMUSTGOON_MP3)
+        response = self._post_uploaded_track(LibTrackTestFilename.RECORDING_SHOWMUSTGOON_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert not self.saved_object.track_file.fingerprint_missing_cause
