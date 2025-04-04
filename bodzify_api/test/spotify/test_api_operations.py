@@ -5,7 +5,7 @@ from bodzify_api.exception.spotify import (
     SpotifyResourceNotFoundException,
     SpotifyNetworkException
 )
-from bodzify_api.model.spotify_resource.children.track.SpotifyTrack import SpotifyTrack
+from bodzify_api.model.spotify.children.track.SpotifyTrack import SpotifyTrack
 from bodzify_api.test.utils.AppTestCase import AppTestCase
 from bodzify_api.utils.spotify.service import SpotifyAPIService, search_spotify_tracks, get_or_create_spotify_track
 from bodzify_api.utils.spotify.ApiFields import ApiFields
@@ -173,7 +173,7 @@ class TestSpotifyAPIOperations(AppTestCase):
         assert result[0] == mock_track_instance
 
     @mock.patch('bodzify_api.utils.spotify.utils.create_spotify_track_instance_from_dict')
-    @mock.patch('bodzify_api.model.spotify_resource.children.track.SpotifyTrack.SpotifyTrack.objects.get')
+    @mock.patch('bodzify_api.model.spotify.children.track.SpotifyTrack.SpotifyTrack.objects.get')
     def test_get_or_create_spotify_track_with_existing_track_then_returns_existing_track(
             self, mock_track_get, mock_create_track):
         # Configure mock to return an existing track
@@ -190,7 +190,7 @@ class TestSpotifyAPIOperations(AppTestCase):
         assert result == mock_track
 
     @mock.patch('bodzify_api.utils.spotify.utils.create_spotify_track_instance_from_dict')
-    @mock.patch('bodzify_api.model.spotify_resource.children.track.SpotifyTrack.SpotifyTrack.objects.get')
+    @mock.patch('bodzify_api.model.spotify.children.track.SpotifyTrack.SpotifyTrack.objects.get')
     def test_get_or_create_spotify_track_with_new_track_then_creates_and_returns_track(
             self, mock_track_get, mock_create_track):
         # Configure mocks
