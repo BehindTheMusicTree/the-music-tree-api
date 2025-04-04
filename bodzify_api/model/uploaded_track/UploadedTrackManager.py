@@ -82,7 +82,7 @@ class UploadedTrackManager(StandardResourceManager['UploadedTrack']):
         self._remove_from_genre_playlists(instance=instance, old_genre=old_genre, genre_limit=common_genre)
 
     def create(self, **kwargs) -> 'UploadedTrack':
-        from ..file.TrackFile import TrackFile
+        from .file.TrackFile import TrackFile
 
         with transaction.atomic():
             artists = kwargs.pop(Fields.ARTISTS, None)
