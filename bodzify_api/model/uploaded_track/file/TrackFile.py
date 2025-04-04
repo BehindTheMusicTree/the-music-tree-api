@@ -64,7 +64,7 @@ class TrackFile(PrivateStandardResource):
         MbRecordingMissingCause, on_delete=models.DO_NOTHING, null=True)
 
     if TYPE_CHECKING:
-        from ..lib.UploadedTrack import UploadedTrack
+        from ..UploadedTrack import UploadedTrack
         uploaded_track: UploadedTrack
 
     class Meta:
