@@ -27,8 +27,8 @@ class UploadedTrackPlaylistRel(PrivateStandardResource):
     objects: UploadedTrackPlaylistRelManager = UploadedTrackPlaylistRelManager()
 
     class Meta:
-        verbose_name = 'Library Track Playlist Relation'
-        verbose_name_plural = 'Library Track Playlist Relations'
+        verbose_name = 'Uploaded Track Playlist Relation'
+        verbose_name_plural = 'Uploaded Track Playlist Relations'
         indexes = [
             models.Index(fields=[Fields.USER, Fields.PLAYLIST]),
             models.Index(fields=[Fields.USER, Fields.UPLOADED_TRACK_INTERNAL]),

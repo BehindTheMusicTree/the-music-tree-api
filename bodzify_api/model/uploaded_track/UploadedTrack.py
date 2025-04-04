@@ -63,8 +63,8 @@ class UploadedTrack(TrackablePlayCount):
     objects: LibTrackManager = LibTrackManager()
 
     class Meta:
-        verbose_name = 'Library Track'
-        verbose_name_plural = 'Library Tracks'
+        verbose_name = 'Uploaded Track'
+        verbose_name_plural = 'Uploaded Tracks'
         indexes = [models.Index(fields=[Fields.USER, Fields.TITLE]),
                    models.Index(fields=[Fields.USER, Fields.GENRE]),
                    models.Index(fields=[Fields.USER, Fields.ALBUM]),]

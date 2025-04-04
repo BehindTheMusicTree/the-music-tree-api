@@ -3,7 +3,7 @@ from uuid import UUID
 from django.urls import reverse
 
 from bodzify_api.test.utils.AppTestCase import AppTestCase
-from bodzify_api.model.all_uploaded_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
+from bodzify_api.model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllLibTracksMixin
 
 
 class AllLibTracksMixinTestCase(AppTestCase[AllLibTracksMixin]):

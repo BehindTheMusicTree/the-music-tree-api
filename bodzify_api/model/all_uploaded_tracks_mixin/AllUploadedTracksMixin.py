@@ -13,8 +13,8 @@ class AllLibTracksMixin(UploadedTrackMixin):
     objects: AllUploadedTrackMixinManager = AllUploadedTrackMixinManager()
 
     class Meta:
-        verbose_name = 'All Library Tracks Mixin'
-        verbose_name_plural = 'All Library Tracks Mixins'
+        verbose_name = 'All Uploaded Tracks Mixin'
+        verbose_name_plural = 'All Uploaded Tracks Mixins'
         constraints = [models.UniqueConstraint(fields=[Fields.USER], name=f'unique_{Fields.USER}_all_tracks_mixin')]
 
     def __str__(self):
@@ -30,4 +30,4 @@ class AllLibTracksMixin(UploadedTrackMixin):
 
     @property
     def type(self):
-        return "All Tracks"
+        return "All Uploaded Tracks"

@@ -2,7 +2,7 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework.exceptions import APIException
 
-from bodzify_api.model.all_uploaded_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
+from bodzify_api.model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllLibTracksMixin
 from bodzify_api.model.user.User import User
 from bodzify_api.serializer.model.uploaded_track.output.minimum import LibTrackMinimumSerializer
 from bodzify_api.serializer.SerializerType import SerializerType
