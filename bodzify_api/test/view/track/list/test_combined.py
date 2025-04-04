@@ -2,7 +2,7 @@ from rest_framework import status
 from datetime import timedelta
 from django.utils import timezone
 
-from bodzify_api.serializer.model.lib_track.output.Fields import Fields as LibTrackFields
+from bodzify_api.serializer.model.uploaded_track.output.Fields import Fields as LibTrackFields
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.utils import data_transformer
 from bodzify_api.filtering.set.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
@@ -12,12 +12,12 @@ class TestCase(LibTrackTestCase):
 
     def test_language_and_genre_name_then_ok(self):
         genre = self.model_fixture_factory.create_genre(name="Rock")
-        track = self.model_fixture_factory.create_lib_track_with_file(
+        track = self.model_fixture_factory.create_uploaded_track_with_file(
             title="Life", language="en", genre=genre)
-        self.model_fixture_factory.create_lib_track_with_file(title="Hey", language="fr")
-        self.model_fixture_factory.create_lib_track_with_file(title="Rockaille", language="en")
+        self.model_fixture_factory.create_uploaded_track_with_file(title="Hey", language="fr")
+        self.model_fixture_factory.create_uploaded_track_with_file(title="Rockaille", language="en")
 
-        response = self._list_lib_tracks(language='en', genre_name='Roc')
+        response = self._list_uploaded_tracks(language='en', genre_name='Roc')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
@@ -30,21 +30,21 @@ class TestCase(LibTrackTestCase):
         artist_john = self.model_fixture_factory.create_artist(name="John")
         artist_jony = self.model_fixture_factory.create_artist(name="Jony")
 
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Life", language="en", genre=genre)
-        track_pascalito = self.model_fixture_factory.create_lib_track_with_file(title="Pascalito",
-                                                                                album=album_best,
-                                                                                artists=[artist_john])
-        track_mapasa = self.model_fixture_factory.create_lib_track_with_file(title="mapasa",
-                                                                             album=album_besto,
-                                                                             artists=[artist_john, artist_jony])
-        self.model_fixture_factory.create_lib_track_with_file(title="Hey", album=album_best, artists=[artist_john])
-        self.model_fixture_factory.create_lib_track_with_file(title="sd", album=album_besto, artists=[artist_jony])
-        self.model_fixture_factory.create_lib_track_with_file(title="Hey",
-                                                              album=album_best,
-                                                              artists=[artist_john, artist_jony])
+        track_pascalito = self.model_fixture_factory.create_uploaded_track_with_file(title="Pascalito",
+                                                                                     album=album_best,
+                                                                                     artists=[artist_john])
+        track_mapasa = self.model_fixture_factory.create_uploaded_track_with_file(title="mapasa",
+                                                                                  album=album_besto,
+                                                                                  artists=[artist_john, artist_jony])
+        self.model_fixture_factory.create_uploaded_track_with_file(title="Hey", album=album_best, artists=[artist_john])
+        self.model_fixture_factory.create_uploaded_track_with_file(title="sd", album=album_besto, artists=[artist_jony])
+        self.model_fixture_factory.create_uploaded_track_with_file(title="Hey",
+                                                                   album=album_best,
+                                                                   artists=[artist_john, artist_jony])
 
-        response = self._list_lib_tracks(title='pas', album_name='Best', artists_name='Joh')
+        response = self._list_uploaded_tracks(title='pas', album_name='Best', artists_name='Joh')
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
@@ -63,18 +63,18 @@ class TestCase(LibTrackTestCase):
         genre_pop = self.model_fixture_factory.create_genre(name="Pop")
 
         # Track within date range and matching genre
-        track_rock_in_range = self.model_fixture_factory.create_lib_track_with_file(
+        track_rock_in_range = self.model_fixture_factory.create_uploaded_track_with_file(
             title="Rock Song", genre=genre_rock, created_on=now)
 
         # Tracks outside date range or not matching genre
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Old Rock", genre=genre_rock, created_on=past)
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Future Rock", genre=genre_rock, created_on=future)
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Pop Song", genre=genre_pop, created_on=now)
 
-        response = self._list_lib_tracks(
+        response = self._list_uploaded_tracks(
             genre_name='Rock',
             **{
                 PrivateUniqueResourceFields.CREATED_ON_GTE: past.isoformat(),

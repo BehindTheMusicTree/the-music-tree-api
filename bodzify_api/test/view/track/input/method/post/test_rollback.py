@@ -12,7 +12,7 @@ class TestCase(LibTrackTestCase):
             exception_message = "Save failed!"
             mock.side_effect = Exception(exception_message)
             try:
-                self._post_lib_track(genre_name=genre_name)
+                self._post_uploaded_track(genre_name=genre_name)
             except Exception as e:
                 assert str(e) == exception_message
                 assert not Genre.objects.filter(user=self.test_user1, name=genre_name).exists()

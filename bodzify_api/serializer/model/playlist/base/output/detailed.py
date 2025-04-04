@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.serializer.field.AppCharField import AppCharField
-from bodzify_api.serializer.model.lib_track_playlist_rel.output.without_playlist import (
+from bodzify_api.serializer.model.uploaded_track_playlist_rel.output.without_playlist import (
     LibTrackPlaylistRelWithoutPlaylist
 )
 

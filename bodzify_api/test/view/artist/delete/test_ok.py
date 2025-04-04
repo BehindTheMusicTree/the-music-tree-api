@@ -10,7 +10,7 @@ class TestCase(ArtistTestCase):
     def test_with_a_track_in_an_album_with_no_other_tracks_then_delete_album(self):
         bertrand_artist = self.model_fixture_factory.create_artist(name='Bertrand')
         xavier_album = self.model_fixture_factory.create_album(name='Xavier', album_artists=[bertrand_artist])
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Life", artists=[bertrand_artist], album=xavier_album)
 
         response = self._delete_artist(bertrand_artist.uuid)
@@ -20,7 +20,7 @@ class TestCase(ArtistTestCase):
 
     def test_linked_to_a_track_then_delete_track(self):
         artist = self.model_fixture_factory.create_artist(name='Bertrand')
-        self.model_fixture_factory.create_lib_track_with_file(title="Life", artists=[artist])
+        self.model_fixture_factory.create_uploaded_track_with_file(title="Life", artists=[artist])
 
         response = self._delete_artist(artist.uuid)
 
@@ -30,7 +30,7 @@ class TestCase(ArtistTestCase):
     def test_with_a_track_and_another_artist_on_the_track_with_no_other_track_then_delete_other_artist(self):
         bertrand_artist = self.model_fixture_factory.create_artist(name='Bertrand')
         coco_artist = self.model_fixture_factory.create_artist(name='Coco')
-        self.model_fixture_factory.create_lib_track_with_file(title="Life", artists=[bertrand_artist, coco_artist])
+        self.model_fixture_factory.create_uploaded_track_with_file(title="Life", artists=[bertrand_artist, coco_artist])
 
         response = self._delete_artist(bertrand_artist.uuid)
 

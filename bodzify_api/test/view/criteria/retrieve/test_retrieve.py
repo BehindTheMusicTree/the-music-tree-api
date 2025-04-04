@@ -18,25 +18,25 @@ class TestCase(GenreTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.result[RetrieveFields.NAME] == name
 
-    def test_lib_tracks(self):
+    def test_uploaded_tracks(self):
         criteria = self.model_fixture_factory.create_genre(name='rock')
 
         title1 = 'stylax'
-        track1_uuid = self.model_fixture_factory.create_lib_track_with_file(
+        track1_uuid = self.model_fixture_factory.create_uploaded_track_with_file(
             title=title1, genre=criteria, use_manager_for_genre_playlist_adding=True).uuid
 
         title2 = 'bien'
-        track2_uuid = self.model_fixture_factory.create_lib_track_with_file(
+        track2_uuid = self.model_fixture_factory.create_uploaded_track_with_file(
             title=title2, genre=criteria, use_manager_for_genre_playlist_adding=True).uuid
 
         response = self._retrieve_genre(uuid=criteria.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        lib_tracks = self.result[to_camel_case(RetrieveFields.LIB_TRACKS_NOT_ARCHIVED_PUBLIC)]
-        assert len(lib_tracks) == 2
-        titles = [track[RetrieveFields.LIB_TRACKS_TITLE] for track in lib_tracks]
+        uploaded_tracks = self.result[to_camel_case(RetrieveFields.LIB_TRACKS_NOT_ARCHIVED_PUBLIC)]
+        assert len(uploaded_tracks) == 2
+        titles = [track[RetrieveFields.LIB_TRACKS_TITLE] for track in uploaded_tracks]
         assert title1 in titles
         assert title2 in titles
-        uuids = [UUID(track[RetrieveFields.UUID]) for track in lib_tracks]
+        uuids = [UUID(track[RetrieveFields.UUID]) for track in uploaded_tracks]
         assert track1_uuid in uuids
         assert track2_uuid in uuids

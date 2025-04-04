@@ -8,8 +8,8 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.model.user.User import User
 from bodzify_api.serializer.field.TrackFileField import TrackFileField
-from bodzify_api.serializer.model.lib_track.input.Fields import InputFields
-from bodzify_api.serializer.model.lib_track.input.input import LibTrackInputSerializer
+from bodzify_api.serializer.model.uploaded_track.input.Fields import InputFields
+from bodzify_api.serializer.model.uploaded_track.input.input import LibTrackInputSerializer
 from bodzify_api.utils import audio_metadata, data_transformer, utils
 from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
 from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey

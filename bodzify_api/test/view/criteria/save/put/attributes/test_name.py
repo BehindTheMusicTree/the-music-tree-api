@@ -52,9 +52,9 @@ class TestCase(GenreTestCase, PutBodyDataTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.saved_object.name == genre_name
 
-    def test_ok_then_update_linked_lib_track(self):
+    def test_ok_then_update_linked_uploaded_track(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
-        track = self.model_fixture_factory.create_lib_track_with_file(title="Track", genre=genre_rock)
+        track = self.model_fixture_factory.create_uploaded_track_with_file(title="Track", genre=genre_rock)
 
         genre_new_name = "Punk"
         response = self._put_genre(uuid=genre_rock.uuid, **{PutFields.NAME_PUBLIC: genre_new_name})

@@ -1,8 +1,8 @@
 from rest_framework import status
 
 from bodzify_api.model.criteria.children.genre.Genre import Genre
-from bodzify_api.model.lib_track_playlist_rel.Fields import Fields as LibTrackPlaylistRelFields
-from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+from bodzify_api.model.uploaded_track_playlist_rel.Fields import Fields as LibTrackPlaylistRelFields
+from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.children.criteria.genre.GenrePlaylist import GenrePlaylist
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
@@ -12,11 +12,11 @@ from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Field
 class TestOldCriteriasDeletion(GenreTestCase):
     def test_import_new_tree_then_old_genre_deleted(self):
         old_genre = self.model_fixture_factory.create_genre(name="Old Rock")
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Track 2", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
@@ -27,11 +27,11 @@ class TestOldCriteriasDeletion(GenreTestCase):
 
     def test_import_new_tree_then_old_playlist_deleted(self):
         old_genre = self.model_fixture_factory.create_genre(name="Old Rock")
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Track 2", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
@@ -42,11 +42,11 @@ class TestOldCriteriasDeletion(GenreTestCase):
 
     def test_import_new_tree_then_tracks_moved_to_criterialess_playlist(self):
         self.model_fixture_factory.create_genre(name="Old Rock")
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Track 2", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
@@ -66,11 +66,11 @@ class TestOldCriteriasDeletion(GenreTestCase):
 
     def test_import_new_tree_then_genre_metadata_cleared(self):
         self.model_fixture_factory.create_genre(name="Old Rock")
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Track 2", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
@@ -89,9 +89,9 @@ class TestOldCriteriasDeletion(GenreTestCase):
         old_genre1 = self.model_fixture_factory.create_genre(name="Old Rock 1")
         old_genre2 = self.model_fixture_factory.create_genre(name="Old Rock 2")
 
-        track1 = self.model_fixture_factory.create_lib_track_with_file(
+        track1 = self.model_fixture_factory.create_uploaded_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
-        track2 = self.model_fixture_factory.create_lib_track_with_file(
+        track2 = self.model_fixture_factory.create_uploaded_track_with_file(
             title="Track 2", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
