@@ -14,7 +14,7 @@ from bodzify_api.serializer.field.criteria.CriteriaFieldInputType import Criteri
 from bodzify_api.serializer.field.criteria.GenreField import GenreField
 from bodzify_api.model.uploaded_track.Fields import Fields as ModelFields
 from bodzify_api.utils import data_transformer
-from .Fields import InputFields
+from .Fields import Fields
 
 
 class UploadedTrackInputSerializer(AppSerializer):
@@ -35,8 +35,8 @@ class UploadedTrackInputSerializer(AppSerializer):
 
     def _update_model_data_with_album_if_name(self, user: User, data: dict):
         from bodzify_api.model.album.Album import Album
-        album_name = data.pop(InputFields.ALBUM_NAME, None)
-        album_artists_names = data.pop(InputFields.ALBUM_ARTISTS_NAMES, [])
+        album_name = data.pop(Fields.ALBUM_NAME, None)
+        album_artists_names = data.pop(Fields.ALBUM_ARTISTS_NAMES, [])
         if album_name is not None:
             if album_name == "":
                 data[ModelFields.ALBUM] = None
@@ -46,32 +46,32 @@ class UploadedTrackInputSerializer(AppSerializer):
                 data[ModelFields.ALBUM] = album
 
     def _update_data_with_artists_if_names_otherwise_empty_list(self, user: User, data: dict) -> None:
-        if InputFields.ARTISTS_NAMES in data:
-            artists_names = data.pop(InputFields.ARTISTS_NAMES) or []
+        if Fields.ARTISTS_NAMES in data:
+            artists_names = data.pop(Fields.ARTISTS_NAMES) or []
             artists = Artist.objects.get_artists_list_from_names_after_potential_creation(
                 user=user, artists_names=artists_names)
             data[ModelFields.ARTISTS] = artists
 
     def _validate_album_fields_from_data(self, data: dict):
-        if InputFields.ALBUM_ARTISTS_NAMES in data:
-            if data.get(InputFields.ALBUM_ARTISTS_NAMES) not in [None, []] and \
-                    data.get(InputFields.ALBUM_NAME, None) in [None, ""]:
+        if Fields.ALBUM_ARTISTS_NAMES in data:
+            if data.get(Fields.ALBUM_ARTISTS_NAMES) not in [None, []] and \
+                    data.get(Fields.ALBUM_NAME, None) in [None, ""]:
                 raise AppValidationException(message="Album name is required when album artists field is provided",
-                                             field_name=InputFields.ALBUM_NAME,
+                                             field_name=Fields.ALBUM_NAME,
                                              field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
-        elif data.get(InputFields.ALBUM_NAME, None) not in [None, ""]:
+        elif data.get(Fields.ALBUM_NAME, None) not in [None, ""]:
             raise AppValidationException(message="Album artists are required when album name is provided",
-                                         field_name=InputFields.ALBUM_ARTISTS_NAMES_MULTIPART,
+                                         field_name=Fields.ALBUM_ARTISTS_NAMES_MULTIPART,
                                          field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
-        if data.get(InputFields.TRACK_NUMBER) is not None and data.get(InputFields.ALBUM_NAME) in [None, ""]:
-            AppValidationException(field_name=InputFields.ALBUM_NAME,
+        if data.get(Fields.TRACK_NUMBER) is not None and data.get(Fields.ALBUM_NAME) in [None, ""]:
+            AppValidationException(field_name=Fields.ALBUM_NAME,
                                    message="Album name must be specified if track position is.",
                                    field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
     def validate(self, data: dict,):
-        if InputFields.LANGUAGE in data and data[InputFields.LANGUAGE] == "":
-            data[InputFields.LANGUAGE] = None
+        if Fields.LANGUAGE in data and data[Fields.LANGUAGE] == "":
+            data[Fields.LANGUAGE] = None
         data_transformer.update_dict_converting_str_to_int_value_if_set(key=ModelFields.RATING, data=data)
 
         user = self.context['request'].user

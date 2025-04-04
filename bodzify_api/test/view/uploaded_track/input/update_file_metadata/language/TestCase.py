@@ -1,5 +1,5 @@
 from bodzify_api import settings
-from bodzify_api.serializer.model.uploaded_track.input.Fields import InputFields as InputFields
+from bodzify_api.serializer.model.uploaded_track.input.Fields import Fields as Fields
 from bodzify_api.test.view.uploaded_track.input.update_file_metadata.UploadedTrackFileMetadataUpdateStrTestCase import (
     UploadedTrackFileMetadataUpdateStrTestCase
 )
@@ -7,7 +7,7 @@ from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 
 
 class TestCase(UploadedTrackFileMetadataUpdateStrTestCase):
-    save_field = InputFields.LANGUAGE
+    save_field = Fields.LANGUAGE
     uploaded_track_app_metadata_key = AppMetadataKey.LANGUAGE
     length_max = settings.LANGUAGE_LEN_MAX
 

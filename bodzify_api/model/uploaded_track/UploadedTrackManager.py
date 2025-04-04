@@ -10,7 +10,7 @@ from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from bodzify_api.model.uploaded_track.file.Fields import Fields as TrackFileFields
 from bodzify_api.model.user.User import User
-from bodzify_api.serializer.model.uploaded_track.input.Fields import InputFields as InputFields
+from bodzify_api.serializer.model.uploaded_track.input.Fields import Fields as Fields
 
 from .Fields import Fields
 

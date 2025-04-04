@@ -7,9 +7,11 @@ from rest_framework.response import Response
 
 from bodzify_api.filtering.set.uploaded_track.UploadedTrackFilterSet import UploadedTrackFilterSet
 from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
-from bodzify_api.model.uploaded_track.Fields import Fields
+from bodzify_api.serializer.model.uploaded_track.input.Fields import Fields as Fields
 from bodzify_api.serializer.model.uploaded_track.output.detailed import UploadedTrackDetailedSerializer
-from bodzify_api.serializer.model.uploaded_track.output.simple.simple_without_album_and_genre import UploadedTrackWithoutAlbumPlaylistGenreSerializer
+from bodzify_api.serializer.model.uploaded_track.output.simple.simple_without_album_and_genre import (
+    UploadedTrackWithoutAlbumPlaylistGenreSerializer
+)
 from bodzify_api.serializer.model.uploaded_track.input.post.post import UploadedTrackPostSerializer
 from bodzify_api.serializer.model.uploaded_track.input.put.put import UploadedTrackPutSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
