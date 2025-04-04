@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.test.utils.AppTestCase import AppTestCase
-from bodzify_api.test.utils.uploaded_track.UploadedTrackDownloadTestUrl import LibTracTestkUrl
+from bodzify_api.test.utils.uploaded_track.UploadedTrackDownloadTestUrl import UploadedTrackDownloadTestUrl
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields
 
 
@@ -13,7 +13,8 @@ class UploadedTrackTestCase(AppTestCase[UploadedTrack]):
     saved_object: UploadedTrack
     is_from_uploaded_track_test_case: bool = True  # Override the default value from AppTestCase
 
-    def _post_uploaded_track_from_url(self, test_uploaded_track_url: LibTracTestkUrl = LibTracTestkUrl.MP3, **kwargs):
+    def _post_uploaded_track_from_url(
+            self, test_uploaded_track_url: UploadedTrackDownloadTestUrl = UploadedTrackDownloadTestUrl.MP3, **kwargs):
         kwargs[Fields.TRACK_FILE_PUBLIC] = str(test_uploaded_track_url)
         return self.api_client.post(
             path=reverse('library-track-list'), data=kwargs, handle_response=self._set_results)
