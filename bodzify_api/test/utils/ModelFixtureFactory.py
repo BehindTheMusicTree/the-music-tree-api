@@ -36,7 +36,7 @@ from bodzify_api.model.uploaded_track.file.TrackFile import Fields as TrackFileF
 from bodzify_api.model.uploaded_track.file.TrackFile import TrackFile
 from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackFields
 from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
-from bodzify_api.model.uploaded_trackable_play_count.TrackablePlayCount import TrackablePlayCount
+from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.model.user.User import User
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 

@@ -16,7 +16,7 @@ from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeign
 from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
 from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.uploaded_trackable_play_count.TrackablePlayCount import TrackablePlayCount
+from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.utils.audio_metadata.manager.MetadataManager import METADATA_ARTISTS_SEPARATORS
 from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 

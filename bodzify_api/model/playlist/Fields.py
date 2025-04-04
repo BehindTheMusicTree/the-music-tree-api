@@ -1,5 +1,5 @@
 from bodzify_api.model.uploaded_track_mixin.Fields import Fields as UploadedTrackMixinFields
-from bodzify_api.model.uploaded_trackable_play_count.Fields import Fields as TrackablePlayCountFields
+from bodzify_api.model.trackable_play_count.Fields import Fields as TrackablePlayCountFields
 
 
 class Fields(UploadedTrackMixinFields, TrackablePlayCountFields):
