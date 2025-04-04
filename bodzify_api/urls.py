@@ -42,7 +42,7 @@ router.register(r'playlists', PlaylistViewSet, basename='playlist')
 router.register(r'manual-playlists', ManualPlaylistViewSet, basename='manual-playlist')
 router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
 router.register(r'tag-playlists', TagPlaylistViewSet, basename='tag-playlist')
-router.register(r'all-tracks', AllUploadedTracksViewSet, basename='all-library-tracks')
+router.register(r'all-tracks', AllUploadedTracksViewSet, basename='all-uploaded-tracks')
 router.register(r'search', SearchViewSet, basename='search')
 
 urlpatterns = [

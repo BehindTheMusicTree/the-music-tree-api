@@ -144,23 +144,23 @@ class AppTestCase(TestCase, Generic[T]):
                 kwargs = file_field_dict
 
             return self.api_client.post(
-                path=reverse('library-track-list'), data=kwargs, format='multipart', handle_response=self._set_results)
+                path=reverse('uploaded-track-list'), data=kwargs, format='multipart', handle_response=self._set_results)
 
     # Defined here and not in UploadedTrackTestCase because other views needs sometimes to put a track for testing purposes
     # (testing Genre deletion for example)
     def _put_uploaded_track(self, uuid, **kwargs):
         if self.is_from_uploaded_track_test_case:
             return self.api_client.put(
-                path=reverse('library-track-detail', kwargs={'pk': uuid}),
+                path=reverse('uploaded-track-detail', kwargs={'pk': uuid}),
                 data=kwargs, handle_response=self._set_results)
         else:
             return self.api_client.put(
-                path=reverse('library-track-detail', kwargs={'pk': uuid}), data=kwargs)
+                path=reverse('uploaded-track-detail', kwargs={'pk': uuid}), data=kwargs)
 
     def _post_uploaded_track_being_logged_out(self):
         self._logout()
         return self.api_client.post(
-            path=reverse('library-track-list'), data={}, format='multipart', handle_response=self._set_results)
+            path=reverse('uploaded-track-list'), data={}, format='multipart', handle_response=self._set_results)
 
     def setUp(self, methods_names_to_implement: list[str] | None = None) -> None:
 

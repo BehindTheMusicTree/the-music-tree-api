@@ -17,21 +17,21 @@ class UploadedTrackTestCase(AppTestCase[UploadedTrack]):
             self, test_uploaded_track_url: UploadedTrackDownloadTestUrl = UploadedTrackDownloadTestUrl.MP3, **kwargs):
         kwargs[Fields.TRACK_FILE_PUBLIC] = str(test_uploaded_track_url)
         return self.api_client.post(
-            path=reverse('library-track-list'), data=kwargs, handle_response=self._set_results)
+            path=reverse('uploaded-track-list'), data=kwargs, handle_response=self._set_results)
 
     def _post_uploaded_track_without_file(self, **kwargs):
         return self.api_client.post(
-            path=reverse('library-track-list'), data=kwargs, handle_response=self._set_results)
+            path=reverse('uploaded-track-list'), data=kwargs, handle_response=self._set_results)
 
     def _download_uploaded_track(self, uuid):
-        return self.api_client.get(path=reverse('library-track-download', kwargs={'pk': uuid}))
+        return self.api_client.get(path=reverse('uploaded-track-download', kwargs={'pk': uuid}))
 
     def _delete_uploaded_track(self, uuid):
-        return self.api_client.delete(path=reverse('library-track-detail', kwargs={'pk': uuid}))
+        return self.api_client.delete(path=reverse('uploaded-track-detail', kwargs={'pk': uuid}))
 
     def _retrieve_uploaded_track(self, uuid: UUID):
-        return self.api_client.get(path=reverse('library-track-detail', kwargs={'pk': uuid}),
+        return self.api_client.get(path=reverse('uploaded-track-detail', kwargs={'pk': uuid}),
                                    handle_response=self._set_results)
 
     def _list_uploaded_tracks(self, **kwargs):
-        return self.api_client.get(path=reverse('library-track-list'), data=kwargs, handle_response=self._set_results)
+        return self.api_client.get(path=reverse('uploaded-track-list'), data=kwargs, handle_response=self._set_results)
