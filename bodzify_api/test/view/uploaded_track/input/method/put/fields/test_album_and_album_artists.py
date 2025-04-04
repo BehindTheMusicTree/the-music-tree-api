@@ -2,12 +2,12 @@ from rest_framework import status
 
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 from bodzify_api.test.utils.field.body_data.method.PutBodyDataTestCase import PutBodyDataTestCase
 from bodzify_api.serializer.model.uploaded_track.input.put.Fields import Fields as PutFields
 
 
-class TestCase(LibTrackTestCase, PutBodyDataTestCase):
+class TestCase(UploadedTrackTestCase, PutBodyDataTestCase):
 
     def test_not_provided_then_unchanged(self):
         album = self.model_fixture_factory.create_album(name="Jojo")

@@ -1,8 +1,8 @@
 
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     """
     As the file is too big to be uploaded on Github, the pytest won't work during Github's

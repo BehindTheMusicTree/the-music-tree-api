@@ -6,7 +6,7 @@ from django_filters import FilterSet
 from bodzify_api.filtering.set.album.AlbumFilterSet import AlbumFilterSet
 from bodzify_api.filtering.set.artist.ArtistFilterSet import ArtistFilterSet
 from bodzify_api.filtering.set.criteria.CriteriaFilterSet import CriteriaFilterSet
-from bodzify_api.filtering.set.uploaded_track.LibTrackFilterSet import UploadedTrackFilterSet
+from bodzify_api.filtering.set.uploaded_track.UploadedTrackFilterSet import UploadedTrackFilterSet
 from bodzify_api.filtering.set.play.PlayFilterSet import PlayFilterSet
 from bodzify_api.filtering.set.playlist.PlaylistFilterSet import PlaylistFilterSet
 from bodzify_api.filtering.set.playlist.children.criteria.CriteriaPlaylistFilterSet import CriteriaPlaylistFilterSet

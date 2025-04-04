@@ -2,10 +2,10 @@ from rest_framework import status
 
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.serializer.model.uploaded_track.input.put.Fields import Fields as PutFields
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_archived_uploaded_track_then_artist_has_plus_1_archived_uploaded_tracks(self):
         artist = self.model_fixture_factory.create_artist(name="Jojo")

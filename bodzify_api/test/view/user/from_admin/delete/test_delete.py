@@ -10,7 +10,7 @@ from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording impor
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.model.user.User import User
-from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.user.UserTestCase import UserTestCase
 
 
@@ -116,7 +116,7 @@ class TestCase(UserTestCase):
             musicbrainz_artists=[])
         track = self.model_fixture_factory.create_uploaded_track_with_file(
             user=user, title='Drown',
-            test_uploaded_track_filename=LibTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
+            test_uploaded_track_filename=UploadedTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
         track.track_file.musicbrainz_recording = mb_recording
         track.track_file.save()
 

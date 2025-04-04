@@ -8,7 +8,7 @@ from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRelManag
 from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
-from bodzify_api.model.uploaded_track.Fields import Fields as LibTrackFields
+from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackFields
 from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 
 from .Fields import Fields
@@ -21,7 +21,7 @@ class UploadedTrackPlaylistRel(PrivateStandardResource):
     playlist: Playlist = PrivateForeignKey(  # type: ignore
         Playlist, on_delete=models.CASCADE, related_name=PlayListFields.UPLOADED_TRACK_PLAYLIST_RELS_INTERNAL)
     uploaded_track: UploadedTrack = PrivateForeignKey(  # type: ignore
-        UploadedTrack, on_delete=models.CASCADE, related_name=LibTrackFields.UPLOADED_TRACK_PLAYLIST_RELS)
+        UploadedTrack, on_delete=models.CASCADE, related_name=UploadedTrackFields.UPLOADED_TRACK_PLAYLIST_RELS)
     position = models.PositiveIntegerField(null=True, blank=True)
 
     objects: UploadedTrackPlaylistRelManager = UploadedTrackPlaylistRelManager()

@@ -12,9 +12,9 @@ from rest_framework_simplejwt.tokens import AccessToken
 from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.model.user.User import User
 from bodzify_api.model.uuid.Fields import Fields as UuidModelFields
-from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as LibTrackPostFields
+from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as UploadedTrackPostFields
 from bodzify_api.test.utils.AppApiClient import AppApiClient
-from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.utils.ModelFixtureFactory import ModelFixtureFactory
 from bodzify_api.utils import audio_metadata, data_transformer
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
@@ -130,14 +130,14 @@ class AppTestCase(TestCase, Generic[T]):
         self.saved_uploaded_track_metadata_with_raw_rating = audio_metadata.get_merged_app_metadata(
             file=saved_uploaded_track.track_file.file)
 
-    # Defined here and not in LibTrackTestCase because other views needs sometimes to post a track for testing purposes
+    # Defined here and not in UploadedTrackTestCase because other views needs sometimes to post a track for testing purposes
     # (testing metadata updates for example)
-    def _post_uploaded_track(self, test_uploaded_track_filename: LibTrackTestFilename = LibTrackTestFilename.DEFAULT_MP3,
+    def _post_uploaded_track(self, test_uploaded_track_filename: UploadedTrackTestFilename = UploadedTrackTestFilename.DEFAULT_MP3,
                              **kwargs) -> Union[JsonResponse, HttpResponse]:
         file_abs_path = self.TEST_FILES_BASE_DIR / test_uploaded_track_filename
 
         with open(file_abs_path, "rb") as sample_file:
-            file_field_dict = {LibTrackPostFields.TRACK_FILE_PUBLIC: sample_file}
+            file_field_dict = {UploadedTrackPostFields.TRACK_FILE_PUBLIC: sample_file}
             if kwargs:
                 kwargs = data_transformer.merge_two_dicts(file_field_dict, kwargs)
             else:
@@ -146,7 +146,7 @@ class AppTestCase(TestCase, Generic[T]):
             return self.api_client.post(
                 path=reverse('library-track-list'), data=kwargs, format='multipart', handle_response=self._set_results)
 
-    # Defined here and not in LibTrackTestCase because other views needs sometimes to put a track for testing purposes
+    # Defined here and not in UploadedTrackTestCase because other views needs sometimes to put a track for testing purposes
     # (testing Genre deletion for example)
     def _put_uploaded_track(self, uuid, **kwargs):
         if self.is_from_uploaded_track_test_case:

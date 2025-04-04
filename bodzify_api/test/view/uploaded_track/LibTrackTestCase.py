@@ -8,7 +8,7 @@ from bodzify_api.test.utils.uploaded_track.UploadedTrackDownloadTestUrl import L
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields
 
 
-class LibTrackTestCase(AppTestCase[UploadedTrack]):
+class UploadedTrackTestCase(AppTestCase[UploadedTrack]):
     model_class = UploadedTrack
     saved_object: UploadedTrack
     is_from_uploaded_track_test_case: bool = True  # Override the default value from AppTestCase

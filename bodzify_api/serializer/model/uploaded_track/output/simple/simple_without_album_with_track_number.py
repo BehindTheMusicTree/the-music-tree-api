@@ -19,7 +19,7 @@ class Fields:
     PLAY_COUNT = SimpleFields.PLAY_COUNT
 
 
-class LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(serializers.ModelSerializer):
+class UploadedTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(serializers.ModelSerializer):
     genre = CriteriaMinimumSerializer()
     artists = ArtistMinimumSerializer(many=True)
 

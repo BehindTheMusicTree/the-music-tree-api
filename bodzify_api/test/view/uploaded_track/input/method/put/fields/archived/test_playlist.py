@@ -8,10 +8,10 @@ from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel impo
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.serializer.model.uploaded_track.input.put.Fields import Fields as PutFields
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_archived_uploaded_track_then_manual_playlist_has_plus_1_archived_uploaded_tracks(self):
         manual_playlist = self.model_fixture_factory.create_manual_playlist(name='teuf')

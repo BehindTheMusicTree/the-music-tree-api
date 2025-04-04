@@ -5,11 +5,11 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as PostFields
 from bodzify_api.test.utils.field.body_data.type.NullablePositiveIntBodyDataTestCase import NullablePositiveIntBodyDataTestCase
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 
 
-class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
+class TestCase(UploadedTrackTestCase, NullablePositiveIntBodyDataTestCase):
 
     def test_empty_then_none(self):
         response = self._post_uploaded_track(

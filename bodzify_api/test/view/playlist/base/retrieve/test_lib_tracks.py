@@ -1,10 +1,10 @@
 from rest_framework import status
 
-from bodzify_api.model.uploaded_track_playlist_rel.Fields import Fields as LibTrackPlaylistRelFields
+from bodzify_api.model.uploaded_track_playlist_rel.Fields import Fields as UploadedTrackPlaylistRelFields
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.serializer.model.uploaded_track.output.simple.simple_without_album import Fields as LibTrackOutputFields
+from bodzify_api.serializer.model.uploaded_track.output.simple.simple_without_album import Fields as UploadedTrackOutputFields
 from bodzify_api.serializer.model.playlist.base.output.detailed import Fields as PlaylistOutputFields
-from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.utils import data_transformer
 
@@ -27,11 +27,14 @@ class TestCase(PlaylistTestCase):
         result_tracks_raw = self.result[data_transformer.to_camel_case(
             PlaylistOutputFields.UPLOADED_TRACK_PLAYLIST_RELS_PUBLIC)]
         result_tracks_sorted = sorted(
-            result_tracks_raw, key=lambda x: x[data_transformer.to_camel_case(LibTrackPlaylistRelFields.POSITION)])
-        uploaded_track_field_name = data_transformer.to_camel_case(LibTrackPlaylistRelFields.UPLOADED_TRACK_PUBLIC)
-        assert result_tracks_sorted[0][uploaded_track_field_name][LibTrackOutputFields.TITLE] == uploaded_track1.title
-        assert result_tracks_sorted[1][uploaded_track_field_name][LibTrackOutputFields.TITLE] == uploaded_track2.title
-        assert result_tracks_sorted[2][uploaded_track_field_name][LibTrackOutputFields.TITLE] == uploaded_track3.title
+            result_tracks_raw, key=lambda x: x[data_transformer.to_camel_case(UploadedTrackPlaylistRelFields.POSITION)])
+        uploaded_track_field_name = data_transformer.to_camel_case(UploadedTrackPlaylistRelFields.UPLOADED_TRACK_PUBLIC)
+        assert result_tracks_sorted[0][uploaded_track_field_name][
+            UploadedTrackOutputFields.TITLE] == uploaded_track1.title
+        assert result_tracks_sorted[1][uploaded_track_field_name][
+            UploadedTrackOutputFields.TITLE] == uploaded_track2.title
+        assert result_tracks_sorted[2][uploaded_track_field_name][
+            UploadedTrackOutputFields.TITLE] == uploaded_track3.title
 
     def test_duration(self):
         genre = self.model_fixture_factory.create_genre(name='rock')
@@ -39,12 +42,12 @@ class TestCase(PlaylistTestCase):
         self.model_fixture_factory.create_uploaded_track_with_file(
             title="celine",
             genre=genre,
-            test_uploaded_track_filename=LibTrackTestFilename.DURATION_472S_WAV,
+            test_uploaded_track_filename=UploadedTrackTestFilename.DURATION_472S_WAV,
             use_manager_for_genre_playlist_adding=True)
         self.model_fixture_factory.create_uploaded_track_with_file(
             title="celine",
             genre=genre,
-            test_uploaded_track_filename=LibTrackTestFilename.DURATION_277S_MP3,
+            test_uploaded_track_filename=UploadedTrackTestFilename.DURATION_277S_MP3,
             use_manager_for_genre_playlist_adding=True)
 
         response = self._retrieve_playlist(genre_criteria_playlist.uuid)

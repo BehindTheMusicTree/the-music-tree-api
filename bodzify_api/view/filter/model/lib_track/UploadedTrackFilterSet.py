@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 
-from bodzify_api.model.uploaded_track.LibTrack import LibTrack
+from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.model.uploaded_track.Fields import Fields
 
 
@@ -16,7 +16,7 @@ class UploadedTrackFilterSet(filters.FilterSet):
     created_before = filters.DateTimeFilter(field_name=Fields.CREATED_AT, lookup_expr='lte')
 
     class Meta:
-        model = LibTrack
+        model = UploadedTrack
         fields = [
             Fields.NAME,
             Fields.ARTIST,

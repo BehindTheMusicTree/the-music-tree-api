@@ -6,7 +6,7 @@ from bodzify_api.serializer.model.playlist.base.output.minimum import PlaylistMi
 from .Fields import Fields
 
 
-class LibTrackPlaylistRelWithoutLibTrack(serializers.ModelSerializer):
+class UploadedTrackPlaylistRelWithoutUploadedTrack(serializers.ModelSerializer):
     playlist = PlaylistMinimumSerializer()
 
     class Meta:

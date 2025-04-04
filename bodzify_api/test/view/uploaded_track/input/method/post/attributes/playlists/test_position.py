@@ -1,10 +1,10 @@
 from rest_framework import status
 
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_create_then_in_first_position_of_genre_playlist_and_other_tracks_after(self):
         genre = self.model_fixture_factory.create_genre(name="Rock")

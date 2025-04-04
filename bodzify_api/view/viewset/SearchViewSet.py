@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from bodzify_api.filtering.set.search.AlbumSearchFilterSet import AlbumSearchFilterSet
 from bodzify_api.filtering.set.search.ArtistSearchFilterSet import ArtistSearchFilterSet
 from bodzify_api.filtering.set.search.CriteriaPlaylistSearchFilterSet import CriteriaPlaylistSearchFilterSet
-from bodzify_api.filtering.set.search.LibTrackSearchFilterSet import LibTrackSearchFilterSet
+from bodzify_api.filtering.set.search.UploadedTrackSearchFilterSet import UploadedTrackSearchFilterSet
 from bodzify_api.filtering.set.search.ManualPlaylistSearchFilterSet import ManualPlaylistSearchFilterSet
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.artist.Artist import Artist
@@ -74,7 +74,7 @@ class SearchViewSet(ObjectMultipleModelAPIViewSet):
         artist_qs = Artist.objects.filter(user=user)
 
         # Apply filtersets
-        uploaded_track_fs = LibTrackSearchFilterSet(
+        uploaded_track_fs = UploadedTrackSearchFilterSet(
             data=self.request.query_params,
             queryset=uploaded_track_qs
         )

@@ -4,11 +4,11 @@ import pytest
 from rest_framework import status
 
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
 @pytest.mark.usefixtures("enable_audio_metadata_analysis")
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_not_found_then_none(self):
         response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_MP3)

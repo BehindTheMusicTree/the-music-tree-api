@@ -2,10 +2,10 @@
 
 from rest_framework import status
 
-from bodzify_api.test.view.uploaded_track.input.update_file_metadata.LibTrackFileMetadataUpdateTestCase import LibTrackFileMetadataUpdateTestCase
+from bodzify_api.test.view.uploaded_track.input.update_file_metadata.UploadedTrackFileMetadataUpdateTestCase import UploadedTrackFileMetadataUpdateTestCase
 
 
-class LibTrackFileMetadataUpdateStrTestCase(LibTrackFileMetadataUpdateTestCase):
+class UploadedTrackFileMetadataUpdateStrTestCase(UploadedTrackFileMetadataUpdateTestCase):
 
     VALUE_EXPECTED_IN_METADATA_WHEN_NOT_PROVIDED = 'LJjksjsksjldkjlksjdlksjkdjskljdslkdjsldslnccsdvkjbvkvb'
     value_expected_in_metadata_is_list = False

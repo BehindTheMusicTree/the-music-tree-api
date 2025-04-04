@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from bodzify_api.model.uploaded_track.LibTrack import UploadedTrack
+from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.model.uploaded_track.Fields import Fields
 
 

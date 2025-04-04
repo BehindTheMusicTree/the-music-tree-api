@@ -2,11 +2,11 @@ import pytest
 from rest_framework import status
 
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
 @pytest.mark.usefixtures("enable_audio_metadata_analysis")
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     @pytest.mark.critical
     def test_audio_fingerprinter_connection_ok(self):

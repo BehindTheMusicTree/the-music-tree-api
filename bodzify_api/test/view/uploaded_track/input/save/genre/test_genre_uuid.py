@@ -4,10 +4,10 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as PostFields
 from bodzify_api.test.utils.field.body_data.type.ForeignKeyBodyDataTestCase import ForeignKeyBodyDataTestCase
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(ForeignKeyBodyDataTestCase, LibTrackTestCase):
+class TestCase(ForeignKeyBodyDataTestCase, UploadedTrackTestCase):
 
     def test_non_existing_then_400_bad_request(self):
         non_exisintg_uuid = "00000000-0000-0000-0000-000000000000"

@@ -1,11 +1,11 @@
 from rest_framework import status
 
-from bodzify_api.serializer.model.uploaded_track.output.Fields import Fields as LibTrackFields
+from bodzify_api.serializer.model.uploaded_track.output.Fields import Fields as UploadedTrackFields
 from bodzify_api.test.utils.field.filter.char.NullableCharFilterTestCase import NullableCharFilterTestCase
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(LibTrackTestCase, NullableCharFilterTestCase):
+class TestCase(UploadedTrackTestCase, NullableCharFilterTestCase):
 
     def test_not_provided_then_results(self):
         self.model_fixture_factory.create_uploaded_track_with_file(title="Life")
@@ -45,4 +45,4 @@ class TestCase(LibTrackTestCase, NullableCharFilterTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
-        assert self.results[0][LibTrackFields.TITLE] == track_life.title
+        assert self.results[0][UploadedTrackFields.TITLE] == track_life.title

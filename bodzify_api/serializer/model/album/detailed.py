@@ -4,12 +4,12 @@ from bodzify_api.model.album.Album import Album
 from bodzify_api.serializer.model.album.Fields import Fields
 from bodzify_api.serializer.model.artist.minimum import ArtistMinimumSerializer
 from bodzify_api.serializer.model.uploaded_track.output.simple.simple_without_album_with_track_number import (
-    LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer
+    UploadedTrackSimpleWithoutAlbumWithPositionInAlbumSerializer
 )
 
 
 class AlbumDetailedSerializer(serializers.ModelSerializer):
-    library_tracks_sorted = LibTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(
+    library_tracks_sorted = UploadedTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(
         source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_SORTED_INTERNAL, many=True)
     library_tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
     library_tracks_archived_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_ARCHIVED_COUNT_INTERNAL)

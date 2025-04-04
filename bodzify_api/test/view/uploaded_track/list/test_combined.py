@@ -2,13 +2,13 @@ from rest_framework import status
 from datetime import timedelta
 from django.utils import timezone
 
-from bodzify_api.serializer.model.uploaded_track.output.Fields import Fields as LibTrackFields
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.serializer.model.uploaded_track.output.Fields import Fields as UploadedTrackFields
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 from bodzify_api.utils import data_transformer
 from bodzify_api.filtering.set.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_language_and_genre_name_then_ok(self):
         genre = self.model_fixture_factory.create_genre(name="Rock")
@@ -21,7 +21,7 @@ class TestCase(LibTrackTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
-        assert self.results[0][data_transformer.to_camel_case(LibTrackFields.TITLE)] == track.title
+        assert self.results[0][data_transformer.to_camel_case(UploadedTrackFields.TITLE)] == track.title
 
     def test_title_and_album_name_and_artists_name_ok(self):
         genre = self.model_fixture_factory.create_genre(name="Heyaa")
@@ -49,8 +49,8 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
         titles = self.results[0][
-            data_transformer.to_camel_case(LibTrackFields.TITLE)], self.results[1][
-            data_transformer.to_camel_case(LibTrackFields.TITLE)]
+            data_transformer.to_camel_case(UploadedTrackFields.TITLE)], self.results[1][
+            data_transformer.to_camel_case(UploadedTrackFields.TITLE)]
         assert track_pascalito.title in titles
         assert track_mapasa.title in titles
 
@@ -84,5 +84,5 @@ class TestCase(LibTrackTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 2
-        titles = [result[data_transformer.to_camel_case(LibTrackFields.TITLE)] for result in self.results]
+        titles = [result[data_transformer.to_camel_case(UploadedTrackFields.TITLE)] for result in self.results]
         assert track_rock_in_range.title in titles

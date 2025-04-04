@@ -3,10 +3,10 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_uploaded_track_created_then_temp_dir_empty(self):
         assert os.listdir(settings.FILE_UPLOAD_TEMP_DIR) == []

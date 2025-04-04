@@ -2,10 +2,10 @@ from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.model.uploaded_track.input.put.Fields import Fields as PutFields
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_new_criteria_then_decrease_positions_of_following_tracks_in_old_criteria(self):
         old_genre = self.model_fixture_factory.create_genre(name="Metal")

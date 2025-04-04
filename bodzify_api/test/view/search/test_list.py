@@ -8,7 +8,7 @@ from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlay
 from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.serializer.model.album.minimum import Fields as AlbumFields
 from bodzify_api.serializer.model.artist.minimum import Fields as ArtistFields
-from bodzify_api.serializer.model.uploaded_track.output.detailed import Fields as LibTrackGetFields
+from bodzify_api.serializer.model.uploaded_track.output.detailed import Fields as UploadedTrackGetFields
 from bodzify_api.serializer.model.playlist.children.criteria.output.simple import Fields as CriteriaPlayListFields
 from bodzify_api.test.view.search.SearchTestCase import SearchTestCase
 
@@ -24,7 +24,7 @@ class TestCase(SearchTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 3
-        title_key = LibTrackGetFields.TITLE
+        title_key = UploadedTrackGetFields.TITLE
         assert self.results[UploadedTrack.__name__][0][title_key] == summerlove_track.title
         assert self.results[Artist.__name__][0][ArtistFields.NAME] == sum41_artist.name
         assert self.results[Album.__name__][0][AlbumFields.NAME] == jailesum_album.name
@@ -82,7 +82,7 @@ class TestCase(SearchTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
-        assert self.results[UploadedTrack.__name__][0][LibTrackGetFields.TITLE] == uploaded_track.title
+        assert self.results[UploadedTrack.__name__][0][UploadedTrackGetFields.TITLE] == uploaded_track.title
 
     def test_artist_then_results(self):
         artist = self.model_fixture_factory.create_artist(name='artist')

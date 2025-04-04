@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.serializer.model.uploaded_track.output.Fields import Fields as LibTrackOutputFields
+from bodzify_api.serializer.model.uploaded_track.output.Fields import Fields as UploadedTrackOutputFields
 
 from ..AllUploadedTracksMixinTestCase import AllUploadedTracksMixinTestCase
 
@@ -25,7 +25,7 @@ class TestCase(AllUploadedTracksMixinTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 3
-        uploaded_track_titles = [uploaded_track[LibTrackOutputFields.TITLE] for uploaded_track in self.results]
+        uploaded_track_titles = [uploaded_track[UploadedTrackOutputFields.TITLE] for uploaded_track in self.results]
         assert uploaded_track_titles[0] == track3_title
         assert uploaded_track_titles[1] == track2_title
         assert uploaded_track_titles[2] == track1_title

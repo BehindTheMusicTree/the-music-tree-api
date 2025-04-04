@@ -22,7 +22,7 @@ from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 
 from ..file.TrackFile import TrackFile
 from .Fields import Fields
-from .UploadedTrackManager import LibTrackManager
+from .UploadedTrackManager import UploadedTrackManager
 
 
 if TYPE_CHECKING:
@@ -54,13 +54,13 @@ class UploadedTrack(TrackablePlayCount):
     language = AppCharField(max_length=settings.LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
     archived = models.BooleanField(default=False)
     playlists = PrivateManyToManyField(
-        Playlist, through='LibTrackPlaylistRel', related_name=PlayListFields.UPLOADED_TRACKS_RELATED_NAME)
+        Playlist, through='UploadedTrackPlaylistRel', related_name=PlayListFields.UPLOADED_TRACKS_RELATED_NAME)
 
     if TYPE_CHECKING:
         track_file: TrackFile
         uploaded_track_playlist_rels: models.QuerySet['UploadedTrackPlaylistRel']
 
-    objects: LibTrackManager = LibTrackManager()
+    objects: UploadedTrackManager = UploadedTrackManager()
 
     class Meta:
         verbose_name = 'Uploaded Track'
@@ -134,8 +134,8 @@ class UploadedTrack(TrackablePlayCount):
 
     @property
     def playlists_with_positions(self) -> list[tuple[str, int]]:
-        from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
+        from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import Fields as UploadedTrackPlaylistRelFields
         from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
         uploaded_track_playlist_rels = UploadedTrackPlaylistRel.objects.filter(user=self.user, uploaded_track=self)
-        return list(uploaded_track_playlist_rels.values_list(LibTrackPlaylistRelFields.PLAYLIST + '__uuid',
-                                                             LibTrackPlaylistRelFields.POSITION))
+        return list(uploaded_track_playlist_rels.values_list(UploadedTrackPlaylistRelFields.PLAYLIST + '__uuid',
+                                                             UploadedTrackPlaylistRelFields.POSITION))

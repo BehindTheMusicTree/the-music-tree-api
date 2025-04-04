@@ -2,11 +2,11 @@ import pytest
 from rest_framework import status
 
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
 @pytest.mark.usefixtures("enable_audio_metadata_analysis")
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_duration_greater_to_one_sec_then_ok(self):
         response = self._post_uploaded_track(UploadedTrackTestFilename.RECORDING_QUEEN_DURATION_181_MP3)

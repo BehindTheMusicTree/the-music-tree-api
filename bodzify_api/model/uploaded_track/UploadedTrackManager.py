@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from .UploadedTrack import UploadedTrack
 
 
-class LibTrackManager(StandardResourceManager['LibraryTrack']):
+class UploadedTrackManager(StandardResourceManager['LibraryTrack']):
     model: type['UploadedTrack']
 
     def _remove_from_genre_playlists(self, instance: 'UploadedTrack', old_genre: 'Genre | None', genre_limit=None):
@@ -66,12 +66,12 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 user=instance.user, playlist=genreless_criteria_playlist, uploaded_track=instance)
 
     def _decrease_position_of_next_tracks_in_old_track_playlists(self, user: User, playlists_with_old_position: list):
-        from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
+        from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import Fields as UploadedTrackPlaylistRelFields
         from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
         for playlist_uuid, old_position in playlists_with_old_position:
             uploaded_track_playlist_rels_to_update = UploadedTrackPlaylistRel.objects.filter(
                 user=user, playlist=playlist_uuid, position__gt=old_position)
-            uploaded_track_playlist_rels_to_update.update(position=F(LibTrackPlaylistRelFields.POSITION) - 1)
+            uploaded_track_playlist_rels_to_update.update(position=F(UploadedTrackPlaylistRelFields.POSITION) - 1)
 
     def _update_genre_playlists(self, instance: 'UploadedTrack', old_genre: 'Genre | None'):
         from bodzify_api.model.criteria.children.genre.Genre import Genre

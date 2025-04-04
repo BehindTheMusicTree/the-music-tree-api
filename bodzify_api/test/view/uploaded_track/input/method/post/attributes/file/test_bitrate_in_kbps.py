@@ -3,10 +3,10 @@ from rest_framework import status
 
 from bodzify_api.model.track.file.TrackFile import TrackFile
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_small_wav(self):
         response = self._post_uploaded_track(UploadedTrackTestFilename.BITRATE_IN_KPBPS_SMALL_1152_WAV)

@@ -2,12 +2,12 @@
 
 from rest_framework import status
 
-from bodzify_api.test.view.uploaded_track.input.update_file_metadata.LibTrackFileMetadataUpdateTestCase import (
-    LibTrackFileMetadataUpdateTestCase
+from bodzify_api.test.view.uploaded_track.input.update_file_metadata.UploadedTrackFileMetadataUpdateTestCase import (
+    UploadedTrackFileMetadataUpdateTestCase
 )
 
 
-class LibTrackFileMetadataUpdatePositiveIntTestCase(LibTrackFileMetadataUpdateTestCase):
+class UploadedTrackFileMetadataUpdatePositiveIntTestCase(UploadedTrackFileMetadataUpdateTestCase):
     value_min: int
     value_max: int
     value_min_expected_in_metadata: int

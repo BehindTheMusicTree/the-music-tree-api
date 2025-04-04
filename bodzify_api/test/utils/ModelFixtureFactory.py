@@ -21,7 +21,7 @@ from bodzify_api.model.criteria.children.tag.Tag import Tag
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
 from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
-from bodzify_api.model.uploaded_track_playlist_rel.Fields import Fields as LibTrackPlaylistRelFields
+from bodzify_api.model.uploaded_track_playlist_rel.Fields import Fields as UploadedTrackPlaylistRelFields
 from bodzify_api.model.musicbrainz_resource.children.artist.Fields import Fields as MusicbrainzArtistFields
 from bodzify_api.model.musicbrainz_resource.children.artist.MbArtist import MbArtist
 from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording import Fields as MusicbrainzRecordingFields
@@ -38,7 +38,7 @@ from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackField
 from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.model.user.User import User
-from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 
 
 global_settings.DDF_FIELD_FIXTURES['django.db.models.fields.generated.GeneratedField'] = lambda: None  # type: ignore
@@ -110,16 +110,16 @@ class ModelFixtureFactory:
     def create_uploaded_track_playlist_rel(
             self, playlist: Playlist, uploaded_track: UploadedTrack, user: User | None = None,) -> UploadedTrackPlaylistRel:
         model_fields = {
-            LibTrackPlaylistRelFields.USER: user or self.default_test_user,
-            LibTrackPlaylistRelFields.PLAYLIST: playlist,
-            LibTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL: uploaded_track,
+            UploadedTrackPlaylistRelFields.USER: user or self.default_test_user,
+            UploadedTrackPlaylistRelFields.PLAYLIST: playlist,
+            UploadedTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL: uploaded_track,
         }
         return G(UploadedTrackPlaylistRel, **model_fields)
 
     def create_uploaded_track_with_file(
         self,
         title: str | None = "test",
-        test_uploaded_track_filename: LibTrackTestFilename | None = LibTrackTestFilename.DEFAULT_MP3,
+        test_uploaded_track_filename: UploadedTrackTestFilename | None = UploadedTrackTestFilename.DEFAULT_MP3,
         user: User | None = None,
         use_manager_for_genre_playlist_adding: bool = False,
         **kwargs

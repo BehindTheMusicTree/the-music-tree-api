@@ -11,7 +11,7 @@ from bodzify_api.model.track.file.fingerprinting.missing_cause.code.FingerprintM
     FingerprintMissingCauseCode
 )
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s    %(name)s:%(filename)s:%(lineno)d %(message)s')
@@ -46,7 +46,7 @@ def restart_docker_container(container_id_or_name):
 
 
 @pytest.mark.usefixtures("enable_audio_metadata_analysis")
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_audio_fingerprinter_service_down_then_corresponding_missing_cause(self):
         if not settings.AFP_CONTAINER_NAME:

@@ -3,10 +3,10 @@ from rest_framework import status
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as PostFields
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_value_then_ok(self) -> None:
         value = 'rovk'

@@ -6,10 +6,10 @@ from bodzify_api.test.utils.field.body_data.type.NullablePositiveIntBodyDataTest
     NullablePositiveIntBodyDataTestCase
 )
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
+class TestCase(UploadedTrackTestCase, NullablePositiveIntBodyDataTestCase):
 
     def test_empty_string_then_none(self):
         response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_MP3, **{PostFields.RATING: ''})

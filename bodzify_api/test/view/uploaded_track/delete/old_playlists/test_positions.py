@@ -1,10 +1,10 @@
 from rest_framework import status
 
 from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TrackDeleteViewTestCase(LibTrackTestCase):
+class TrackDeleteViewTestCase(UploadedTrackTestCase):
 
     def test_removal_then_next_tracks_in_playlist_decrease_position(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")

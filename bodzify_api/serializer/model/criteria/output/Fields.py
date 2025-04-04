@@ -1,5 +1,5 @@
 from bodzify_api.model.criteria.Criteria import Fields as ModelFields
-from bodzify_api.model.uploaded_track.Fields import Fields as LibTrackFields
+from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackFields
 
 
 class Fields:
@@ -14,7 +14,7 @@ class Fields:
     UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC = ModelFields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC
     UPLOADED_TRACKS_ARCHIVED_COUNT_INTERNAL = ModelFields.UPLOADED_TRACKS_ARCHIVED_COUNT_INTERNAL
     UPLOADED_TRACKS_ARCHIVED_COUNT_PUBLIC = ModelFields.UPLOADED_TRACKS_ARCHIVED_COUNT_PUBLIC
-    UPLOADED_TRACKS_TITLE = LibTrackFields.TITLE
+    UPLOADED_TRACKS_TITLE = UploadedTrackFields.TITLE
     ROOT = ModelFields.ROOT
     PARENT = ModelFields.PARENT
     ASCENDANTS = ModelFields.ASCENDANTS

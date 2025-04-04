@@ -4,10 +4,10 @@ from rest_framework import status
 
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_genre_code_from_riff_then_genre_name(self):
         response = self._post_uploaded_track(

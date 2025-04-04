@@ -5,10 +5,10 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as PostFields
 from bodzify_api.test.utils.field.body_data.type.NotNullableCharBodyDataTestCase import NotNullableCharBodyDataTestCase
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(NotNullableCharBodyDataTestCase, LibTrackTestCase):
+class TestCase(NotNullableCharBodyDataTestCase, UploadedTrackTestCase):
 
     def test_largest_then_ok(self):
         value = "a" * settings.UPLOADED_TRACK_TITLE_LEN_MAX

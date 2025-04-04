@@ -5,11 +5,11 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as PostFields
 from bodzify_api.test.utils.field.body_data.type.NullableCharBodyDataTestCase import NullableCharBodyDataTestCase
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
 
 
-class TestCase(LibTrackTestCase, NullableCharBodyDataTestCase):
+class TestCase(UploadedTrackTestCase, NullableCharBodyDataTestCase):
 
     def test_largest_then_ok(self):
         album_name = "a" * settings.ALBUM_NAME_LEN_MAX

@@ -3,10 +3,10 @@ from rest_framework import status
 from bodzify_api import settings
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as PostFields
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_non_existing_then_400_bad_request(self):
         data = {PostFields.GENRE: '8adfc3f9-18f6-4f06-b3cb-e16d5032121w' * settings.UUID_LEN}

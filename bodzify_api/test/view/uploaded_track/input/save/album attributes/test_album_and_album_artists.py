@@ -8,12 +8,12 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as PostFields
 from bodzify_api.utils.data_transformer import to_camel_case
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
     def test_album_provided_but_album_artists_not_then_400_bad_request(self):
         data = {PostFields.ALBUM_NAME: "Koko"}
         response = self._post_uploaded_track(

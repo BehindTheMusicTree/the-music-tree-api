@@ -6,11 +6,11 @@ from django.test import override_settings
 from rest_framework import status
 
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCodeNumeric
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     @override_settings(DEBUG=False)
     def test_internal_error_then_500_with_response_error_code(self):

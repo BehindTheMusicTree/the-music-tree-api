@@ -17,7 +17,7 @@ from bodzify_api.utils import data_transformer
 from .Fields import InputFields
 
 
-class LibTrackInputSerializer(AppSerializer):
+class UploadedTrackInputSerializer(AppSerializer):
     track_file_fingerprint_must_be_unique = serializers.BooleanField(required=False)
     title = AppCharField(
         max_length=settings.UPLOADED_TRACK_TITLE_LEN_MAX, required=False, allow_blank=False, allow_null=True)

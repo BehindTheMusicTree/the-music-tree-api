@@ -1,10 +1,10 @@
 from unittest.mock import patch
 
 from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_exception_then_rollback(self):
         album = self.model_fixture_factory.create_album(name="album")

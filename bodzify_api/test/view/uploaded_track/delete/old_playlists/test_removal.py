@@ -1,10 +1,10 @@
 from rest_framework import status
 
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TrackDeleteViewTestCase(LibTrackTestCase):
+class TrackDeleteViewTestCase(UploadedTrackTestCase):
 
     def test_delete_then_remove_from_the_genre_playlists(self):
         genre1_name = "Rock"

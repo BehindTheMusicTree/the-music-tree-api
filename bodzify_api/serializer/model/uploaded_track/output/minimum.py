@@ -6,7 +6,7 @@ from bodzify_api.serializer.model.artist.minimum import ArtistMinimumSerializer
 from .Fields import Fields
 
 
-class LibTrackMinimumSerializer(serializers.ModelSerializer):
+class UploadedTrackMinimumSerializer(serializers.ModelSerializer):
     artists = ArtistMinimumSerializer(many=True)
 
     class Meta:

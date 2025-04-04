@@ -2,10 +2,10 @@ from rest_framework import status
 
 from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TrackDeleteViewTestCase(LibTrackTestCase):
+class TrackDeleteViewTestCase(UploadedTrackTestCase):
 
     def test_delete_then_delete_file(self):
         track = self.model_fixture_factory.create_uploaded_track_with_file(

@@ -6,7 +6,7 @@ from bodzify_api.serializer.model.uploaded_track.output.detailed import Uploaded
 from .Fields import Fields
 
 
-class LibTrackPlaylistRelWithoutPlaylist(serializers.ModelSerializer):
+class UploadedTrackPlaylistRelWithoutPlaylist(serializers.ModelSerializer):
     library_track = UploadedTrackDetailedSerializer(source=Fields.UPLOADED_TRACK_INTERNAL)
 
     class Meta:

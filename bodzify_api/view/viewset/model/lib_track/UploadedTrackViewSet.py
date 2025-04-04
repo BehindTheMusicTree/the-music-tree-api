@@ -5,8 +5,8 @@ from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.response import Response
 
-from bodzify_api.filtering.set.uploaded_track.LibTrackFilterSet import UploadedTrackFilterSet
-from bodzify_api.model.uploaded_track.LibTrack import UploadedTrack
+from bodzify_api.filtering.set.uploaded_track.UploadedTrackFilterSet import UploadedTrackFilterSet
+from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.model.uploaded_track.Fields import Fields
 from bodzify_api.view.serializer.model.uploaded_track.detailed import UploadedTrackDetailedSerializer
 from bodzify_api.view.serializer.model.uploaded_track.post import UploadedTrackPostSerializer

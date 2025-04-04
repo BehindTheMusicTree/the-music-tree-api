@@ -3,11 +3,11 @@ import pytest
 from rest_framework import status
 
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
 @pytest.mark.usefixtures("enable_audio_metadata_analysis")
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_no_matching_recording_then_none(self):
         response = self._post_uploaded_track(
@@ -46,7 +46,7 @@ class TestCase(LibTrackTestCase):
     def test_with_25_matches_then_select_the_one_with_closest_duration_and_most_fields_and_most_release_groups(self):
         # TODO: Implement this test as musicbrainz changes the recording id
         # response = self._post_uploaded_track(
-        #     TestLibTrackFilename.RECORDING_QUEEN_25_MATCHES_BUT_ONE_WITH_BEST_DURATION_AND_MOST_FIELDS_AND_MOST_RELEASE_GROUPS_MP3)
+        #     TestUploadedTrackFilename.RECORDING_QUEEN_25_MATCHES_BUT_ONE_WITH_BEST_DURATION_AND_MOST_FIELDS_AND_MOST_RELEASE_GROUPS_MP3)
         # assert response.status_code == status.HTTP_201_CREATED
         # assert self.saved_object.track_file.musicbrainz_recording
         # assert self.saved_object.track_file.musicbrainz_recording.musicbrainz_id == \

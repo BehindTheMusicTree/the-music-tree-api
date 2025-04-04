@@ -1,13 +1,13 @@
 from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as LibTrackPostFields
+from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as UploadedTrackPostFields
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 from bodzify_api.utils import audio_metadata
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_flac_md5_not_valid_and_corrupted_then_400_bad_request(self):
         response = self._post_uploaded_track(UploadedTrackTestFilename.FORMAT_MD5_NOT_VALID_AND_CORRUPTED_FLAC)
@@ -15,7 +15,7 @@ class TestCase(LibTrackTestCase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
-        assert error['field'] == LibTrackPostFields.TRACK_FILE_PUBLIC
+        assert error['field'] == UploadedTrackPostFields.TRACK_FILE_PUBLIC
         assert error['code'] == FieldValidationErrorCode.TRACK_FILE_TYPE_INVALID
 
     def test_flac_md5_not_valid_not_because_of_id3v2_metadata_then_corrected(self):

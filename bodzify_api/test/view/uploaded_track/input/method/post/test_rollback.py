@@ -1,10 +1,10 @@
 from unittest.mock import patch
 
 from bodzify_api.model.criteria.children.genre.Genre import Genre
-from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     def test_exception_then_rollback(self):
         genre_name = "Rock"
