@@ -2,16 +2,16 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework.exceptions import APIException
 
-from bodzify_api.model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllLibTracksMixin
+from bodzify_api.model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllUploadedTracksMixin
 from bodzify_api.model.user.User import User
 from bodzify_api.serializer.model.uploaded_track.output.minimum import LibTrackMinimumSerializer
 from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
 
-class AllLibTracksViewSet(AppModelViewSet[AllLibTracksMixin]):
+class AllUploadedTracksViewSet(AppModelViewSet[AllUploadedTracksMixin]):
     def __init__(self, **kwargs):
-        super().__init__(model_class=AllLibTracksMixin,
+        super().__init__(model_class=AllUploadedTracksMixin,
                          simple_serializer_class=LibTrackMinimumSerializer,
                          **kwargs)
 
@@ -25,10 +25,10 @@ class AllLibTracksViewSet(AppModelViewSet[AllLibTracksMixin]):
     def list(self, args, **kwargs):
         queryset = self.get_queryset()
         queryset = self.filter_queryset(queryset)
-        allLibTracksMixin: AllLibTracksMixin | None = queryset.first()
-        if not allLibTracksMixin:
+        allUploadedTracksMixin: AllUploadedTracksMixin | None = queryset.first()
+        if not allUploadedTracksMixin:
             raise APIException('System initialization error: User data is corrupted')
-        page = self.paginate_queryset(allLibTracksMixin.uploaded_tracks_not_archived_sorted)
+        page = self.paginate_queryset(allUploadedTracksMixin.uploaded_tracks_not_archived_sorted)
 
         if page is not None:
             serializer = self._require_serializer(SerializerType.SIMPLE)(page, many=True)

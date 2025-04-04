@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .model.album.Album import Album
-from .model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllLibTracksMixin
+from .model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllUploadedTracksMixin
 from .model.artist.Artist import Artist
 from .model.criteria.Criteria import Criteria
 from .model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
@@ -30,7 +30,7 @@ admin.site.register(UploadedTrack)
 admin.site.register(TrackFile)
 admin.site.register(FingerprintMissingCause)
 admin.site.register(FingerprintMissingCauseCode)
-admin.site.register(AllLibTracksMixin)
+admin.site.register(AllUploadedTracksMixin)
 admin.site.register(Artist)
 admin.site.register(Album)
 admin.site.register(Criteria)

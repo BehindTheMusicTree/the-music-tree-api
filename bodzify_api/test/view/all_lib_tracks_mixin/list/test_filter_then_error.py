@@ -2,10 +2,10 @@ from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 
-from ..AllLibTracksMixinTestCase import AllLibTracksMixinTestCase
+from ..AllUploadedTracksMixinTestCase import AllUploadedTracksMixinTestCase
 
 
-class TestCase(AllLibTracksMixinTestCase):
+class TestCase(AllUploadedTracksMixinTestCase):
 
     def test_filter_then_400_bad_request(self):
         filter = 'filter'

@@ -20,7 +20,7 @@ from .UserManager import UserManager
 
 
 if TYPE_CHECKING:
-    from bodzify_api.model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllLibTracksMixin
+    from bodzify_api.model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllUploadedTracksMixin
 
 
 class User(AbstractUser, BaseModel):
@@ -53,9 +53,9 @@ class User(AbstractUser, BaseModel):
         return settings.MEDIA_ROOT / self.lib_path_relative_to_media
 
     @cached_property
-    def all_uploaded_tracks_mixin(self) -> 'AllLibTracksMixin':
-        from bodzify_api.model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllLibTracksMixin
-        all_uploaded_tracks_mixin, _ = AllLibTracksMixin.objects.get_or_create(user=self)
+    def all_uploaded_tracks_mixin(self) -> 'AllUploadedTracksMixin':
+        from bodzify_api.model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllUploadedTracksMixin
+        all_uploaded_tracks_mixin, _ = AllUploadedTracksMixin.objects.get_or_create(user=self)
         return all_uploaded_tracks_mixin
 
     def does_track_filename_exist_in_lib(self, test_uploaded_track_filename: UploadedTrackTestFilename):

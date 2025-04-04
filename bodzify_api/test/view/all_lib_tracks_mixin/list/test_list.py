@@ -2,10 +2,10 @@ from rest_framework import status
 
 from bodzify_api.serializer.model.uploaded_track.output.Fields import Fields as LibTrackOutputFields
 
-from ..AllLibTracksMixinTestCase import AllLibTracksMixinTestCase
+from ..AllUploadedTracksMixinTestCase import AllUploadedTracksMixinTestCase
 
 
-class TestCase(AllLibTracksMixinTestCase):
+class TestCase(AllUploadedTracksMixinTestCase):
 
     def test_get_then_results(self):
         self.model_fixture_factory.create_uploaded_track_with_file(title="test")

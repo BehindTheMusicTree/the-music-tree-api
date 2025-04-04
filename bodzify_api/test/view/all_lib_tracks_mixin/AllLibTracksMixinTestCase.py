@@ -3,10 +3,10 @@ from uuid import UUID
 from django.urls import reverse
 
 from bodzify_api.test.utils.AppTestCase import AppTestCase
-from bodzify_api.model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllLibTracksMixin
+from bodzify_api.model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllUploadedTracksMixin
 
 
-class AllLibTracksMixinTestCase(AppTestCase[AllLibTracksMixin]):
+class AllUploadedTracksMixinTestCase(AppTestCase[AllUploadedTracksMixin]):
     def _post_all_uploaded_tracks_mixin(self, **kwargs):
         return self.api_client.post(path=reverse('all-library-tracks-list'),
                                     data=kwargs,

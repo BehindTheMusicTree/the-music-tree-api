@@ -8,7 +8,7 @@ from .Fields import Fields
 
 
 # One per user
-class AllLibTracksMixin(UploadedTrackMixin):
+class AllUploadedTracksMixin(UploadedTrackMixin):
 
     objects: AllUploadedTrackMixinManager = AllUploadedTrackMixinManager()
 
