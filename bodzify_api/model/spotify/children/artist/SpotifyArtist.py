@@ -3,7 +3,7 @@ from django.db.models import F, Value
 
 from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.utils.ConcatOp import ConcatOp
-from bodzify_api.model.spotify_resource.SpotifyResource import SpotifyResource
+from bodzify_api.model.spotify.SpotifyResource import SpotifyResource
 from .Fields import Fields
 
 

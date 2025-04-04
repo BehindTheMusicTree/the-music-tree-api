@@ -1,0 +1,8 @@
+from bodzify_api.model.spotify.Fields import Fields as SpotifyFields
+
+
+class Fields(SpotifyFields):
+    POPULARITY = 'popularity'
+    SPOTIFY_LINK = 'spotify_link'
+    GENRES = 'genres'
+    IMAGES = 'images'

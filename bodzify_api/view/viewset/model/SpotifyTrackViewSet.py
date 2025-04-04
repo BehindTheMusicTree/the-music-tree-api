@@ -3,8 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from bodzify_api.model.spotify_resource.children.track.SpotifyTrack import SpotifyTrack
-from bodzify_api.model.spotify_resource.children.track.Fields import Fields
+from bodzify_api.model.spotify.children.track.SpotifyTrack import SpotifyTrack
+from bodzify_api.model.spotify.children.track.Fields import Fields
 from bodzify_api.utils.spotify.service import sync_user_spotify_library
 from bodzify_api.view.serializer.model.spotify_track.detailed import SpotifyTrackDetailedSerializer
 from bodzify_api.view.serializer.model.spotify_track.simple import SpotifyTrackSimpleSerializer

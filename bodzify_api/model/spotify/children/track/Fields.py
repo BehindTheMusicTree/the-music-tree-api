@@ -1,8 +1,7 @@
-from bodzify_api.model.spotify_resource.Fields import Fields as SpotifyResourceFields
+from bodzify_api.model.spotify.Fields import Fields as SpotifyFields
 
 
-class Fields(SpotifyResourceFields):
-    SPOTIFY_ID = 'spotify_id'
+class Fields(SpotifyFields):
     NAME = 'name'
     DURATION_MS = 'duration_ms'
     POPULARITY = 'popularity'

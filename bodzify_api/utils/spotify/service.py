@@ -9,7 +9,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 from spotipy.exceptions import SpotifyException as SpotipyException
 
 from bodzify_api.exception import spotify as spotify_exception
-from bodzify_api.model.spotify_resource.children.track.SpotifyTrack import SpotifyTrack
+from bodzify_api.model.spotify.children.track.SpotifyTrack import SpotifyTrack
 from bodzify_api.model.user.User import User
 from . import utils
 from .ApiFields import ApiFields
