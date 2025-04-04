@@ -79,7 +79,7 @@ def spotify_auth_api(request):
         jwt_token = create_jwt_token(user)
 
         return Response({
-            'token': jwt_token,
+            'accessToken': jwt_token,
             'user': {
                 'id': user.id,
                 'email': user.email,
@@ -145,7 +145,7 @@ def spotify_callback(request):
         jwt_token = create_jwt_token(user)
 
         return Response({
-            'token': jwt_token,
+            'accessToken': jwt_token,
             'user': {
                 'id': user.id,
                 'email': user.email,

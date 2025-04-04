@@ -7,7 +7,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from bodzify_api.utils.AppStaticFileStates import StaticFileStates
 from bodzify_api.view.viewset.model.AllUploadedTracksMixinViewSet import AllUploadedTracksViewSet
-from bodzify_api.view.viewset.spotify_auth import spotify_auth, spotify_callback
+from bodzify_api.view.spotify_auth import spotify_auth, spotify_callback
 
 from . import settings
 from .view.viewset.model.AlbumViewSet import AlbumViewSet
@@ -23,7 +23,7 @@ from .view.viewset.model.PlayViewSet import PlayViewSet
 from .view.viewset.model.SpotifyLibTrackViewSet import SpotifyLibTrackViewSet
 from .view.viewset.model.UserViewSet import UserViewSet
 from .view.viewset.SearchViewSet import SearchViewSet
-from .view.viewset.spotify_auth import spotify_auth_api
+from .view.spotify_auth import spotify_auth_api
 
 
 router = routers.DefaultRouter()
