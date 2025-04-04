@@ -3,18 +3,18 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from bodzify_api.model.spotify.children.track.SpotifyTrack import SpotifyTrack
+from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.model.spotify.children.track.Fields import Fields
 from bodzify_api.utils.spotify.service import sync_user_spotify_library
-from bodzify_api.serializer.model.spotify_track.output.detailed import SpotifyTrackDetailedSerializer
-from bodzify_api.serializer.model.spotify_track.output.simple import SpotifyTrackSimpleSerializer
+from bodzify_api.serializer.model.spotify_lib_track.output.detailed import SpotifyLibTrackDetailedSerializer
+from bodzify_api.serializer.model.spotify_lib_track.output.simple import SpotifyLibTrackSimpleSerializer
 
 
-class SpotifyTrackViewSet(ReadOnlyModelViewSet):
+class SpotifyLibTrackViewSet(ReadOnlyModelViewSet):
 
-    queryset = SpotifyTrack.objects.all()
-    serializer_class = SpotifyTrackSimpleSerializer
-    detail_serializer_class = SpotifyTrackDetailedSerializer
+    queryset = SpotifyLibTrack.objects.all()
+    serializer_class = SpotifyLibTrackSimpleSerializer
+    detail_serializer_class = SpotifyLibTrackDetailedSerializer
 
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -22,7 +22,6 @@ class SpotifyTrackViewSet(ReadOnlyModelViewSet):
         return self.serializer_class
 
     def get_queryset(self):
-        """Filter tracks to only show those from the current user's Spotify library."""
         return super().get_queryset().filter(
             spotify_artists__user=self.request.user,
             **{Fields.IS_REMOVED: False}
@@ -30,7 +29,6 @@ class SpotifyTrackViewSet(ReadOnlyModelViewSet):
 
     @action(detail=False, methods=['post'])
     def sync(self, request):
-        """Sync the user's Spotify library."""
         try:
             sync_user_spotify_library(request.user)
             return Response(

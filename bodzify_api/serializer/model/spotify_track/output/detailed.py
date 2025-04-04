@@ -1,12 +1,12 @@
 from rest_framework import serializers
 
-from bodzify_api.model.spotify.children.track.SpotifyTrack import SpotifyTrack
-from bodzify_api.serializer.model.spotify_track.output.Fields import Fields
+from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
+from bodzify_api.serializer.model.spotify_lib_track.output.Fields import Fields
 
 
-class SpotifyTrackDetailedSerializer(serializers.ModelSerializer):
+class SpotifyLibTrackDetailedSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SpotifyTrack
+        model = SpotifyLibTrack
         fields = [
             Fields.UUID,
             Fields.NAME,

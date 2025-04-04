@@ -21,7 +21,7 @@ from .model.uploaded_track.file.TrackFile import TrackFile
 from .model.uploaded_track.UploadedTrack import UploadedTrack
 from .model.user.admin.UserAdmin import UserAdmin
 from .model.user.User import User
-from .model.spotify.children.track.SpotifyTrack import SpotifyTrack
+from .model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
 from .model.spotify.children.artist.SpotifyArtist import SpotifyArtist
 
 
@@ -43,5 +43,5 @@ admin.site.register(MusicbrainzRecording)
 admin.site.register(MbRecordingMissingCause)
 admin.site.register(MbRecordingMissingCauseCode)
 admin.site.register(MbArtist)
-admin.site.register(SpotifyTrack)
+admin.site.register(SpotifyLibTrack)
 admin.site.register(SpotifyArtist)

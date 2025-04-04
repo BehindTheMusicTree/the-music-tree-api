@@ -179,7 +179,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='SpotifyTrack',
+            name='SpotifyLibTrack',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_on', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
@@ -198,7 +198,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Spotify Track',
                 'verbose_name_plural': 'Spotify Tracks',
-                'db_table': 'bodzify_api_spotify_track',
+                'db_table': 'bodzify_api_spotify_lib_track',
             },
         ),
         migrations.CreateModel(

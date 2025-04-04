@@ -8,11 +8,10 @@ from bodzify_api.model.utils.ConcatOp import ConcatOp
 from bodzify_api.model.spotify.children.artist.SpotifyArtist import SpotifyArtist
 from bodzify_api.model.spotify.SpotifyResource import SpotifyResource
 from bodzify_api.model.spotify.children.track.Fields import Fields
-from bodzify_api.model.spotify.children.track.SpotifyTrackManager import SpotifyTrackManager
+from bodzify_api.model.spotify.children.track.SpotifyLibTrackManager import SpotifyLibTrackManager
 
 
-class SpotifyTrack(SpotifyResource):
-    """Represents a track from Spotify in the user's library."""
+class SpotifyLibTrack(SpotifyResource):
 
     name = AppCharField(max_length=256, editable=False, db_column=Fields.NAME)
     duration_ms = models.IntegerField(editable=False, db_column=Fields.DURATION_MS)
@@ -35,7 +34,7 @@ class SpotifyTrack(SpotifyResource):
         db_column=Fields.IS_REMOVED
     )
 
-    objects = SpotifyTrackManager()
+    objects = SpotifyLibTrackManager()
 
     @property
     def duration_str_in_hour_min_sec(self) -> str:
@@ -52,7 +51,7 @@ class SpotifyTrack(SpotifyResource):
         return f"{minutes}:{seconds:02d}"
 
     class Meta:
-        verbose_name = 'Spotify Track'
-        verbose_name_plural = 'Spotify Tracks'
+        verbose_name = 'Spotify Library Track'
+        verbose_name_plural = 'Spotify Library Tracks'
         indexes = [models.Index(fields=[Fields.SPOTIFY_ID], name='sp_track_id_idx')]
-        db_table = 'spotify_track'
+        db_table = 'spotify_lib_track'

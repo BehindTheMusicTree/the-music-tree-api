@@ -5,9 +5,9 @@ from bodzify_api.exception.spotify import (
     SpotifyResourceNotFoundException,
     SpotifyNetworkException
 )
-from bodzify_api.model.spotify.children.track.SpotifyTrack import SpotifyTrack
+from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.test.utils.AppTestCase import AppTestCase
-from bodzify_api.utils.spotify.service import SpotifyAPIService, search_spotify_tracks, get_or_create_spotify_track
+from bodzify_api.utils.spotify.service import SpotifyAPIService, search_spotify_lib_tracks, get_or_create_spotify_lib_track
 from bodzify_api.utils.spotify.ApiFields import ApiFields
 
 
@@ -142,8 +142,8 @@ class TestSpotifyAPIOperations(AppTestCase):
         # Verify the search was performed correctly
         self.mock_spotify_instance.search.assert_called_once_with(q="isrc:USRC12345678", type='track')
 
-    @mock.patch('bodzify_api.utils.spotify.utils.create_spotify_track_instance_from_dict')
-    def test_search_spotify_tracks_with_valid_query_then_creates_track_models(self, mock_create_track):
+    @mock.patch('bodzify_api.utils.spotify.utils.create_spotify_lib_track_instance_from_dict')
+    def test_search_spotify_lib_tracks_with_valid_query_then_creates_track_models(self, mock_create_track):
         # Configure mocks
         mock_track_data = {
             ApiFields.Names.ID: "track123",
@@ -159,12 +159,12 @@ class TestSpotifyAPIOperations(AppTestCase):
         self.mock_spotify_instance.search.return_value = mock_search_result
 
         # Create a mock track instance
-        mock_track_instance = mock.MagicMock(spec=SpotifyTrack)
+        mock_track_instance = mock.MagicMock(spec=SpotifyLibTrack)
         mock_create_track.return_value = mock_track_instance
 
         # Test the function
         # Use the user instance created in AppTestCase.setUp
-        result = search_spotify_tracks(self.test_user1, "Test Query")
+        result = search_spotify_lib_tracks(self.test_user1, "Test Query")
 
         # Verify correct behavior
         self.mock_spotify_instance.search.assert_called_once()
@@ -172,26 +172,26 @@ class TestSpotifyAPIOperations(AppTestCase):
         assert len(result) == 1
         assert result[0] == mock_track_instance
 
-    @mock.patch('bodzify_api.utils.spotify.utils.create_spotify_track_instance_from_dict')
-    @mock.patch('bodzify_api.model.spotify.children.track.SpotifyTrack.SpotifyTrack.objects.get')
-    def test_get_or_create_spotify_track_with_existing_track_then_returns_existing_track(
+    @mock.patch('bodzify_api.utils.spotify.utils.create_spotify_lib_track_instance_from_dict')
+    @mock.patch('bodzify_api.model.spotify.children.track.SpotifyLibTrack.SpotifyLibTrack.objects.get')
+    def test_get_or_create_spotify_lib_track_with_existing_track_then_returns_existing_track(
             self, mock_track_get, mock_create_track):
         # Configure mock to return an existing track
-        mock_track = mock.MagicMock(spec=SpotifyTrack)
+        mock_track = mock.MagicMock(spec=SpotifyLibTrack)
         mock_track_get.return_value = mock_track
 
         # Test the function
         # Use the user instance created in AppTestCase.setUp
-        result = get_or_create_spotify_track(self.test_user1, "track123")
+        result = get_or_create_spotify_lib_track(self.test_user1, "track123")
 
         # Verify correct behavior
         mock_track_get.assert_called_once_with(spotify_id="track123")
         mock_create_track.assert_not_called()
         assert result == mock_track
 
-    @mock.patch('bodzify_api.utils.spotify.utils.create_spotify_track_instance_from_dict')
-    @mock.patch('bodzify_api.model.spotify.children.track.SpotifyTrack.SpotifyTrack.objects.get')
-    def test_get_or_create_spotify_track_with_new_track_then_creates_and_returns_track(
+    @mock.patch('bodzify_api.utils.spotify.utils.create_spotify_lib_track_instance_from_dict')
+    @mock.patch('bodzify_api.model.spotify.children.track.SpotifyLibTrack.SpotifyLibTrack.objects.get')
+    def test_get_or_create_spotify_lib_track_with_new_track_then_creates_and_returns_track(
             self, mock_track_get, mock_create_track):
         # Configure mocks
         from django.core.exceptions import ObjectDoesNotExist
@@ -203,12 +203,12 @@ class TestSpotifyAPIOperations(AppTestCase):
         }
         self.mock_spotify_instance.track.return_value = mock_track_data
 
-        mock_track = mock.MagicMock(spec=SpotifyTrack)
+        mock_track = mock.MagicMock(spec=SpotifyLibTrack)
         mock_create_track.return_value = mock_track
 
         # Test the function
         # Use the user instance created in AppTestCase.setUp
-        result = get_or_create_spotify_track(self.test_user1, "track123")
+        result = get_or_create_spotify_lib_track(self.test_user1, "track123")
 
         # Verify correct behavior
         mock_track_get.assert_called_once_with(spotify_id="track123")

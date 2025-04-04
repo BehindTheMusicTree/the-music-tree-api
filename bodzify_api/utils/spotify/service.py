@@ -9,7 +9,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 from spotipy.exceptions import SpotifyException as SpotipyException
 
 from bodzify_api.exception import spotify as spotify_exception
-from bodzify_api.model.spotify.children.track.SpotifyTrack import SpotifyTrack
+from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.model.user.User import User
 from . import utils
 from .ApiFields import ApiFields
@@ -189,28 +189,28 @@ class SpotifyAPIService:
             raise spotify_exception.SpotifyNetworkException(f"Network error: {str(e)}")
 
 
-def get_or_create_spotify_track(user: User, track_id: str) -> Optional[SpotifyTrack]:
+def get_or_create_spotify_lib_track(user: User, track_id: str) -> Optional[SpotifyLibTrack]:
     """
-    Get or create a SpotifyTrack instance for the given Spotify track ID
+    Get or create a SpotifyLibTrack instance for the given Spotify track ID
 
     Args:
         user: User making the request
         track_id: Spotify track ID
 
     Returns:
-        SpotifyTrack instance or None if track not found
+        SpotifyLibTrack instance or None if track not found
     """
     try:
         # Check if the track already exists in our database
         try:
-            return SpotifyTrack.objects.get(spotify_id=track_id)
+            return SpotifyLibTrack.objects.get(spotify_id=track_id)
         except ObjectDoesNotExist:
             # Track doesn't exist, fetch from Spotify API
             service = SpotifyAPIService()
             try:
                 track_data = service.get_track_by_id(track_id)
                 if track_data:
-                    return utils.create_spotify_track_instance_from_dict(track_id, track_data)
+                    return utils.create_spotify_lib_track_instance_from_dict(track_id, track_data)
                 return None
             except spotify_exception.SpotifyResourceNotFoundException:
                 logger.info(f"Track not found on Spotify: {track_id}")
@@ -224,7 +224,7 @@ def get_or_create_spotify_track(user: User, track_id: str) -> Optional[SpotifyTr
         return None
 
 
-def search_spotify_tracks(user: User, query: str, limit: int = 5) -> List[SpotifyTrack]:
+def search_spotify_lib_tracks(user: User, query: str, limit: int = 5) -> List[SpotifyLibTrack]:
     """
     Search for tracks on Spotify and create track models for the results
 
@@ -234,7 +234,7 @@ def search_spotify_tracks(user: User, query: str, limit: int = 5) -> List[Spotif
         limit: Maximum number of results
 
     Returns:
-        List of SpotifyTrack instances
+        List of SpotifyLibTrack instances
     """
     tracks = []
     try:
@@ -246,7 +246,7 @@ def search_spotify_tracks(user: User, query: str, limit: int = 5) -> List[Spotif
                 for track_data in results[ApiFields.Names.TRACKS][ApiFields.Names.ITEMS]:
                     track_id = track_data.get(ApiFields.Names.ID)
                     if track_id:
-                        track = utils.create_spotify_track_instance_from_dict(track_id, track_data)
+                        track = utils.create_spotify_lib_track_instance_from_dict(track_id, track_data)
                         tracks.append(track)
         except spotify_exception.SpotifyResourceNotFoundException:
             logger.info(f"No tracks found for query: {query}")
@@ -260,7 +260,7 @@ def search_spotify_tracks(user: User, query: str, limit: int = 5) -> List[Spotif
     return tracks
 
 
-def sync_user_spotify_library(user: User) -> list[SpotifyTrack]:
+def sync_user_spotify_library(user: User) -> list[SpotifyLibTrack]:
     """
     Sync a user's Spotify library by fetching their saved tracks and creating or updating track models.
     Only updates tracks that have changed since last sync.
@@ -269,7 +269,7 @@ def sync_user_spotify_library(user: User) -> list[SpotifyTrack]:
         user: The user whose library should be synced
 
     Returns:
-        list[SpotifyTrack]: List of synced track instances
+        list[SpotifyLibTrack]: List of synced track instances
     """
     tracks = []
     offset = 0
@@ -286,7 +286,7 @@ def sync_user_spotify_library(user: User) -> list[SpotifyTrack]:
     service = SpotifyAPIService()
 
     # Get all existing track IDs
-    existing_tracks = set(SpotifyTrack.objects.values_list('spotify_id', flat=True))
+    existing_tracks = set(SpotifyLibTrack.objects.values_list('spotify_id', flat=True))
 
     print(f"Found {len(existing_tracks)} existing tracks")
 
@@ -325,7 +325,7 @@ def sync_user_spotify_library(user: User) -> list[SpotifyTrack]:
                 print(f"Track ID: {track_id}")
 
                 # Check if track exists and needs update
-                track = SpotifyTrack.objects.filter(spotify_id=track_id).first()
+                track = SpotifyLibTrack.objects.filter(spotify_id=track_id).first()
                 needs_update = True
 
                 if track:
@@ -344,7 +344,7 @@ def sync_user_spotify_library(user: User) -> list[SpotifyTrack]:
                         continue
 
                 if needs_update:
-                    track = utils.create_spotify_track_instance_from_dict(track_id, track_data)
+                    track = utils.create_spotify_lib_track_instance_from_dict(track_id, track_data)
                     if track:
                         track.last_synced_at = now
                         track.is_removed = False  # Mark as not removed
@@ -379,7 +379,7 @@ def sync_user_spotify_library(user: User) -> list[SpotifyTrack]:
     if removed_tracks:
         print(f"\nFound {len(removed_tracks)} tracks that were removed from Spotify library")
         # Mark these tracks as removed
-        SpotifyTrack.objects.filter(spotify_id__in=removed_tracks).update(is_removed=True)
+        SpotifyLibTrack.objects.filter(spotify_id__in=removed_tracks).update(is_removed=True)
         for track_id in removed_tracks:
             print(f"Track marked as removed: {track_id}")
 
