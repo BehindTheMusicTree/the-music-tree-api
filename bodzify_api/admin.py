@@ -15,9 +15,9 @@ from .model.musicbrainz_resource.children.recording.missing_cause.MbRecordingMis
 from .model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from .model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from .model.playlist.Playlist import Playlist
-from .model.track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import FingerprintMissingCauseCode
-from .model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
-from .model.track.file.TrackFile import TrackFile
+from .model.uploaded_track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import FingerprintMissingCauseCode
+from .model.uploaded_track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
+from .model.uploaded_track.file.TrackFile import TrackFile
 from .model.uploaded_track.UploadedTrack import UploadedTrack
 from .model.user.admin.UserAdmin import UserAdmin
 from .model.user.User import User

@@ -1,7 +1,7 @@
 from typing import cast
 from rest_framework import status
 
-from bodzify_api.model.track.file.TrackFile import TrackFile
+from bodzify_api.model.uploaded_track.file.TrackFile import TrackFile
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 

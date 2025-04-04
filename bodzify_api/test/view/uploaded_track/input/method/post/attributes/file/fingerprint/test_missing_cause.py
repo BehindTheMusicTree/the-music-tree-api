@@ -7,7 +7,7 @@ import pytest
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.model.track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import (
+from bodzify_api.model.uploaded_track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import (
     FingerprintMissingCauseCode
 )
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename

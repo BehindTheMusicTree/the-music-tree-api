@@ -7,7 +7,7 @@ from bodzify_api.serializer.model.artist.minimum import ArtistMinimumSerializer
 from bodzify_api.serializer.model.criteria.output.minimum import CriteriaMinimumSerializer
 from bodzify_api.serializer.model.uploaded_track.output.Fields import Fields
 from bodzify_api.serializer.model.playlist.base.output.minimum import PlaylistMinimumSerializer
-from bodzify_api.serializer.model.track_file.output.detailed import FileDetailedSerializer
+from bodzify_api.serializer.model.uploaded_track_file.output.detailed import FileDetailedSerializer
 
 
 class UploadedTrackDetailedSerializer(serializers.ModelSerializer):

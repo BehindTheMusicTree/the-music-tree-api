@@ -1,7 +1,7 @@
 
 from dataclasses import dataclass
 
-from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
+from bodzify_api.model.uploaded_track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
 
 
 @dataclass

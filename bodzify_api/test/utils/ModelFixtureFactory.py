@@ -32,11 +32,11 @@ from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.children.manual.Fields import Fields as ManualPlayListFields
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from bodzify_api.model.playlist.Fields import Fields as PlayListFields
-from bodzify_api.model.track.file.TrackFile import Fields as TrackFileFields
-from bodzify_api.model.track.file.TrackFile import TrackFile
+from bodzify_api.model.uploaded_track.file.TrackFile import Fields as TrackFileFields
+from bodzify_api.model.uploaded_track.file.TrackFile import TrackFile
 from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackFields
 from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
-from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
+from bodzify_api.model.uploaded_trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.model.user.User import User
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 

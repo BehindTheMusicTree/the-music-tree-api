@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from bodzify_api.model.track.file.TrackFile import TrackFile
+from bodzify_api.model.uploaded_track.file.TrackFile import TrackFile
 from bodzify_api.serializer.model.fingerprint_missing_cause.detailed import FingerprintMissingCauseDetailedSerializer
 from bodzify_api.serializer.model.musicbrainz.recording.detailed import MusicbrainzRecordingDetailedSerializer
 

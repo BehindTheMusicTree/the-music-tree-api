@@ -5,7 +5,7 @@ from django.db import models
 
 from bodzify_api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
 from bodzify_api.model.playlist.PlaylistManager import PlaylistManager
-from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
+from bodzify_api.model.uploaded_trackable_play_count.TrackablePlayCount import TrackablePlayCount
 
 from .Fields import Fields
 
