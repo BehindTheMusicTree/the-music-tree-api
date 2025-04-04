@@ -1,7 +1,7 @@
 from django_filters import rest_framework as filters
 
-from bodzify_api.model.lib_track.LibTrack import LibTrack
-from bodzify_api.model.lib_track.Fields import Fields
+from bodzify_api.model.uploaded_track.LibTrack import LibTrack
+from bodzify_api.model.uploaded_track.Fields import Fields
 
 
 class UploadedTrackFilterSet(filters.FilterSet):

@@ -23,31 +23,31 @@ class LibTrackMixin(PrivateUniqueResource):
 
     @property
     @abstractmethod
-    def lib_tracks(self) -> models.QuerySet['UploadedTrack']:
+    def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
         pass
 
     @property
     @abstractmethod
-    def lib_tracks_not_archived(self) -> models.QuerySet['UploadedTrack']:
-        return self.lib_tracks.filter(archived=False)
+    def uploaded_tracks_not_archived(self) -> models.QuerySet['UploadedTrack']:
+        return self.uploaded_tracks.filter(archived=False)
 
     @property
-    def lib_tracks_not_archived_sorted(self) -> models.QuerySet['UploadedTrack']:
-        return self.lib_tracks_not_archived.order_by(f'-{LibraryTrackFields.CREATED_ON}')
+    def uploaded_tracks_not_archived_sorted(self) -> models.QuerySet['UploadedTrack']:
+        return self.uploaded_tracks_not_archived.order_by(f'-{LibraryTrackFields.CREATED_ON}')
 
     @property
-    def lib_tracks_not_archived_count(self) -> int:
-        return self.lib_tracks_not_archived.count()
+    def uploaded_tracks_not_archived_count(self) -> int:
+        return self.uploaded_tracks_not_archived.count()
 
     @property
-    def lib_tracks_archived_count(self) -> int:
-        return self.lib_tracks.filter(archived=True).count()
+    def uploaded_tracks_archived_count(self) -> int:
+        return self.uploaded_tracks.filter(archived=True).count()
 
     @property
     def duration_in_sec(self) -> int:
         return sum(
-            int(lib_track.track_file.duration_in_sec or 0) if lib_track.track_file else 0
-            for lib_track in self.lib_tracks_not_archived.all()
+            int(uploaded_track.track_file.duration_in_sec or 0) if uploaded_track.track_file else 0
+            for uploaded_track in self.uploaded_tracks_not_archived.all()
         )
 
     @property

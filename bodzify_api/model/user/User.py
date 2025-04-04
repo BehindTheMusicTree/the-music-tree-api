@@ -13,14 +13,14 @@ from bodzify_api.model.base.BaseModel import BaseModel
 from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.utils.ConcatOp import ConcatOp
 from bodzify_api.model.utils.ConditionalExpression import ConditionalExpression
-from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
 
 from .Fields import Fields
 from .UserManager import UserManager
 
 
 if TYPE_CHECKING:
-    from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
+    from bodzify_api.model.all_uploaded_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
 
 
 class User(AbstractUser, BaseModel):
@@ -53,13 +53,13 @@ class User(AbstractUser, BaseModel):
         return settings.MEDIA_ROOT / self.lib_path_relative_to_media
 
     @cached_property
-    def all_lib_tracks_mixin(self) -> 'AllLibTracksMixin':
-        from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
-        all_lib_tracks_mixin, _ = AllLibTracksMixin.objects.get_or_create(user=self)
-        return all_lib_tracks_mixin
+    def all_uploaded_tracks_mixin(self) -> 'AllLibTracksMixin':
+        from bodzify_api.model.all_uploaded_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
+        all_uploaded_tracks_mixin, _ = AllLibTracksMixin.objects.get_or_create(user=self)
+        return all_uploaded_tracks_mixin
 
-    def does_track_filename_exist_in_lib(self, test_lib_track_filename: LibTrackTestFilename):
-        return os.path.isfile(Path(self.lib_abs_path) / test_lib_track_filename)
+    def does_track_filename_exist_in_lib(self, test_uploaded_track_filename: LibTrackTestFilename):
+        return os.path.isfile(Path(self.lib_abs_path) / test_uploaded_track_filename)
 
     def delete(self, *args, **kwargs):
         if self.lib_abs_path.exists():

@@ -26,7 +26,7 @@ from .UploadedTrackManager import LibTrackManager
 
 
 if TYPE_CHECKING:
-    from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+    from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 
 
 class UploadedTrack(TrackablePlayCount):
@@ -58,7 +58,7 @@ class UploadedTrack(TrackablePlayCount):
 
     if TYPE_CHECKING:
         track_file: TrackFile
-        lib_track_playlist_rels: models.QuerySet['LibTrackPlaylistRel']
+        uploaded_track_playlist_rels: models.QuerySet['LibTrackPlaylistRel']
 
     objects: LibTrackManager = LibTrackManager()
 
@@ -96,7 +96,7 @@ class UploadedTrack(TrackablePlayCount):
             artist.name for artist in artists) if self.artists.exists() else f"no {Fields.ARTISTS}"
         return f"{self.uuid} | '{self.title}' by {artists_str}"
 
-    def update_file_metadata_from_lib_track_instance_values(self):
+    def update_file_metadata_from_uploaded_track_instance_values(self):
         normalized_metadata = dict()
         normalized_metadata[AppMetadataKey.TITLE] = self.title
 
@@ -134,8 +134,8 @@ class UploadedTrack(TrackablePlayCount):
 
     @property
     def playlists_with_positions(self) -> list[tuple[str, int]]:
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
-        lib_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, lib_track=self)
-        return list(lib_track_playlist_rels.values_list(LibTrackPlaylistRelFields.PLAYLIST + '__uuid',
-                                                        LibTrackPlaylistRelFields.POSITION))
+        from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
+        from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        uploaded_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, uploaded_track=self)
+        return list(uploaded_track_playlist_rels.values_list(LibTrackPlaylistRelFields.PLAYLIST + '__uuid',
+                                                             LibTrackPlaylistRelFields.POSITION))

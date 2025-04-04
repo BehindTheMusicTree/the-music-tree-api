@@ -41,26 +41,29 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
             relation.position = i
             relation.save(update_fields=[Fields.POSITION])
 
-    def archive_instances_of_lib_track(self, lib_track: 'UploadedTrack'):
-        for lib_track_playlist_rel in lib_track.lib_track_playlist_rels.all():
-            lib_track_old_position = cast(int, lib_track_playlist_rel.position)  # Is not None before archiving
-            lib_track_playlist_rel.position = None
-            lib_track_playlist_rel.save(update_fields=[Fields.POSITION])
+    def archive_instances_of_uploaded_track(self, uploaded_track: 'UploadedTrack'):
+        for uploaded_track_playlist_rel in uploaded_track.uploaded_track_playlist_rels.all():
+            uploaded_track_old_position = cast(
+                int, uploaded_track_playlist_rel.position)  # Is not None before archiving
+            uploaded_track_playlist_rel.position = None
+            uploaded_track_playlist_rel.save(update_fields=[Fields.POSITION])
 
-            self._decrement_positions_of_following_tracks(lib_track_playlist_rel.playlist, lib_track_old_position)
+            self._decrement_positions_of_following_tracks(
+                uploaded_track_playlist_rel.playlist, uploaded_track_old_position)
 
-    def unarchive_instances_of_lib_track(self, lib_track: 'UploadedTrack'):
-        for lib_track_playlist_rel in lib_track.lib_track_playlist_rels.all():
-            self._increment_positions_of_following_tracks(lib_track_playlist_rel.playlist, 1)
-            lib_track_playlist_rel.position = 1
-            lib_track_playlist_rel.save(update_fields=[Fields.POSITION])
+    def unarchive_instances_of_uploaded_track(self, uploaded_track: 'UploadedTrack'):
+        for uploaded_track_playlist_rel in uploaded_track.uploaded_track_playlist_rels.all():
+            self._increment_positions_of_following_tracks(uploaded_track_playlist_rel.playlist, 1)
+            uploaded_track_playlist_rel.position = 1
+            uploaded_track_playlist_rel.save(update_fields=[Fields.POSITION])
 
-    def delete_instance(self, user: User, playlist: 'Playlist', lib_track: 'UploadedTrack'):
+    def delete_instance(self, user: User, playlist: 'Playlist', uploaded_track: 'UploadedTrack'):
         from .LibTrackPlaylistRel import LibTrackPlaylistRel
-        lib_track_playlist_rel: LibTrackPlaylistRel = self.get(user=user, playlist=playlist, lib_track=lib_track)
-        if lib_track_playlist_rel.position is not None:  # if lib track not archived
-            self._decrement_positions_of_following_tracks(playlist, lib_track_playlist_rel.position)
-        lib_track_playlist_rel.delete()
+        uploaded_track_playlist_rel: LibTrackPlaylistRel = self.get(
+            user=user, playlist=playlist, uploaded_track=uploaded_track)
+        if uploaded_track_playlist_rel.position is not None:  # if lib track not archived
+            self._decrement_positions_of_following_tracks(playlist, uploaded_track_playlist_rel.position)
+        uploaded_track_playlist_rel.delete()
 
     def move_tracks_to_playlist_beginning(
             self, source_rels: QuerySet['LibTrackPlaylistRel'], target_playlist: 'Playlist') -> None:
@@ -90,7 +93,7 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
         return self.filter(
             user=playlist.user,
             playlist=playlist
-        ).select_related('lib_track').order_by(
+        ).select_related('uploaded_track').order_by(
             F(Fields.POSITION).desc(nulls_last=True),
             Fields.POSITION
         )

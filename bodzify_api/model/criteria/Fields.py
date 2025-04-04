@@ -1,8 +1,8 @@
-from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
+from bodzify_api.model.uploaded_track_mixin.Fields import Fields as LibTrackMixinFields
 
 
 class Fields(LibTrackMixinFields):
-    LIB_TRACKS_RELATED_NAME = 'lib_tracks_of_criteria'
+    LIB_TRACKS_RELATED_NAME = 'uploaded_tracks_of_criteria'
     ASCENDANTS = 'ascendants'
     ASCENDANTS_RELS = 'ascendants_rels'
     DESCENDANTS = 'descendants'

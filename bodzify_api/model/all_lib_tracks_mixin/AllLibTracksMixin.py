@@ -1,9 +1,9 @@
 from django.db import models
 
-from bodzify_api.model.all_lib_tracks_mixin.AllLibTrackMixinManager import AllLibTrackMixinManager
+from bodzify_api.model.all_uploaded_tracks_mixin.AllLibTrackMixinManager import AllLibTrackMixinManager
 from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 
-from ..lib_track_mixin.LibTrackMixin import LibTrackMixin
+from ..uploaded_track_mixin.LibTrackMixin import LibTrackMixin
 from .Fields import Fields
 
 
@@ -25,7 +25,7 @@ class AllLibTracksMixin(LibTrackMixin):
         return 'All Tracks'
 
     @property
-    def lib_tracks(self) -> models.QuerySet[UploadedTrack]:
+    def uploaded_tracks(self) -> models.QuerySet[UploadedTrack]:
         return UploadedTrack.objects.filter(user=self.user)
 
     @property

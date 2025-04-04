@@ -6,7 +6,7 @@ from mutagen import File  # type: ignore
 
 from bodzify_api import settings
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields
+from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields
 
 
 @deconstructible

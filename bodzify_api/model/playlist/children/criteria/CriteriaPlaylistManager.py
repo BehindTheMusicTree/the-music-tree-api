@@ -41,53 +41,53 @@ class CriteriaPlaylistManager(StandardResourceManager):
         for child in instance.children.all():
             self.update_instance_and_children_root(instance=child, root=root)
 
-    def update_ascendants_lib_tracks(
+    def update_ascendants_uploaded_tracks(
             self, instance: 'CriteriaPlaylist', old_parent: 'Criteria | None', common_criteria: 'Criteria | None'):
         if instance.parent:
-            self.add_lib_tracks_to_instance_and_ascendants_until_criteria_limit(
-                instance=instance.parent, lib_tracks=instance.lib_tracks.all(), criteria_limit=common_criteria)
+            self.add_uploaded_tracks_to_instance_and_ascendants_until_criteria_limit(
+                instance=instance.parent, uploaded_tracks=instance.uploaded_tracks.all(), criteria_limit=common_criteria)
 
         if old_parent:
-            self.remove_lib_tracks_from_instance_and_ascendants_until_criteria_limit(
-                instance=old_parent.criteria_playlist, lib_tracks=instance.lib_tracks.all(), criteria_limit=common_criteria)
+            self.remove_uploaded_tracks_from_instance_and_ascendants_until_criteria_limit(
+                instance=old_parent.criteria_playlist, uploaded_tracks=instance.uploaded_tracks.all(), criteria_limit=common_criteria)
 
-    def add_lib_tracks_to_instance_and_ascendants_until_criteria_limit(self,
-                                                                       instance: 'CriteriaPlaylist',
-                                                                       lib_tracks: QuerySet['UploadedTrack'],
-                                                                       criteria_limit: 'Criteria | None' = None):
+    def add_uploaded_tracks_to_instance_and_ascendants_until_criteria_limit(self,
+                                                                            instance: 'CriteriaPlaylist',
+                                                                            uploaded_tracks: QuerySet['UploadedTrack'],
+                                                                            criteria_limit: 'Criteria | None' = None):
         if instance.criteria != criteria_limit:
-            from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
-            for lib_track in lib_tracks:
-                LibTrackPlaylistRel(user=instance.user, playlist=instance, lib_track=lib_track).save()
+            from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+            for uploaded_track in uploaded_tracks:
+                LibTrackPlaylistRel(user=instance.user, playlist=instance, uploaded_track=uploaded_track).save()
 
             if instance.parent:
-                self.add_lib_tracks_to_instance_and_ascendants_until_criteria_limit(
-                    instance=instance.parent, lib_tracks=lib_tracks, criteria_limit=criteria_limit)
+                self.add_uploaded_tracks_to_instance_and_ascendants_until_criteria_limit(
+                    instance=instance.parent, uploaded_tracks=uploaded_tracks, criteria_limit=criteria_limit)
 
-    def remove_lib_tracks_from_instance_and_ascendants_until_criteria_limit(
+    def remove_uploaded_tracks_from_instance_and_ascendants_until_criteria_limit(
             self, instance: 'CriteriaPlaylist',
-            lib_tracks: QuerySet['UploadedTrack'],
+            uploaded_tracks: QuerySet['UploadedTrack'],
             criteria_limit: 'Criteria | None' = None):
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 
         if instance.criteria != criteria_limit:
-            instance.lib_track_playlist_rels.filter(lib_track__in=lib_tracks).delete()
+            instance.uploaded_track_playlist_rels.filter(uploaded_track__in=uploaded_tracks).delete()
             LibTrackPlaylistRel.objects.update_positions_to_fill_deleted_ones(instance)
 
             if instance.parent:
-                self.remove_lib_tracks_from_instance_and_ascendants_until_criteria_limit(
-                    instance=instance.parent, lib_tracks=lib_tracks, criteria_limit=criteria_limit)
+                self.remove_uploaded_tracks_from_instance_and_ascendants_until_criteria_limit(
+                    instance=instance.parent, uploaded_tracks=uploaded_tracks, criteria_limit=criteria_limit)
 
     def transfer_direct_tracks_to_criterialess_playlist(
             self, direct_tracks: QuerySet['UploadedTrack'],
             criteria_playlist: 'CriteriaPlaylist'):
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 
         criterialess_playlist = self.get(
             user=criteria_playlist.user, criteria=None, type=criteria_playlist.type)
 
-        direct_tracks_rels_in_criteria_playlist = criteria_playlist.lib_track_playlist_rels.filter(
-            lib_track__uuid__in=[track.uuid for track in direct_tracks]
+        direct_tracks_rels_in_criteria_playlist = criteria_playlist.uploaded_track_playlist_rels.filter(
+            uploaded_track__uuid__in=[track.uuid for track in direct_tracks]
         )
 
         direct_tracks_rels_not_archived = direct_tracks_rels_in_criteria_playlist.filter(position__isnull=False)

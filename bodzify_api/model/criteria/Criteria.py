@@ -13,7 +13,7 @@ from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
 from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
 from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
-from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
+from bodzify_api.model.uploaded_track_mixin.LibTrackMixin import LibTrackMixin
 from bodzify_api.utils.model import SaveContext
 
 from .Fields import Fields
@@ -56,7 +56,7 @@ class Criteria(LibTrackMixin):
         return self._name
 
     @property
-    def lib_tracks(self) -> models.QuerySet['UploadedTrack']:
+    def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
         return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
 
     @property

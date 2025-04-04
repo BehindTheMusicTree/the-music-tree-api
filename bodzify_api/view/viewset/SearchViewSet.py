@@ -17,7 +17,7 @@ from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlay
 from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 from bodzify_api.serializer.model.album.minimum import AlbumMinimumSerializer
 from bodzify_api.serializer.model.artist.simple import ArtistSimpleSerializer
-from bodzify_api.serializer.model.lib_track.output.detailed import UploadedTrackDetailedSerializer
+from bodzify_api.serializer.model.uploaded_track.output.detailed import UploadedTrackDetailedSerializer
 from bodzify_api.serializer.model.playlist.children.criteria.output.simple import CriteriaSimpleSerializer
 from bodzify_api.serializer.model.playlist.children.manual.output.simple import ManualPlaylistSimpleSerializer
 
@@ -67,16 +67,16 @@ class SearchViewSet(ObjectMultipleModelAPIViewSet):
         query = self.request.query_params.get('query', '')
 
         # Base querysets filtered by user
-        lib_track_qs = UploadedTrack.objects.filter(user=user)
+        uploaded_track_qs = UploadedTrack.objects.filter(user=user)
         manual_playlist_qs = ManualPlaylist.objects.filter(user=user)
         criteria_playlist_qs = CriteriaPlaylist.objects.filter(user=user)
         album_qs = Album.objects.filter(user=user)
         artist_qs = Artist.objects.filter(user=user)
 
         # Apply filtersets
-        lib_track_fs = LibTrackSearchFilterSet(
+        uploaded_track_fs = LibTrackSearchFilterSet(
             data=self.request.query_params,
-            queryset=lib_track_qs
+            queryset=uploaded_track_qs
         )
         manual_playlist_fs = ManualPlaylistSearchFilterSet(
             data=self.request.query_params,
@@ -113,7 +113,7 @@ class SearchViewSet(ObjectMultipleModelAPIViewSet):
 
         querylist = (
             {
-                'queryset': lib_track_fs.qs,
+                'queryset': uploaded_track_fs.qs,
                 'serializer_class': UploadedTrackDetailedSerializer,
             },
             {

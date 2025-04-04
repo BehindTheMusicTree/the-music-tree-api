@@ -60,7 +60,7 @@ class BaseModel(models.Model, metaclass=DynamicTableNameModelBase):
         self._post_save(adding=adding)
 
     def _prepare_save(self, ctx: SaveContext) -> dict:
-        from bodzify_api.model.lib_track_mixin.query_utils import transform_name_fields
+        from bodzify_api.model.uploaded_track_mixin.query_utils import transform_name_fields
         transformed_kwargs = transform_name_fields(self.__class__, **ctx.kwargs)
         ctx.kwargs = transformed_kwargs
         return ctx.kwargs

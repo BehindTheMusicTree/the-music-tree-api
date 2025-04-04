@@ -6,7 +6,7 @@ from .Fields import Fields
 
 
 if TYPE_CHECKING:
-    from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
+    from bodzify_api.model.uploaded_track_mixin.LibTrackMixin import LibTrackMixin
 
 T = TypeVar('T', bound='LibTrackMixin')
 

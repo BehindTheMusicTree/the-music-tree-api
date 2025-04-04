@@ -2,9 +2,9 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework.exceptions import APIException
 
-from bodzify_api.model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
+from bodzify_api.model.all_uploaded_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
 from bodzify_api.model.user.User import User
-from bodzify_api.serializer.model.lib_track.output.minimum import LibTrackMinimumSerializer
+from bodzify_api.serializer.model.uploaded_track.output.minimum import LibTrackMinimumSerializer
 from bodzify_api.serializer.SerializerType import SerializerType
 from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
 
@@ -19,7 +19,7 @@ class AllLibTracksViewSet(AppModelViewSet[AllLibTracksMixin]):
         user = self.request.user
         if not isinstance(user, User):
             raise ValueError('User is not instance of User')
-        return user.all_lib_tracks_mixin
+        return user.all_uploaded_tracks_mixin
 
     @extend_schema(responses=LibTrackMinimumSerializer(many=True))
     def list(self, args, **kwargs):
@@ -28,7 +28,7 @@ class AllLibTracksViewSet(AppModelViewSet[AllLibTracksMixin]):
         allLibTracksMixin: AllLibTracksMixin | None = queryset.first()
         if not allLibTracksMixin:
             raise APIException('System initialization error: User data is corrupted')
-        page = self.paginate_queryset(allLibTracksMixin.lib_tracks_not_archived_sorted)
+        page = self.paginate_queryset(allLibTracksMixin.uploaded_tracks_not_archived_sorted)
 
         if page is not None:
             serializer = self._require_serializer(SerializerType.SIMPLE)(page, many=True)

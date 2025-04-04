@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from bodzify_api.serializer.model.playlist.base.output.minimum import PlaylistMinimumSerializer
 
 from .Fields import Fields

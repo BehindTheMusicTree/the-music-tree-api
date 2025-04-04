@@ -2,8 +2,8 @@ from typing import TYPE_CHECKING
 
 from django.db import transaction
 
-from bodzify_api.model.lib_track_mixin.Fields import Fields as LibTrackMixinFields
-from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
+from bodzify_api.model.uploaded_track_mixin.Fields import Fields as LibTrackMixinFields
+from bodzify_api.model.uploaded_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
 
 
 if TYPE_CHECKING:
@@ -36,13 +36,13 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
         for album in instance.albums.all():
             Album.objects.delete_instance_with_tracks_and_potentially_artists(album)
 
-        for lib_track in instance.lib_tracks.all():
-            UploadedTrack.objects.delete_instance_with_checking_album_and_artists_potential_deletion(lib_track)
+        for uploaded_track in instance.uploaded_tracks.all():
+            UploadedTrack.objects.delete_instance_with_checking_album_and_artists_potential_deletion(uploaded_track)
 
         return instance.delete()
 
     def delete_instance_if_nothing_linked(self, instance: 'Artist') -> tuple[int, dict[str, int]]:
         if instance.albums.count() == 0:
-            if instance.lib_tracks.count() == 0:
+            if instance.uploaded_tracks.count() == 0:
                 return instance.delete()
         return 0, {}

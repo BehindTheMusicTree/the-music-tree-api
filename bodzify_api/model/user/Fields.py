@@ -8,4 +8,4 @@ class Fields:
     IS_SUPERUSER = 'is_superuser'
     GROUPS = 'groups'
     USER_PERMISSIONS = 'user_permissions'
-    ALL_LIB_TRACK_MIXIN = 'all_lib_tracks_mixin'
+    ALL_LIB_TRACK_MIXIN = 'all_uploaded_tracks_mixin'

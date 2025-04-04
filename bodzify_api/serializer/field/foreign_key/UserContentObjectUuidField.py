@@ -36,17 +36,17 @@ class PrivateContentUuidField(PrivateUuidField):
         super().__init__(**kwargs)
         # Initialize content type cache as None
         self._playlist_ct = None
-        self._lib_track_ct = None
+        self._uploaded_track_ct = None
 
     def _get_playlist_ct(self):
         if self._playlist_ct is None:
             self._playlist_ct = ContentType.objects.get_for_model(Playlist)
         return self._playlist_ct
 
-    def _get_lib_track_ct(self):
-        if self._lib_track_ct is None:
-            self._lib_track_ct = ContentType.objects.get_for_model(UploadedTrack)
-        return self._lib_track_ct
+    def _get_uploaded_track_ct(self):
+        if self._uploaded_track_ct is None:
+            self._uploaded_track_ct = ContentType.objects.get_for_model(UploadedTrack)
+        return self._uploaded_track_ct
 
     def get_queryset(self):
         user = self.get_request_user()
@@ -75,11 +75,11 @@ class PrivateContentUuidField(PrivateUuidField):
                 ContentObjectFields.CONTENT: playlist
             }
 
-        lib_track = UploadedTrack.objects.filter(user=user, uuid=uuid).first()
-        if lib_track:
+        uploaded_track = UploadedTrack.objects.filter(user=user, uuid=uuid).first()
+        if uploaded_track:
             return {
-                ContentObjectFields.CONTENT_TYPE: self._get_lib_track_ct(),
-                ContentObjectFields.CONTENT: lib_track
+                ContentObjectFields.CONTENT_TYPE: self._get_uploaded_track_ct(),
+                ContentObjectFields.CONTENT: uploaded_track
             }
         self.fail('does_not_exist')
 

@@ -11,7 +11,7 @@ from bodzify_api.serializer.model.criteria_lineage_rel.without_ascendant import 
 from bodzify_api.serializer.model.criteria_lineage_rel.without_descendant import (
     CriteriaLineageRelWithoutDescendantSerializer
 )
-from bodzify_api.serializer.model.lib_track.output.simple.simple_without_album_and_genre import (
+from bodzify_api.serializer.model.uploaded_track.output.simple.simple_without_album_and_genre import (
     LibTrackWithoutAlbumPlaylistGenreSerializer
 )
 from bodzify_api.serializer.model.playlist.children.criteria.output.minumum import CriteriaPlaylistMinimumSerializer

@@ -38,7 +38,7 @@ from .fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMis
 
 
 class TrackFile(PrivateStandardResource):
-    lib_track = PrivateOneToOneField(  # type: ignore
+    uploaded_track = PrivateOneToOneField(  # type: ignore
         'LibraryTrack', on_delete=models.CASCADE, related_name=LibraryTrackFields.TRACK_FILE_INTERNAL)
     file: TemporaryUploadedFile | FieldFile = models.FileField(  # type: ignore
         upload_to=model_utils.get_user_lib_path,
@@ -64,8 +64,8 @@ class TrackFile(PrivateStandardResource):
         MbRecordingMissingCause, on_delete=models.DO_NOTHING, null=True)
 
     if TYPE_CHECKING:
-        from ..lib.LibraryTrack import UploadedTrack
-        lib_track: UploadedTrack
+        from ..lib.UploadedTrack import UploadedTrack
+        uploaded_track: UploadedTrack
 
     class Meta:
         verbose_name = 'Track File'
@@ -103,12 +103,12 @@ class TrackFile(PrivateStandardResource):
 
         if is_audio_meta_analysis_enabled_override == 'true' or settings.AUDIO_META_ANALYSIS_ENABLED:
             fingerprinting_result = audio_fingerprinter.get_fingerprinting_result(
-                user=self.user, track_file=self.file, title=self.lib_track.title)
+                user=self.user, track_file=self.file, title=self.uploaded_track.title)
 
             if fingerprinting_result.is_success:
                 fingerprint = binascii.hexlify(fingerprinting_result.fingerprint)
 
-                if self.lib_track.track_file_fingerprint_must_be_unique:
+                if self.uploaded_track.track_file_fingerprint_must_be_unique:
                     existing_track_file = cast(
                         'TrackFile | None',
                         self.__class__.objects.filter(user=self.user, fingerprint_memory=fingerprint).first())
@@ -116,7 +116,7 @@ class TrackFile(PrivateStandardResource):
                         raise AppValidationException(
                             field_name='file',
                             message=_(f'The file {self.filename} has the same fingerprint as the track "'
-                                      f'{existing_track_file.lib_track.simple_str()}"'),
+                                      f'{existing_track_file.uploaded_track.simple_str()}"'),
                             field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_FINGERPRINT_DUPLICATE)
                 self.fingerprint_memory = fingerprint
             else:

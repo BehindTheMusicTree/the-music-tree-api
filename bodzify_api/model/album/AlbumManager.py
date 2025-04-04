@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING
 from django.db import transaction
 from django.db.models import QuerySet
 
-from bodzify_api.model.lib_track_mixin.Fields import Fields
-from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
+from bodzify_api.model.uploaded_track_mixin.Fields import Fields
+from bodzify_api.model.uploaded_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
 
 
 if TYPE_CHECKING:
@@ -64,8 +64,8 @@ class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
         # Keep this deletion order for rollback tests: first delete tracks, then delete album, then delete artists
 
         artists_linked_to_album_and_track: list[Artist] = []
-        lib_tracks: QuerySet[UploadedTrack] = instance.lib_tracks.all()
-        for track in lib_tracks:
+        uploaded_tracks: QuerySet[UploadedTrack] = instance.uploaded_tracks.all()
+        for track in uploaded_tracks:
             if track.artists.exists():
                 for artist in track.artists.all():
                     if artist not in artists_linked_to_album_and_track:
@@ -83,7 +83,7 @@ class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
 
     def delete_instance_if_no_track_linked_with_potential_album_artist_deletion(self, instance: 'Album'):
         from bodzify_api.model.artist.Artist import Artist
-        if instance.lib_tracks.count() == 0:
+        if instance.uploaded_tracks.count() == 0:
             album_artists = list(instance.album_artists.all())  # Copy the list before the deletion
             instance.delete()
             for album_artist in album_artists:

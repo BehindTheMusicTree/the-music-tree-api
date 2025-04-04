@@ -10,7 +10,7 @@ from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
 from bodzify_api.model.track.file.Fields import Fields as TrackFileFields
 from bodzify_api.model.user.User import User
-from bodzify_api.serializer.model.lib_track.input.Fields import InputFields as InputFields
+from bodzify_api.serializer.model.uploaded_track.input.Fields import InputFields as InputFields
 
 from .Fields import Fields
 
@@ -25,7 +25,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
     model: type['UploadedTrack']
 
     def _remove_from_genre_playlists(self, instance: 'UploadedTrack', old_genre: 'Genre | None', genre_limit=None):
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 
         update_date = timezone.now()
@@ -34,7 +34,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             while old_genre_tree_item != genre_limit:
                 old_genre_tree_item = cast(Criteria, old_genre_tree_item)  # Cannot be None at that point
                 LibTrackPlaylistRel.objects.delete_instance(
-                    user=instance.user, playlist=old_genre_tree_item.criteria_playlist, lib_track=instance)
+                    user=instance.user, playlist=old_genre_tree_item.criteria_playlist, uploaded_track=instance)
 
                 # The loop will stop before genre_tree_item is None
                 old_genre_tree_item = old_genre_tree_item.parent
@@ -43,10 +43,10 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             genreless_criteria_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(
                 user=instance.user, type=CriteriaTypePks.GENRE, criteria=None)
             LibTrackPlaylistRel.objects.filter(
-                playlist=genreless_criteria_playlist, lib_track=instance).delete()
+                playlist=genreless_criteria_playlist, uploaded_track=instance).delete()
 
     def _add_to_genre_playlists(self, instance: 'UploadedTrack', genre_limit=None):
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 
         update_date = timezone.now()
@@ -54,7 +54,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             genre_tree_item: Genre = instance.genre
             while genre_tree_item != genre_limit:
                 LibTrackPlaylistRel.objects.create(
-                    user=instance.user, playlist=genre_tree_item.criteria_playlist, lib_track=instance)
+                    user=instance.user, playlist=genre_tree_item.criteria_playlist, uploaded_track=instance)
 
                 # The loop will stop before genre_tree_item is None
                 genre_tree_item = genre_tree_item.parent  # type: ignore
@@ -63,15 +63,15 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                                                                                          type=CriteriaTypePks.GENRE,
                                                                                          criteria=None)
             LibTrackPlaylistRel.objects.create(
-                user=instance.user, playlist=genreless_criteria_playlist, lib_track=instance)
+                user=instance.user, playlist=genreless_criteria_playlist, uploaded_track=instance)
 
     def _decrease_position_of_next_tracks_in_old_track_playlists(self, user: User, playlists_with_old_position: list):
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
+        from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
         for playlist_uuid, old_position in playlists_with_old_position:
-            lib_track_playlist_rels_to_update = LibTrackPlaylistRel.objects.filter(
+            uploaded_track_playlist_rels_to_update = LibTrackPlaylistRel.objects.filter(
                 user=user, playlist=playlist_uuid, position__gt=old_position)
-            lib_track_playlist_rels_to_update.update(position=F(LibTrackPlaylistRelFields.POSITION) - 1)
+            uploaded_track_playlist_rels_to_update.update(position=F(LibTrackPlaylistRelFields.POSITION) - 1)
 
     def _update_genre_playlists(self, instance: 'UploadedTrack', old_genre: 'Genre | None'):
         from bodzify_api.model.criteria.children.genre.Genre import Genre
@@ -99,7 +99,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             TrackFile.objects.create(**track_file_model_data)
 
             self._add_to_genre_playlists(instance)
-            instance.update_file_metadata_from_lib_track_instance_values()
+            instance.update_file_metadata_from_uploaded_track_instance_values()
             return instance
 
     def create_instance_with_track_file(
@@ -108,22 +108,22 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         with transaction.atomic():
             artists = library_track_data.pop(Fields.ARTISTS, None)
-            lib_track: UploadedTrack = self.model(**library_track_data)
-            lib_track.save()
+            uploaded_track: UploadedTrack = self.model(**library_track_data)
+            uploaded_track.save()
             if artists:
-                lib_track.artists.set(artists)
+                uploaded_track.artists.set(artists)
 
-            track_file_data[TrackFileFields.LIB_TRACK] = lib_track
+            track_file_data[TrackFileFields.LIB_TRACK] = uploaded_track
             TrackFile.objects.create(**track_file_data)
 
-        lib_track.update_file_metadata_from_lib_track_instance_values()
+        uploaded_track.update_file_metadata_from_uploaded_track_instance_values()
 
-        return lib_track
+        return uploaded_track
 
     def update_instance(self, old_instance: 'UploadedTrack', **kwargs) -> 'UploadedTrack':
         from bodzify_api.model.album.Album import Album
         from bodzify_api.model.artist.Artist import Artist
-        from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 
         with transaction.atomic():
             old_album_artists_list = []
@@ -142,7 +142,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             old_archived_state = old_instance.archived
 
             updated_instance: UploadedTrack = super().update_instance(old_instance, **kwargs)
-            updated_instance.update_file_metadata_from_lib_track_instance_values()
+            updated_instance.update_file_metadata_from_uploaded_track_instance_values()
 
             if old_genre != updated_instance.genre:
                 self._update_genre_playlists(updated_instance, old_genre=old_genre)
@@ -161,9 +161,9 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
             if old_archived_state != updated_instance.archived:
                 if updated_instance.archived:
-                    LibTrackPlaylistRel.objects.archive_instances_of_lib_track(lib_track=updated_instance)
+                    LibTrackPlaylistRel.objects.archive_instances_of_uploaded_track(uploaded_track=updated_instance)
                 else:
-                    LibTrackPlaylistRel.objects.unarchive_instances_of_lib_track(lib_track=updated_instance)
+                    LibTrackPlaylistRel.objects.unarchive_instances_of_uploaded_track(uploaded_track=updated_instance)
 
             return updated_instance
 

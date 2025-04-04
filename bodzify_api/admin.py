@@ -1,11 +1,11 @@
 from django.contrib import admin
 
 from .model.album.Album import Album
-from .model.all_lib_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
+from .model.all_uploaded_tracks_mixin.AllLibTracksMixin import AllLibTracksMixin
 from .model.artist.Artist import Artist
 from .model.criteria.Criteria import Criteria
 from .model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
-from .model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+from .model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 from .model.musicbrainz_resource.children.artist.MbArtist import MbArtist
 from .model.musicbrainz_resource.children.recording.MbRecording import MusicbrainzRecording
 from .model.musicbrainz_resource.children.recording.missing_cause.code.MbRecordingMissingCauseCode import (

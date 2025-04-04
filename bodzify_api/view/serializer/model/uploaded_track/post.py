@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from bodzify_api.model.lib_track.LibTrack import UploadedTrack
-from bodzify_api.model.lib_track.Fields import Fields
+from bodzify_api.model.uploaded_track.LibTrack import UploadedTrack
+from bodzify_api.model.uploaded_track.Fields import Fields
 
 
 class UploadedTrackPostSerializer(serializers.ModelSerializer):

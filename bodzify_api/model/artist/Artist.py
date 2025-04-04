@@ -4,7 +4,7 @@ from django.db import models
 
 from bodzify_api import settings
 from bodzify_api.model.field.AppCharField import AppCharField
-from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
+from bodzify_api.model.uploaded_track_mixin.LibTrackMixin import LibTrackMixin
 
 from .ArtistManager import ArtistManager
 from .Fields import Fields
@@ -28,7 +28,7 @@ class Artist(LibTrackMixin):
     objects: ArtistManager = ArtistManager()
 
     @property
-    def lib_tracks(self) -> models.QuerySet['UploadedTrack']:
+    def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
         return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
 
     class Meta:
