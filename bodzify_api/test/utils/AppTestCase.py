@@ -14,7 +14,7 @@ from bodzify_api.model.user.User import User
 from bodzify_api.model.uuid.Fields import Fields as UuidModelFields
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as LibTrackPostFields
 from bodzify_api.test.utils.AppApiClient import AppApiClient
-from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.utils.ModelFixtureFactory import ModelFixtureFactory
 from bodzify_api.utils import audio_metadata, data_transformer
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields

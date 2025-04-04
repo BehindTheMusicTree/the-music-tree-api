@@ -4,7 +4,7 @@ from bodzify_api.model.uploaded_track_playlist_rel.Fields import Fields as LibTr
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.serializer.model.uploaded_track.output.simple.simple_without_album import Fields as LibTrackOutputFields
 from bodzify_api.serializer.model.playlist.base.output.detailed import Fields as PlaylistOutputFields
-from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from bodzify_api.utils import data_transformer
 
