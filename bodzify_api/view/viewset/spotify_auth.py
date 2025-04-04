@@ -7,7 +7,7 @@ from django.utils import timezone
 from bodzify_api.utils.spotify.oauth import SpotifyOAuthService
 from bodzify_api.model.user.User import User
 from bodzify_api.utils.jwt import create_jwt_token
-from bodzify_api.utils.spotify.service import sync_user_spotify_library
+from bodzify_api.utils.spotify.service import quick_sync_spotify_library
 
 
 @api_view(['GET'])
@@ -66,10 +66,10 @@ def spotify_auth_api(request):
         print(f"User authenticated: {user.username}")
         print("Attempting to sync user's library...")
 
-        # Sync user's Spotify library
+        # Quick sync user's Spotify library (only new additions)
         try:
-            tracks = sync_user_spotify_library(user)
-            sync_message = f"Successfully synced {len(tracks)} tracks"
+            tracks = quick_sync_spotify_library(user)
+            sync_message = f"Successfully quick-synced {len(tracks)} new tracks"
             print(sync_message)
         except Exception as e:
             sync_message = f"Failed to sync library: {str(e)}"
@@ -134,10 +134,10 @@ def spotify_callback(request):
             user.spotify_refresh_token = refresh_token
             user.save()
 
-        # Sync user's Spotify library
+        # Quick sync user's Spotify library (only new additions)
         try:
-            tracks = sync_user_spotify_library(user)
-            sync_message = f"Successfully synced {len(tracks)} tracks"
+            tracks = quick_sync_spotify_library(user)
+            sync_message = f"Successfully quick-synced {len(tracks)} new tracks"
         except Exception as e:
             sync_message = f"Failed to sync tracks: {str(e)}"
 

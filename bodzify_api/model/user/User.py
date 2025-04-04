@@ -45,6 +45,12 @@ class User(AbstractUser, BaseModel):
     spotify_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
     spotify_access_token = models.CharField(max_length=500, null=True, blank=True)
     spotify_refresh_token = models.CharField(max_length=500, null=True, blank=True)
+    spotify_token_expires_at = models.DateTimeField(null=True, blank=True)
+    spotify_library_last_synced_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Timestamp of when the user's Spotify library was last synced"
+    )
 
     objects: UserManager = UserManager()
 

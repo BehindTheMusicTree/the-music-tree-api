@@ -61,7 +61,7 @@ def create_spotify_lib_track_instance_from_dict(
     except ObjectDoesNotExist:
         spotify_lib_track = SpotifyLibTrack.objects.create(
             spotify_id=spotify_lib_track_id,
-            _name=name,
+            name=name,
             duration_ms=duration_ms,
             popularity=popularity,
             album=album,
