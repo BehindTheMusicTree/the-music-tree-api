@@ -26,7 +26,7 @@ from .UploadedTrackManager import LibTrackManager
 
 
 if TYPE_CHECKING:
-    from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+    from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
 
 
 class UploadedTrack(TrackablePlayCount):
@@ -58,7 +58,7 @@ class UploadedTrack(TrackablePlayCount):
 
     if TYPE_CHECKING:
         track_file: TrackFile
-        uploaded_track_playlist_rels: models.QuerySet['LibTrackPlaylistRel']
+        uploaded_track_playlist_rels: models.QuerySet['UploadedTrackPlaylistRel']
 
     objects: LibTrackManager = LibTrackManager()
 
@@ -134,8 +134,8 @@ class UploadedTrack(TrackablePlayCount):
 
     @property
     def playlists_with_positions(self) -> list[tuple[str, int]]:
-        from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
-        from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
-        uploaded_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, uploaded_track=self)
+        from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import Fields as LibTrackPlaylistRelFields
+        from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
+        uploaded_track_playlist_rels = UploadedTrackPlaylistRel.objects.filter(user=self.user, uploaded_track=self)
         return list(uploaded_track_playlist_rels.values_list(LibTrackPlaylistRelFields.PLAYLIST + '__uuid',
                                                              LibTrackPlaylistRelFields.POSITION))

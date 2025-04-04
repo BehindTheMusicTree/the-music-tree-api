@@ -4,7 +4,7 @@ from django.db.models import F, Case, When, Value
 
 
 from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
-from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRelManager import LibTrackPlaylistRelManager
+from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRelManager import UploadedTrackPlaylistRelManager
 from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
@@ -17,14 +17,14 @@ from .Fields import Fields
 User = get_user_model()
 
 
-class LibTrackPlaylistRel(PrivateStandardResource):
+class UploadedTrackPlaylistRel(PrivateStandardResource):
     playlist: Playlist = PrivateForeignKey(  # type: ignore
         Playlist, on_delete=models.CASCADE, related_name=PlayListFields.UPLOADED_TRACK_PLAYLIST_RELS_INTERNAL)
     uploaded_track: UploadedTrack = PrivateForeignKey(  # type: ignore
         UploadedTrack, on_delete=models.CASCADE, related_name=LibTrackFields.UPLOADED_TRACK_PLAYLIST_RELS)
     position = models.PositiveIntegerField(null=True, blank=True)
 
-    objects: LibTrackPlaylistRelManager = LibTrackPlaylistRelManager()
+    objects: UploadedTrackPlaylistRelManager = UploadedTrackPlaylistRelManager()
 
     class Meta:
         verbose_name = 'Library Track Playlist Relation'
@@ -40,7 +40,8 @@ class LibTrackPlaylistRel(PrivateStandardResource):
 
     def _perform_save(self, adding: bool, ctx) -> None:
         if adding:
-            uploaded_track_playlist_rels = LibTrackPlaylistRel.objects.filter(user=self.user, playlist=self.playlist)
+            uploaded_track_playlist_rels = UploadedTrackPlaylistRel.objects.filter(
+                user=self.user, playlist=self.playlist)
             uploaded_track_playlist_rels.update(
                 position=Case(
                     When(**{Fields.POSITION + '__isnull': False}, then=F(Fields.POSITION) + 1),

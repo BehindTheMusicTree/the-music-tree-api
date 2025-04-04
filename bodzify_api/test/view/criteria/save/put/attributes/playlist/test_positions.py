@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
 from bodzify_api.serializer.model.criteria.input.put import Fields as PutFields
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
@@ -67,8 +67,9 @@ class TestCase(GenreTestCase):
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: genre_rock.uuid})
         assert response.status_code == status.HTTP_200_OK
-        uploaded_track_playlist_rels: list[LibTrackPlaylistRel] = \
-            list(LibTrackPlaylistRel.objects.filter(user=self.test_user1, playlist=genre_guitare.criteria_playlist))
+        uploaded_track_playlist_rels: list[UploadedTrackPlaylistRel] = list(
+            UploadedTrackPlaylistRel.objects.filter(
+                user=self.test_user1, playlist=genre_guitare.criteria_playlist))
         tracks_uuids_positions = {
             relation.uploaded_track.uuid: relation.position for relation in uploaded_track_playlist_rels}
         assert tracks_uuids_positions[uploaded_track_previously_first_in_punk.uuid] == 1
@@ -119,8 +120,8 @@ class TestCase(GenreTestCase):
         response = self._put_genre(uuid=punk_fr_genre.uuid, **{PutFields.PARENT: genre_rock.uuid})
 
         assert response.status_code == status.HTTP_200_OK
-        uploaded_track_playlist_rel: LibTrackPlaylistRel = \
-            LibTrackPlaylistRel.objects.get(user=self.test_user1,
-                                            playlist=genre_punk.criteria_playlist,
-                                            uploaded_track=track_second_in_punk)
+        uploaded_track_playlist_rel: UploadedTrackPlaylistRel = \
+            UploadedTrackPlaylistRel.objects.get(user=self.test_user1,
+                                                 playlist=genre_punk.criteria_playlist,
+                                                 uploaded_track=track_second_in_punk)
         assert uploaded_track_playlist_rel.position == 1

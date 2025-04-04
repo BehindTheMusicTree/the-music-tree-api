@@ -9,12 +9,12 @@ from .Fields import Fields
 
 
 if TYPE_CHECKING:
-    from .LibTrackPlaylistRel import LibTrackPlaylistRel
+    from .UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
     from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
     from bodzify_api.model.playlist.Playlist import Playlist
 
 
-class LibTrackPlaylistRelManager(StandardResourceManager):
+class UploadedTrackPlaylistRelManager(StandardResourceManager):
 
     def _decrement_positions_of_following_tracks(self, playlist: 'Playlist', position: int):
         self.filter(
@@ -37,7 +37,7 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
             Fields.POSITION)
 
         for i, relation in enumerate(tracks_positions_ordered_asc, 1):
-            relation: LibTrackPlaylistRel = relation  # for type hinting
+            relation: UploadedTrackPlaylistRel = relation  # for type hinting
             relation.position = i
             relation.save(update_fields=[Fields.POSITION])
 
@@ -58,15 +58,15 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
             uploaded_track_playlist_rel.save(update_fields=[Fields.POSITION])
 
     def delete_instance(self, user: User, playlist: 'Playlist', uploaded_track: 'UploadedTrack'):
-        from .LibTrackPlaylistRel import LibTrackPlaylistRel
-        uploaded_track_playlist_rel: LibTrackPlaylistRel = self.get(
+        from .UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
+        uploaded_track_playlist_rel: UploadedTrackPlaylistRel = self.get(
             user=user, playlist=playlist, uploaded_track=uploaded_track)
         if uploaded_track_playlist_rel.position is not None:  # if lib track not archived
             self._decrement_positions_of_following_tracks(playlist, uploaded_track_playlist_rel.position)
         uploaded_track_playlist_rel.delete()
 
     def move_tracks_to_playlist_beginning(
-            self, source_rels: QuerySet['LibTrackPlaylistRel'], target_playlist: 'Playlist') -> None:
+            self, source_rels: QuerySet['UploadedTrackPlaylistRel'], target_playlist: 'Playlist') -> None:
         from .Fields import Fields
 
         if not source_rels:
@@ -85,7 +85,7 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
             relation.position = i
             relation.save(update_fields=[Fields.POSITION, 'playlist'])
 
-    def get_ordered_relations_for_playlist(self, playlist: 'Playlist') -> QuerySet['LibTrackPlaylistRel']:
+    def get_ordered_relations_for_playlist(self, playlist: 'Playlist') -> QuerySet['UploadedTrackPlaylistRel']:
         """
         Returns ordered relations for a playlist, with non-archived tracks first (sorted by position)
         followed by archived tracks (null positions).

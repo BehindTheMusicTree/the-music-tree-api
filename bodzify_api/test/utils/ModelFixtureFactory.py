@@ -20,7 +20,7 @@ from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.model.criteria.children.tag.Tag import Tag
 from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
-from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
 from bodzify_api.model.uploaded_track_playlist_rel.Fields import Fields as LibTrackPlaylistRelFields
 from bodzify_api.model.musicbrainz_resource.children.artist.Fields import Fields as MusicbrainzArtistFields
 from bodzify_api.model.musicbrainz_resource.children.artist.MbArtist import MbArtist
@@ -108,13 +108,13 @@ class ModelFixtureFactory:
         return uploaded_track
 
     def create_uploaded_track_playlist_rel(
-            self, playlist: Playlist, uploaded_track: UploadedTrack, user: User | None = None,) -> LibTrackPlaylistRel:
+            self, playlist: Playlist, uploaded_track: UploadedTrack, user: User | None = None,) -> UploadedTrackPlaylistRel:
         model_fields = {
             LibTrackPlaylistRelFields.USER: user or self.default_test_user,
             LibTrackPlaylistRelFields.PLAYLIST: playlist,
             LibTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL: uploaded_track,
         }
-        return G(LibTrackPlaylistRel, **model_fields)
+        return G(UploadedTrackPlaylistRel, **model_fields)
 
     def create_uploaded_track_with_file(
         self,

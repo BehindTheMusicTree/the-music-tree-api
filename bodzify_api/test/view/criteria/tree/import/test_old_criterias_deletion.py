@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.model.uploaded_track_playlist_rel.Fields import Fields as LibTrackPlaylistRelFields
-from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.playlist.children.criteria.genre.GenrePlaylist import GenrePlaylist
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
@@ -55,7 +55,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
         assert response.status_code == status.HTTP_201_CREATED
 
         criterialess_playlist = GenrePlaylist.objects.get(user=self.test_user1, criteria=None)
-        rels = LibTrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
+        rels = UploadedTrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
             LibTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL)
         tracks = [getattr(rel, LibTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL) for rel in rels]
         assert len(tracks) == 3
@@ -79,7 +79,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
         assert response.status_code == status.HTTP_201_CREATED
 
         criterialess_playlist = GenrePlaylist.objects.get(user=self.test_user1, criteria=None)
-        rels = LibTrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
+        rels = UploadedTrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
             LibTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL)
         tracks = [getattr(rel, LibTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL) for rel in rels]
         for track in tracks:
@@ -108,7 +108,7 @@ class TestOldCriteriasDeletion(GenreTestCase):
 
         # Verify all tracks are moved to criterialess playlist
         criterialess_playlist = GenrePlaylist.objects.get(user=self.test_user1, criteria=None)
-        rels = LibTrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
+        rels = UploadedTrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
             LibTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL)
         tracks = [getattr(rel, LibTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL) for rel in rels]
         assert len(tracks) == 2

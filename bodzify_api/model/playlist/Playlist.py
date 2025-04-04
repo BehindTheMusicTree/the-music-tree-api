@@ -11,7 +11,7 @@ from .Fields import Fields
 
 
 if TYPE_CHECKING:
-    from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+    from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
     from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 
     from .children.criteria.CriteriaPlaylist import CriteriaPlaylist
@@ -23,7 +23,7 @@ class Playlist(UploadedTrackMixin, TrackablePlayCount):
     objects: PlaylistManager = PlaylistManager()
 
     if TYPE_CHECKING:
-        uploaded_track_playlist_rels: models.QuerySet['LibTrackPlaylistRel']
+        uploaded_track_playlist_rels: models.QuerySet['UploadedTrackPlaylistRel']
         manual_playlist: 'ManualPlaylist | None'
         criteria_playlist: 'CriteriaPlaylist | None'
 
@@ -70,18 +70,18 @@ class Playlist(UploadedTrackMixin, TrackablePlayCount):
         Archived tracks (null positions) are sorted last.
         Returns empty dict if no tracks.
         """
-        from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
-        relations = LibTrackPlaylistRel.objects.get_ordered_relations_for_playlist(playlist)
+        from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
+        relations = UploadedTrackPlaylistRel.objects.get_ordered_relations_for_playlist(playlist)
 
         if not relations.exists():
             return {}
 
         result: dict[int | None, 'UploadedTrack'] = {}
         for relation in relations.filter(position__isnull=False):
-            relation = cast(LibTrackPlaylistRel, relation)
+            relation = cast(UploadedTrackPlaylistRel, relation)
             result[relation.position] = relation.uploaded_track
         for relation in relations.filter(position__isnull=True):
-            relation = cast(LibTrackPlaylistRel, relation)
+            relation = cast(UploadedTrackPlaylistRel, relation)
             result[len(result) + 1] = relation.uploaded_track
 
         return result

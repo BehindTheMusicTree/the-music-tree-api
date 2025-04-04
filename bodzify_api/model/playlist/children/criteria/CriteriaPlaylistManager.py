@@ -56,9 +56,9 @@ class CriteriaPlaylistManager(StandardResourceManager):
                                                                             uploaded_tracks: QuerySet['UploadedTrack'],
                                                                             criteria_limit: 'Criteria | None' = None):
         if instance.criteria != criteria_limit:
-            from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+            from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
             for uploaded_track in uploaded_tracks:
-                LibTrackPlaylistRel(user=instance.user, playlist=instance, uploaded_track=uploaded_track).save()
+                UploadedTrackPlaylistRel(user=instance.user, playlist=instance, uploaded_track=uploaded_track).save()
 
             if instance.parent:
                 self.add_uploaded_tracks_to_instance_and_ascendants_until_criteria_limit(
@@ -68,11 +68,11 @@ class CriteriaPlaylistManager(StandardResourceManager):
             self, instance: 'CriteriaPlaylist',
             uploaded_tracks: QuerySet['UploadedTrack'],
             criteria_limit: 'Criteria | None' = None):
-        from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
 
         if instance.criteria != criteria_limit:
             instance.uploaded_track_playlist_rels.filter(uploaded_track__in=uploaded_tracks).delete()
-            LibTrackPlaylistRel.objects.update_positions_to_fill_deleted_ones(instance)
+            UploadedTrackPlaylistRel.objects.update_positions_to_fill_deleted_ones(instance)
 
             if instance.parent:
                 self.remove_uploaded_tracks_from_instance_and_ascendants_until_criteria_limit(
@@ -81,7 +81,7 @@ class CriteriaPlaylistManager(StandardResourceManager):
     def transfer_direct_tracks_to_criterialess_playlist(
             self, direct_tracks: QuerySet['UploadedTrack'],
             criteria_playlist: 'CriteriaPlaylist'):
-        from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
+        from bodzify_api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
 
         criterialess_playlist = self.get(
             user=criteria_playlist.user, criteria=None, type=criteria_playlist.type)
@@ -92,7 +92,7 @@ class CriteriaPlaylistManager(StandardResourceManager):
 
         direct_tracks_rels_not_archived = direct_tracks_rels_in_criteria_playlist.filter(position__isnull=False)
 
-        LibTrackPlaylistRel.objects.move_tracks_to_playlist_beginning(
+        UploadedTrackPlaylistRel.objects.move_tracks_to_playlist_beginning(
             source_rels=direct_tracks_rels_not_archived, target_playlist=criterialess_playlist)
 
         direct_tracks_rels_in_criteria_playlist.filter(position__isnull=True).update(playlist=criterialess_playlist)
