@@ -8,7 +8,7 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
+from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.model.user.User import User
 from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.view.user.UserTestCase import UserTestCase

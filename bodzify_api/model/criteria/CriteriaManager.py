@@ -4,7 +4,7 @@ from django.db import transaction
 from django.db.models import QuerySet
 
 from bodzify_api.model.criteria.Fields import Fields as ModelFields
-from bodzify_api.model.uploaded_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
+from bodzify_api.model.uploaded_track_mixin.UploadedTrackMixinWithInternalNameManager import UploadedTrackMixinWithInternalNameManager
 from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields as TreeImportFields
 from bodzify_api.serializer.model.criteria.input.Fields import Fields as InputFields
 
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 T = TypeVar('T', bound='Criteria')
 
 
-class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
+class CriteriaManager(UploadedTrackMixinWithInternalNameManager[T]):
     model: type[T]
 
     def _refresh_ascendants_of_instance(self, instance: T):
@@ -122,7 +122,7 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         """
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 
-        from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
+        from bodzify_api.model.uploaded_track.Fields import Fields as LibTrackFields
 
         criteria_uploaded_tracks = instance.uploaded_tracks.all()
         for uploaded_track in criteria_uploaded_tracks:

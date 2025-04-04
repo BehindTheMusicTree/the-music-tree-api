@@ -34,8 +34,8 @@ from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlay
 from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.track.file.TrackFile import Fields as TrackFileFields
 from bodzify_api.model.track.file.TrackFile import TrackFile
-from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
-from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
+from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackFields
+from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.model.user.User import User
 from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
@@ -94,16 +94,16 @@ class ModelFixtureFactory:
     def _create_uploaded_track(self, user: User, title: str, **kwargs) -> UploadedTrack:
         now = timezone.make_aware(datetime.now())
         model_fields = {
-            LibraryTrackFields.CREATED_ON: kwargs.get(LibraryTrackFields.CREATED_ON, now),
-            LibraryTrackFields.UPDATED_ON: kwargs.get(LibraryTrackFields.UPDATED_ON, now),
-            LibraryTrackFields.USER: user,
-            LibraryTrackFields.TITLE: title,
+            UploadedTrackFields.CREATED_ON: kwargs.get(UploadedTrackFields.CREATED_ON, now),
+            UploadedTrackFields.UPDATED_ON: kwargs.get(UploadedTrackFields.UPDATED_ON, now),
+            UploadedTrackFields.USER: user,
+            UploadedTrackFields.TITLE: title,
         }
         model_fields.update(kwargs)
         uploaded_track = G(UploadedTrack, **model_fields)
 
-        if kwargs.get(LibraryTrackFields.ARTISTS):
-            uploaded_track.artists.set(kwargs[LibraryTrackFields.ARTISTS])
+        if kwargs.get(UploadedTrackFields.ARTISTS):
+            uploaded_track.artists.set(kwargs[UploadedTrackFields.ARTISTS])
 
         return uploaded_track
 
@@ -128,10 +128,10 @@ class ModelFixtureFactory:
 
         now = timezone.make_aware(datetime.now())
         model_fields = {
-            LibraryTrackFields.CREATED_ON: kwargs.get(LibraryTrackFields.CREATED_ON, now),
-            LibraryTrackFields.UPDATED_ON: kwargs.get(LibraryTrackFields.UPDATED_ON, now),
-            LibraryTrackFields.USER: user,
-            LibraryTrackFields.TITLE: title,
+            UploadedTrackFields.CREATED_ON: kwargs.get(UploadedTrackFields.CREATED_ON, now),
+            UploadedTrackFields.UPDATED_ON: kwargs.get(UploadedTrackFields.UPDATED_ON, now),
+            UploadedTrackFields.USER: user,
+            UploadedTrackFields.TITLE: title,
         }
         model_fields.update(kwargs)
 
@@ -145,7 +145,7 @@ class ModelFixtureFactory:
         if use_manager_for_genre_playlist_adding:
             with open(track_file_path_in_lib, 'rb') as f:
                 django_file = File(f, name=os.path.basename(track_file_path_in_lib))
-                model_fields.update({LibraryTrackFields.TRACK_FILE_INTERNAL: django_file})
+                model_fields.update({UploadedTrackFields.TRACK_FILE_INTERNAL: django_file})
                 uploaded_track = UploadedTrack.objects.create(**model_fields)
         else:
             with transaction.atomic():

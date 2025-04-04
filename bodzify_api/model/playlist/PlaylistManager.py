@@ -12,7 +12,7 @@ from .PlaylistQuerySet import PlaylistQuerySet
 
 if TYPE_CHECKING:
     from bodzify_api.model.playlist.Playlist import Playlist
-    from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
+    from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 
 
 class PlaylistManager(StandardResourceManager):

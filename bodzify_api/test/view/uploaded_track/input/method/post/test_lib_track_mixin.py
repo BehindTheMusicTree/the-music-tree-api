@@ -1,7 +1,7 @@
 from typing import cast
 from rest_framework import status
 
-from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
+from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields
 from bodzify_api.test.utils.uploaded_track.LibTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase

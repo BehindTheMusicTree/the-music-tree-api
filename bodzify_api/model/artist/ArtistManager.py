@@ -2,8 +2,8 @@ from typing import TYPE_CHECKING
 
 from django.db import transaction
 
-from bodzify_api.model.uploaded_track_mixin.Fields import Fields as LibTrackMixinFields
-from bodzify_api.model.uploaded_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
+from bodzify_api.model.uploaded_track_mixin.Fields import Fields as UploadedTrackMixinFields
+from bodzify_api.model.uploaded_track_mixin.UploadedTrackMixinWithInternalNameManager import UploadedTrackMixinWithInternalNameManager
 
 
 if TYPE_CHECKING:
@@ -12,11 +12,11 @@ if TYPE_CHECKING:
     from .Artist import Artist
 
 
-class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
+class ArtistManager(UploadedTrackMixinWithInternalNameManager['Artist']):
     model: type['Artist']
 
     def get_default_ordering(self) -> list[str]:
-        return [LibTrackMixinFields.NAME_INTERNAL]
+        return [UploadedTrackMixinFields.NAME_INTERNAL]
 
     def get_artists_list_from_names_after_potential_creation(
             self, user: 'User', artists_names: list[str] | None) -> list['Artist']:
@@ -29,7 +29,7 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
 
     def delete_instance_with_albums_and_tracks(self, instance: 'Artist') -> tuple[int, dict[str, int]]:
         from bodzify_api.model.album.Album import Album
-        from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
+        from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 
         # Keep deletion order for rollback tests
 

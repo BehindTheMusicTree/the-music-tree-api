@@ -6,12 +6,12 @@ from .Fields import Fields
 
 
 if TYPE_CHECKING:
-    from bodzify_api.model.uploaded_track_mixin.LibTrackMixin import LibTrackMixin
+    from bodzify_api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
 
-T = TypeVar('T', bound='LibTrackMixin')
+T = TypeVar('T', bound='UploadedTrackMixin')
 
 
-class LibTrackMixinManager(StandardResourceManager[T]):
+class UploadedTrackMixinManager(StandardResourceManager[T]):
     model: type[T]
 
     def get_default_ordering(self) -> list[str]:

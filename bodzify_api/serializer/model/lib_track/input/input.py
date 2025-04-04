@@ -12,7 +12,7 @@ from bodzify_api.serializer.field.TrackNumberField import TrackNumberField
 from bodzify_api.serializer.field.RatingField import RatingField
 from bodzify_api.serializer.field.criteria.CriteriaFieldInputType import CriteriaFieldInputType
 from bodzify_api.serializer.field.criteria.GenreField import GenreField
-from bodzify_api.model.track.lib.Fields import Fields as ModelFields
+from bodzify_api.model.uploaded_track.Fields import Fields as ModelFields
 from bodzify_api.utils import data_transformer
 from .Fields import InputFields
 

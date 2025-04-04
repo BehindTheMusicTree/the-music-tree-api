@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
+from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.serializer.model.artist.minimum import ArtistMinimumSerializer
 
 from .Fields import Fields

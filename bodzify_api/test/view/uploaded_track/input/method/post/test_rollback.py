@@ -8,7 +8,7 @@ class TestCase(LibTrackTestCase):
 
     def test_exception_then_rollback(self):
         genre_name = "Rock"
-        with patch('bodzify_api.model.track.lib.LibraryTrack.LibraryTrack') as mock:
+        with patch('bodzify_api.model.uploaded_track.UploadedTrack.LibraryTrack') as mock:
             exception_message = "Save failed!"
             mock.side_effect = Exception(exception_message)
             try:

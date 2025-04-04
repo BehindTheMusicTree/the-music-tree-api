@@ -1,16 +1,16 @@
 from django.db import models
 
-from bodzify_api.model.all_uploaded_tracks_mixin.AllLibTrackMixinManager import AllLibTrackMixinManager
-from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
+from bodzify_api.model.all_uploaded_tracks_mixin.AllUploadedTrackMixinManager import AllUploadedTrackMixinManager
+from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 
-from ..uploaded_track_mixin.LibTrackMixin import LibTrackMixin
+from ..uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
 from .Fields import Fields
 
 
 # One per user
-class AllLibTracksMixin(LibTrackMixin):
+class AllLibTracksMixin(UploadedTrackMixin):
 
-    objects: AllLibTrackMixinManager = AllLibTrackMixinManager()
+    objects: AllUploadedTrackMixinManager = AllUploadedTrackMixinManager()
 
     class Meta:
         verbose_name = 'All Library Tracks Mixin'

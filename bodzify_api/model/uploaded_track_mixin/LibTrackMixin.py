@@ -4,14 +4,14 @@ from typing import TYPE_CHECKING
 from django.db import models
 
 from bodzify_api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
-from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
+from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackFields
 
 
 if TYPE_CHECKING:
-    from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
+    from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 
 
-class LibTrackMixin(PrivateUniqueResource):
+class UploadedTrackMixin(PrivateUniqueResource):
 
     class Meta:
         abstract = True
@@ -33,7 +33,7 @@ class LibTrackMixin(PrivateUniqueResource):
 
     @property
     def uploaded_tracks_not_archived_sorted(self) -> models.QuerySet['UploadedTrack']:
-        return self.uploaded_tracks_not_archived.order_by(f'-{LibraryTrackFields.CREATED_ON}')
+        return self.uploaded_tracks_not_archived.order_by(f'-{UploadedTrackFields.CREATED_ON}')
 
     @property
     def uploaded_tracks_not_archived_count(self) -> int:

@@ -1,7 +1,7 @@
 from rest_framework import status
 
-from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
-from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
+from bodzify_api.model.uploaded_track.Fields import Fields as LibTrackFields
+from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.serializer.model.uploaded_track.input.put.Fields import Fields as PutFields
 from bodzify_api.test.utils.field.body_data.method.PutBodyDataTestCase import PutBodyDataTestCase
 from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase

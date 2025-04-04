@@ -8,8 +8,8 @@ from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRelManager im
 from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
-from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
-from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
+from bodzify_api.model.uploaded_track.Fields import Fields as LibTrackFields
+from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 
 from .Fields import Fields
 

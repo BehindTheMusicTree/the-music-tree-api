@@ -24,7 +24,7 @@ from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.MbR
 )
 from bodzify_api.model.musicbrainz_resource.children.recording.missing_cause.code.MbRecordingMissingCauseCode import MbRecordingMissingCauseCode
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
-from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
+from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackFields
 from bodzify_api.model.utils import utils as model_utils
 from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
 from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
@@ -39,7 +39,7 @@ from .fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMis
 
 class TrackFile(PrivateStandardResource):
     uploaded_track = PrivateOneToOneField(  # type: ignore
-        'LibraryTrack', on_delete=models.CASCADE, related_name=LibraryTrackFields.TRACK_FILE_INTERNAL)
+        'LibraryTrack', on_delete=models.CASCADE, related_name=UploadedTrackFields.TRACK_FILE_INTERNAL)
     file: TemporaryUploadedFile | FieldFile = models.FileField(  # type: ignore
         upload_to=model_utils.get_user_lib_path,
         storage=PreserveSpacesStorage(),

@@ -4,7 +4,7 @@ from django.db import transaction
 from django.db.models import QuerySet
 
 from bodzify_api.model.uploaded_track_mixin.Fields import Fields
-from bodzify_api.model.uploaded_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
+from bodzify_api.model.uploaded_track_mixin.UploadedTrackMixinWithInternalNameManager import UploadedTrackMixinWithInternalNameManager
 
 
 if TYPE_CHECKING:
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from .Album import Album
 
 
-class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
+class AlbumManager(UploadedTrackMixinWithInternalNameManager['Album']):
     model: type['Album']
 
     def _get_instance_from_name_and_artists_after_potential_creations(
@@ -59,7 +59,7 @@ class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
 
     def delete_instance_with_tracks_and_potentially_artists(self, instance: 'Album'):
         from bodzify_api.model.artist.Artist import Artist
-        from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
+        from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 
         # Keep this deletion order for rollback tests: first delete tracks, then delete album, then delete artists
 

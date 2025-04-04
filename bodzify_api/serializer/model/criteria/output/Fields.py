@@ -1,5 +1,5 @@
 from bodzify_api.model.criteria.Criteria import Fields as ModelFields
-from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
+from bodzify_api.model.uploaded_track.Fields import Fields as LibTrackFields
 
 
 class Fields:

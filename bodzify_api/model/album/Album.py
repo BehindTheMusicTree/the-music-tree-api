@@ -11,17 +11,17 @@ from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
-from bodzify_api.model.uploaded_track_mixin.LibTrackMixin import LibTrackMixin
-from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
+from bodzify_api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
+from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackFields
 
 from .Fields import Fields
 
 
 if TYPE_CHECKING:
-    from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
+    from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 
 
-class Album(LibTrackMixin):
+class Album(UploadedTrackMixin):
     _name = AppCharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None, db_column=Fields.NAME_PUBLIC)
     year = AppCharField(max_length=4, default=None, null=True)
     album_artists: QuerySet[Artist] = PrivateManyToManyField(Artist, related_name=ArtistFields.ALBUMS)  # type: ignore
@@ -40,7 +40,7 @@ class Album(LibTrackMixin):
     def uploaded_tracks_not_archived_sorted(self) -> models.QuerySet['UploadedTrack']:
         return self.uploaded_tracks_not_archived.annotate(
             null_position=Q(track_number__isnull=True)).order_by(
-            'null_position', LibraryTrackFields.TRACK_NUMBER, LibraryTrackFields.TITLE)
+            'null_position', UploadedTrackFields.TRACK_NUMBER, UploadedTrackFields.TITLE)
 
     class Meta:
         constraints = [models.CheckConstraint(check=~models.Q(_name=""), name="album_non_empty_name")]

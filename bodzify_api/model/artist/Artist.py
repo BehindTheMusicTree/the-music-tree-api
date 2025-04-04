@@ -4,7 +4,7 @@ from django.db import models
 
 from bodzify_api import settings
 from bodzify_api.model.field.AppCharField import AppCharField
-from bodzify_api.model.uploaded_track_mixin.LibTrackMixin import LibTrackMixin
+from bodzify_api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
 
 from .ArtistManager import ArtistManager
 from .Fields import Fields
@@ -12,10 +12,10 @@ from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.album.Album import Album
-    from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
+    from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 
 
-class Artist(LibTrackMixin):
+class Artist(UploadedTrackMixin):
     _name = AppCharField(max_length=settings.ARTIST_NAME_LEN_MAX, default=None, db_column=Fields.NAME_PUBLIC)
 
     @property
