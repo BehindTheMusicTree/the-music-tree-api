@@ -8,10 +8,10 @@ from rest_framework.response import Response
 from bodzify_api.filtering.set.uploaded_track.UploadedTrackFilterSet import UploadedTrackFilterSet
 from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.model.uploaded_track.Fields import Fields
-from bodzify_api.view.serializer.model.uploaded_track.detailed import UploadedTrackDetailedSerializer
-from bodzify_api.view.serializer.model.uploaded_track.post import UploadedTrackPostSerializer
-from bodzify_api.view.serializer.model.uploaded_track.put import UploadedTrackPutSerializer
-from bodzify_api.view.serializer.model.uploaded_track.simple import UploadedTrackSimpleSerializer
+from bodzify_api.view.serializer.model.uploaded_track.output.detailed import UploadedTrackDetailedSerializer
+from bodzify_api.view.serializer.model.uploaded_track.input.post.post import UploadedTrackPostSerializer
+from bodzify_api.view.serializer.model.uploaded_track.put.put import UploadedTrackPutSerializer
+from bodzify_api.view.serializer.model.uploaded_track.output.simple import UploadedTrackSimpleSerializer
 from bodzify_api.view.viewset.base.BaseViewSet import BaseViewSet
 
 
