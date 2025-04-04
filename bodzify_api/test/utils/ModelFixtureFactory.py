@@ -35,7 +35,7 @@ from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.track.file.TrackFile import Fields as TrackFileFields
 from bodzify_api.model.track.file.TrackFile import TrackFile
 from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.model.user.User import User
 from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
@@ -80,7 +80,7 @@ class ModelFixtureFactory:
         return model_class.objects.create(**model_fields)
 
     def _create_file(
-            self, user: User, lib_track: LibraryTrack, track_file_path_in_lib: Path | None, **kwargs) -> TrackFile:
+            self, user: User, lib_track: UploadedTrack, track_file_path_in_lib: Path | None, **kwargs) -> TrackFile:
         model_fields = {
             TrackFileFields.CREATED_ON: timezone.make_aware(datetime.now()),
             TrackFileFields.UPDATED_ON: timezone.make_aware(datetime.now()),
@@ -91,7 +91,7 @@ class ModelFixtureFactory:
         model_fields.update(kwargs)
         return G(TrackFile, **model_fields)
 
-    def _create_lib_track(self, user: User, title: str, **kwargs) -> LibraryTrack:
+    def _create_lib_track(self, user: User, title: str, **kwargs) -> UploadedTrack:
         now = timezone.make_aware(datetime.now())
         model_fields = {
             LibraryTrackFields.CREATED_ON: kwargs.get(LibraryTrackFields.CREATED_ON, now),
@@ -100,7 +100,7 @@ class ModelFixtureFactory:
             LibraryTrackFields.TITLE: title,
         }
         model_fields.update(kwargs)
-        lib_track = G(LibraryTrack, **model_fields)
+        lib_track = G(UploadedTrack, **model_fields)
 
         if kwargs.get(LibraryTrackFields.ARTISTS):
             lib_track.artists.set(kwargs[LibraryTrackFields.ARTISTS])
@@ -108,7 +108,7 @@ class ModelFixtureFactory:
         return lib_track
 
     def create_lib_track_playlist_rel(
-            self, playlist: Playlist, lib_track: LibraryTrack, user: User | None = None,) -> LibTrackPlaylistRel:
+            self, playlist: Playlist, lib_track: UploadedTrack, user: User | None = None,) -> LibTrackPlaylistRel:
         model_fields = {
             LibTrackPlaylistRelFields.USER: user or self.default_test_user,
             LibTrackPlaylistRelFields.PLAYLIST: playlist,
@@ -123,7 +123,7 @@ class ModelFixtureFactory:
         user: User | None = None,
         use_manager_for_genre_playlist_adding: bool = False,
         **kwargs
-    ) -> LibraryTrack:
+    ) -> UploadedTrack:
         user = user or self.default_test_user
 
         now = timezone.make_aware(datetime.now())
@@ -146,7 +146,7 @@ class ModelFixtureFactory:
             with open(track_file_path_in_lib, 'rb') as f:
                 django_file = File(f, name=os.path.basename(track_file_path_in_lib))
                 model_fields.update({LibraryTrackFields.TRACK_FILE_INTERNAL: django_file})
-                lib_track = LibraryTrack.objects.create(**model_fields)
+                lib_track = UploadedTrack.objects.create(**model_fields)
         else:
             with transaction.atomic():
                 lib_track = self._create_lib_track(user=user, title=title, **kwargs)

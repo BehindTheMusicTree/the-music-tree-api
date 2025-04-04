@@ -8,7 +8,7 @@ from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
 
 
 if TYPE_CHECKING:
-    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+    from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 
 
 class LibTrackMixin(PrivateUniqueResource):
@@ -23,16 +23,16 @@ class LibTrackMixin(PrivateUniqueResource):
 
     @property
     @abstractmethod
-    def lib_tracks(self) -> models.QuerySet['LibraryTrack']:
+    def lib_tracks(self) -> models.QuerySet['UploadedTrack']:
         pass
 
     @property
     @abstractmethod
-    def lib_tracks_not_archived(self) -> models.QuerySet['LibraryTrack']:
+    def lib_tracks_not_archived(self) -> models.QuerySet['UploadedTrack']:
         return self.lib_tracks.filter(archived=False)
 
     @property
-    def lib_tracks_not_archived_sorted(self) -> models.QuerySet['LibraryTrack']:
+    def lib_tracks_not_archived_sorted(self) -> models.QuerySet['UploadedTrack']:
         return self.lib_tracks_not_archived.order_by(f'-{LibraryTrackFields.CREATED_ON}')
 
     @property

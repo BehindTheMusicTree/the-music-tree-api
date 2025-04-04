@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 
 
-class LibraryTrack(TrackablePlayCount):
+class UploadedTrack(TrackablePlayCount):
     title = AppCharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
     track_file_fingerprint_must_be_unique = models.BooleanField(default=False)
     artists = PrivateManyToManyField(Artist, blank=True, related_name=ArtistFields.LIB_TRACKS_RELATED_NAME)

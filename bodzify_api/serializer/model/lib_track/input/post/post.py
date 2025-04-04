@@ -16,7 +16,7 @@ from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 from .Fields import Fields as PostFields
 
 
-class LibTrackPostSerializer(LibTrackInputSerializer):
+class UploadedTrackPostSerializer(LibTrackInputSerializer):
     file = TrackFileField(required=True)
 
     def _get_generated_title_from_data(self, file: DjangoFile, data: dict):

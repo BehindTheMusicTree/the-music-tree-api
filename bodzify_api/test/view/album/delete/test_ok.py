@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api.model.album.Album import Album
 from bodzify_api.model.artist.Artist import Artist
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 
@@ -35,8 +35,8 @@ class TestCase(AlbumTestCase):
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
         assert not Album.objects.filter(uuid=black_holes_album.uuid).exists()
-        assert not LibraryTrack.objects.filter(title=assassin_track.title).exists()
-        assert not LibraryTrack.objects.filter(title=starlight_track.title).exists()
+        assert not UploadedTrack.objects.filter(title=assassin_track.title).exists()
+        assert not UploadedTrack.objects.filter(title=starlight_track.title).exists()
         assert not self.test_user1.does_track_filename_exist_in_lib(
             LibTrackTestFilename.RECORDING_ALLUMERLEFEU_2_MATCHES_ONE_WITH_MORE_RELEASE_GROUPS_MP3)
         assert not self.test_user1.does_track_filename_exist_in_lib(LibTrackTestFilename.RECORDING_KEMAR_FRANCE_MP3)

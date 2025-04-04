@@ -22,7 +22,7 @@ from .type.CriteriaType import CriteriaType
 
 if TYPE_CHECKING:
     from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+    from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 
     from .lineage_rel.CriteriaLineageRel import CriteriaLineageRel
 
@@ -56,7 +56,7 @@ class Criteria(LibTrackMixin):
         return self._name
 
     @property
-    def lib_tracks(self) -> models.QuerySet['LibraryTrack']:
+    def lib_tracks(self) -> models.QuerySet['UploadedTrack']:
         return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
 
     @property

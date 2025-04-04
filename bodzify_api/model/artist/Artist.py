@@ -12,7 +12,7 @@ from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.album.Album import Album
-    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+    from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 
 
 class Artist(LibTrackMixin):
@@ -28,7 +28,7 @@ class Artist(LibTrackMixin):
     objects: ArtistManager = ArtistManager()
 
     @property
-    def lib_tracks(self) -> models.QuerySet['LibraryTrack']:
+    def lib_tracks(self) -> models.QuerySet['UploadedTrack']:
         return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
 
     class Meta:

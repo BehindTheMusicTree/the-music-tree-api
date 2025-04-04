@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
@@ -16,5 +16,5 @@ class TrackDeleteViewTestCase(LibTrackTestCase):
         response = self._delete_lib_track(uuid=track.uuid)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert not LibraryTrack.objects.filter(user=self.test_user1, uuid=track.uuid).exists()
+        assert not UploadedTrack.objects.filter(user=self.test_user1, uuid=track.uuid).exists()
         assert not self.test_user1.does_track_filename_exist_in_lib(LibTrackTestFilename.RECORDING_KEMAR_FRANCE_MP3)

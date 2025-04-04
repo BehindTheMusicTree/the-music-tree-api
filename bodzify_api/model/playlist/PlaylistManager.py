@@ -12,7 +12,7 @@ from .PlaylistQuerySet import PlaylistQuerySet
 
 if TYPE_CHECKING:
     from bodzify_api.model.playlist.Playlist import Playlist
-    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+    from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 
 
 class PlaylistManager(StandardResourceManager):
@@ -62,7 +62,7 @@ class PlaylistManager(StandardResourceManager):
 
         return queryset
 
-    def get_ordered_relations_for_playlist(self, playlist: 'Playlist') -> dict[int | None, 'LibraryTrack']:
+    def get_ordered_relations_for_playlist(self, playlist: 'Playlist') -> dict[int | None, 'UploadedTrack']:
         """
         Returns a dictionary of LibraryTrack objects where dict[position] = lib_track.
         Includes both non-archived tracks (with position) and archived tracks (position is None).
@@ -75,7 +75,7 @@ class PlaylistManager(StandardResourceManager):
         if not relations.exists():
             return {}
 
-        result: dict[int | None, 'LibraryTrack'] = {}
+        result: dict[int | None, 'UploadedTrack'] = {}
         for relation in relations.filter(position__isnull=False):
             relation = cast(LibTrackPlaylistRel, relation)
             result[relation.position] = relation.lib_track

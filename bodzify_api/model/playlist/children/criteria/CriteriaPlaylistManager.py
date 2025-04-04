@@ -9,7 +9,7 @@ from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.criteria.Criteria import Criteria
-    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+    from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 
     from .CriterialessPlaylistNames import CriterialessPlaylistNames
     from .CriteriaPlaylist import CriteriaPlaylist
@@ -53,7 +53,7 @@ class CriteriaPlaylistManager(StandardResourceManager):
 
     def add_lib_tracks_to_instance_and_ascendants_until_criteria_limit(self,
                                                                        instance: 'CriteriaPlaylist',
-                                                                       lib_tracks: QuerySet['LibraryTrack'],
+                                                                       lib_tracks: QuerySet['UploadedTrack'],
                                                                        criteria_limit: 'Criteria | None' = None):
         if instance.criteria != criteria_limit:
             from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
@@ -66,7 +66,7 @@ class CriteriaPlaylistManager(StandardResourceManager):
 
     def remove_lib_tracks_from_instance_and_ascendants_until_criteria_limit(
             self, instance: 'CriteriaPlaylist',
-            lib_tracks: QuerySet['LibraryTrack'],
+            lib_tracks: QuerySet['UploadedTrack'],
             criteria_limit: 'Criteria | None' = None):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 
@@ -79,7 +79,7 @@ class CriteriaPlaylistManager(StandardResourceManager):
                     instance=instance.parent, lib_tracks=lib_tracks, criteria_limit=criteria_limit)
 
     def transfer_direct_tracks_to_criterialess_playlist(
-            self, direct_tracks: QuerySet['LibraryTrack'],
+            self, direct_tracks: QuerySet['UploadedTrack'],
             criteria_playlist: 'CriteriaPlaylist'):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
 

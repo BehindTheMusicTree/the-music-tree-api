@@ -1,7 +1,7 @@
 
 from rest_framework import serializers
 
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 from bodzify_api.serializer.model.album.minimum import AlbumMinimumSerializer
 from bodzify_api.serializer.model.artist.minimum import ArtistMinimumSerializer
 from bodzify_api.serializer.model.criteria.output.minimum import CriteriaMinimumSerializer
@@ -25,7 +25,7 @@ class LibTrackSimpleWithoutPositionInAlbumSerializer(serializers.ModelSerializer
     genre = CriteriaMinimumSerializer()
 
     class Meta:
-        model = LibraryTrack
+        model = UploadedTrack
         fields = [Fields.UUID,
                   Fields.TITLE,
                   Fields.ARTISTS,

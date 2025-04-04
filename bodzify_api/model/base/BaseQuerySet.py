@@ -1,5 +1,6 @@
 from typing import Any, Type
 
+from django.core.exceptions import FieldDoesNotExist, ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q, OrderBy, F
 
@@ -41,7 +42,7 @@ def uses_internal_name(model: Type[models.Model]) -> bool:
     try:
         field = model._meta.get_field(LibTrackMixinFields.NAME_INTERNAL)
         return isinstance(field, AppCharField) and field.db_column == LibTrackMixinFields.NAME_PUBLIC
-    except (models.FieldDoesNotExist, AttributeError):
+    except (ObjectDoesNotExist, FieldDoesNotExist, AttributeError):
         return False
 
 

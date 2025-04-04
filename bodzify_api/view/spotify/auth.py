@@ -1,10 +1,13 @@
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from django.utils import timezone
 
 from bodzify_api.utils.spotify.oauth import SpotifyOAuthService
 from bodzify_api.model.user.User import User
 from bodzify_api.utils.jwt import create_jwt_token
+from bodzify_api.utils.spotify.service import sync_user_spotify_library
 
 
 @api_view(['GET'])
@@ -18,19 +21,16 @@ def spotify_auth(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def spotify_auth_api(request):
     """
     Handle Spotify authentication code from frontend
     This endpoint matches what the frontend expects when exchanging the auth code
     """
-    # Extract code from request body instead of query parameters
+    print("\n=== Spotify Auth API Called ===")
     code = request.data.get('code')
-
     if not code:
-        return Response(
-            {'error': 'Authorization code is required in request body'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response({'error': 'No code provided'}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
         oauth_service = SpotifyOAuthService()
@@ -51,7 +51,8 @@ def spotify_auth_api(request):
             defaults={
                 'email': email,
                 'spotify_access_token': access_token,
-                'spotify_refresh_token': refresh_token
+                'spotify_refresh_token': refresh_token,
+                'spotify_token_expires_at': timezone.now() + timezone.timedelta(seconds=token_info['expires_in'])
             }
         )
 
@@ -59,7 +60,20 @@ def spotify_auth_api(request):
             # Update tokens for existing user
             user.spotify_access_token = access_token
             user.spotify_refresh_token = refresh_token
+            user.spotify_token_expires_at = timezone.now() + timezone.timedelta(seconds=token_info['expires_in'])
             user.save()
+
+        print(f"User authenticated: {user.username}")
+        print("Attempting to sync user's library...")
+
+        # Sync user's Spotify library
+        try:
+            tracks = sync_user_spotify_library(user)
+            sync_message = f"Successfully synced {len(tracks)} tracks"
+            print(sync_message)
+        except Exception as e:
+            sync_message = f"Failed to sync library: {str(e)}"
+            print(f"Sync error: {str(e)}")
 
         # Create JWT token
         jwt_token = create_jwt_token(user)
@@ -70,14 +84,13 @@ def spotify_auth_api(request):
                 'id': user.id,
                 'email': user.email,
                 'spotify_id': user.spotify_id
-            }
+            },
+            'sync_message': sync_message
         })
 
     except Exception as e:
-        return Response(
-            {'error': str(e)},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        print(f"Auth error: {str(e)}")
+        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -121,6 +134,13 @@ def spotify_callback(request):
             user.spotify_refresh_token = refresh_token
             user.save()
 
+        # Sync user's Spotify library
+        try:
+            tracks = sync_user_spotify_library(user)
+            sync_message = f"Successfully synced {len(tracks)} tracks"
+        except Exception as e:
+            sync_message = f"Failed to sync tracks: {str(e)}"
+
         # Create JWT token
         jwt_token = create_jwt_token(user)
 
@@ -130,7 +150,8 @@ def spotify_callback(request):
                 'id': user.id,
                 'email': user.email,
                 'spotify_id': user.spotify_id
-            }
+            },
+            'sync_message': sync_message
         })
 
     except Exception as e:

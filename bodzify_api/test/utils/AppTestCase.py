@@ -9,7 +9,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework_simplejwt.tokens import AccessToken
 
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 from bodzify_api.model.user.User import User
 from bodzify_api.model.uuid.Fields import Fields as UuidModelFields
 from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as LibTrackPostFields
@@ -58,7 +58,7 @@ class AppTestCase(TestCase, Generic[T]):
         uuid = response.json()[UuidModelFields.UUID]
         # At this point model_class is guaranteed to be a Model class with objects manager
         self.saved_object = self.model_class.objects.get(uuid=uuid)  # type: ignore
-        if isinstance(self.saved_object, LibraryTrack):
+        if isinstance(self.saved_object, UploadedTrack):
             self._set_saved_lib_track_metadata()
 
     def _set_single_result(self, response):
@@ -126,7 +126,7 @@ class AppTestCase(TestCase, Generic[T]):
         self.results_overall_total = response_json[PaginatedResponseFields.OVERALL_TOTAL]
 
     def _set_saved_lib_track_metadata(self):
-        saved_lib_track = cast(LibraryTrack, self.saved_object)
+        saved_lib_track = cast(UploadedTrack, self.saved_object)
         self.saved_lib_track_metadata_with_raw_rating = audio_metadata.get_merged_app_metadata(
             file=saved_lib_track.track_file.file)
 

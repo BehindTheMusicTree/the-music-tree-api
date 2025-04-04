@@ -12,7 +12,7 @@ from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
-    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+    from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 
     from .children.criteria.CriteriaPlaylist import CriteriaPlaylist
     from .children.manual.ManualPlaylist import ManualPlaylist
@@ -36,7 +36,7 @@ class Playlist(LibTrackMixin, TrackablePlayCount):
         return f'{self.uuid} | {self.name}'
 
     @property
-    def lib_tracks(self) -> models.QuerySet['LibraryTrack']:
+    def lib_tracks(self) -> models.QuerySet['UploadedTrack']:
         return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
 
     @property
@@ -53,7 +53,7 @@ class Playlist(LibTrackMixin, TrackablePlayCount):
             raise ValueError('Playlist has no type')
 
     @property
-    def lib_tracks_not_archived_dict_by_position(self) -> dict[int | None, 'LibraryTrack']:
+    def lib_tracks_not_archived_dict_by_position(self) -> dict[int | None, 'UploadedTrack']:
         """
         Returns a dictionary of LibraryTrack objects where dict[position] = lib_track.
         Includes both non-archived tracks (with position) and archived tracks (position is None).
@@ -63,7 +63,7 @@ class Playlist(LibTrackMixin, TrackablePlayCount):
         return Playlist.get_ordered_relations_for_playlist(self)
 
     @classmethod
-    def get_ordered_relations_for_playlist(cls, playlist: 'Playlist') -> dict[int | None, 'LibraryTrack']:
+    def get_ordered_relations_for_playlist(cls, playlist: 'Playlist') -> dict[int | None, 'UploadedTrack']:
         """
         Returns a dictionary of LibraryTrack objects where dict[position] = lib_track.
         Includes both non-archived tracks (with position) and archived tracks (position is None).
@@ -76,7 +76,7 @@ class Playlist(LibTrackMixin, TrackablePlayCount):
         if not relations.exists():
             return {}
 
-        result: dict[int | None, 'LibraryTrack'] = {}
+        result: dict[int | None, 'UploadedTrack'] = {}
         for relation in relations.filter(position__isnull=False):
             relation = cast(LibTrackPlaylistRel, relation)
             result[relation.position] = relation.lib_track

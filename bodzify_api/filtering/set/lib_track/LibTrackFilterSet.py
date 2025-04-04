@@ -9,12 +9,12 @@ from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.criteria.Criteria import Fields as CriteriaFields
 from bodzify_api.model.track.lib.Fields import Fields as ModelFields
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 
 from .Fields import Fields
 
 
-class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
+class UploadedTrackFilterSet(PrivateUniqueResourceFilterSet):
     title = CharFilter(field_name=ModelFields.TITLE, lookup_expr='icontains')
     artists_name = RelatedObjectCharFilter(primary_field=ArtistFields.NAME_INTERNAL,
                                            field_name=ModelFields.ARTISTS,
@@ -34,7 +34,7 @@ class LibTrackFilterSet(PrivateUniqueResourceFilterSet):
         field_name_public=ModelFields.LANGUAGE, field_name=ModelFields.LANGUAGE, lookup_expr='icontains')
 
     class Meta:
-        model = LibraryTrack
+        model = UploadedTrack
         fields = [
             Fields.TITLE,
             Fields.LANGUAGE,

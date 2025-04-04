@@ -5,7 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from bodzify_api.model.ContentObjectFields import ContentObjectFields
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 from bodzify_api.serializer.field.foreign_key.PrivateUuidField import PrivateUuidField
 
 
@@ -45,14 +45,14 @@ class PrivateContentUuidField(PrivateUuidField):
 
     def _get_lib_track_ct(self):
         if self._lib_track_ct is None:
-            self._lib_track_ct = ContentType.objects.get_for_model(LibraryTrack)
+            self._lib_track_ct = ContentType.objects.get_for_model(UploadedTrack)
         return self._lib_track_ct
 
     def get_queryset(self):
         user = self.get_request_user()
         return (
             Playlist.objects.filter(user=user) |
-            LibraryTrack.objects.filter(user=user)
+            UploadedTrack.objects.filter(user=user)
         )
 
     def to_internal_value(self, data: Any) -> dict[str, Any]:
@@ -75,7 +75,7 @@ class PrivateContentUuidField(PrivateUuidField):
                 ContentObjectFields.CONTENT: playlist
             }
 
-        lib_track = LibraryTrack.objects.filter(user=user, uuid=uuid).first()
+        lib_track = UploadedTrack.objects.filter(user=user, uuid=uuid).first()
         if lib_track:
             return {
                 ContentObjectFields.CONTENT_TYPE: self._get_lib_track_ct(),

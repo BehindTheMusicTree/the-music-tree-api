@@ -18,13 +18,13 @@ from .model.playlist.Playlist import Playlist
 from .model.track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import FingerprintMissingCauseCode
 from .model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
 from .model.track.file.TrackFile import TrackFile
-from .model.track.lib.LibraryTrack import LibraryTrack
+from .model.track.lib.LibraryTrack import UploadedTrack
 from .model.user.admin.UserAdmin import UserAdmin
 from .model.user.User import User
 
 
 admin.site.register(User, UserAdmin)
-admin.site.register(LibraryTrack)
+admin.site.register(UploadedTrack)
 admin.site.register(TrackFile)
 admin.site.register(FingerprintMissingCause)
 admin.site.register(FingerprintMissingCauseCode)

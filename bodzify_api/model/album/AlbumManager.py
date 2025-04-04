@@ -59,12 +59,12 @@ class AlbumManager(LibTrackMixinWithInternalNameManager['Album']):
 
     def delete_instance_with_tracks_and_potentially_artists(self, instance: 'Album'):
         from bodzify_api.model.artist.Artist import Artist
-        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+        from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 
         # Keep this deletion order for rollback tests: first delete tracks, then delete album, then delete artists
 
         artists_linked_to_album_and_track: list[Artist] = []
-        lib_tracks: QuerySet[LibraryTrack] = instance.lib_tracks.all()
+        lib_tracks: QuerySet[UploadedTrack] = instance.lib_tracks.all()
         for track in lib_tracks:
             if track.artists.exists():
                 for artist in track.artists.all():

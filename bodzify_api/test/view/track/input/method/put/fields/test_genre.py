@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 from bodzify_api.serializer.model.lib_track.input.put.Fields import Fields as PutFields
 from bodzify_api.test.utils.field.body_data.method.PutBodyDataTestCase import PutBodyDataTestCase
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
@@ -17,7 +17,7 @@ class TestCase(LibTrackTestCase, PutBodyDataTestCase):
         response = self._put_lib_track(lib_track.uuid, **{PutFields.TITLE: "koko"})
 
         assert response.status_code == status.HTTP_200_OK
-        updated_lib_track = LibraryTrack.objects.get(uuid=lib_track.uuid)
+        updated_lib_track = UploadedTrack.objects.get(uuid=lib_track.uuid)
         assert updated_lib_track.genre == rap_criteria
 
     def test_ok_when_updating_to_not_none(self):

@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
 
 
@@ -21,4 +21,4 @@ class TestCase(AlbumTestCase):
                 self._delete_album(uuid=black_holes_album.uuid)
             except Exception as e:
                 assert str(e) == exception_message
-                assert LibraryTrack.objects.filter(user=self.test_user1, title=lib_track_title).exists()
+                assert UploadedTrack.objects.filter(user=self.test_user1, title=lib_track_title).exists()

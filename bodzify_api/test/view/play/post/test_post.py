@@ -4,7 +4,7 @@ from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 from bodzify_api.serializer.model.play.input.schema.PostFields import Fields
 from bodzify_api.test.view.play.PlayTestCase import PlayTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
@@ -66,7 +66,7 @@ class TestCase(PlayTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         playlist: Playlist = self.saved_object.content  # type: ignore
         assert playlist.lib_tracks.count() == 1
-        playlist_lib_track: LibraryTrack | None = playlist.lib_tracks.first()
+        playlist_lib_track: UploadedTrack | None = playlist.lib_tracks.first()
         assert playlist_lib_track
         assert playlist_lib_track.uuid == lib_track.uuid
 

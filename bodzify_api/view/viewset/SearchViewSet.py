@@ -14,10 +14,10 @@ from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from bodzify_api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 from bodzify_api.serializer.model.album.minimum import AlbumMinimumSerializer
 from bodzify_api.serializer.model.artist.simple import ArtistSimpleSerializer
-from bodzify_api.serializer.model.lib_track.output.detailed import LibTrackDetailedSerializer
+from bodzify_api.serializer.model.lib_track.output.detailed import UploadedTrackDetailedSerializer
 from bodzify_api.serializer.model.playlist.children.criteria.output.simple import CriteriaSimpleSerializer
 from bodzify_api.serializer.model.playlist.children.manual.output.simple import ManualPlaylistSimpleSerializer
 
@@ -42,7 +42,7 @@ class SearchViewSet(ObjectMultipleModelAPIViewSet):
 
     # Only used by drf spectacular to generate the schema
     def get_detailed_serializer_class(self):
-        return LibTrackDetailedSerializer
+        return UploadedTrackDetailedSerializer
 
     @extend_schema(
         parameters=[
@@ -67,7 +67,7 @@ class SearchViewSet(ObjectMultipleModelAPIViewSet):
         query = self.request.query_params.get('query', '')
 
         # Base querysets filtered by user
-        lib_track_qs = LibraryTrack.objects.filter(user=user)
+        lib_track_qs = UploadedTrack.objects.filter(user=user)
         manual_playlist_qs = ManualPlaylist.objects.filter(user=user)
         criteria_playlist_qs = CriteriaPlaylist.objects.filter(user=user)
         album_qs = Album.objects.filter(user=user)
@@ -114,7 +114,7 @@ class SearchViewSet(ObjectMultipleModelAPIViewSet):
         querylist = (
             {
                 'queryset': lib_track_fs.qs,
-                'serializer_class': LibTrackDetailedSerializer,
+                'serializer_class': UploadedTrackDetailedSerializer,
             },
             {
                 'queryset': manual_playlist_fs.qs,

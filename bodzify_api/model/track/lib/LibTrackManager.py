@@ -18,13 +18,13 @@ from .Fields import Fields
 if TYPE_CHECKING:
     from bodzify_api.model.criteria.children.genre.Genre import Genre
 
-    from .LibraryTrack import LibraryTrack
+    from .LibraryTrack import UploadedTrack
 
 
 class LibTrackManager(StandardResourceManager['LibraryTrack']):
-    model: type['LibraryTrack']
+    model: type['UploadedTrack']
 
-    def _remove_from_genre_playlists(self, instance: 'LibraryTrack', old_genre: 'Genre | None', genre_limit=None):
+    def _remove_from_genre_playlists(self, instance: 'UploadedTrack', old_genre: 'Genre | None', genre_limit=None):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 
@@ -45,7 +45,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             LibTrackPlaylistRel.objects.filter(
                 playlist=genreless_criteria_playlist, lib_track=instance).delete()
 
-    def _add_to_genre_playlists(self, instance: 'LibraryTrack', genre_limit=None):
+    def _add_to_genre_playlists(self, instance: 'UploadedTrack', genre_limit=None):
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 
@@ -73,7 +73,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 user=user, playlist=playlist_uuid, position__gt=old_position)
             lib_track_playlist_rels_to_update.update(position=F(LibTrackPlaylistRelFields.POSITION) - 1)
 
-    def _update_genre_playlists(self, instance: 'LibraryTrack', old_genre: 'Genre | None'):
+    def _update_genre_playlists(self, instance: 'UploadedTrack', old_genre: 'Genre | None'):
         from bodzify_api.model.criteria.children.genre.Genre import Genre
         common_genre = Genre.objects.get_common_ascendant(
             instance.genre, old_genre) if old_genre and instance.genre else None
@@ -81,7 +81,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         self._add_to_genre_playlists(instance=instance, genre_limit=common_genre)
         self._remove_from_genre_playlists(instance=instance, old_genre=old_genre, genre_limit=common_genre)
 
-    def create(self, **kwargs) -> 'LibraryTrack':
+    def create(self, **kwargs) -> 'UploadedTrack':
         from ..file.TrackFile import TrackFile
 
         with transaction.atomic():
@@ -89,7 +89,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             track_file_model_data = dict()
             track_file_model_data[TrackFileFields.FILE] = kwargs.pop(Fields.TRACK_FILE_INTERNAL)
 
-            instance: LibraryTrack = super().create(**kwargs)
+            instance: UploadedTrack = super().create(**kwargs)
             if artists:
                 instance.artists.set(artists)
 
@@ -103,12 +103,12 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             return instance
 
     def create_instance_with_track_file(
-            self, track_file_data: dict[str, Any], library_track_data: dict[str, Any]) -> 'LibraryTrack':
+            self, track_file_data: dict[str, Any], library_track_data: dict[str, Any]) -> 'UploadedTrack':
         from ..file.TrackFile import TrackFile
 
         with transaction.atomic():
             artists = library_track_data.pop(Fields.ARTISTS, None)
-            lib_track: LibraryTrack = self.model(**library_track_data)
+            lib_track: UploadedTrack = self.model(**library_track_data)
             lib_track.save()
             if artists:
                 lib_track.artists.set(artists)
@@ -120,7 +120,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
         return lib_track
 
-    def update_instance(self, old_instance: 'LibraryTrack', **kwargs) -> 'LibraryTrack':
+    def update_instance(self, old_instance: 'UploadedTrack', **kwargs) -> 'UploadedTrack':
         from bodzify_api.model.album.Album import Album
         from bodzify_api.model.artist.Artist import Artist
         from bodzify_api.model.lib_track_playlist_rel.LibTrackPlaylistRel import LibTrackPlaylistRel
@@ -141,7 +141,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
             old_archived_state = old_instance.archived
 
-            updated_instance: LibraryTrack = super().update_instance(old_instance, **kwargs)
+            updated_instance: UploadedTrack = super().update_instance(old_instance, **kwargs)
             updated_instance.update_file_metadata_from_lib_track_instance_values()
 
             if old_genre != updated_instance.genre:
@@ -167,7 +167,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
 
             return updated_instance
 
-    def delete_instance(self, instance: 'LibraryTrack'):
+    def delete_instance(self, instance: 'UploadedTrack'):
         with transaction.atomic():
             old_playlists_with_positions = instance.playlists_with_positions
             user = instance.user
@@ -175,7 +175,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             self._decrease_position_of_next_tracks_in_old_track_playlists(
                 user=user, playlists_with_old_position=old_playlists_with_positions)
 
-    def delete_instance_with_checking_album_and_artists_potential_deletion(self, instance: 'LibraryTrack'):
+    def delete_instance_with_checking_album_and_artists_potential_deletion(self, instance: 'UploadedTrack'):
         from bodzify_api.model.album.Album import Album
         from bodzify_api.model.artist.Artist import Artist
         artists: list[Artist] = list(instance.artists.all())  # list() makes a copy of the QuerySet before the deletion
@@ -189,7 +189,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
         for artist in artists:
             Artist.objects.delete_instance_if_nothing_linked(artist)
 
-    def delete_with_checking_artists_potential_deletion(self, instance: 'LibraryTrack'):
+    def delete_with_checking_artists_potential_deletion(self, instance: 'UploadedTrack'):
         track_artists: QuerySet[Artist] = instance.artists.all()
         instance.delete()
         for artist in track_artists:

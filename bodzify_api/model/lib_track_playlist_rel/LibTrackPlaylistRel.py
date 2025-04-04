@@ -9,7 +9,7 @@ from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
 from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 
 from .Fields import Fields
 
@@ -20,8 +20,8 @@ User = get_user_model()
 class LibTrackPlaylistRel(PrivateStandardResource):
     playlist: Playlist = PrivateForeignKey(  # type: ignore
         Playlist, on_delete=models.CASCADE, related_name=PlayListFields.LIB_TRACK_PLAYLIST_RELS_INTERNAL)
-    lib_track: LibraryTrack = PrivateForeignKey(  # type: ignore
-        LibraryTrack, on_delete=models.CASCADE, related_name=LibTrackFields.LIB_TRACK_PLAYLIST_RELS)
+    lib_track: UploadedTrack = PrivateForeignKey(  # type: ignore
+        UploadedTrack, on_delete=models.CASCADE, related_name=LibTrackFields.LIB_TRACK_PLAYLIST_RELS)
     position = models.PositiveIntegerField(null=True, blank=True)
 
     objects: LibTrackPlaylistRelManager = LibTrackPlaylistRelManager()

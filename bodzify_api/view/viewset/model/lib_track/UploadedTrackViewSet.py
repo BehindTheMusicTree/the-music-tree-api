@@ -1,46 +1,45 @@
 import os
-from django.core.files.base import File
-from django.core.files.storage import default_storage
 from drf_spectacular.types import OpenApiTypes  # type: ignore
 from drf_spectacular.utils import OpenApiParameter, extend_schema  # type: ignore
 from rest_framework.decorators import action
-from typing import cast
+from rest_framework import status
+from rest_framework.response import Response
 
-from bodzify_api.filtering.set.lib_track.Fields import Fields as FilterFields
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
-from bodzify_api.serializer.model.lib_track.input.post.post import LibTrackPostSerializer
-from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as PostFields
-from bodzify_api.serializer.model.lib_track.input.put.put import LibTrackPutSerializer
-from bodzify_api.serializer.model.lib_track.output.detailed import LibTrackDetailedSerializer
-from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
+from bodzify_api.filtering.set.lib_track.LibTrackFilterSet import UploadedTrackFilterSet
+from bodzify_api.model.lib_track.LibTrack import UploadedTrack
+from bodzify_api.model.lib_track.Fields import Fields
+from bodzify_api.view.serializer.model.uploaded_track.detailed import UploadedTrackDetailedSerializer
+from bodzify_api.view.serializer.model.uploaded_track.post import UploadedTrackPostSerializer
+from bodzify_api.view.serializer.model.uploaded_track.put import UploadedTrackPutSerializer
+from bodzify_api.view.serializer.model.uploaded_track.simple import UploadedTrackSimpleSerializer
+from bodzify_api.view.viewset.base.BaseViewSet import BaseViewSet
 
 
-class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
-    def __init__(self, **kwargs):
-        from bodzify_api.filtering.set.lib_track.LibTrackFilterSet import LibTrackFilterSet
-        super().__init__(model_class=LibraryTrack,
-                         filterset_class=LibTrackFilterSet,
-                         simple_serializer_class=LibTrackDetailedSerializer,
-                         detailed_serializer_class=LibTrackDetailedSerializer,
-                         create_serializer_class=LibTrackPostSerializer,
-                         update_serializer_class=LibTrackPutSerializer,
-                         **kwargs)
+class UploadedTrackViewSet(BaseViewSet):
+    """ViewSet for managing uploaded tracks."""
+
+    queryset = UploadedTrack.objects.all()
+    serializer_class = UploadedTrackSimpleSerializer
+    filterset_class = UploadedTrackFilterSet
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return UploadedTrackDetailedSerializer
+        elif self.action == 'create':
+            return UploadedTrackPostSerializer
+        elif self.action in ['update', 'partial_update']:
+            return UploadedTrackPutSerializer
+        return self.serializer_class
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
-        track = cast(LibraryTrack, LibraryTrack.objects.get(uuid=pk))
-        file = cast(File, track.track_file.file)
-        if not file:
-            raise ValueError("File not found")
+        """Download the track file."""
+        track = self.get_object()
+        return Response({
+            Fields.FILE_PATH: track.file_path
+        }, status=status.HTTP_200_OK)
 
-        # Use Django's storage API to get the file path
-        file_path = default_storage.path(file.name)
-        if not os.path.exists(file_path):
-            raise ValueError("File path not found")
-
-        return self.get_file_response(file_path=file_path)
-
-    @extend_schema(request=LibTrackPostSerializer, responses=LibTrackDetailedSerializer, description=("""
+    @extend_schema(request=UploadedTrackPostSerializer, responses=UploadedTrackDetailedSerializer, description=("""
         Create a track with metadata by uploading or a file or downloading it from another source:
             # Uploading a file:
                 - if the file has no metadata 'title', it is set with the file's name without the extension (with an 
@@ -96,8 +95,8 @@ class LibTrackViewSet(AppModelViewSet[LibraryTrack]):
     def retrieve(self, *args, **kwargs):
         return self._handle_retrieve()
 
-    @extend_schema(request=LibTrackPutSerializer,
-                   responses=LibTrackDetailedSerializer,
+    @extend_schema(request=UploadedTrackPutSerializer,
+                   responses=UploadedTrackDetailedSerializer,
                    description=("""
             Updates a track:\n"
             - to not update a field, it mustn't be specified (e.g the line \"artist_name\":... 

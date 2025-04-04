@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
 
 
@@ -18,4 +18,4 @@ class TestCase(LibTrackTestCase):
                 self._delete_lib_track(uuid=track.uuid)
             except Exception as e:
                 assert str(e) == exception_message
-                assert LibraryTrack.objects.filter(uuid=track.uuid).exists()
+                assert UploadedTrack.objects.filter(uuid=track.uuid).exists()

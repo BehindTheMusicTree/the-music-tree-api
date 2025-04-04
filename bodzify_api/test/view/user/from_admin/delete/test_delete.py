@@ -8,7 +8,7 @@ from bodzify_api.model.criteria.Criteria import Criteria
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.musicbrainz_resource.children.recording.MbRecording import MusicbrainzRecording
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 from bodzify_api.model.user.User import User
 from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
 from bodzify_api.test.view.user.UserTestCase import UserTestCase
@@ -67,13 +67,13 @@ class TestCase(UserTestCase):
         self._login_as_user(user)
         title = 'Dr mo'
         self.model_fixture_factory.create_lib_track_with_file(user=user, title=title)
-        assert LibraryTrack.objects.filter(user=user, title=title).count() == 1
+        assert UploadedTrack.objects.filter(user=user, title=title).count() == 1
 
         self._login_as_test_admin()
         response = self._delete_user(user.pk)
 
         assert response.status_code == status.HTTP_204_NO_CONTENT
-        assert LibraryTrack.objects.filter(user=user, title=title).count() == 0
+        assert UploadedTrack.objects.filter(user=user, title=title).count() == 0
 
     def test_delete_then_album_removed(self):
         user = self.model_fixture_factory.create_user()

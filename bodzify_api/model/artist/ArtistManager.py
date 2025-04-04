@@ -29,7 +29,7 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
 
     def delete_instance_with_albums_and_tracks(self, instance: 'Artist') -> tuple[int, dict[str, int]]:
         from bodzify_api.model.album.Album import Album
-        from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+        from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
 
         # Keep deletion order for rollback tests
 
@@ -37,7 +37,7 @@ class ArtistManager(LibTrackMixinWithInternalNameManager['Artist']):
             Album.objects.delete_instance_with_tracks_and_potentially_artists(album)
 
         for lib_track in instance.lib_tracks.all():
-            LibraryTrack.objects.delete_instance_with_checking_album_and_artists_potential_deletion(lib_track)
+            UploadedTrack.objects.delete_instance_with_checking_album_and_artists_potential_deletion(lib_track)
 
         return instance.delete()
 

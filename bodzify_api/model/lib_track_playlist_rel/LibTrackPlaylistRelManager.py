@@ -10,7 +10,7 @@ from .Fields import Fields
 
 if TYPE_CHECKING:
     from .LibTrackPlaylistRel import LibTrackPlaylistRel
-    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+    from bodzify_api.model.track.lib.LibraryTrack import UploadedTrack
     from bodzify_api.model.playlist.Playlist import Playlist
 
 
@@ -41,7 +41,7 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
             relation.position = i
             relation.save(update_fields=[Fields.POSITION])
 
-    def archive_instances_of_lib_track(self, lib_track: 'LibraryTrack'):
+    def archive_instances_of_lib_track(self, lib_track: 'UploadedTrack'):
         for lib_track_playlist_rel in lib_track.lib_track_playlist_rels.all():
             lib_track_old_position = cast(int, lib_track_playlist_rel.position)  # Is not None before archiving
             lib_track_playlist_rel.position = None
@@ -49,13 +49,13 @@ class LibTrackPlaylistRelManager(StandardResourceManager):
 
             self._decrement_positions_of_following_tracks(lib_track_playlist_rel.playlist, lib_track_old_position)
 
-    def unarchive_instances_of_lib_track(self, lib_track: 'LibraryTrack'):
+    def unarchive_instances_of_lib_track(self, lib_track: 'UploadedTrack'):
         for lib_track_playlist_rel in lib_track.lib_track_playlist_rels.all():
             self._increment_positions_of_following_tracks(lib_track_playlist_rel.playlist, 1)
             lib_track_playlist_rel.position = 1
             lib_track_playlist_rel.save(update_fields=[Fields.POSITION])
 
-    def delete_instance(self, user: User, playlist: 'Playlist', lib_track: 'LibraryTrack'):
+    def delete_instance(self, user: User, playlist: 'Playlist', lib_track: 'UploadedTrack'):
         from .LibTrackPlaylistRel import LibTrackPlaylistRel
         lib_track_playlist_rel: LibTrackPlaylistRel = self.get(user=user, playlist=playlist, lib_track=lib_track)
         if lib_track_playlist_rel.position is not None:  # if lib track not archived
