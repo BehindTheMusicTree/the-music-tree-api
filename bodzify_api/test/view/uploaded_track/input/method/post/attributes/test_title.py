@@ -2,7 +2,7 @@ from rest_framework import status
 
 from bodzify_api import settings
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.utils.uploaded_track.LibTrackTestUrl import LibTracTestkUrl
+from bodzify_api.test.utils.uploaded_track.UploadedTrackDownloadTestUrl import LibTracTestkUrl
 from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
 
 

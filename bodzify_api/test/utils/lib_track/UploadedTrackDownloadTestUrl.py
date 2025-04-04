@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class LibTracTestkUrl(str, Enum):
+class UploadedTrackDownloadTestUrl(str, Enum):
     WAV = "http://www.canadianmusicartists.com/sample/fx02.wav"
     MP3 = "https://lasonotheque.org/UPLOAD/mp3/0001.mp3"
     LONG_MP3 = ("https://cs9-7v4.vkuseraudio.net/s/v1/acmp/i18p_zFWiH7jmzEvvkfhv21apWdJuIW5LJox"

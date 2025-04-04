@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.test.utils.uploaded_track.LibTrackTestUrl import LibTracTestkUrl
+from bodzify_api.test.utils.uploaded_track.UploadedTrackDownloadTestUrl import LibTracTestkUrl
 from bodzify_api.test.view.uploaded_track.LibTrackTestCase import LibTrackTestCase
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields
 

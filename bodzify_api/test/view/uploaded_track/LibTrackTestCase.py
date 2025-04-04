@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.test.utils.AppTestCase import AppTestCase
-from bodzify_api.test.utils.uploaded_track.LibTrackTestUrl import LibTracTestkUrl
+from bodzify_api.test.utils.uploaded_track.UploadedTrackDownloadTestUrl import LibTracTestkUrl
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields
 
 
