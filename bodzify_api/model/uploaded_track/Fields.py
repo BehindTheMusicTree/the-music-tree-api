@@ -13,7 +13,7 @@ class Fields(PrivateUniqueResourceFields, TrackablePlayCountFields):
     GENRE = "genre"
     RATING = "rating"
     PLAYLISTS = "playlists"
-    LIB_TRACK_PLAYLIST_RELS = "uploaded_track_playlist_rels"
+    UPLOADED_TRACK_PLAYLIST_RELS = "uploaded_track_playlist_rels"
     LANGUAGE = "language"
     ARCHIVED = 'archived'
     RELATIVE_URL = "relative_url"

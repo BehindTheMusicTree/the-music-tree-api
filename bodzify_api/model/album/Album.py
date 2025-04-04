@@ -34,7 +34,7 @@ class Album(LibTrackMixin):
 
     @property
     def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
-        return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
+        return getattr(self, Fields.UPLOADED_TRACKS_RELATED_NAME)
 
     @property
     def uploaded_tracks_not_archived_sorted(self) -> models.QuerySet['UploadedTrack']:

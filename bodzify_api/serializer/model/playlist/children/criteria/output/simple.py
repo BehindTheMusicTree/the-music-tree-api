@@ -10,8 +10,8 @@ from bodzify_api.serializer.model.playlist.children.criteria.output.minumum impo
 
 class Fields:
     UUID = AvailableFields.UUID
-    LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL = AvailableFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL
-    LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC = AvailableFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC
+    UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL = AvailableFields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL
+    UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC = AvailableFields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC
     DURATION_STR_IN_HOUR_MIN_SEC = AvailableFields.DURATION_STR_IN_HOUR_MIN_SEC
     NAME = AvailableFields.NAME
     CRITERIA = AvailableFields.CRITERIA
@@ -25,7 +25,7 @@ class CriteriaPlaylistSimpleSerializer(serializers.ModelSerializer):
     criteria = CriteriaSimpleSerializer()
     parent = CriteriaPlaylistMinimumSerializer()
     root = CriteriaPlaylistMinimumSerializer()  # type: ignore
-    library_tracks_count = serializers.IntegerField(source=Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+    library_tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
 
     def to_representation(self, instance):
         if not isinstance(instance, CriteriaPlaylist):
@@ -39,6 +39,6 @@ class CriteriaPlaylistSimpleSerializer(serializers.ModelSerializer):
                   Fields.CRITERIA,
                   Fields.PARENT,
                   Fields.ROOT,
-                  Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
+                  Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON,]

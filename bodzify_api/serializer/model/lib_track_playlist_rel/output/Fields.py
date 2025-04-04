@@ -2,7 +2,7 @@ from bodzify_api.model.uploaded_track_playlist_rel.LibTrackPlaylistRel import Fi
 
 
 class Fields:
-    LIB_TRACK_INTERNAL = ModelFields.LIB_TRACK_INTERNAL
-    LIB_TRACK_PUBLIC = ModelFields.LIB_TRACK_PUBLIC
+    UPLOADED_TRACK_INTERNAL = ModelFields.UPLOADED_TRACK_INTERNAL
+    UPLOADED_TRACK_PUBLIC = ModelFields.UPLOADED_TRACK_PUBLIC
     PLAYLIST = ModelFields.PLAYLIST
     POSITION = ModelFields.POSITION

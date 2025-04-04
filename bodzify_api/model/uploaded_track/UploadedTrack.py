@@ -30,31 +30,31 @@ if TYPE_CHECKING:
 
 
 class UploadedTrack(TrackablePlayCount):
-    title = AppCharField(max_length=settings.LIB_TRACK_TITLE_LEN_MAX)
+    title = AppCharField(max_length=settings.UPLOADED_TRACK_TITLE_LEN_MAX)
     track_file_fingerprint_must_be_unique = models.BooleanField(default=False)
-    artists = PrivateManyToManyField(Artist, blank=True, related_name=ArtistFields.LIB_TRACKS_RELATED_NAME)
+    artists = PrivateManyToManyField(Artist, blank=True, related_name=ArtistFields.UPLOADED_TRACKS_RELATED_NAME)
     album: Album = PrivateForeignKey(Album,  # type: ignore
                                      on_delete=models.CASCADE,
                                      null=True,
                                      blank=True,
-                                     related_name=AlbumFields.LIB_TRACKS_RELATED_NAME,)
+                                     related_name=AlbumFields.UPLOADED_TRACKS_RELATED_NAME,)
     track_number = models.PositiveIntegerField(
         null=True,
         blank=True,
-        validators=[MinValueValidator(1), MaxValueValidator(settings.LIB_TRACK_TRACK_NUMBER_MAX)])
+        validators=[MinValueValidator(1), MaxValueValidator(settings.UPLOADED_TRACK_TRACK_NUMBER_MAX)])
     genre = PrivateForeignKey(Genre,
                               on_delete=models.DO_NOTHING,
                               null=True,
                               blank=True,
-                              related_name=CriteriaFields.LIB_TRACKS_RELATED_NAME)
+                              related_name=CriteriaFields.UPLOADED_TRACKS_RELATED_NAME)
     rating = models.IntegerField(
         null=True,
         blank=True,
-        validators=[MinValueValidator(0), MaxValueValidator(settings.LIB_TRACK_RATING_VALUE_MAX)])
+        validators=[MinValueValidator(0), MaxValueValidator(settings.UPLOADED_TRACK_RATING_VALUE_MAX)])
     language = AppCharField(max_length=settings.LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
     archived = models.BooleanField(default=False)
     playlists = PrivateManyToManyField(
-        Playlist, through='LibTrackPlaylistRel', related_name=PlayListFields.LIB_TRACKS_RELATED_NAME)
+        Playlist, through='LibTrackPlaylistRel', related_name=PlayListFields.UPLOADED_TRACKS_RELATED_NAME)
 
     if TYPE_CHECKING:
         track_file: TrackFile

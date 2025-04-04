@@ -23,12 +23,12 @@ class UploadedTrackPostSerializer(LibTrackInputSerializer):
         filename = os.path.basename(file.name).rsplit('.', 1)[0]
         filename = filename.rstrip()
         filename_without_expressions_to_exclude = data_transformer.remove_substrings_from_string(
-            string_a=filename, substrings=settings.LIB_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE)
+            string_a=filename, substrings=settings.UPLOADED_TRACK_FILENAME_EXPRESSIONS_TO_EXCLUDE_GENERATING_TITLE)
 
-        if len(filename_without_expressions_to_exclude) > settings.LIB_TRACK_FILENAME_LEN_MAX:
-            title = settings.LIB_TRACK_GENERATED_TITLE_PREFIXE + \
+        if len(filename_without_expressions_to_exclude) > settings.UPLOADED_TRACK_FILENAME_LEN_MAX:
+            title = settings.UPLOADED_TRACK_GENERATED_TITLE_PREFIXE + \
                 utils.generate_short_uu(
-                    settings.LIB_TRACK_GENERATED_TITLE_LENGTH - len(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE))
+                    settings.UPLOADED_TRACK_GENERATED_TITLE_LENGTH - len(settings.UPLOADED_TRACK_GENERATED_TITLE_PREFIXE))
         else:
             title = filename_without_expressions_to_exclude
         return title
@@ -36,7 +36,7 @@ class UploadedTrackPostSerializer(LibTrackInputSerializer):
     def _get_metadata_from_file(self, file) -> dict:
         try:
             return audio_metadata.get_merged_app_metadata(
-                file=file, normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
+                file=file, normalized_rating_max_value=settings.UPLOADED_TRACK_RATING_VALUE_MAX)
         except FileCorruptedError as exc:
             raise AppValidationException(field_name=PostFields.TRACK_FILE_PUBLIC,
                                          message=str(exc),
@@ -44,7 +44,7 @@ class UploadedTrackPostSerializer(LibTrackInputSerializer):
 
     def _truncate_metadata_values(self, metadata_dict: dict) -> dict:
         metadata_str_max_lengths = {
-            AppMetadataKey.TITLE: settings.LIB_TRACK_TITLE_LEN_MAX,
+            AppMetadataKey.TITLE: settings.UPLOADED_TRACK_TITLE_LEN_MAX,
             AppMetadataKey.ARTISTS_NAMES: settings.ARTISTS_NAMES_LEN_MAX,
             AppMetadataKey.ALBUM_NAME: settings.ALBUM_NAME_LEN_MAX,
             AppMetadataKey.ALBUM_ARTISTS_NAMES: settings.ALBUM_ARTISTS_NAMES_FIELD_LEN_MAX,

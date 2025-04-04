@@ -94,7 +94,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
                 instance.artists.set(artists)
 
             track_file_model_data[TrackFileFields.USER] = instance.user
-            track_file_model_data[TrackFileFields.LIB_TRACK] = instance
+            track_file_model_data[TrackFileFields.UPLOADED_TRACK] = instance
 
             TrackFile.objects.create(**track_file_model_data)
 
@@ -113,7 +113,7 @@ class LibTrackManager(StandardResourceManager['LibraryTrack']):
             if artists:
                 uploaded_track.artists.set(artists)
 
-            track_file_data[TrackFileFields.LIB_TRACK] = uploaded_track
+            track_file_data[TrackFileFields.UPLOADED_TRACK] = uploaded_track
             TrackFile.objects.create(**track_file_data)
 
         uploaded_track.update_file_metadata_from_uploaded_track_instance_values()

@@ -63,15 +63,16 @@ class TestCase(LibTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert self.saved_object.track_number == track_number
 
     def test_largest_then_ok(self):
-        track_number = settings.LIB_TRACK_TRACK_NUMBER_MAX
+        track_number = settings.UPLOADED_TRACK_TRACK_NUMBER_MAX
         response = self._post_uploaded_track(LibTrackTestFilename.METADATA_NONE_MP3, track_number=track_number)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_number == track_number
 
     def test_too_large_then_400_bad_request(self):
-        response = self._post_uploaded_track(LibTrackTestFilename.METADATA_NONE_MP3,
-                                             album_name='album', track_number=settings.LIB_TRACK_TRACK_NUMBER_MAX + 1)
+        response = self._post_uploaded_track(
+            LibTrackTestFilename.METADATA_NONE_MP3, album_name='album',
+            track_number=settings.UPLOADED_TRACK_TRACK_NUMBER_MAX + 1)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1

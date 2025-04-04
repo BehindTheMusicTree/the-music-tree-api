@@ -2,5 +2,5 @@ from bodzify_api.model.uploaded_track_mixin.Fields import Fields as LibTrackMixi
 
 
 class Fields(LibTrackMixinFields):
-    LIB_TRACKS_RELATED_NAME = 'uploaded_tracks_of_artist'
+    UPLOADED_TRACKS_RELATED_NAME = 'uploaded_tracks_of_artist'
     ALBUMS = 'albums'

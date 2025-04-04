@@ -37,7 +37,7 @@ class Playlist(LibTrackMixin, TrackablePlayCount):
 
     @property
     def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
-        return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
+        return getattr(self, Fields.UPLOADED_TRACKS_RELATED_NAME)
 
     @property
     def type_label(self) -> str:

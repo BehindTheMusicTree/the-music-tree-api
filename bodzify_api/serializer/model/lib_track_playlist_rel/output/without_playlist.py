@@ -7,8 +7,8 @@ from .Fields import Fields
 
 
 class LibTrackPlaylistRelWithoutPlaylist(serializers.ModelSerializer):
-    library_track = UploadedTrackDetailedSerializer(source=Fields.LIB_TRACK_INTERNAL)
+    library_track = UploadedTrackDetailedSerializer(source=Fields.UPLOADED_TRACK_INTERNAL)
 
     class Meta:
         model = LibTrackPlaylistRel
-        fields = [Fields.LIB_TRACK_PUBLIC, Fields.POSITION,]
+        fields = [Fields.UPLOADED_TRACK_PUBLIC, Fields.POSITION,]

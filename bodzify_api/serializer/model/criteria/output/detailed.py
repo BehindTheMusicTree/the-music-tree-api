@@ -22,9 +22,9 @@ from .minimum import CriteriaMinimumSerializer
 
 class CriteriaDetailedSerializer(AppSerializer, serializers.ModelSerializer):
     library_tracks = LibTrackWithoutAlbumPlaylistGenreSerializer(
-        source=Fields.LIB_TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
-    library_tracks_count = IntegerField(source=Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
-    library_tracks_archived_count = IntegerField(source=Fields.LIB_TRACKS_ARCHIVED_COUNT_INTERNAL)
+        source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
+    library_tracks_count = IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+    library_tracks_archived_count = IntegerField(source=Fields.UPLOADED_TRACKS_ARCHIVED_COUNT_INTERNAL)
     parent = CriteriaMinimumSerializer()
     ascendants = CriteriaLineageRelWithoutDescendantSerializer(source=ModelFields.ASCENDANTS_RELS, many=True)
     descendants = CriteriaLineageRelWithoutAscendantSerializer(source=ModelFields.DESCENDANTS_RELS, many=True)
@@ -43,8 +43,8 @@ class CriteriaDetailedSerializer(AppSerializer, serializers.ModelSerializer):
                   Fields.ROOT,
                   Fields.CHILDREN,
                   Fields.CRITERIA_PLAYLIST,
-                  Fields.LIB_TRACKS_NOT_ARCHIVED_PUBLIC,
-                  Fields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
-                  Fields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC,
+                  Fields.UPLOADED_TRACKS_NOT_ARCHIVED_PUBLIC,
+                  Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
+                  Fields.UPLOADED_TRACKS_ARCHIVED_COUNT_PUBLIC,
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON]

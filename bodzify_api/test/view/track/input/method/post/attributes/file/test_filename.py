@@ -12,7 +12,7 @@ class TestCase(LibTrackTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.filename == \
-            LibTrackTestFilename.FILENAME_151_MP3[-settings.LIB_TRACK_FILENAME_LEN_MAX:]
+            LibTrackTestFilename.FILENAME_151_MP3[-settings.UPLOADED_TRACK_FILENAME_LEN_MAX:]
 
     def test_same_filename_so_suffixe_added(self):
         self._post_uploaded_track(LibTrackTestFilename.METADATA_NONE_MP3)

@@ -29,7 +29,7 @@ class Artist(LibTrackMixin):
 
     @property
     def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
-        return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
+        return getattr(self, Fields.UPLOADED_TRACKS_RELATED_NAME)
 
     class Meta:
         constraints = [models.CheckConstraint(check=~models.Q(_name=""), name="artist_non_empty_name")]

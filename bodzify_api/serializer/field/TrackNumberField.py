@@ -29,10 +29,10 @@ class TrackNumberField(AppField, serializers.IntegerField):
                     field_name=self.get_error_field_name(),
                     message='Position in album must be greater than or equal to 1',
                     field_validation_error_code=FieldValidationErrorCode.TRACK_NUMBER_TOO_SMALL)
-            if value > settings.LIB_TRACK_TRACK_NUMBER_MAX:
+            if value > settings.UPLOADED_TRACK_TRACK_NUMBER_MAX:
                 raise AppValidationException(
                     field_name=self.get_error_field_name(),
-                    message=f'Position in album must be less than or equal to {settings.LIB_TRACK_TRACK_NUMBER_MAX}',
+                    message=f'Position in album must be less than or equal to {settings.UPLOADED_TRACK_TRACK_NUMBER_MAX}',
                     field_validation_error_code=FieldValidationErrorCode.TRACK_NUMBER_TOO_LARGE)
 
         return value

@@ -21,7 +21,7 @@ class TestCase(AlbumTestCase):
         response = self._retrieve_album(uuid=album.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        result_tracks = self.result[to_camel_case(RetrieveFields.LIB_TRACKS_NOT_ARCHIVED_SORTED_PUBLIC)]
+        result_tracks = self.result[to_camel_case(RetrieveFields.UPLOADED_TRACKS_NOT_ARCHIVED_SORTED_PUBLIC)]
 
         assert result_tracks[0][to_camel_case(LibTrackOutputFields.TITLE)] == uploaded_track_1st_position.title
         assert result_tracks[1][to_camel_case(LibTrackOutputFields.TITLE)] == uploaded_track_12th_position.title
@@ -46,7 +46,7 @@ class TestCase(AlbumTestCase):
         response = self._retrieve_album(uuid=album.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        result_tracks = self.result[to_camel_case(RetrieveFields.LIB_TRACKS_NOT_ARCHIVED_SORTED_PUBLIC)]
+        result_tracks = self.result[to_camel_case(RetrieveFields.UPLOADED_TRACKS_NOT_ARCHIVED_SORTED_PUBLIC)]
         assert result_tracks[0][to_camel_case(LibTrackOutputFields.TITLE)] == uploaded_track_4th_position.title
         assert result_tracks[1][to_camel_case(LibTrackOutputFields.TITLE)] == uploaded_track_112th_position.title
         assert result_tracks[2][to_camel_case(LibTrackOutputFields.TITLE)] == uploaded_track_no_position_1.title
@@ -74,7 +74,7 @@ class TestCase(AlbumTestCase):
         response = self._retrieve_album(album.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[to_camel_case(RetrieveFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC)] == 2
+        assert self.result[to_camel_case(RetrieveFields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC)] == 2
 
     def test_archived_count(self):
         album = self.model_fixture_factory.create_album(name="Chuck")
@@ -86,4 +86,4 @@ class TestCase(AlbumTestCase):
         response = self._retrieve_album(album.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[to_camel_case(RetrieveFields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC)] == 3
+        assert self.result[to_camel_case(RetrieveFields.UPLOADED_TRACKS_ARCHIVED_COUNT_PUBLIC)] == 3

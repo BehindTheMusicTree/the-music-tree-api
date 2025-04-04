@@ -31,4 +31,4 @@ class TestCase(LibTrackTestCase):
 
         assert True
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.title.startswith(settings.LIB_TRACK_GENERATED_TITLE_PREFIXE)
+        assert self.saved_object.title.startswith(settings.UPLOADED_TRACK_GENERATED_TITLE_PREFIXE)

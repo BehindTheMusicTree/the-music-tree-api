@@ -19,9 +19,9 @@ User = get_user_model()
 
 class LibTrackPlaylistRel(PrivateStandardResource):
     playlist: Playlist = PrivateForeignKey(  # type: ignore
-        Playlist, on_delete=models.CASCADE, related_name=PlayListFields.LIB_TRACK_PLAYLIST_RELS_INTERNAL)
+        Playlist, on_delete=models.CASCADE, related_name=PlayListFields.UPLOADED_TRACK_PLAYLIST_RELS_INTERNAL)
     uploaded_track: UploadedTrack = PrivateForeignKey(  # type: ignore
-        UploadedTrack, on_delete=models.CASCADE, related_name=LibTrackFields.LIB_TRACK_PLAYLIST_RELS)
+        UploadedTrack, on_delete=models.CASCADE, related_name=LibTrackFields.UPLOADED_TRACK_PLAYLIST_RELS)
     position = models.PositiveIntegerField(null=True, blank=True)
 
     objects: LibTrackPlaylistRelManager = LibTrackPlaylistRelManager()
@@ -31,7 +31,7 @@ class LibTrackPlaylistRel(PrivateStandardResource):
         verbose_name_plural = 'Library Track Playlist Relations'
         indexes = [
             models.Index(fields=[Fields.USER, Fields.PLAYLIST]),
-            models.Index(fields=[Fields.USER, Fields.LIB_TRACK_INTERNAL]),
+            models.Index(fields=[Fields.USER, Fields.UPLOADED_TRACK_INTERNAL]),
         ]
 
     def __str__(self):

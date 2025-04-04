@@ -85,7 +85,7 @@ class ModelFixtureFactory:
             TrackFileFields.CREATED_ON: timezone.make_aware(datetime.now()),
             TrackFileFields.UPDATED_ON: timezone.make_aware(datetime.now()),
             TrackFileFields.USER: user,
-            TrackFileFields.LIB_TRACK: uploaded_track,
+            TrackFileFields.UPLOADED_TRACK: uploaded_track,
             TrackFileFields.FILE: str(track_file_path_in_lib)
         }
         model_fields.update(kwargs)
@@ -112,7 +112,7 @@ class ModelFixtureFactory:
         model_fields = {
             LibTrackPlaylistRelFields.USER: user or self.default_test_user,
             LibTrackPlaylistRelFields.PLAYLIST: playlist,
-            LibTrackPlaylistRelFields.LIB_TRACK_INTERNAL: uploaded_track,
+            LibTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL: uploaded_track,
         }
         return G(LibTrackPlaylistRel, **model_fields)
 

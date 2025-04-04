@@ -28,7 +28,7 @@ class TrackFileValidator:
         self._validate_content_type_is_audio_from_magic_bytes_and_content(value, field)
 
     def _validate_extension(self, value, field=None):
-        allowed_extensions = [ext.lower() for ext in settings.LIB_TRACK_FILE_EXTENSIONS]
+        allowed_extensions = [ext.lower() for ext in settings.UPLOADED_TRACK_FILE_EXTENSIONS]
         extension = Path(value.name).suffix[0:].lower()
 
         if extension not in allowed_extensions:
@@ -50,10 +50,10 @@ class TrackFileValidator:
                     field_name=self.field_name)
 
     def _validate_file_size(self, file, field=None):
-        track_size_max_in_ko = settings.LIB_TRACK_FILE_SIZE_MAX_IN_MO * 1000000
+        track_size_max_in_ko = settings.UPLOADED_TRACK_FILE_SIZE_MAX_IN_MO * 1000000
         if file.size > track_size_max_in_ko:
             message = _('File too large. Size should not exceed %(size).3f Mo.') % {
-                'size': settings.LIB_TRACK_FILE_SIZE_MAX_IN_MO
+                'size': settings.UPLOADED_TRACK_FILE_SIZE_MAX_IN_MO
             }
             if field and hasattr(field, 'fail'):
                 field.fail(FieldValidationErrorCode.FILE_TOO_LARGE, message)
@@ -65,10 +65,10 @@ class TrackFileValidator:
                     field_validation_error_code=FieldValidationErrorCode.FILE_TOO_LARGE
                 )
 
-        track_size_min = settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO * 1000000
+        track_size_min = settings.UPLOADED_TRACK_FILE_SIZE_MIN_IN_MO * 1000000
         if file.size < track_size_min:
             message = _('File too small. Size should be at least %(size).3f Mo.') % {
-                'size': settings.LIB_TRACK_FILE_SIZE_MIN_IN_MO
+                'size': settings.UPLOADED_TRACK_FILE_SIZE_MIN_IN_MO
             }
             if field and hasattr(field, 'fail'):
                 field.fail(FieldValidationErrorCode.FILE_TOO_SMALL, message)

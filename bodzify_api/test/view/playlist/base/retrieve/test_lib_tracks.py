@@ -25,10 +25,10 @@ class TestCase(PlaylistTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         result_tracks_raw = self.result[data_transformer.to_camel_case(
-            PlaylistOutputFields.LIB_TRACK_PLAYLIST_RELS_PUBLIC)]
+            PlaylistOutputFields.UPLOADED_TRACK_PLAYLIST_RELS_PUBLIC)]
         result_tracks_sorted = sorted(
             result_tracks_raw, key=lambda x: x[data_transformer.to_camel_case(LibTrackPlaylistRelFields.POSITION)])
-        uploaded_track_field_name = data_transformer.to_camel_case(LibTrackPlaylistRelFields.LIB_TRACK_PUBLIC)
+        uploaded_track_field_name = data_transformer.to_camel_case(LibTrackPlaylistRelFields.UPLOADED_TRACK_PUBLIC)
         assert result_tracks_sorted[0][uploaded_track_field_name][LibTrackOutputFields.TITLE] == uploaded_track1.title
         assert result_tracks_sorted[1][uploaded_track_field_name][LibTrackOutputFields.TITLE] == uploaded_track2.title
         assert result_tracks_sorted[2][uploaded_track_field_name][LibTrackOutputFields.TITLE] == uploaded_track3.title
@@ -65,7 +65,7 @@ class TestCase(PlaylistTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         assert self.result[data_transformer.to_camel_case(
-            PlaylistOutputFields.LIB_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC)] == 2
+            PlaylistOutputFields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC)] == 2
 
     def test_archived_count(self):
         genre = self.model_fixture_factory.create_genre(name='rock')
@@ -81,4 +81,5 @@ class TestCase(PlaylistTestCase):
         response = self._retrieve_playlist(genre.criteria_playlist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[data_transformer.to_camel_case(PlaylistOutputFields.LIB_TRACKS_ARCHIVED_COUNT_PUBLIC)] == 2
+        assert self.result[data_transformer.to_camel_case(
+            PlaylistOutputFields.UPLOADED_TRACKS_ARCHIVED_COUNT_PUBLIC)] == 2

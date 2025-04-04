@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 
 class User(AbstractUser, BaseModel):
-    DEFAULT_LIB_TRACK_FILENAME_WITH_EXTENSION = "default.mp3"
+    DEFAULT_UPLOADED_TRACK_FILENAME_WITH_EXTENSION = "default.mp3"
 
     is_test_user = models.BooleanField(default=False)
     lib_path_relative_to_media = models.GeneratedField(  # type: ignore

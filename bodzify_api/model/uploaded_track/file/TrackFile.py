@@ -194,7 +194,7 @@ class TrackFile(PrivateStandardResource):
     def update_file_metadata(self, app_metadata: AppMetadata):
         audio_metadata.update_file_metadata(file=self.file,
                                             app_metadata=app_metadata,
-                                            normalized_rating_max_value=settings.LIB_TRACK_RATING_VALUE_MAX)
+                                            normalized_rating_max_value=settings.UPLOADED_TRACK_RATING_VALUE_MAX)
 
     def handle_flac_md5(self) -> bool:
         return False
