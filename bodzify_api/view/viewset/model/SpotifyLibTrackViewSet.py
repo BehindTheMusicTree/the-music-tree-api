@@ -22,8 +22,9 @@ class SpotifyLibTrackViewSet(ReadOnlyModelViewSet):
         return self.serializer_class
 
     def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return super().get_queryset().none()
         return super().get_queryset().filter(
-            spotify_artists__user=self.request.user,
             **{Fields.IS_REMOVED: False}
         ).distinct()
 
