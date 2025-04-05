@@ -71,7 +71,7 @@ class UploadedTrack(TrackablePlayCount):
 
     @property
     def relative_url(self) -> str:
-        return f"tracks/{self.uuid}/"
+        return f"library/uploaded/{self.uuid}/"
 
     def __str__(self):
         position_str = f"#{self.track_number}" if self.track_number else "#--"
