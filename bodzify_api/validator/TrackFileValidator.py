@@ -81,7 +81,9 @@ class TrackFileValidator:
                 )
 
     def _validate_content_type_is_audio_from_magic_bytes_and_content(self, file, field=None):
+        original_position = file.tell()
         first_few_bytes = file.read(4)
+        file.seek(original_position)  # Reset file pointer to original position
 
         for magic_bytes, _ in self.AUDIO_MAGIC_BYTES.items():
             if first_few_bytes.startswith(magic_bytes):
