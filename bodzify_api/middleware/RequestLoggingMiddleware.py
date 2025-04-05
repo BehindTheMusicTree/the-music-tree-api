@@ -31,13 +31,26 @@ class RequestLoggingMiddleware:
         requestDebugLogger.info(_generate_log_about_headers(request))
 
         # Log request body for non-GET requests
-        if request.method != 'GET' and request.body:
+        if request.method != 'GET':
             try:
-                body = request.body.decode('utf-8')
+                # Try to get the body from the request attribute first (set by other middleware)
+                body = getattr(request, '_body', None)
+                if body is None:
+                    # If not set, try to read the body directly
+                    body = request.body
+                    # Store the body in a request attribute for other middleware
+                    request._body = body
+
                 if body:
-                    requestDebugLogger.info(f"[{request_id}] Request Body: {body}")
-            except UnicodeDecodeError:
-                requestDebugLogger.info(f"[{request_id}] Request Body: <binary data>")
+                    try:
+                        body_str = body.decode('utf-8')
+                        if body_str:
+                            requestDebugLogger.info(f"[{request_id}] Request Body: {body_str}")
+                    except UnicodeDecodeError:
+                        requestDebugLogger.info(f"[{request_id}] Request Body: <binary data>")
+            except Exception as e:
+                # Log the error but don't fail the request
+                requestDebugLogger.error(f"[{request_id}] Error reading request body: {str(e)}")
 
         try:
             response = self.get_response(request)
