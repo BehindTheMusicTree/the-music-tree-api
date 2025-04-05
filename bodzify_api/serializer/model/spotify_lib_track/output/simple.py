@@ -8,7 +8,7 @@ class SpotifyLibTrackSimpleSerializer(serializers.ModelSerializer):
     class Meta:
         model = SpotifyLibTrack
         fields = [
-            Fields.UUID,
+            Fields.SPOTIFY_ID,
             Fields.NAME,
             Fields.DURATION_STR_IN_HOUR_MIN_SEC,
             Fields.SPOTIFY_LINK,
