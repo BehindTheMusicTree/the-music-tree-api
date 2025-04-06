@@ -78,7 +78,6 @@ def spotify_auth_api(request):
         # Create JWT token
         jwt_token = create_jwt_token(user)
 
-        print(f"JWT token: {jwt_token}")
         print("Sync complete.")
         return Response({
             'accessToken': jwt_token,
