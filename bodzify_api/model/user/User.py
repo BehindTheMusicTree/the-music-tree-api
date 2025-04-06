@@ -45,6 +45,7 @@ class User(AbstractUser, BaseModel):
     spotify_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
     spotify_access_token = models.CharField(max_length=500, null=True, blank=True)
     spotify_refresh_token = models.CharField(max_length=500, null=True, blank=True)
+    spotify_profile = models.JSONField(null=True, blank=True)
 
     objects: UserManager = UserManager()
 

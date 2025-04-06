@@ -51,14 +51,16 @@ def spotify_auth_api(request):
             defaults={
                 'email': email,
                 'spotify_access_token': access_token,
-                'spotify_refresh_token': refresh_token
+                'spotify_refresh_token': refresh_token,
+                'spotify_profile': user_info
             }
         )
 
         if not created:
-            # Update tokens for existing user
+            # Update tokens and profile for existing user
             user.spotify_access_token = access_token
             user.spotify_refresh_token = refresh_token
+            user.spotify_profile = user_info
             user.save()
 
         # Create JWT token
@@ -69,7 +71,8 @@ def spotify_auth_api(request):
             'user': {
                 'id': user.id,
                 'email': user.email,
-                'spotify_id': user.spotify_id
+                'spotify_id': user.spotify_id,
+                'spotify_profile': user.spotify_profile
             }
         })
 
@@ -111,14 +114,16 @@ def spotify_callback(request):
             defaults={
                 'email': email,
                 'spotify_access_token': access_token,
-                'spotify_refresh_token': refresh_token
+                'spotify_refresh_token': refresh_token,
+                'spotify_profile': user_info
             }
         )
 
         if not created:
-            # Update tokens for existing user
+            # Update tokens and profile for existing user
             user.spotify_access_token = access_token
             user.spotify_refresh_token = refresh_token
+            user.spotify_profile = user_info
             user.save()
 
         # Create JWT token
@@ -129,7 +134,8 @@ def spotify_callback(request):
             'user': {
                 'id': user.id,
                 'email': user.email,
-                'spotify_id': user.spotify_id
+                'spotify_id': user.spotify_id,
+                'spotify_profile': user.spotify_profile
             }
         })
 
