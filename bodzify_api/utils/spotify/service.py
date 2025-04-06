@@ -188,6 +188,90 @@ class SpotifyAPIService:
             logger.error(f"Network error fetching saved tracks: {str(e)}")
             raise spotify_exception.SpotifyNetworkException(f"Network error: {str(e)}")
 
+    def get_user_playlists(self, access_token: str, limit: int = 50, offset: int = 0) -> Dict[str, Any]:
+        """
+        Get user's playlists
+
+        Args:
+            access_token: User's Spotify access token
+            limit: Maximum number of playlists to return (default: 50)
+            offset: Offset for pagination (default: 0)
+
+        Returns:
+            Dictionary containing user's playlists
+        """
+        try:
+            sp = spotipy.Spotify(auth=access_token)
+            result = sp.current_user_playlists(limit=limit, offset=offset)
+            if result is None:
+                return {}
+            return result
+        except SpotipyException as e:
+            logger.error(f"Spotify playlists fetch error: {str(e)}")
+            if "not found" in str(e).lower():
+                raise spotify_exception.SpotifyResourceNotFoundException("User's playlists not found")
+            else:
+                raise spotify_exception.SpotifyAPIException(f"Spotify API error: {str(e)}")
+        except Exception as e:
+            logger.error(f"Network error fetching playlists: {str(e)}")
+            raise spotify_exception.SpotifyNetworkException(f"Network error: {str(e)}")
+
+    def get_user_saved_albums(self, access_token: str, limit: int = 50, offset: int = 0) -> Dict[str, Any]:
+        """
+        Get user's saved albums
+
+        Args:
+            access_token: User's Spotify access token
+            limit: Maximum number of albums to return (default: 50)
+            offset: Offset for pagination (default: 0)
+
+        Returns:
+            Dictionary containing user's saved albums
+        """
+        try:
+            sp = spotipy.Spotify(auth=access_token)
+            result = sp.current_user_saved_albums(limit=limit, offset=offset)
+            if result is None:
+                return {}
+            return result
+        except SpotipyException as e:
+            logger.error(f"Spotify saved albums fetch error: {str(e)}")
+            if "not found" in str(e).lower():
+                raise spotify_exception.SpotifyResourceNotFoundException("User's saved albums not found")
+            else:
+                raise spotify_exception.SpotifyAPIException(f"Spotify API error: {str(e)}")
+        except Exception as e:
+            logger.error(f"Network error fetching saved albums: {str(e)}")
+            raise spotify_exception.SpotifyNetworkException(f"Network error: {str(e)}")
+
+    def get_user_followed_artists(self, access_token: str, limit: int = 50, after: str | None = None) -> Dict[str, Any]:
+        """
+        Get user's followed artists
+
+        Args:
+            access_token: User's Spotify access token
+            limit: Maximum number of artists to return (default: 50)
+            after: Cursor for pagination (default: None)
+
+        Returns:
+            Dictionary containing user's followed artists
+        """
+        try:
+            sp = spotipy.Spotify(auth=access_token)
+            result = sp.current_user_followed_artists(limit=limit, after=after)
+            if result is None:
+                return {}
+            return result
+        except SpotipyException as e:
+            logger.error(f"Spotify followed artists fetch error: {str(e)}")
+            if "not found" in str(e).lower():
+                raise spotify_exception.SpotifyResourceNotFoundException("User's followed artists not found")
+            else:
+                raise spotify_exception.SpotifyAPIException(f"Spotify API error: {str(e)}")
+        except Exception as e:
+            logger.error(f"Network error fetching followed artists: {str(e)}")
+            raise spotify_exception.SpotifyNetworkException(f"Network error: {str(e)}")
+
 
 def get_or_create_spotify_lib_track(user: User, track_id: str) -> Optional[SpotifyLibTrack]:
     """

@@ -7,29 +7,20 @@ from django.utils import timezone
 from bodzify_api.utils.spotify.oauth import SpotifyOAuthService
 from bodzify_api.model.user.User import User
 from bodzify_api.utils.jwt import create_jwt_token
-from bodzify_api.utils.spotify.service import quick_sync_spotify_library
 from bodzify_api.model.user.Fields import Fields
 from bodzify_api.model.spotify.Fields import Fields as SpotifyFields
+from bodzify_api.utils.spotify.service import SpotifyAPIService
 
-
-@api_view(['GET'])
-def spotify_auth(request):
-    """
-    Get the Spotify authorization URL
-    """
-    oauth_service = SpotifyOAuthService()
-    auth_url = oauth_service.get_auth_url()
-    return Response({'auth_url': auth_url})
+spotify_service = SpotifyAPIService()
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
-def spotify_auth_api(request):
+def spotify_auth(request):
     """
     Handle Spotify authentication code from frontend
-    This endpoint matches what the frontend expects when exchanging the auth code
     """
-    print("\n=== Spotify Auth API Called ===")
+    print("\n=== Spotify Auth Called ===")
     code = request.data.get('code')
     if not code:
         return Response({'error': 'No code provided'}, status=status.HTTP_400_BAD_REQUEST)
@@ -44,17 +35,21 @@ def spotify_auth_api(request):
 
         # Get user info
         user_info = oauth_service.get_user_info(access_token)
+        print(f"User info: {user_info}")
+
         spotify_id = user_info['id']
         email = user_info.get('email')
+        display_name = user_info.get('display_name', spotify_id)
 
         # Create or update user
         user, created = User.objects.get_or_create(
             spotify_id=spotify_id,
             defaults={
                 'email': email,
+                'username': display_name,
                 'spotify_access_token': access_token,
                 'spotify_refresh_token': refresh_token,
-                'spotify_token_expires_at': timezone.now() + timezone.timedelta(seconds=token_info['expires_in'])
+                'spotify_token_expires_at': timezone.now() + timezone.timedelta(seconds=token_info['expires_in']),
                 'spotify_profile': user_info
             }
         )
@@ -68,28 +63,26 @@ def spotify_auth_api(request):
             user.save()
 
         print(f"User authenticated: {user.username}")
-        print("Syncing user's library...")
-
-        # Quick sync user's Spotify library (only new additions)
-        try:
-            tracks = quick_sync_spotify_library(user)
-            sync_message = f"Successfully quick-synced {len(tracks)} new tracks"
-        except Exception as e:
-            sync_message = f"Failed to sync library: {str(e)}"
 
         # Create JWT token
         jwt_token = create_jwt_token(user)
 
-        print("Sync complete.")
+        print("Auth complete.")
         return Response({
             'accessToken': jwt_token,
             'user': {
-                'spotify_profile': user.spotify_profile
+                'spotify_profile': user.spotify_profile,
                 Fields.ID: user.id,
                 Fields.EMAIL: user.email,
-                SpotifyFields.SPOTIFY_ID: user.spotify_id
-            },
-            'sync_message': sync_message
+                SpotifyFields.SPOTIFY_ID: user.spotify_id,
+                'display_name': user.spotify_profile.get('display_name'),
+                'external_urls': user.spotify_profile.get('external_urls'),
+                'followers': user.spotify_profile.get('followers'),
+                'href': user.spotify_profile.get('href'),
+                'images': user.spotify_profile.get('images'),
+                'type': user.spotify_profile.get('type'),
+                'uri': user.spotify_profile.get('uri')
+            }
         })
 
     except Exception as e:
@@ -121,14 +114,17 @@ def spotify_callback(request):
         user_info = oauth_service.get_user_info(access_token)
         spotify_id = user_info['id']
         email = user_info.get('email')
+        display_name = user_info.get('display_name', spotify_id)
 
         # Create or update user
         user, created = User.objects.get_or_create(
             spotify_id=spotify_id,
             defaults={
                 'email': email,
+                'username': display_name,
                 'spotify_access_token': access_token,
                 'spotify_refresh_token': refresh_token,
+                'spotify_token_expires_at': timezone.now() + timezone.timedelta(seconds=token_info['expires_in']),
                 'spotify_profile': user_info
             }
         )
@@ -138,14 +134,8 @@ def spotify_callback(request):
             user.spotify_access_token = access_token
             user.spotify_refresh_token = refresh_token
             user.spotify_profile = user_info
+            user.spotify_token_expires_at = timezone.now() + timezone.timedelta(seconds=token_info['expires_in'])
             user.save()
-
-        # Quick sync user's Spotify library (only new additions)
-        try:
-            tracks = quick_sync_spotify_library(user)
-            sync_message = f"Successfully quick-synced {len(tracks)} new tracks"
-        except Exception as e:
-            sync_message = f"Failed to sync tracks: {str(e)}"
 
         # Create JWT token
         jwt_token = create_jwt_token(user)
@@ -153,12 +143,18 @@ def spotify_callback(request):
         return Response({
             'accessToken': jwt_token,
             'user': {
+                'spotify_profile': user.spotify_profile,
                 Fields.ID: user.id,
                 Fields.EMAIL: user.email,
-                SpotifyFields.SPOTIFY_ID: user.spotify_id
-                'spotify_id': user.spotify_id,
-            },
-            'sync_message': sync_message
+                SpotifyFields.SPOTIFY_ID: user.spotify_id,
+                'display_name': user.spotify_profile.get('display_name'),
+                'external_urls': user.spotify_profile.get('external_urls'),
+                'followers': user.spotify_profile.get('followers'),
+                'href': user.spotify_profile.get('href'),
+                'images': user.spotify_profile.get('images'),
+                'type': user.spotify_profile.get('type'),
+                'uri': user.spotify_profile.get('uri')
+            }
         })
 
     except Exception as e:
