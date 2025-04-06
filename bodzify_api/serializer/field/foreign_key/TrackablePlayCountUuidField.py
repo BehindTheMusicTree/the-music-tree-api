@@ -8,13 +8,13 @@ from rest_framework.request import Request
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.serializer.field.foreign_key.PrivateUuidField import PrivateUuidField
 
 
 class TrackablePlayCountUuidField(PrivateUuidField):
     """
-    A field that validates a UUID refers to a trackable play count object (Playlist or LibraryTrack)
+    A field that validates a UUID refers to a trackable play count object (Playlist or UploadedTrack)
     owned by the current user.
     """
 
@@ -48,7 +48,7 @@ class TrackablePlayCountUuidField(PrivateUuidField):
 
         content_object = (
             self._get_object_by_uuid(uuid_value, user, Playlist) or
-            self._get_object_by_uuid(uuid_value, user, LibraryTrack)
+            self._get_object_by_uuid(uuid_value, user, UploadedTrack)
         )
 
         if not content_object:

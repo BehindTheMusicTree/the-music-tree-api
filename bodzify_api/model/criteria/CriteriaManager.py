@@ -4,7 +4,7 @@ from django.db import transaction
 from django.db.models import QuerySet
 
 from bodzify_api.model.criteria.Fields import Fields as ModelFields
-from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
+from bodzify_api.model.uploaded_track_mixin.UploadedTrackMixinWithInternalNameManager import UploadedTrackMixinWithInternalNameManager
 from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields as TreeImportFields
 from bodzify_api.serializer.model.criteria.input.Fields import Fields as InputFields
 
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 T = TypeVar('T', bound='Criteria')
 
 
-class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
+class CriteriaManager(UploadedTrackMixinWithInternalNameManager[T]):
     model: type[T]
 
     def _refresh_ascendants_of_instance(self, instance: T):
@@ -76,18 +76,18 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
                                                      **{Fields.PARENT: playlist_parent})
 
             common_criteria = self.get_common_ascendant(updated_instance, old_parent)
-            CriteriaPlaylist.objects.update_ascendants_lib_tracks(instance=updated_instance.criteria_playlist,
-                                                                  old_parent=old_parent,
-                                                                  common_criteria=common_criteria)
+            CriteriaPlaylist.objects.update_ascendants_uploaded_tracks(instance=updated_instance.criteria_playlist,
+                                                                       old_parent=old_parent,
+                                                                       common_criteria=common_criteria)
 
             if old_root != updated_instance.root:
                 self.update_children_root(criteria=updated_instance, new_root=updated_instance.root)
                 CriteriaPlaylist.objects.update_instance_and_children_root(instance=updated_instance.criteria_playlist,
                                                                            root=updated_instance.root.criteria_playlist)
 
-        if old_name != updated_instance.name and updated_instance.lib_tracks:
-            for lib_track in updated_instance.lib_tracks.all():
-                lib_track.update_file_metadata_from_lib_track_instance_values()
+        if old_name != updated_instance.name and updated_instance.uploaded_tracks:
+            for uploaded_track in updated_instance.uploaded_tracks.all():
+                uploaded_track.update_file_metadata_from_uploaded_track_instance_values()
 
         return updated_instance
 
@@ -122,17 +122,17 @@ class CriteriaManager(LibTrackMixinWithInternalNameManager[T]):
         """
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 
-        from bodzify_api.model.track.lib.Fields import Fields as LibTrackFields
+        from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackFields
 
-        criteria_lib_tracks = instance.lib_tracks.all()
-        for lib_track in criteria_lib_tracks:
-            lib_track.genre = instance.parent
-            lib_track.save(update_fields=[f'{LibTrackFields.GENRE}_id'])
-            lib_track.update_file_metadata_from_lib_track_instance_values()
+        criteria_uploaded_tracks = instance.uploaded_tracks.all()
+        for uploaded_track in criteria_uploaded_tracks:
+            uploaded_track.genre = instance.parent
+            uploaded_track.save(update_fields=[f'{UploadedTrackFields.GENRE}_id'])
+            uploaded_track.update_file_metadata_from_uploaded_track_instance_values()
 
         if instance.is_root:
             CriteriaPlaylist.objects.transfer_direct_tracks_to_criterialess_playlist(
-                direct_tracks=criteria_lib_tracks,
+                direct_tracks=criteria_uploaded_tracks,
                 criteria_playlist=instance.criteria_playlist)
 
         if instance.children.exists():

@@ -1,0 +1,11 @@
+meta {
+  name: allumer
+  type: http
+  seq: 1
+}
+
+delete {
+  url: {{BASE_URL}}library/uploaded/{{trackAllumerUuid}}/
+  body: none
+  auth: inherit
+}

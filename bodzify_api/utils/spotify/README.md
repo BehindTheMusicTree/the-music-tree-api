@@ -67,7 +67,7 @@ You can also test specific functionality:
 python manage.py spotify_connection_test --search "your search query"
 
 # Test getting a track by ID
-python manage.py spotify_connection_test --track "spotify_track_id"
+python manage.py spotify_connection_test --track "spotify_lib_track_id"
 
 # Test getting an artist by ID
 python manage.py spotify_connection_test --artist "spotify_artist_id"
@@ -81,10 +81,10 @@ python manage.py spotify_connection_test --isrc "isrc_code"
 ### Searching for tracks
 
 ```python
-from bodzify_api.utils.spotify.service import search_spotify_tracks
+from bodzify_api.utils.spotify.service import search_spotify_lib_tracks
 
 # Search for tracks
-tracks = search_spotify_tracks(user, "search query", limit=5)
+tracks = search_spotify_lib_tracks(user, "search query", limit=5)
 for track in tracks:
     print(f"{track.name} - {track.spotify_artists.all()}")
 ```
@@ -92,10 +92,10 @@ for track in tracks:
 ### Getting a track by ID
 
 ```python
-from bodzify_api.utils.spotify.service import get_or_create_spotify_track
+from bodzify_api.utils.spotify.service import get_or_create_spotify_lib_track
 
 # Get a track by Spotify ID
-track = get_or_create_spotify_track(user, "spotify_track_id")
+track = get_or_create_spotify_lib_track(user, "spotify_lib_track_id")
 if track:
     print(f"Track: {track.name}, Duration: {track.duration_str_in_hour_min_sec}")
 ```
@@ -109,7 +109,7 @@ from bodzify_api.utils.spotify.service import SpotifyAPIService
 service = SpotifyAPIService()
 
 # Get audio features for a track
-features = service.get_audio_features("spotify_track_id")
+features = service.get_audio_features("spotify_lib_track_id")
 print(f"Tempo: {features.get('tempo')}, Key: {features.get('key')}")
 
 # Get artist details
@@ -135,7 +135,7 @@ from bodzify_api.utils.spotify.service import SpotifyAPIService
 
 try:
     service = SpotifyAPIService()
-    track = service.get_track_by_id("spotify_track_id")
+    track = service.get_track_by_id("spotify_lib_track_id")
     # Process track data
 except spotify_exception.SpotifyResourceNotFoundException:
     # Handle resource not found
@@ -150,4 +150,4 @@ except spotify_exception.SpotifyException as e:
 The Spotify integration includes two main models:
 
 1. `SpotifyArtist`: Represents an artist from Spotify
-2. `SpotifyTrack`: Represents a track from Spotify with a many-to-many relationship to artists
+2. `SpotifyLibTrack`: Represents a track from Spotify with a many-to-many relationship to artists

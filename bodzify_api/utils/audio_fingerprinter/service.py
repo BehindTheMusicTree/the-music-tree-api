@@ -1,11 +1,11 @@
 
 from django.core.files.base import File as DjangoFile
 
-from bodzify_api.model.track.file.fingerprinting.FingerprintingResult import FingerprintingResult
-from bodzify_api.model.track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import (
+from bodzify_api.model.uploaded_track.file.fingerprinting.FingerprintingResult import FingerprintingResult
+from bodzify_api.model.uploaded_track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import (
     FingerprintMissingCauseCode
 )
-from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
+from bodzify_api.model.uploaded_track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
 from bodzify_api.model.user.User import User
 
 from . import utils

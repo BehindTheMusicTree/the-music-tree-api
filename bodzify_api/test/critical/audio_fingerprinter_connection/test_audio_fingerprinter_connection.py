@@ -1,17 +1,18 @@
 import pytest
 from rest_framework import status
 
-from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
-from bodzify_api.test.view.track.LibTrackTestCase import LibTrackTestCase
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
+from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
 @pytest.mark.usefixtures("enable_audio_metadata_analysis")
-class TestCase(LibTrackTestCase):
+class TestCase(UploadedTrackTestCase):
 
     @pytest.mark.critical
     def test_audio_fingerprinter_connection_ok(self):
         print("test_audio_fingerprinter_connection_ok")
-        response = self._post_lib_track(LibTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
+        response = self._post_uploaded_track(
+            UploadedTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
         is_reponse_ok = response.status_code == status.HTTP_201_CREATED
         if not is_reponse_ok:
             print(self.bad_request_result)

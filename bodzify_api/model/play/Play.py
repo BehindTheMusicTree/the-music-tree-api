@@ -14,7 +14,7 @@ class Play(PrivateUniqueResource):
     """Tracks plays of any model that inherits from TrackablePlayCount.
 
     Uses Django's generic foreign key mechanism to reference the played content,
-    which can be either a LibraryTrack or a Playlist.
+    which can be either a UploadedTrack or a Playlist.
     """
     content_type = AppForeignKey(ContentType, on_delete=models.CASCADE)
     content_uuid = models.UUIDField(db_column='object_pk')

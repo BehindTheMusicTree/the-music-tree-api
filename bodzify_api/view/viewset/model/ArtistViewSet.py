@@ -6,7 +6,7 @@ from bodzify_api.filtering.set.artist.ArtistFilterSet import ArtistFilterSet
 from bodzify_api.filtering.set.artist.ArtistFilterSet import Fields as FilterFields
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.serializer.model.artist.detailed import ArtistDetailedSerializer
-from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
 class ArtistViewSet(AppModelViewSet[Artist]):

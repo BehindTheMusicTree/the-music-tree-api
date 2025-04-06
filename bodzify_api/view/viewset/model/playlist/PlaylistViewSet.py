@@ -6,7 +6,7 @@ from bodzify_api.filtering.set.playlist.PlaylistFilterSet import PlaylistFilterS
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.serializer.model.playlist.base.output.detailed import PlaylistDetailedSerializer
 from bodzify_api.serializer.model.playlist.base.output.simple import PlaylistSimpleSerializer
-from bodzify_api.view.viewset.model.base.AppModelViewSet import AppModelViewSet
+from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
 class PlaylistViewSet(AppModelViewSet[Playlist]):

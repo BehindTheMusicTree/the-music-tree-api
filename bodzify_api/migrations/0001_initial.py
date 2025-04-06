@@ -85,40 +85,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='LibraryTrack',
-            fields=[
-                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
-                ('created_on', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
-                ('updated_on', models.DateTimeField(null=True)),
-                ('play_count', models.PositiveIntegerField(default=0)),
-                ('title', bodzify_api.model.field.AppCharField(max_length=256)),
-                ('track_file_fingerprint_must_be_unique', models.BooleanField(default=False)),
-                ('track_number', models.PositiveIntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(1000)])),
-                ('rating', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
-                ('language', bodzify_api.model.field.AppCharField(blank=True, default=None, max_length=3, null=True)),
-                ('archived', models.BooleanField(default=False)),
-            ],
-            options={
-                'verbose_name': 'Library Track',
-                'verbose_name_plural': 'Library Tracks',
-                'db_table': 'bodzify_api_library_track',
-            },
-        ),
-        migrations.CreateModel(
-            name='LibTrackPlaylistRel',
-            fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_on', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
-                ('updated_on', models.DateTimeField(null=True)),
-                ('position', models.PositiveIntegerField(blank=True, null=True)),
-            ],
-            options={
-                'verbose_name': 'Library Track Playlist Relation',
-                'verbose_name_plural': 'Library Track Playlist Relations',
-                'db_table': 'bodzify_api_lib_track_playlist_rel',
-            },
-        ),
-        migrations.CreateModel(
             name='MbArtist',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -255,6 +221,40 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='UploadedTrack',
+            fields=[
+                ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
+                ('created_on', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
+                ('updated_on', models.DateTimeField(null=True)),
+                ('play_count', models.PositiveIntegerField(default=0)),
+                ('title', bodzify_api.model.field.AppCharField(max_length=256)),
+                ('track_file_fingerprint_must_be_unique', models.BooleanField(default=False)),
+                ('track_number', models.PositiveIntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(1000)])),
+                ('rating', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
+                ('language', bodzify_api.model.field.AppCharField(blank=True, default=None, max_length=3, null=True)),
+                ('archived', models.BooleanField(default=False)),
+            ],
+            options={
+                'verbose_name': 'Uploaded Track',
+                'verbose_name_plural': 'Uploaded Tracks',
+                'db_table': 'bodzify_api_uploaded_track',
+            },
+        ),
+        migrations.CreateModel(
+            name='UploadedTrackPlaylistRel',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('created_on', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
+                ('updated_on', models.DateTimeField(null=True)),
+                ('position', models.PositiveIntegerField(blank=True, null=True)),
+            ],
+            options={
+                'verbose_name': 'Uploaded Track Playlist Relation',
+                'verbose_name_plural': 'Uploaded Track Playlist Relations',
+                'db_table': 'bodzify_api_uploaded_track_playlist_rel',
+            },
+        ),
+        migrations.CreateModel(
             name='User',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
@@ -284,7 +284,7 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='AllLibTracksMixin',
+            name='AllUploadedTracksMixin',
             fields=[
                 ('uuid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False, unique=True)),
                 ('created_on', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
@@ -292,9 +292,9 @@ class Migration(migrations.Migration):
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'verbose_name': 'All Library Tracks Mixin',
-                'verbose_name_plural': 'All Library Tracks Mixins',
-                'db_table': 'bodzify_api_all_lib_tracks_mixin',
+                'verbose_name': 'All Uploaded Tracks Mixin',
+                'verbose_name_plural': 'All Uploaded Tracks Mixins',
+                'db_table': 'bodzify_api_all_uploaded_tracks_mixin',
             },
         ),
         migrations.CreateModel(
@@ -441,41 +441,6 @@ class Migration(migrations.Migration):
             name='code',
             field=bodzify_api.model.field.foreign_key.AppForeignKey.AppForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='bodzify_api.fingerprintmissingcausecode'),
         ),
-        migrations.AddField(
-            model_name='librarytrack',
-            name='album',
-            field=bodzify_api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='lib_tracks_of_album', to='bodzify_api.album'),
-        ),
-        migrations.AddField(
-            model_name='librarytrack',
-            name='artists',
-            field=bodzify_api.model.field.foreign_key.PrivateManyToManyField.PrivateManyToManyField(blank=True, related_name='lib_tracks_of_artist', to='bodzify_api.artist'),
-        ),
-        migrations.AddField(
-            model_name='librarytrack',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AddField(
-            model_name='libtrackplaylistrel',
-            name='lib_track',
-            field=bodzify_api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lib_track_playlist_rels', to='bodzify_api.librarytrack'),
-        ),
-        migrations.AddField(
-            model_name='libtrackplaylistrel',
-            name='playlist',
-            field=bodzify_api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='lib_track_playlist_rels', to='bodzify_api.playlist'),
-        ),
-        migrations.AddField(
-            model_name='libtrackplaylistrel',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AddField(
-            model_name='librarytrack',
-            name='playlists',
-            field=bodzify_api.model.field.foreign_key.PrivateManyToManyField.PrivateManyToManyField(related_name='lib_tracks_of_playlist', through='bodzify_api.LibTrackPlaylistRel', to='bodzify_api.playlist'),
-        ),
         migrations.AddIndex(
             model_name='mbartist',
             index=models.Index(fields=['musicbrainz_id'], name='mb_artist_id_idx'),
@@ -521,11 +486,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='trackfile',
-            name='lib_track',
-            field=bodzify_api.model.field.foreign_key.PrivateOneToOneField.PrivateOneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='track_file', to='bodzify_api.librarytrack'),
-        ),
-        migrations.AddField(
-            model_name='trackfile',
             name='musicbrainz_recording',
             field=bodzify_api.model.field.foreign_key.AppForeignKey.AppForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='bodzify_api.musicbrainzrecording'),
         ),
@@ -539,8 +499,48 @@ class Migration(migrations.Migration):
             name='user',
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL),
         ),
+        migrations.AddField(
+            model_name='uploadedtrack',
+            name='album',
+            field=bodzify_api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='uploaded_tracks_of_album', to='bodzify_api.album'),
+        ),
+        migrations.AddField(
+            model_name='uploadedtrack',
+            name='artists',
+            field=bodzify_api.model.field.foreign_key.PrivateManyToManyField.PrivateManyToManyField(blank=True, related_name='uploaded_tracks_of_artist', to='bodzify_api.artist'),
+        ),
+        migrations.AddField(
+            model_name='uploadedtrack',
+            name='user',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='trackfile',
+            name='uploaded_track',
+            field=bodzify_api.model.field.foreign_key.PrivateOneToOneField.PrivateOneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='track_file', to='bodzify_api.uploadedtrack'),
+        ),
+        migrations.AddField(
+            model_name='uploadedtrackplaylistrel',
+            name='playlist',
+            field=bodzify_api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='uploaded_track_playlist_rels', to='bodzify_api.playlist'),
+        ),
+        migrations.AddField(
+            model_name='uploadedtrackplaylistrel',
+            name='uploaded_track',
+            field=bodzify_api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='uploaded_track_playlist_rels', to='bodzify_api.uploadedtrack'),
+        ),
+        migrations.AddField(
+            model_name='uploadedtrackplaylistrel',
+            name='user',
+            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='uploadedtrack',
+            name='playlists',
+            field=bodzify_api.model.field.foreign_key.PrivateManyToManyField.PrivateManyToManyField(related_name='uploaded_tracks_of_playlist', through='bodzify_api.UploadedTrackPlaylistRel', to='bodzify_api.playlist'),
+        ),
         migrations.AddConstraint(
-            model_name='alllibtracksmixin',
+            model_name='alluploadedtracksmixin',
             constraint=models.UniqueConstraint(fields=('user',), name='unique_user_all_tracks_mixin'),
         ),
         migrations.AddConstraint(
@@ -552,9 +552,9 @@ class Migration(migrations.Migration):
             constraint=models.CheckConstraint(check=models.Q(('_name', ''), _negated=True), name='album_non_empty_name'),
         ),
         migrations.AddField(
-            model_name='librarytrack',
+            model_name='uploadedtrack',
             name='genre',
-            field=bodzify_api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='lib_tracks_of_criteria', to='bodzify_api.genre'),
+            field=bodzify_api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='uploaded_tracks_of_criteria', to='bodzify_api.genre'),
         ),
         migrations.AddIndex(
             model_name='criterialineagerel',
@@ -633,14 +633,6 @@ class Migration(migrations.Migration):
             constraint=models.UniqueConstraint(fields=('user', '_name'), name='unique_name_per_user'),
         ),
         migrations.AddIndex(
-            model_name='libtrackplaylistrel',
-            index=models.Index(fields=['user', 'playlist'], name='bodzify_api_user_id_697d9a_idx'),
-        ),
-        migrations.AddIndex(
-            model_name='libtrackplaylistrel',
-            index=models.Index(fields=['user', 'lib_track'], name='bodzify_api_user_id_1c75b7_idx'),
-        ),
-        migrations.AddIndex(
             model_name='musicbrainzrecording',
             index=models.Index(fields=['musicbrainz_id'], name='mb_recording_id_idx'),
         ),
@@ -657,12 +649,24 @@ class Migration(migrations.Migration):
             index=models.Index(fields=['user', 'title'], name='bodzify_api_user_id_cc175c_idx'),
         ),
         migrations.AddIndex(
-            model_name='librarytrack',
-            index=models.Index(fields=['user', 'genre'], name='bodzify_api_user_id_7c20bd_idx'),
+            model_name='uploadedtrackplaylistrel',
+            index=models.Index(fields=['user', 'playlist'], name='bodzify_api_user_id_467636_idx'),
         ),
         migrations.AddIndex(
-            model_name='librarytrack',
-            index=models.Index(fields=['user', 'album'], name='bodzify_api_user_id_2b75f8_idx'),
+            model_name='uploadedtrackplaylistrel',
+            index=models.Index(fields=['user', 'uploaded_track'], name='bodzify_api_user_id_bd4afd_idx'),
+        ),
+        migrations.AddIndex(
+            model_name='uploadedtrack',
+            index=models.Index(fields=['user', 'title'], name='bodzify_api_user_id_fe0c9e_idx'),
+        ),
+        migrations.AddIndex(
+            model_name='uploadedtrack',
+            index=models.Index(fields=['user', 'genre'], name='bodzify_api_user_id_0bb305_idx'),
+        ),
+        migrations.AddIndex(
+            model_name='uploadedtrack',
+            index=models.Index(fields=['user', 'album'], name='bodzify_api_user_id_b2b8d8_idx'),
         ),
         migrations.AddIndex(
             model_name='criteriaplaylist',

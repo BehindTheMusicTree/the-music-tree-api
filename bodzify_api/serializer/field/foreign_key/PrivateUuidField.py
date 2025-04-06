@@ -27,7 +27,7 @@ class PrivateUuidField(ForeignKeyField, AppUuidField, Generic[T]):
 
     For standard single-model foreign keys with user ownership:
         class PlaylistSerializer(serializers.ModelSerializer):
-            track = PrivateUuidField(queryset=LibraryTrack.objects.all())
+            track = PrivateUuidField(queryset=UploadedTrack.objects.all())
     """
 
     def get_request_user(self) -> Any:

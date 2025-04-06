@@ -1,0 +1,26 @@
+meta {
+  name: | title duplicate
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}library/uploaded/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/utils/uploaded_track/files/metadata=none.mp3)
+  title: Jo
+  title: steeve
+}
+
+vars:post-response {
+  albumJoUuid: res.body.album.uuid
+  artistSteeveUuid: res.body.artists[0].uuid
+}

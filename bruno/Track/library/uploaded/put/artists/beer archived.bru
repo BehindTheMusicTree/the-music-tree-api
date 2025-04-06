@@ -1,0 +1,18 @@
+meta {
+  name: beer archived
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{BASE_URL}}library/uploaded/{{trackBeerUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Love archived",
+    "archived": "true"
+  }
+}

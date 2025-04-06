@@ -1,0 +1,20 @@
+
+from bodzify_api.model.uploaded_track.Fields import Fields as ModelFields
+
+
+class Fields:
+    CREATED_ON = ModelFields.CREATED_ON
+    UPDATED_ON = ModelFields.UPDATED_ON
+    UUID = ModelFields.UUID
+    RELATIVE_URL = ModelFields.RELATIVE_URL
+    FILE = ModelFields.TRACK_FILE_PUBLIC
+    TITLE = ModelFields.TITLE
+    ARTISTS = ModelFields.ARTISTS
+    ALBUM = ModelFields.ALBUM
+    TRACK_NUMBER = ModelFields.TRACK_NUMBER
+    GENRE = ModelFields.GENRE
+    RATING = ModelFields.RATING
+    LANGUAGE = ModelFields.LANGUAGE
+    PLAYLISTS_PUBLIC = ModelFields.PLAYLISTS
+    PLAY_COUNT = ModelFields.PLAY_COUNT
+    ARCHIVED = ModelFields.ARCHIVED

@@ -60,19 +60,24 @@ def pytest_runtest_setup(item):
 
 
 def pytest_collection_modifyitems(config, items):
-    # Set critical tests first
+    # Set critical tests first and slow tests last
     critical_tests = []
-    non_critical_tests = []
+    normal_tests = []
+    slow_tests = []
 
-    print("Setting critical tests first")
+    print("Ordering tests: critical tests first, slow tests last")
     for item in items:
         critical_marker = item.get_closest_marker("critical")
+        slow_marker = item.get_closest_marker("slow")
+
         if critical_marker:
             critical_tests.append(item)
+        elif slow_marker:
+            slow_tests.append(item)
         else:
-            non_critical_tests.append(item)
+            normal_tests.append(item)
 
-    items[:] = critical_tests + non_critical_tests
+    items[:] = critical_tests + normal_tests + slow_tests
 
 
 @pytest.fixture()

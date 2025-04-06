@@ -18,7 +18,7 @@ class TestCase(AppTestCase):
         assert 'code' in response.json()['details']
 
     def test_not_logged_in_then_401(self):
-        response = self._post_lib_track_being_logged_out()
+        response = self._post_uploaded_track_being_logged_out()
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 

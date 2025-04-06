@@ -3,18 +3,18 @@ from enum import Enum
 
 from django.core.exceptions import ImproperlyConfigured
 
-from bodzify_api.serializer.model.lib_track.input.Fields import InputFields as LibTrackInputFields
+from bodzify_api.serializer.model.uploaded_track.input.Fields import Fields as UploadedTrackInputFields
 from bodzify_api.serializer.model.criteria.input.Fields import Fields as CriteriaInputFields
 
 
 class AppMetadataKey(str, Enum):
-    TITLE = LibTrackInputFields.TITLE
-    ARTISTS_NAMES = LibTrackInputFields.ARTISTS_NAMES
-    ALBUM_NAME = LibTrackInputFields.ALBUM_NAME
-    ALBUM_ARTISTS_NAMES = LibTrackInputFields.ALBUM_ARTISTS_NAMES
-    GENRE_NAME = f'{LibTrackInputFields.GENRE}_{CriteriaInputFields.NAME_PUBLIC}'
-    RATING = LibTrackInputFields.RATING
-    LANGUAGE = LibTrackInputFields.LANGUAGE
+    TITLE = UploadedTrackInputFields.TITLE
+    ARTISTS_NAMES = UploadedTrackInputFields.ARTISTS_NAMES
+    ALBUM_NAME = UploadedTrackInputFields.ALBUM_NAME
+    ALBUM_ARTISTS_NAMES = UploadedTrackInputFields.ALBUM_ARTISTS_NAMES
+    GENRE_NAME = f'{UploadedTrackInputFields.GENRE}_{CriteriaInputFields.NAME_PUBLIC}'
+    RATING = UploadedTrackInputFields.RATING
+    LANGUAGE = UploadedTrackInputFields.LANGUAGE
     # RELEASE_DATE = 'release_date'
     # TRACK_NUMBER = 'track_number'
     # BPM = 'bpm'

@@ -19,7 +19,7 @@ class SpotifyOAuthService:
             client_id=settings.SPOTIFY_CLIENT_ID,
             client_secret=settings.SPOTIFY_CLIENT_SECRET,
             redirect_uri=settings.SPOTIFY_REDIRECT_URI,
-            scope='user-read-email user-read-private'
+            scope='user-read-email user-read-private user-library-read'
         )
 
     def get_auth_url(self, state: Optional[str] = None) -> str:

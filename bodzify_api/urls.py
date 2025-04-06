@@ -6,28 +6,30 @@ from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from bodzify_api.utils.AppStaticFileStates import StaticFileStates
-from bodzify_api.view.viewset.model.AllLibTracksMixinViewSet import AllLibTracksViewSet
-from bodzify_api.view.spotify.auth import spotify_auth, spotify_callback
+from bodzify_api.view.viewset.model.AllUploadedTracksMixinViewSet import AllUploadedTracksViewSet
+from bodzify_api.view.spotify_auth import spotify_auth, spotify_callback
 
 from . import settings
 from .view.viewset.model.AlbumViewSet import AlbumViewSet
 from .view.viewset.model.ArtistViewSet import ArtistViewSet
 from .view.viewset.model.criteria.children.GenreViewSet import GenreViewSet
 from .view.viewset.model.criteria.children.TagViewSet import TagViewSet
-from .view.viewset.model.lib_track.LibTrackViewSet import LibTrackViewSet
+from .view.viewset.model.UploadedTrackViewSet import UploadedTrackViewSet
 from .view.viewset.model.playlist.children.criteria.GenrePlaylistViewSet import GenrePlaylistViewSet
 from .view.viewset.model.playlist.children.criteria.TagPlaylistViewSet import TagPlaylistViewSet
 from .view.viewset.model.playlist.children.ManualPlaylistViewSet import ManualPlaylistViewSet
 from .view.viewset.model.playlist.PlaylistViewSet import PlaylistViewSet
 from .view.viewset.model.PlayViewSet import PlayViewSet
+from .view.viewset.model.SpotifyLibTrackViewSet import SpotifyLibTrackViewSet
 from .view.viewset.model.UserViewSet import UserViewSet
 from .view.viewset.SearchViewSet import SearchViewSet
-from .view.spotify.auth import spotify_auth_api
+from .view.spotify_auth import spotify_auth_api
 
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
-router.register(r'tracks', LibTrackViewSet, basename='library-track')
+router.register(r'library/uploaded', UploadedTrackViewSet, basename='uploaded-track')
+router.register(r'library/spotify', SpotifyLibTrackViewSet, basename='spotify-track')
 router.register(r'artists', ArtistViewSet, basename='artist')
 router.register(r'albums', AlbumViewSet, basename='album')
 router.register(r'tags', TagViewSet, basename='tag')
@@ -40,7 +42,7 @@ router.register(r'playlists', PlaylistViewSet, basename='playlist')
 router.register(r'manual-playlists', ManualPlaylistViewSet, basename='manual-playlist')
 router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
 router.register(r'tag-playlists', TagPlaylistViewSet, basename='tag-playlist')
-router.register(r'all-tracks', AllLibTracksViewSet, basename='all-library-tracks')
+router.register(r'all-tracks', AllUploadedTracksViewSet, basename='all-uploaded-tracks')
 router.register(r'search', SearchViewSet, basename='search')
 
 urlpatterns = [
