@@ -1,18 +1,21 @@
 import logging
-import traceback
+import uuid
 from time import time
 
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
 
 
-class ExceptionLoggingMiddleware:
+class RequestResponseLoggingMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
-        self.logger = logging.getLogger('exceptions')
+        self.logger = logging.getLogger('request')
 
     def __call__(self, request):
+        # Generate a unique request ID
+        request_id = str(uuid.uuid4())
+        request.request_id = request_id
+
         start_time = time()
-        request_id = getattr(request, 'request_id', 'unknown')
         self.logger.info(
             f"[{request_id}] Incoming Request: {request.method} {request.path} {request.META.get('REMOTE_ADDR')}")
 

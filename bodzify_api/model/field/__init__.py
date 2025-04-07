@@ -6,10 +6,12 @@ from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateMa
 from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
 
 from .AppCharField import AppCharField
+from .AppFileField import AppFileField
 
 
 __all__ = [
     'AppCharField',
+    'AppFileField',
     'AppForeignKey',
     'AppOneToOneField',
     'PrivateForeignKey',
