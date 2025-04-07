@@ -2,6 +2,7 @@ import logging
 from typing import Optional, Dict, List, Any
 from django.utils import timezone
 import time
+from datetime import datetime
 
 import spotipy
 from django.conf import settings
@@ -351,10 +352,10 @@ class SpotifyAPIService:
                     break
 
             except Exception as e:
-                if isinstance(e, spotify_exception.SpotifyAPIError):
-                    if e.status_code == 404:
+                if isinstance(e, SpotipyException):
+                    if e.http_status == 404:
                         break
-                    elif e.status_code == 429:
+                    elif e.http_status == 429:
                         time.sleep(1)
                         continue
                 raise
@@ -396,10 +397,10 @@ class SpotifyAPIService:
                     break
 
             except Exception as e:
-                if isinstance(e, spotify_exception.SpotifyAPIError):
-                    if e.status_code == 404:
+                if isinstance(e, SpotipyException):
+                    if e.http_status == 404:
                         break
-                    elif e.status_code == 429:
+                    elif e.http_status == 429:
                         time.sleep(1)
                         continue
                 raise
@@ -414,6 +415,31 @@ class SpotifyAPIService:
         user.save()
 
         return tracks
+
+    def _process_track(
+            self, user: SpotifyUser, track_data: dict, last_sync_time: datetime | None = None) -> SpotifyLibTrack | None:
+        if not track_data:
+            return None
+
+        track_id = track_data.get('id')
+        if not track_id:
+            return None
+
+        try:
+            track = SpotifyLibTrack.objects.get(spotify_id=track_id)
+            if last_sync_time and track.last_synced_at and track.last_synced_at <= last_sync_time:
+                return None
+            return track
+        except ObjectDoesNotExist:
+            return utils.create_spotify_lib_track_instance_from_dict(track_id, track_data)
+
+    def _fetch_tracks_batch(self, user: SpotifyUser, offset: int, limit: int) -> tuple[list[dict], int]:
+        if not user.spotify_access_token:
+            return [], 0
+        saved_tracks = self.get_user_saved_tracks(user.spotify_access_token, limit=limit, offset=offset)
+        items = saved_tracks.get('items', [])
+        total = saved_tracks.get('total', 0)
+        return [item['track'] for item in items if item.get('track')], total
 
 
 def get_or_create_spotify_lib_track(user: SpotifyUser, track_id: str) -> Optional[SpotifyLibTrack]:
