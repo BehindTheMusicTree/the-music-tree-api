@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny
 from django.utils import timezone
 
 from bodzify_api.utils.spotify.oauth import SpotifyOAuthService
-from bodzify_api.model.user.User import User
+from bodzify_api.model.user.SpotifyUser import SpotifyUser
 from bodzify_api.utils.jwt import create_jwt_token
 from bodzify_api.model.user.Fields import Fields
 from bodzify_api.model.spotify.Fields import Fields as SpotifyFields
@@ -42,7 +42,7 @@ def spotify_auth(request):
         display_name = user_info.get('display_name', spotify_id)
 
         # Create or update user
-        user, created = User.objects.get_or_create(
+        user, created = SpotifyUser.objects.get_or_create(
             spotify_id=spotify_id,
             defaults={
                 'email': email,
@@ -117,7 +117,7 @@ def spotify_callback(request):
         display_name = user_info.get('display_name', spotify_id)
 
         # Create or update user
-        user, created = User.objects.get_or_create(
+        user, created = SpotifyUser.objects.get_or_create(
             spotify_id=spotify_id,
             defaults={
                 'email': email,

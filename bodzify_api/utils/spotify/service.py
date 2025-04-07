@@ -10,7 +10,7 @@ from spotipy.exceptions import SpotifyException as SpotipyException
 
 from bodzify_api.exception import spotify as spotify_exception
 from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
-from bodzify_api.model.user.User import User
+from bodzify_api.model.user.SpotifyUser import SpotifyUser
 from . import utils
 from .ApiFields import ApiFields
 
@@ -319,7 +319,7 @@ class SpotifyAPIService:
             raise spotify_exception.SpotifyNetworkException(f"Network error: {str(e)}")
 
 
-def get_or_create_spotify_lib_track(user: User, track_id: str) -> Optional[SpotifyLibTrack]:
+def get_or_create_spotify_lib_track(user: SpotifyUser, track_id: str) -> Optional[SpotifyLibTrack]:
     """
     Get or create a SpotifyLibTrack instance for the given Spotify track ID
 
@@ -354,7 +354,7 @@ def get_or_create_spotify_lib_track(user: User, track_id: str) -> Optional[Spoti
         return None
 
 
-def search_spotify_lib_tracks(user: User, query: str, limit: int = 5) -> List[SpotifyLibTrack]:
+def search_spotify_lib_tracks(user: SpotifyUser, query: str, limit: int = 5) -> List[SpotifyLibTrack]:
     """
     Search for tracks on Spotify and create track models for the results
 
@@ -390,7 +390,7 @@ def search_spotify_lib_tracks(user: User, query: str, limit: int = 5) -> List[Sp
     return tracks
 
 
-def quick_sync_spotify_library(user: User) -> list[SpotifyLibTrack]:
+def quick_sync_spotify_library(user: SpotifyUser) -> list[SpotifyLibTrack]:
     """
     Perform a quick sync of a user's Spotify library, focusing on new additions only.
     This is designed to be faster for routine use and is automatically called when a user connects.
@@ -528,7 +528,7 @@ def quick_sync_spotify_library(user: User) -> list[SpotifyLibTrack]:
     return tracks
 
 
-def full_sync_spotify_library(user: User) -> list[SpotifyLibTrack]:
+def full_sync_spotify_library(user: SpotifyUser) -> list[SpotifyLibTrack]:
     """
     Perform a complete sync of a user's Spotify library by fetching all saved tracks.
     This handles both new additions and removals, but is more resource-intensive than quick_sync.

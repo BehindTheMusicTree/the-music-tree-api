@@ -42,21 +42,6 @@ class User(AbstractUser, BaseModel):
         output_field=AppCharField(max_length=256),
         db_persist=True)
 
-    spotify_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
-    spotify_access_token = models.TextField(null=True, blank=True)
-    spotify_refresh_token = models.TextField(null=True, blank=True)
-    spotify_profile = models.JSONField(null=True, blank=True)
-    spotify_token_expires_at = models.DateTimeField(null=True, blank=True)
-    spotify_library_last_synced_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        help_text="Timestamp of when the user's Spotify library was last synced"
-    )
-    spotify_sync_in_progress = models.BooleanField(
-        default=False,
-        help_text="Indicates if a Spotify library sync is currently in progress"
-    )
-
     objects: UserManager = UserManager()
 
     @property
