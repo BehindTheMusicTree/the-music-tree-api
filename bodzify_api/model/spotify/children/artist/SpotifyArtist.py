@@ -4,10 +4,11 @@ from django.db.models import F, Value
 from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.utils.ConcatOp import ConcatOp
 from bodzify_api.model.spotify.SpotifyResource import SpotifyResource
+from bodzify_api.model.public_standard_resource.PublicStandardResource import PublicStandardResource
 from .Fields import Fields
 
 
-class SpotifyArtist(SpotifyResource):
+class SpotifyArtist(SpotifyResource, PublicStandardResource):
     name = AppCharField(max_length=256, editable=False)
     popularity = models.IntegerField(null=True, editable=False)
     spotify_link = models.GeneratedField(  # type: ignore
@@ -16,6 +17,8 @@ class SpotifyArtist(SpotifyResource):
         db_persist=True)
     genres = models.JSONField(null=True, editable=False)
     images = models.JSONField(null=True, editable=False)
+    created_on = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_on = models.DateTimeField(auto_now=True, editable=False)
 
     def __str__(self):
         return self.name
