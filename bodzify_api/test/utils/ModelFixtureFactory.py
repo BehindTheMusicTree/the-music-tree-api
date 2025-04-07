@@ -40,6 +40,7 @@ from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackableP
 from bodzify_api.model.user.User import User
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
+from bodzify_api.model.spotify.children.artist.SpotifyArtist import SpotifyArtist
 
 
 global_settings.DDF_FIELD_FIXTURES['django.db.models.fields.generated.GeneratedField'] = lambda: None  # type: ignore
@@ -92,13 +93,13 @@ class ModelFixtureFactory:
         model_fields.update(kwargs)
         return G(TrackFile, **model_fields)
 
-    def _create_uploaded_track(self, user: User, title: str, **kwargs) -> UploadedTrack:
+    def _create_uploaded_track(self, user: User, title: str | None = None, **kwargs) -> UploadedTrack:
         now = timezone.make_aware(datetime.now())
         model_fields = {
             UploadedTrackFields.CREATED_ON: kwargs.get(UploadedTrackFields.CREATED_ON, now),
             UploadedTrackFields.UPDATED_ON: kwargs.get(UploadedTrackFields.UPDATED_ON, now),
             UploadedTrackFields.USER: user,
-            UploadedTrackFields.TITLE: title,
+            UploadedTrackFields.TITLE: title or "Untitled",
         }
         model_fields.update(kwargs)
         uploaded_track = G(UploadedTrack, **model_fields)
@@ -252,3 +253,15 @@ class ModelFixtureFactory:
             'is_removed': kwargs.get('is_removed', False)
         }
         return G(SpotifyLibTrack, **model_fields)
+
+    def create_spotify_artist(self, name: str, **kwargs) -> SpotifyArtist:
+        model_fields = {
+            'spotify_id': str(uuid.uuid4()),
+            'name': name,
+            'popularity': kwargs.get('popularity'),
+            'genres': kwargs.get('genres', []),
+            'images': kwargs.get('images', []),
+            'created_on': timezone.make_aware(datetime.now()),
+            'updated_on': timezone.make_aware(datetime.now())
+        }
+        return G(SpotifyArtist, **model_fields)
