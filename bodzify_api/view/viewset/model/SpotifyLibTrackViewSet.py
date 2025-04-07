@@ -7,7 +7,7 @@ from django.db import transaction
 from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.model.spotify.children.track.Fields import Fields
 from bodzify_api.utils.spotify.service import full_sync_spotify_library, quick_sync_spotify_library
-from bodzify_api.serializer.model.spotify_lib_track.output.detailed import SpotifyLibTrackDetailedSerializer
+from bodzify_api.serializer.model.spotify.lib_track.output.detailed import SpotifyLibTrackDetailedSerializer
 
 
 class SpotifyLibTrackViewSet(ModelViewSet):
