@@ -8,19 +8,12 @@ from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibT
 from bodzify_api.model.spotify.children.track.Fields import Fields
 from bodzify_api.utils.spotify.service import full_sync_spotify_library, quick_sync_spotify_library
 from bodzify_api.serializer.model.spotify_lib_track.output.detailed import SpotifyLibTrackDetailedSerializer
-from bodzify_api.serializer.model.spotify_lib_track.output.simple import SpotifyLibTrackSimpleSerializer
 
 
 class SpotifyLibTrackViewSet(ModelViewSet):
 
     queryset = SpotifyLibTrack.objects.all()
-    serializer_class = SpotifyLibTrackSimpleSerializer
-    detail_serializer_class = SpotifyLibTrackDetailedSerializer
-
-    def get_serializer_class(self):
-        if self.action == 'retrieve':
-            return self.detail_serializer_class
-        return self.serializer_class
+    serializer_class = SpotifyLibTrackDetailedSerializer
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:

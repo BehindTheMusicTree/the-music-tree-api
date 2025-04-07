@@ -2,9 +2,12 @@ from rest_framework import serializers
 
 from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.serializer.model.spotify_lib_track.output.Fields import Fields
+from bodzify_api.serializer.model.spotify.children.artist.output.detailed import SpotifyArtistDetailedSerializer
 
 
 class SpotifyLibTrackSimpleSerializer(serializers.ModelSerializer):
+    spotify_artists = SpotifyArtistDetailedSerializer(many=True, read_only=True)
+
     class Meta:
         model = SpotifyLibTrack
         fields = [

@@ -272,6 +272,52 @@ class SpotifyAPIService:
             logger.error(f"Network error fetching followed artists: {str(e)}")
             raise spotify_exception.SpotifyNetworkException(f"Network error: {str(e)}")
 
+    def _get_authenticated_client(self, access_token: str) -> spotipy.Spotify:
+        """
+        Get a Spotify client authenticated with user's access token.
+
+        Args:
+            access_token: User's Spotify access token
+
+        Returns:
+            Authenticated Spotify client
+        """
+        if not access_token:
+            raise spotify_exception.SpotifyAuthenticationException("No access token provided")
+        return spotipy.Spotify(auth=access_token)
+
+    def get_artists(self, artist_ids: list[str], access_token: str) -> dict[str, dict]:
+        """
+        Get details for multiple artists in a single API call.
+
+        Args:
+            artist_ids: List of Spotify artist IDs (max 50)
+            access_token: User's Spotify access token
+
+        Returns:
+            Dictionary mapping artist IDs to their details
+        """
+        try:
+            sp = self._get_authenticated_client(access_token)
+            results = sp.artists(artist_ids)
+            if results is None or 'artists' not in results:
+                return {}
+
+            artist_details = {}
+            for artist in results['artists']:
+                if artist:  # Skip any None results
+                    artist_details[artist['id']] = artist
+            return artist_details
+        except SpotipyException as e:
+            logger.error(f"Spotify artists batch fetch error: {str(e)}")
+            if "not found" in str(e).lower():
+                raise spotify_exception.SpotifyResourceNotFoundException(f"Artists not found: {artist_ids}")
+            else:
+                raise spotify_exception.SpotifyAPIException(f"Spotify API error: {str(e)}")
+        except Exception as e:
+            logger.error(f"Network error fetching artists: {str(e)}")
+            raise spotify_exception.SpotifyNetworkException(f"Network error: {str(e)}")
+
 
 def get_or_create_spotify_lib_track(user: User, track_id: str) -> Optional[SpotifyLibTrack]:
     """

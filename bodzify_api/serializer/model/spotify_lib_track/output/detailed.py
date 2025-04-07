@@ -2,13 +2,25 @@ from rest_framework import serializers
 
 from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.serializer.model.spotify_lib_track.output.Fields import Fields
+from bodzify_api.serializer.model.spotify.children.artist.output.detailed import SpotifyArtistDetailedSerializer
 
 
 class SpotifyLibTrackDetailedSerializer(serializers.ModelSerializer):
+    genres = serializers.SerializerMethodField()
+    spotify_artists = SpotifyArtistDetailedSerializer(many=True, read_only=True)
+
+    def get_genres(self, obj):
+        # Get all unique genres from all artists
+        genres = set()
+        for artist in obj.spotify_artists.all():
+            if artist.genres:
+                genres.update(artist.genres)
+        return list(genres)
+
     class Meta:
         model = SpotifyLibTrack
         fields = [
-            Fields.UUID,
+            Fields.SPOTIFY_ID,
             Fields.NAME,
             Fields.DURATION_MS,
             Fields.DURATION_STR_IN_HOUR_MIN_SEC,
@@ -18,9 +30,9 @@ class SpotifyLibTrackDetailedSerializer(serializers.ModelSerializer):
             Fields.PREVIEW_URL,
             Fields.EXPLICIT,
             Fields.SPOTIFY_ARTISTS,
-            Fields.SPOTIFY_ID,
             Fields.CREATED_ON,
             Fields.UPDATED_ON,
             Fields.LAST_SYNCED_AT,
-            Fields.IS_REMOVED
+            Fields.IS_REMOVED,
+            'genres'
         ]
