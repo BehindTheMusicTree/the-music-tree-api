@@ -24,25 +24,24 @@ from .view.viewset.model.SpotifyLibTrackViewSet import SpotifyLibTrackViewSet
 from .view.viewset.model.UserViewSet import UserViewSet
 from .view.viewset.SearchViewSet import SearchViewSet
 
-
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet, basename='user')
-router.register(r'library/uploaded', UploadedTrackViewSet, basename='uploaded-track')
-router.register(r'library/spotify', SpotifyLibTrackViewSet, basename='spotify-track')
-router.register(r'artists', ArtistViewSet, basename='artist')
-router.register(r'albums', AlbumViewSet, basename='album')
-router.register(r'tags', TagViewSet, basename='tag')
-router.register(r'genres', GenreViewSet, basename='genre')
-router.register(r'plays', PlayViewSet, basename='play')
+router.register(r'users/', UserViewSet, basename='user')
+router.register(r'library/uploaded/', UploadedTrackViewSet, basename='uploaded-track')
+router.register(r'library/spotify/', SpotifyLibTrackViewSet, basename='spotify-track')
+router.register(r'artists/', ArtistViewSet, basename='artist')
+router.register(r'albums/', AlbumViewSet, basename='album')
+router.register(r'tags/', TagViewSet, basename='tag')
+router.register(r'genres/', GenreViewSet, basename='genre')
+router.register(r'plays/', PlayViewSet, basename='play')
 
 # Do not move PlaylistViewSet after GenrePlaylistViewSet or ManualPlaylistViewSet or it will cause confusion resolving
 # reverse urls.
-router.register(r'playlists', PlaylistViewSet, basename='playlist')
-router.register(r'manual-playlists', ManualPlaylistViewSet, basename='manual-playlist')
-router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
-router.register(r'tag-playlists', TagPlaylistViewSet, basename='tag-playlist')
-router.register(r'all-tracks', AllUploadedTracksViewSet, basename='all-uploaded-tracks')
-router.register(r'search', SearchViewSet, basename='search')
+router.register(r'playlists/', PlaylistViewSet, basename='playlist')
+router.register(r'manual-playlists/', ManualPlaylistViewSet, basename='manual-playlist')
+router.register(r'genre-playlists/', GenrePlaylistViewSet, basename='genre-playlist')
+router.register(r'tag-playlists/', TagPlaylistViewSet, basename='tag-playlist')
+router.register(r'all-tracks/', AllUploadedTracksViewSet, basename='all-uploaded-tracks')
+router.register(r'search/', SearchViewSet, basename='search')
 
 urlpatterns = [
     path(settings.API_ROOT_BASE, include(router.urls)),
@@ -52,6 +51,7 @@ urlpatterns = [
     path(settings.API_ROOT_BASE + 'auth/', include('django.contrib.auth.urls')),
     path(settings.API_ROOT_BASE + 'auth/token/', TokenObtainPairView.as_view(), name='token-obtain-pair'),
     path(settings.API_ROOT_BASE + 'auth/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
+
     path(settings.API_ROOT_BASE + 'auth/spotify/', spotify_auth, name='api-auth-spotify'),
     path(settings.API_ROOT_BASE + 'auth/spotify/callback/', spotify_callback, name='api-auth-spotify-callback'),
 
@@ -59,7 +59,6 @@ urlpatterns = [
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
-
 
 if settings.STATIC_FILES_STATE in [StaticFileStates.COLLECTING, StaticFileStates.SERVING]:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
