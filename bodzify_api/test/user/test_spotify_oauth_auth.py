@@ -3,6 +3,7 @@ from unittest import mock
 from bodzify_api.exception.spotify import SpotifyAuthenticationException
 from bodzify_api.test.utils.AppTestCase import AppTestCase
 from bodzify_api.utils.spotify.oauth import SpotifyOAuthService
+from bodzify_api.serializer.model.spotify.token.Fields import Fields
 
 
 class TestSpotifyOAuthAuth(AppTestCase):
@@ -19,17 +20,17 @@ class TestSpotifyOAuthAuth(AppTestCase):
     @mock.patch('bodzify_api.utils.spotify.oauth.SpotifyOAuth')
     def test_get_access_token_with_valid_code_then_returns_tokens(self, mock_oauth):
         mock_oauth.return_value.get_access_token.return_value = {
-            "access_token": "test_access_token",
-            "refresh_token": "test_refresh_token",
-            "expires_in": 3600
+            Fields.ACCESS_TOKEN: "test_access_token",
+            Fields.REFRESH_TOKEN: "test_refresh_token",
+            Fields.EXPIRES_IN: 3600
         }
 
         service = SpotifyOAuthService()
         tokens = service.get_access_token("valid_code")
 
-        assert tokens["access_token"] == "test_access_token"
-        assert tokens["refresh_token"] == "test_refresh_token"
-        assert tokens["expires_in"] == 3600
+        assert tokens[Fields.ACCESS_TOKEN] == "test_access_token"
+        assert tokens[Fields.REFRESH_TOKEN] == "test_refresh_token"
+        assert tokens[Fields.EXPIRES_IN] == 3600
         mock_oauth.return_value.get_access_token.assert_called_once_with("valid_code")
 
     @mock.patch('bodzify_api.utils.spotify.oauth.SpotifyOAuth')
@@ -44,15 +45,15 @@ class TestSpotifyOAuthAuth(AppTestCase):
     @mock.patch('bodzify_api.utils.spotify.oauth.SpotifyOAuth')
     def test_refresh_access_token_with_valid_token_then_returns_new_token(self, mock_oauth):
         mock_oauth.return_value.refresh_access_token.return_value = {
-            "access_token": "new_access_token",
-            "expires_in": 3600
+            Fields.ACCESS_TOKEN: "new_access_token",
+            Fields.EXPIRES_IN: 3600
         }
 
         service = SpotifyOAuthService()
         tokens = service.refresh_access_token("valid_refresh_token")
 
-        assert tokens["access_token"] == "new_access_token"
-        assert tokens["expires_in"] == 3600
+        assert tokens[Fields.ACCESS_TOKEN] == "new_access_token"
+        assert tokens[Fields.EXPIRES_IN] == 3600
         mock_oauth.return_value.refresh_access_token.assert_called_once_with("valid_refresh_token")
 
     @mock.patch('bodzify_api.utils.spotify.oauth.SpotifyOAuth')
