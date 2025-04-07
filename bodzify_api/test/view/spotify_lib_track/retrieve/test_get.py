@@ -8,10 +8,15 @@ from bodzify_api.serializer.model.spotify.lib_track.output.Fields import Fields 
 class TestGet(SpotifyLibTrackTestCase):
     def setUp(self):
         super().setUp()
+        self.spotify_artist = self.model_fixture_factory.create_spotify_artist(
+            name="Test Artist",
+            genres=["Rock", "Pop"]
+        )
         self.track = self.model_fixture_factory.create_spotify_lib_track(
             name="Test Track",
             duration_ms=300000,
             popularity=80,
+            spotify_artists=[self.spotify_artist],
             album={"name": "Test Album"},
             preview_url="https://example.com/preview",
             explicit=True
@@ -37,8 +42,7 @@ class TestGet(SpotifyLibTrackTestCase):
         assert result[SerializerFields.UPDATED_ON] is not None
         assert result[SerializerFields.LAST_SYNCED_AT] is None
         assert result[SerializerFields.IS_REMOVED] is False
-        assert 'genres' in result
-        assert result['genres'] == []
+        assert result[SerializerFields.GENRES] == ["Rock", "Pop"]
 
     def test_retrieve_spotify_lib_track_with_invalid_id_then_404_not_found(self):
         response = self._retrieve_spotify_lib_track(str(uuid4()))

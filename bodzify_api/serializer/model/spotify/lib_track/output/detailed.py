@@ -6,16 +6,7 @@ from bodzify_api.serializer.model.spotify.artist.output.detailed import SpotifyA
 
 
 class SpotifyLibTrackDetailedSerializer(serializers.ModelSerializer):
-    genres = serializers.SerializerMethodField()
     spotify_artists = SpotifyArtistDetailedSerializer(many=True, read_only=True)
-
-    def get_genres(self, obj):
-        # Get all unique genres from all artists
-        genres = set()
-        for artist in obj.spotify_artists.all():
-            if artist.genres:
-                genres.update(artist.genres)
-        return list(genres)
 
     class Meta:
         model = SpotifyLibTrack
@@ -34,5 +25,5 @@ class SpotifyLibTrackDetailedSerializer(serializers.ModelSerializer):
             Fields.UPDATED_ON,
             Fields.LAST_SYNCED_AT,
             Fields.IS_REMOVED,
-            'genres'
+            Fields.GENRES
         ]

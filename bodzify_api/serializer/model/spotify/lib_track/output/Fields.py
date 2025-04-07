@@ -14,3 +14,4 @@ class Fields:
     UPDATED_ON = 'updated_on'
     LAST_SYNCED_AT = 'last_synced_at'
     IS_REMOVED = 'is_removed'
+    GENRES = 'genres'

@@ -19,5 +19,6 @@ class SpotifyLibTrackSimpleSerializer(serializers.ModelSerializer):
             Fields.SPOTIFY_ARTISTS,
             Fields.CREATED_ON,
             Fields.LAST_SYNCED_AT,
-            Fields.IS_REMOVED
+            Fields.IS_REMOVED,
+            Fields.GENRES
         ]
