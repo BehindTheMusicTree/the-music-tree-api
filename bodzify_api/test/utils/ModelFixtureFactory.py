@@ -39,6 +39,7 @@ from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.model.user.User import User
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
+from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
 
 
 global_settings.DDF_FIELD_FIXTURES['django.db.models.fields.generated.GeneratedField'] = lambda: None  # type: ignore
@@ -237,3 +238,17 @@ class ModelFixtureFactory:
         }
         model_fields.update(kwargs)
         return G(MbArtist, **model_fields)
+
+    def create_spotify_lib_track(self, name: str, **kwargs) -> SpotifyLibTrack:
+        model_fields = {
+            'spotify_id': str(uuid.uuid4()),
+            'name': name,
+            'duration_ms': kwargs.get('duration_ms', 0),
+            'popularity': kwargs.get('popularity'),
+            'album': kwargs.get('album'),
+            'preview_url': kwargs.get('preview_url'),
+            'explicit': kwargs.get('explicit', False),
+            'last_synced_at': timezone.make_aware(datetime.now()),
+            'is_removed': kwargs.get('is_removed', False)
+        }
+        return G(SpotifyLibTrack, **model_fields)
