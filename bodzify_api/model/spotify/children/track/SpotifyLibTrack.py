@@ -40,6 +40,14 @@ class SpotifyLibTrack(SpotifyResource):
     def duration_str_in_hour_min_sec(self) -> str:
         return str(datetime.timedelta(milliseconds=self.duration_ms))
 
+    @property
+    def genres(self) -> list[str]:
+        genres = set()
+        for artist in self.spotify_artists.all():
+            if artist.genres:
+                genres.update(artist.genres)
+        return list(genres)
+
     def __str__(self):
         return f"{self.name} ({self.duration_str_in_hour_min_sec})"
 
