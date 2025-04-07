@@ -1,6 +1,7 @@
 import logging
 from typing import Optional, Dict, List, Any
 from django.utils import timezone
+import time
 
 import spotipy
 from django.conf import settings
@@ -317,6 +318,102 @@ class SpotifyAPIService:
         except Exception as e:
             logger.error(f"Network error fetching artists: {str(e)}")
             raise spotify_exception.SpotifyNetworkException(f"Network error: {str(e)}")
+
+    def quick_sync_library(self, user: SpotifyUser) -> list[SpotifyLibTrack]:
+        if not user.spotify_access_token:
+            return []
+
+        tracks = []
+        offset = 0
+        limit = 50
+        last_sync_time = user.spotify_library_last_synced_at
+
+        while True:
+            try:
+                items, total = self._fetch_tracks_batch(user, offset, limit)
+                if not items:
+                    break
+
+                for track_data in items:
+                    if not track_data:
+                        continue
+
+                    track_id = track_data.get('id')
+                    if not track_id:
+                        continue
+
+                    track = self._process_track(user, track_data, last_sync_time)
+                    if track:
+                        tracks.append(track)
+
+                offset += limit
+                if offset >= total:
+                    break
+
+            except Exception as e:
+                if isinstance(e, spotify_exception.SpotifyAPIError):
+                    if e.status_code == 404:
+                        break
+                    elif e.status_code == 429:
+                        time.sleep(1)
+                        continue
+                raise
+
+        user.spotify_library_last_synced_at = timezone.now()
+        user.save()
+
+        return tracks
+
+    def sync_library(self, user: SpotifyUser) -> list[SpotifyLibTrack]:
+        if not user.spotify_access_token:
+            return []
+
+        tracks = []
+        offset = 0
+        limit = 50
+        existing_tracks = set(SpotifyLibTrack.objects.values_list('spotify_id', flat=True))
+        existing_track_ids = set(existing_tracks)
+
+        while True:
+            try:
+                items, total = self._fetch_tracks_batch(user, offset, limit)
+                if not items:
+                    break
+
+                for track_data in items:
+                    if not track_data or not track_data.get('id'):
+                        continue
+
+                    track_id = track_data['id']
+                    track = self._process_track(user, track_data)
+                    if track:
+                        tracks.append(track)
+                        if track_id in existing_track_ids:
+                            existing_track_ids.remove(track_id)
+
+                offset += limit
+                if offset >= total:
+                    break
+
+            except Exception as e:
+                if isinstance(e, spotify_exception.SpotifyAPIError):
+                    if e.status_code == 404:
+                        break
+                    elif e.status_code == 429:
+                        time.sleep(1)
+                        continue
+                raise
+
+        removed_tracks = existing_track_ids - set(track.spotify_id for track in tracks)
+        if removed_tracks:
+            SpotifyLibTrack.objects.filter(spotify_id__in=removed_tracks).update(is_removed=True)
+            for track_id in removed_tracks:
+                print(f"Track marked as removed: {track_id}")
+
+        user.spotify_library_last_synced_at = timezone.now()
+        user.save()
+
+        return tracks
 
 
 def get_or_create_spotify_lib_track(user: SpotifyUser, track_id: str) -> Optional[SpotifyLibTrack]:
