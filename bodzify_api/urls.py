@@ -28,7 +28,7 @@ from .view.viewset.SearchViewSet import SearchViewSet
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
 router.register(r'library/uploaded', UploadedTrackViewSet, basename='uploaded-track')
-router.register(r'library/spotify', SpotifyLibTrackViewSet, basename='spotify-track')
+router.register(r'library/spotify', SpotifyLibTrackViewSet, basename='spotify-lib-track')
 router.register(r'artists', ArtistViewSet, basename='artist')
 router.register(r'albums', AlbumViewSet, basename='album')
 router.register(r'tags', TagViewSet, basename='tag')
