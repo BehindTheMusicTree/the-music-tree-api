@@ -11,7 +11,7 @@ from spotipy.exceptions import SpotifyException as SpotipyException
 
 from bodzify_api.exception import spotify as spotify_exception
 from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
-from bodzify_api.model.user.SpotifyUser import SpotifyUser
+from bodzify_api.model.user.spotify.SpotifyUser import SpotifyUser
 from . import utils
 from .ApiFields import ApiFields
 
