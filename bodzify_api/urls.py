@@ -24,24 +24,25 @@ from .view.viewset.model.SpotifyLibTrackViewSet import SpotifyLibTrackViewSet
 from .view.viewset.model.UserViewSet import UserViewSet
 from .view.viewset.SearchViewSet import SearchViewSet
 
+
 router = routers.DefaultRouter()
-router.register(r'users/', UserViewSet, basename='user')
-router.register(r'library/uploaded/', UploadedTrackViewSet, basename='uploaded-track')
-router.register(r'library/spotify/', SpotifyLibTrackViewSet, basename='spotify-track')
-router.register(r'artists/', ArtistViewSet, basename='artist')
-router.register(r'albums/', AlbumViewSet, basename='album')
-router.register(r'tags/', TagViewSet, basename='tag')
-router.register(r'genres/', GenreViewSet, basename='genre')
-router.register(r'plays/', PlayViewSet, basename='play')
+router.register(r'users', UserViewSet, basename='user')
+router.register(r'library/uploaded', UploadedTrackViewSet, basename='uploaded-track')
+router.register(r'library/spotify', SpotifyLibTrackViewSet, basename='spotify-track')
+router.register(r'artists', ArtistViewSet, basename='artist')
+router.register(r'albums', AlbumViewSet, basename='album')
+router.register(r'tags', TagViewSet, basename='tag')
+router.register(r'genres', GenreViewSet, basename='genre')
+router.register(r'plays', PlayViewSet, basename='play')
 
 # Do not move PlaylistViewSet after GenrePlaylistViewSet or ManualPlaylistViewSet or it will cause confusion resolving
 # reverse urls.
-router.register(r'playlists/', PlaylistViewSet, basename='playlist')
-router.register(r'manual-playlists/', ManualPlaylistViewSet, basename='manual-playlist')
-router.register(r'genre-playlists/', GenrePlaylistViewSet, basename='genre-playlist')
-router.register(r'tag-playlists/', TagPlaylistViewSet, basename='tag-playlist')
-router.register(r'all-tracks/', AllUploadedTracksViewSet, basename='all-uploaded-tracks')
-router.register(r'search/', SearchViewSet, basename='search')
+router.register(r'playlists', PlaylistViewSet, basename='playlist')
+router.register(r'manual-playlists', ManualPlaylistViewSet, basename='manual-playlist')
+router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
+router.register(r'tag-playlists', TagPlaylistViewSet, basename='tag-playlist')
+router.register(r'all-tracks', AllUploadedTracksViewSet, basename='all-uploaded-tracks')
+router.register(r'search', SearchViewSet, basename='search')
 
 urlpatterns = [
     path(settings.API_ROOT_BASE, include(router.urls)),
