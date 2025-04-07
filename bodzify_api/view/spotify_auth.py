@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.utils import timezone
+from django.contrib.auth import login
 
 from bodzify_api.utils.spotify.oauth import SpotifyOAuthService
 from bodzify_api.model.user.SpotifyUser import SpotifyUser
@@ -10,6 +11,8 @@ from bodzify_api.utils.jwt import create_jwt_token
 from bodzify_api.model.user.Fields import Fields
 from bodzify_api.model.spotify.Fields import Fields as SpotifyFields
 from bodzify_api.utils.spotify.service import SpotifyAPIService
+from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 
 spotify_service = SpotifyAPIService()
 
@@ -20,12 +23,15 @@ def spotify_auth(request):
     """
     Handle Spotify authentication code from frontend
     """
-    print("\n=== Spotify Auth Called ===")
-    code = request.data.get('code')
-    if not code:
-        return Response({'error': 'No code provided'}, status=status.HTTP_400_BAD_REQUEST)
-
     try:
+        code = request.data.get('code')
+        if not code:
+            raise AppValidationException(
+                field_name='code',
+                message='No code provided',
+                field_validation_error_code=FieldValidationErrorCode.REQUIRED
+            )
+
         oauth_service = SpotifyOAuthService()
 
         # Get access token
@@ -35,7 +41,6 @@ def spotify_auth(request):
 
         # Get user info
         user_info = oauth_service.get_user_info(access_token)
-        print(f"User info: {user_info}")
 
         spotify_id = user_info['id']
         email = user_info.get('email')
@@ -62,12 +67,10 @@ def spotify_auth(request):
             user.spotify_token_expires_at = timezone.now() + timezone.timedelta(seconds=token_info['expires_in'])
             user.save()
 
-        print(f"User authenticated: {user.username}")
-
         # Create JWT token
         jwt_token = create_jwt_token(user)
 
-        print("Auth complete.")
+        login(request, user)
         return Response({
             'accessToken': jwt_token,
             'user': {
@@ -86,8 +89,7 @@ def spotify_auth(request):
         })
 
     except Exception as e:
-        print(f"Auth error: {str(e)}")
-        return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])
@@ -95,14 +97,14 @@ def spotify_callback(request):
     """
     Handle the Spotify OAuth callback
     """
-    code = request.GET.get('code')
-    if not code:
-        return Response(
-            {'error': 'Authorization code is required'},
-            status=status.HTTP_400_BAD_REQUEST
-        )
-
     try:
+        code = request.GET.get('code')
+        if not code:
+            return Response(
+                {'error': 'Authorization code is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         oauth_service = SpotifyOAuthService()
 
         # Get access token
@@ -140,6 +142,7 @@ def spotify_callback(request):
         # Create JWT token
         jwt_token = create_jwt_token(user)
 
+        login(request, user)
         return Response({
             'accessToken': jwt_token,
             'user': {
