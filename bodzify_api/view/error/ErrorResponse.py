@@ -14,6 +14,7 @@ from rest_framework.exceptions import (
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+from bodzify_api.exception.spotify import SpotifyAuthenticationException
 from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCodeNumeric
 from bodzify_api.view.error.DrfValidationErrorResponseDetail import DrfValidationErrorResponseDetail
@@ -258,6 +259,12 @@ class ErrorResponse:
         )
 
     @staticmethod
+    def _from_spotify_authentication_exception(exception: SpotifyAuthenticationException) -> JsonResponse:
+        return ErrorResponse.create_error_response(
+            error_detail={'message': str(exception), 'code': 'spotify_authentication_error'},
+            api_error_code=ApiErrorCodeNumeric.AUTH_INVALID_CREDENTIALS)
+
+    @staticmethod
     def handle_exception(exc: Exception) -> JsonResponse:
         """
         Routes different types of exceptions to their appropriate handlers.
@@ -283,5 +290,7 @@ class ErrorResponse:
             return ErrorResponse._from_permission_denied_exception(exc)
         elif isinstance(exc, DisallowedHost):
             return ErrorResponse._from_disallowed_host_exception(exc)
+        elif isinstance(exc, SpotifyAuthenticationException):
+            return ErrorResponse._from_spotify_authentication_exception(exc)
         else:
             return ErrorResponse._from_unhandled_exception(exc)
