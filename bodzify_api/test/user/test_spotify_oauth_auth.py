@@ -3,7 +3,7 @@ from unittest import mock
 from bodzify_api.exception.spotify import SpotifyAuthenticationException
 from bodzify_api.test.utils.AppTestCase import AppTestCase
 from bodzify_api.utils.spotify.oauth import SpotifyOAuthService
-from bodzify_api.serializer.model.spotify.token.Fields import Fields
+from bodzify_api.serializer.token.Fields import Fields
 
 
 class TestSpotifyOAuthAuth(AppTestCase):

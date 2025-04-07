@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from bodzify_api.model.spotify.children.artist.SpotifyArtist import SpotifyArtist
-from bodzify_api.serializer.model.spotify.children.artist.output.Fields import Fields
+from bodzify_api.serializer.model.spotify.artist.output.Fields import Fields
 
 
 class SpotifyArtistDetailedSerializer(serializers.ModelSerializer):
