@@ -2,6 +2,7 @@ from rest_framework import status
 from django.urls import reverse
 
 from bodzify_api.test.view.spotify_artist.SpotifyArtistTestCase import SpotifyArtistTestCase
+from bodzify_api.model.spotify_resource
 
 
 class TestInvalidMethods(SpotifyArtistTestCase):

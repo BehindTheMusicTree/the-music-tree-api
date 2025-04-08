@@ -4,7 +4,7 @@ from django.contrib.postgres.fields import ArrayField
 
 from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.utils.ConcatOp import ConcatOp
-from bodzify_api.model.spotify.SpotifyResource import SpotifyResource
+from bodzify_api.model.spotify_resource.SpotifyResource import SpotifyResource
 from bodzify_api.model.public_standard_resource.PublicStandardResource import PublicStandardResource
 from .Fields import Fields
 from .SpotifyArtistManager import SpotifyArtistManager

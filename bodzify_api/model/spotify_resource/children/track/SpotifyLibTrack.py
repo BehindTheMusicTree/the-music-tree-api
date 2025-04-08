@@ -5,10 +5,10 @@ from django.db.models import F, Value
 from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.field.foreign_key.AppManyToManyField import AppManyToManyField
 from bodzify_api.model.utils.ConcatOp import ConcatOp
-from bodzify_api.model.spotify.children.artist.SpotifyArtist import SpotifyArtist
-from bodzify_api.model.spotify.SpotifyResource import SpotifyResource
-from bodzify_api.model.spotify.children.track.Fields import Fields
-from bodzify_api.model.spotify.children.track.SpotifyLibTrackManager import SpotifyLibTrackManager
+from bodzify_api.model.spotify_resource.children.artist.SpotifyArtist import SpotifyArtist
+from bodzify_api.model.spotify_resource.SpotifyResource import SpotifyResource
+from bodzify_api.model.spotify_resource.children.track.Fields import Fields
+from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrackManager import SpotifyLibTrackManager
 
 
 class SpotifyLibTrack(SpotifyResource):

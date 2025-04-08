@@ -8,8 +8,8 @@ from django.db import transaction
 
 from bodzify_api.filtering.set.spotify.lib_track.SpotifyLibTrackFilterSet import SpotifyLibTrackFilterSet
 from bodzify_api.filtering.set.spotify.lib_track.Fields import Fields as FilterFields
-from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
-from bodzify_api.model.spotify.children.track.Fields import Fields
+from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
+from bodzify_api.model.spotify_resource.children.track.Fields import Fields
 from bodzify_api.utils.spotify.service import full_sync_spotify_library, quick_sync_spotify_library
 from bodzify_api.serializer.model.spotify.lib_track.output.detailed import SpotifyLibTrackDetailedSerializer
 from bodzify_api.serializer.model.spotify.lib_track.output.simple import SpotifyLibTrackSimpleSerializer
@@ -33,7 +33,7 @@ class SpotifyLibTrackViewSet(AppModelViewSet[SpotifyLibTrack]):
         ).distinct()
 
     @extend_schema(parameters=[
-        OpenApiParameter(name=FilterFields.NAME_PUBLIC, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
         OpenApiParameter(name=FilterFields.ALBUM_ARTIST_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
         OpenApiParameter(name=FilterFields.DURATION_SEC_MIN, type=OpenApiTypes.INT, location=OpenApiParameter.QUERY),
         OpenApiParameter(name=FilterFields.DURATION_SEC_MAX, type=OpenApiTypes.INT, location=OpenApiParameter.QUERY),

@@ -1,7 +1,7 @@
 from uuid import uuid4
 from rest_framework import status
 
-from bodzify_api.model.spotify.children.artist.Fields import Fields
+from bodzify_api.model.spotify_resource.children.artist.Fields import Fields
 from bodzify_api.test.view.spotify_artist.SpotifyArtistTestCase import SpotifyArtistTestCase
 
 
@@ -16,7 +16,7 @@ class TestGet(SpotifyArtistTestCase):
         )
 
     def test_retrieve_spotify_artist_then_ok(self):
-        response = self._retrieve_spotify_artist(str(self.artist.pk))
+        response = self._retrieve_spotify_artist(self.artist.spotify_id)
         assert response.status_code == status.HTTP_200_OK
         result = self.result
         assert result[Fields.NAME] == self.artist.name
