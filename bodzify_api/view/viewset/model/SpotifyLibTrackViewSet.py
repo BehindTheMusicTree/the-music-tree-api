@@ -1,19 +1,29 @@
+from drf_spectacular.utils import OpenApiParameter  # type: ignore
+from drf_spectacular.types import OpenApiTypes  # type: ignore
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
 from django.db import transaction
 
+from bodzify_api.filtering.set.spotify.lib_track.SpotifyLibTrackFilterSet import SpotifyLibTrackFilterSet
+from bodzify_api.filtering.set.spotify.lib_track.Fields import Fields as FilterFields
 from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.model.spotify.children.track.Fields import Fields
 from bodzify_api.utils.spotify.service import full_sync_spotify_library, quick_sync_spotify_library
 from bodzify_api.serializer.model.spotify.lib_track.output.detailed import SpotifyLibTrackDetailedSerializer
+from bodzify_api.serializer.model.spotify.lib_track.output.simple import SpotifyLibTrackSimpleSerializer
+from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
-class SpotifyLibTrackViewSet(ModelViewSet):
-
-    queryset = SpotifyLibTrack.objects.all()
-    serializer_class = SpotifyLibTrackDetailedSerializer
+class SpotifyLibTrackViewSet(AppModelViewSet[SpotifyLibTrack]):
+    def __init__(self, **kwargs):
+        super().__init__(model_class=SpotifyLibTrack,
+                         filterset_class=SpotifyLibTrackFilterSet,
+                         detailed_serializer_class=SpotifyLibTrackDetailedSerializer,
+                         simple_serializer_class=SpotifyLibTrackSimpleSerializer,
+                         is_private_resource=False,
+                         **kwargs)
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:
@@ -21,6 +31,37 @@ class SpotifyLibTrackViewSet(ModelViewSet):
         return super().get_queryset().filter(
             **{Fields.IS_REMOVED: False}
         ).distinct()
+
+    @extend_schema(parameters=[
+        OpenApiParameter(name=FilterFields.NAME_PUBLIC, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.ALBUM_ARTIST_NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.DURATION_SEC_MIN, type=OpenApiTypes.INT, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.DURATION_SEC_MAX, type=OpenApiTypes.INT, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.POPULARITY_MIN, type=OpenApiTypes.INT, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.POPULARITY_MAX, type=OpenApiTypes.INT, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.EXPLICIT, type=OpenApiTypes.BOOL, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.LAST_SYNCED_AT, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.LAST_SYNCED_AT_GT, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.LAST_SYNCED_AT_LT, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.LAST_SYNCED_AT_GTE, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.LAST_SYNCED_AT_LTE, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.IS_REMOVED, type=OpenApiTypes.BOOL, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.CREATED_ON, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.CREATED_ON_GT, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.CREATED_ON_LT, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.CREATED_ON_GTE, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.CREATED_ON_LTE, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.UPDATED_ON, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.UPDATED_ON_GT, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.UPDATED_ON_LT, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.UPDATED_ON_GTE, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
+        OpenApiParameter(name=FilterFields.UPDATED_ON_LTE, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
+    ])
+    def list(self, *args, **kwargs):
+        return self._handle_list()
+
+    def retrieve(self, *args, **kwargs):
+        return self._handle_retrieve()
 
     @action(detail=False, methods=['post'], url_path='sync/quick')
     def quick_sync(self, request):
