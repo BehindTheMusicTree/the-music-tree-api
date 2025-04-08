@@ -4,17 +4,15 @@ from bodzify_api.filtering.filter.char.RelatedObjectCharFilter import RelatedObj
 from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import (
     PrivateUniqueResourceFilterSet
 )
-from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
-from bodzify_api.model.spotify.children.track.Fields import Fields as ModelFields
-from bodzify_api.model.spotify.children.artist.Fields import Fields as ArtistModelFields
+from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
+from bodzify_api.model.spotify_resource.children.track.Fields import Fields as ModelFields
+from bodzify_api.model.spotify_resource.children.artist.Fields import Fields as ArtistModelFields
 
 from .Fields import Fields
 
 
 class SpotifyLibTrackFilterSet(PrivateUniqueResourceFilterSet):
-    name = NonEmptiableCharFilter(field_name=ModelFields.NAME,
-                                  field_name_public=Fields.NAME_PUBLIC,
-                                  lookup_expr='icontains')
+    name = NonEmptiableCharFilter(lookup_expr='icontains')
     album_artist_name = RelatedObjectCharFilter(primary_field=ArtistModelFields.NAME,
                                                 field_name=ModelFields.SPOTIFY_ARTISTS,
                                                 field_name_public=Fields.ALBUM_ARTIST_NAME,
