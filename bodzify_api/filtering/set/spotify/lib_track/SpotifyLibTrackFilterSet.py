@@ -1,4 +1,4 @@
-from django_filters import NumberFilter, BooleanFilter, DateTimeFilter, CharFilter
+from django_filters import NumberFilter, BooleanFilter, DateTimeFilter
 from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import NonEmptiableCharFilter
 from bodzify_api.filtering.filter.char.RelatedObjectCharFilter import RelatedObjectCharFilter
 from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import (
@@ -12,7 +12,6 @@ from .Fields import Fields
 
 
 class SpotifyLibTrackFilterSet(PrivateUniqueResourceFilterSet):
-    spotify_id = CharFilter(field_name=ModelFields.SPOTIFY_ID, lookup_expr='exact')
     name = NonEmptiableCharFilter(field_name=ModelFields.NAME,
                                   field_name_public=Fields.NAME_PUBLIC,
                                   lookup_expr='icontains')
@@ -41,7 +40,6 @@ class SpotifyLibTrackFilterSet(PrivateUniqueResourceFilterSet):
     class Meta:
         model = SpotifyLibTrack
         fields = [
-            ModelFields.SPOTIFY_ID,
             ModelFields.NAME,
             ModelFields.SPOTIFY_ARTISTS,
             ModelFields.DURATION_MS,
