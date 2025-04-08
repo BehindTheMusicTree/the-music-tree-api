@@ -7,6 +7,7 @@ from bodzify_api.model.utils.ConcatOp import ConcatOp
 from bodzify_api.model.spotify.SpotifyResource import SpotifyResource
 from bodzify_api.model.public_standard_resource.PublicStandardResource import PublicStandardResource
 from .Fields import Fields
+from .SpotifyArtistManager import SpotifyArtistManager
 
 
 class SpotifyArtist(SpotifyResource, PublicStandardResource):
@@ -20,6 +21,8 @@ class SpotifyArtist(SpotifyResource, PublicStandardResource):
     images = models.JSONField(null=True, editable=False)
     created_on = models.DateTimeField(auto_now_add=True, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=False)
+
+    objects = SpotifyArtistManager()
 
     def __str__(self):
         return self.name
