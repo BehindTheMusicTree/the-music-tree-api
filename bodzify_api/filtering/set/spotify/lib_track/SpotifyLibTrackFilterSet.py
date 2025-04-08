@@ -1,4 +1,4 @@
-from django_filters import NumberFilter, BooleanFilter, DateTimeFilter
+from django_filters import NumberFilter, BooleanFilter, DateTimeFilter, CharFilter
 from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import NonEmptiableCharFilter
 from bodzify_api.filtering.filter.char.RelatedObjectCharFilter import RelatedObjectCharFilter
 from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import (
@@ -12,6 +12,7 @@ from .Fields import Fields
 
 
 class SpotifyLibTrackFilterSet(PrivateUniqueResourceFilterSet):
+    spotify_id = CharFilter(field_name=ModelFields.SPOTIFY_ID, lookup_expr='exact')
     name = NonEmptiableCharFilter(field_name=ModelFields.NAME,
                                   field_name_public=Fields.NAME_PUBLIC,
                                   lookup_expr='icontains')
@@ -40,18 +41,13 @@ class SpotifyLibTrackFilterSet(PrivateUniqueResourceFilterSet):
     class Meta:
         model = SpotifyLibTrack
         fields = [
-            Fields.NAME_PUBLIC,
-            Fields.ALBUM_ARTIST_NAME,
-            Fields.DURATION_SEC_MIN,
-            Fields.DURATION_SEC_MAX,
-            Fields.POPULARITY_MIN,
-            Fields.POPULARITY_MAX,
-            Fields.EXPLICIT,
-            Fields.LAST_SYNCED_AT,
-            Fields.LAST_SYNCED_AT_GT,
-            Fields.LAST_SYNCED_AT_LT,
-            Fields.LAST_SYNCED_AT_GTE,
-            Fields.LAST_SYNCED_AT_LTE,
-            Fields.IS_REMOVED,
+            ModelFields.SPOTIFY_ID,
+            ModelFields.NAME,
+            ModelFields.SPOTIFY_ARTISTS,
+            ModelFields.DURATION_MS,
+            ModelFields.POPULARITY,
+            ModelFields.EXPLICIT,
+            ModelFields.LAST_SYNCED_AT,
+            ModelFields.IS_REMOVED,
             *PrivateUniqueResourceFilterSet.get_date_fields()
         ]
