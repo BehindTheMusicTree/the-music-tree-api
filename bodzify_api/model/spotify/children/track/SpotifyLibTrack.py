@@ -27,14 +27,16 @@ class SpotifyLibTrack(SpotifyResource):
     explicit = models.BooleanField(default=False, editable=False, db_column=Fields.EXPLICIT)
     spotify_artists = AppManyToManyField(SpotifyArtist, db_column=Fields.SPOTIFY_ARTISTS)
     last_synced_at = models.DateTimeField(null=True, editable=False, db_column=Fields.LAST_SYNCED_AT)
-    is_removed = models.BooleanField(
-        default=False,
-        editable=False,
-        help_text="Indicates if the track has been removed from Spotify",
-        db_column=Fields.IS_REMOVED
-    )
+    is_removed = models.BooleanField(default=False,
+                                     editable=False,
+                                     help_text="Indicates if the track has been removed from Spotify",
+                                     db_column=Fields.IS_REMOVED)
 
     objects = SpotifyLibTrackManager()
+
+    @property
+    def duration_sec(self) -> int:
+        return self.duration_ms // 1000
 
     @property
     def duration_str_in_hour_min_sec(self) -> str:
