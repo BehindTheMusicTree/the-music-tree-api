@@ -94,8 +94,8 @@ class SpotifyOAuthService:
             sp = spotipy.Spotify(auth=access_token)
             user_info = sp.current_user()
             if user_info is None:
-                raise spotify_exception.SpotifyAPIException("Failed to get user info: No user info returned")
+                raise spotify_exception.SpotifyAuthenticationException("Failed to get user info: No user info returned")
             return user_info
         except Exception as e:
             logger.error(f"Failed to get user info: {str(e)}")
-            raise spotify_exception.SpotifyAPIException(f"Failed to get user info: {str(e)}")
+            raise spotify_exception.SpotifyAuthenticationException(f"Failed to get user info: {str(e)}")
