@@ -13,7 +13,6 @@ from django.utils import timezone
 from django_dynamic_fixture import global_settings
 
 from bodzify_api.model.album.Album import Album
-from bodzify_api.model.album.Fields import Fields as AlbumFields
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.criteria.children.genre.Genre import Genre
@@ -41,6 +40,10 @@ from bodzify_api.model.user.User import User
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.model.spotify.children.artist.SpotifyArtist import SpotifyArtist
+from bodzify_api.model.spotify.children.track.Fields import Fields as TrackFields
+from bodzify_api.model.spotify.children.artist.Fields import Fields as ArtistFields
+from bodzify_api.model.artist.Fields import Fields as ArtistModelFields
+from bodzify_api.model.album.Fields import Fields as AlbumModelFields
 
 
 global_settings.DDF_FIELD_FIXTURES['django.db.models.fields.generated.GeneratedField'] = lambda: None  # type: ignore
@@ -173,22 +176,22 @@ class ModelFixtureFactory:
 
     def create_artist(self, name: str, user: User | None = None, **kwargs) -> Artist:
         model_fields = {
-            ArtistFields.CREATED_ON: timezone.make_aware(datetime.now()),
-            ArtistFields.UPDATED_ON: timezone.make_aware(datetime.now()),
-            ArtistFields.USER: user or self.default_test_user,
-            ArtistFields.NAME_INTERNAL: name
+            ArtistModelFields.CREATED_ON: timezone.make_aware(datetime.now()),
+            ArtistModelFields.UPDATED_ON: timezone.make_aware(datetime.now()),
+            ArtistModelFields.USER: user or self.default_test_user,
+            ArtistModelFields.NAME_INTERNAL: name
         }
         model_fields.update(kwargs)
         return G(Artist, **model_fields)
 
     def create_album(self, name: str, user: User | None = None, **kwargs) -> Album:
         model_fields = {
-            AlbumFields.CREATED_ON: timezone.make_aware(datetime.now()),
-            AlbumFields.UPDATED_ON: timezone.make_aware(datetime.now()),
-            AlbumFields.USER: user or self.default_test_user,
-            AlbumFields.ALBUM_ARTISTS: [],
-            AlbumFields.YEAR: None,
-            AlbumFields.NAME_INTERNAL: name
+            AlbumModelFields.CREATED_ON: timezone.make_aware(datetime.now()),
+            AlbumModelFields.UPDATED_ON: timezone.make_aware(datetime.now()),
+            AlbumModelFields.USER: user or self.default_test_user,
+            AlbumModelFields.ALBUM_ARTISTS: [],
+            AlbumModelFields.YEAR: None,
+            AlbumModelFields.NAME_INTERNAL: name
         }
         model_fields.update(kwargs)
         return G(Album, **model_fields)
@@ -242,26 +245,29 @@ class ModelFixtureFactory:
 
     def create_spotify_lib_track(self, name: str, **kwargs) -> SpotifyLibTrack:
         model_fields = {
-            'spotify_id': str(uuid.uuid4()),
-            'name': name,
-            'duration_ms': kwargs.get('duration_ms', 0),
-            'popularity': kwargs.get('popularity'),
-            'album': kwargs.get('album'),
-            'preview_url': kwargs.get('preview_url'),
-            'explicit': kwargs.get('explicit', False),
-            'last_synced_at': timezone.make_aware(datetime.now()),
-            'is_removed': kwargs.get('is_removed', False)
+            TrackFields.SPOTIFY_ID: str(uuid.uuid4()),
+            TrackFields.NAME: name,
+            TrackFields.DURATION_MS: kwargs.get(TrackFields.DURATION_MS, 0),
+            TrackFields.POPULARITY: kwargs.get(TrackFields.POPULARITY),
+            TrackFields.ALBUM: kwargs.get(TrackFields.ALBUM),
+            TrackFields.PREVIEW_URL: kwargs.get(TrackFields.PREVIEW_URL),
+            TrackFields.EXPLICIT: kwargs.get(TrackFields.EXPLICIT, False),
+            TrackFields.LAST_SYNCED_AT: timezone.make_aware(datetime.now()),
+            TrackFields.IS_REMOVED: kwargs.get(TrackFields.IS_REMOVED, False)
         }
-        return G(SpotifyLibTrack, **model_fields)
+        track = G(SpotifyLibTrack, **model_fields)
+        if 'spotify_artists' in kwargs:
+            track.spotify_artists.set(kwargs['spotify_artists'])
+        return track
 
     def create_spotify_artist(self, name: str, **kwargs) -> SpotifyArtist:
         model_fields = {
-            'spotify_id': str(uuid.uuid4()),
-            'name': name,
-            'popularity': kwargs.get('popularity'),
-            'genres': kwargs.get('genres', []),
-            'images': kwargs.get('images', []),
-            'created_on': timezone.make_aware(datetime.now()),
-            'updated_on': timezone.make_aware(datetime.now())
+            ArtistFields.SPOTIFY_ID: str(uuid.uuid4()),
+            ArtistFields.NAME: name,
+            ArtistFields.POPULARITY: kwargs.get(ArtistFields.POPULARITY),
+            ArtistFields.GENRES: kwargs.get(ArtistFields.GENRES, []),
+            ArtistFields.IMAGES: kwargs.get(ArtistFields.IMAGES, []),
+            ArtistFields.CREATED_ON: timezone.make_aware(datetime.now()),
+            ArtistFields.UPDATED_ON: timezone.make_aware(datetime.now())
         }
         return G(SpotifyArtist, **model_fields)
