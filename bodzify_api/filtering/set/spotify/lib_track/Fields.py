@@ -4,7 +4,7 @@ from bodzify_api.filtering.set.private_unique_resource.Fields import Fields as P
 
 
 class Fields(PrivateUniqueResourceFields):
-    NAME_PUBLIC = ModelFields.NAME
+    NAME = ModelFields.NAME
     ALBUM_ARTIST_NAME = f'spotify_artists_{ArtistFields.NAME}'
     DURATION_SEC_MIN = f'{ModelFields.DURATION_MS}_sec_min'
     DURATION_SEC_MAX = f'{ModelFields.DURATION_MS}_sec_max'
