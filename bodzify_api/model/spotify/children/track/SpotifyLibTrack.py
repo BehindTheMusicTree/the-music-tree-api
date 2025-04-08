@@ -44,11 +44,11 @@ class SpotifyLibTrack(SpotifyResource):
 
     @property
     def genres(self) -> list[str]:
-        genres = set()
+        unique_genres: set[str] = set()
         for artist in self.spotify_artists.all():
             if artist.genres:
-                genres.update(artist.genres)
-        return list(genres)
+                unique_genres.update(artist.genres)
+        return sorted(list(unique_genres))
 
     def __str__(self):
         return f"{self.name} ({self.duration_str_in_hour_min_sec})"
