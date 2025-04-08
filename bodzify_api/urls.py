@@ -8,6 +8,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from bodzify_api.utils.AppStaticFileStates import StaticFileStates
 from bodzify_api.view.viewset.model.AllUploadedTracksMixinViewSet import AllUploadedTracksViewSet
 from bodzify_api.view.spotify_auth import spotify_auth, spotify_callback
+from bodzify_api.view.viewset.model.SpotifyArtistViewSet import SpotifyArtistViewSet
 
 from . import settings
 from .view.viewset.model.AlbumViewSet import AlbumViewSet
@@ -29,6 +30,7 @@ router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
 router.register(r'library/uploaded', UploadedTrackViewSet, basename='uploaded-track')
 router.register(r'library/spotify', SpotifyLibTrackViewSet, basename='spotify-lib-track')
+router.register(r'spotify-artists', SpotifyArtistViewSet, basename='spotify-artist')
 router.register(r'artists', ArtistViewSet, basename='artist')
 router.register(r'albums', AlbumViewSet, basename='album')
 router.register(r'tags', TagViewSet, basename='tag')
