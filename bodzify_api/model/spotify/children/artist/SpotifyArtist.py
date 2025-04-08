@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models import F, Value
+from django.contrib.postgres.fields import ArrayField
 
 from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.utils.ConcatOp import ConcatOp
@@ -15,7 +16,7 @@ class SpotifyArtist(SpotifyResource, PublicStandardResource):
         expression=ConcatOp(Value("https://open.spotify.com/artist/"), F(Fields.SPOTIFY_ID)),
         output_field=AppCharField(max_length=500),
         db_persist=True)
-    genres = models.JSONField(null=True, editable=False)
+    genres = ArrayField(models.CharField(max_length=100), null=True, editable=False)
     images = models.JSONField(null=True, editable=False)
     created_on = models.DateTimeField(auto_now_add=True, editable=False)
     updated_on = models.DateTimeField(auto_now=True, editable=False)
