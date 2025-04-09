@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.utils.spotify_api.SpotifyClient import SpotifyClient
 from bodzify_api.utils.spotify_api.ApiFields import ApiFields
-from bodzify_api.utils.spotify_api.SpotifyArtistManager import SpotifyArtistManager
+from bodzify_api.utils.spotify_api.managers.SpotifyArtistManager import SpotifyArtistManager
 
 spotify_client = SpotifyClient()
 spotify_artist_manager = SpotifyArtistManager()
