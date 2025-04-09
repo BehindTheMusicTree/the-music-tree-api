@@ -23,7 +23,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS('Creating Spotify API service...'))
             service = SpotifyAPIService()
             self.stdout.write(self.style.SUCCESS('Successfully authenticated with Spotify API!'))
-            
+
             # Test search functionality if search query provided
             search_query = options.get('search')
             if search_query:
@@ -31,19 +31,20 @@ class Command(BaseCommand):
                 results = service.search_track(search_query, limit=5)
                 tracks = results.get('tracks', {}).get('items', [])
                 self.stdout.write(self.style.SUCCESS(f'Found {len(tracks)} tracks'))
-                
+
                 for i, track in enumerate(tracks[:5], 1):
-                    self.stdout.write(f"{i}. {track.get('name')} by {', '.join([a.get('name') for a in track.get('artists', [])])}")
-            
+                    self.stdout.write(
+                        f"{i}. {track.get('name')} by {', '.join([a.get('name') for a in track.get('artists', [])])}")
+
             # Test get track by ID if track ID provided
             track_id = options.get('track')
             if track_id:
                 self.stdout.write(f'Getting track with ID: {track_id}')
-                track = service.get_track_by_id(track_id)
+                track = service.retrieve_track_by_id(track_id)
                 self.stdout.write(self.style.SUCCESS(
                     f"Track: {track.get('name')} by {', '.join([a.get('name') for a in track.get('artists', [])])}"
                 ))
-                
+
                 # Test audio features
                 self.stdout.write(f'Getting audio features for track: {track_id}')
                 features = service.get_audio_features(track_id)
@@ -51,7 +52,7 @@ class Command(BaseCommand):
                     f"Audio features: Tempo: {features.get('tempo')}, Key: {features.get('key')}, "
                     f"Energy: {features.get('energy')}, Danceability: {features.get('danceability')}"
                 ))
-            
+
             # Test get artist by ID if artist ID provided
             artist_id = options.get('artist')
             if artist_id:
@@ -61,24 +62,24 @@ class Command(BaseCommand):
                     f"Artist: {artist.get('name')}, Genres: {', '.join(artist.get('genres', []))}, "
                     f"Popularity: {artist.get('popularity')}"
                 ))
-            
+
             # Test get track by ISRC if ISRC code provided
             isrc = options.get('isrc')
             if isrc:
                 self.stdout.write(f'Looking up track with ISRC: {isrc}')
-                track = service.get_track_by_isrc(isrc)
+                track = service.retrieve_track_by_isrc(isrc)
                 if track:
                     self.stdout.write(self.style.SUCCESS(
                         f"ISRC match found: {track.get('name')} by {', '.join([a.get('name') for a in track.get('artists', [])])}"
                     ))
                 else:
                     self.stdout.write(self.style.WARNING(f'No track found with ISRC: {isrc}'))
-            
+
             if not any([search_query, track_id, artist_id, isrc]):
                 self.stdout.write(self.style.SUCCESS(
                     'Connection to Spotify API verified! Use --search, --track, --artist, or --isrc to test specific functionality.'
                 ))
-                
+
         except spotify_exception.SpotifyAuthenticationException as e:
             raise CommandError(f'Authentication with Spotify failed: {str(e)}')
         except spotify_exception.SpotifyException as e:

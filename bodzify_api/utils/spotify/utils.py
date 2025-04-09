@@ -126,7 +126,7 @@ def create_spotify_lib_track_instance_from_dict(
     return spotify_lib_track
 
 
-def get_track_by_isrc(track_results, isrc):
+def retrieve_track_by_isrc(track_results, isrc):
     """
     Find a track with a specific ISRC code in track search results
 

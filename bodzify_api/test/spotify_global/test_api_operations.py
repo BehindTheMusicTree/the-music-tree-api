@@ -92,7 +92,7 @@ class TestSpotifyAPIOperations(AppTestCase):
         with self.assertRaises(SpotifyNetworkException):
             service.search_track("Test Query")
 
-    def test_get_track_by_id_with_valid_id_then_returns_track(self):
+    def test_retrieve_track_by_id_with_valid_id_then_returns_track(self):
         # Configure the mock to return a track
         mock_track = {
             ApiFields.Names.ID: "track123",
@@ -103,13 +103,13 @@ class TestSpotifyAPIOperations(AppTestCase):
 
         # Test getting a track by ID
         service = SpotifyAPIService()
-        result = service.get_track_by_id("track123")
+        result = service.retrieve_track_by_id("track123")
 
         # Verify the track was fetched correctly
         self.mock_spotify_instance.track.assert_called_once_with("track123")
         assert result == mock_track
 
-    def test_get_track_by_id_with_nonexistent_id_then_raises_not_found_exception(self):
+    def test_retrieve_track_by_id_with_nonexistent_id_then_raises_not_found_exception(self):
         # Configure the mock to raise a not found exception
         self.mock_spotify_instance.track.side_effect = SpotipyException(
             http_status=404, msg="Track not found", code=404)
@@ -117,9 +117,9 @@ class TestSpotifyAPIOperations(AppTestCase):
         # Test getting a nonexistent track raises the appropriate exception
         service = SpotifyAPIService()
         with self.assertRaises(SpotifyResourceNotFoundException):
-            service.get_track_by_id("nonexistent_track")
+            service.retrieve_track_by_id("nonexistent_track")
 
-    def test_get_track_by_isrc_with_valid_isrc_then_returns_track(self):
+    def test_retrieve_track_by_isrc_with_valid_isrc_then_returns_track(self):
         # Configure the mock to return search results
         mock_track = {
             ApiFields.Names.ID: "track123",
@@ -137,7 +137,7 @@ class TestSpotifyAPIOperations(AppTestCase):
 
         # Test finding a track by ISRC
         service = SpotifyAPIService()
-        result = service.get_track_by_isrc("USRC12345678")
+        result = service.retrieve_track_by_isrc("USRC12345678")
 
         # Verify the search was performed correctly
         self.mock_spotify_instance.search.assert_called_once_with(q="isrc:USRC12345678", type='track')

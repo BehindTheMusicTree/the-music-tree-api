@@ -65,7 +65,7 @@ class SpotifyAPIService:
             logger.error(f"Network error during Spotify search: {str(e)}")
             raise spotify_exception.SpotifyNetworkException(f"Network error: {str(e)}")
 
-    def get_track_by_id(self, track_id: str) -> Dict[str, Any]:
+    def retrieve_track_by_id(self, track_id: str) -> Dict[str, Any]:
         """
         Get track details by Spotify track ID
 
@@ -115,7 +115,7 @@ class SpotifyAPIService:
             logger.error(f"Network error fetching artist: {str(e)}")
             raise spotify_exception.SpotifyNetworkException(f"Network error: {str(e)}")
 
-    def get_track_by_isrc(self, isrc: str) -> Optional[Dict[str, Any]]:
+    def retrieve_track_by_isrc(self, isrc: str) -> Optional[Dict[str, Any]]:
         """
         Find a track by its ISRC code
 
@@ -128,7 +128,7 @@ class SpotifyAPIService:
         try:
             # Search using the ISRC directly
             results = self.spotify.search(q=f"isrc:{isrc}", type='track')
-            return utils.get_track_by_isrc(results, isrc)
+            return utils.retrieve_track_by_isrc(results, isrc)
         except SpotipyException as e:
             logger.error(f"Spotify ISRC lookup error: {str(e)}")
             return None
@@ -461,7 +461,7 @@ def get_or_create_spotify_lib_track(user: SpotifyUser, track_id: str) -> Optiona
             # Track doesn't exist, fetch from Spotify API
             service = SpotifyAPIService()
             try:
-                track_data = service.get_track_by_id(track_id)
+                track_data = service.retrieve_track_by_id(track_id)
                 if track_data:
                     return utils.create_spotify_lib_track_instance_from_dict(track_id, track_data)
                 return None
