@@ -38,10 +38,10 @@ from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.model.user.User import User
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
-from bodzify_api.model.spotify.children.artist.SpotifyArtist import SpotifyArtist
-from bodzify_api.model.spotify.children.track.Fields import Fields as TrackFields
-from bodzify_api.model.spotify.children.artist.Fields import Fields as ArtistFields
+from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
+from bodzify_api.model.spotify_resource.children.artist.SpotifyArtist import SpotifyArtist
+from bodzify_api.model.spotify_resource.children.track.Fields import Fields as TrackFields
+from bodzify_api.model.spotify_resource.children.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.artist.Fields import Fields as ArtistModelFields
 from bodzify_api.model.album.Fields import Fields as AlbumModelFields
 

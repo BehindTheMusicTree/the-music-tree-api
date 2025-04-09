@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
+from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.serializer.model.spotify.artist.output.simple import SpotifyArtistSimpleSerializer
 from bodzify_api.serializer.model.spotify.lib_track.output.Fields import Fields
 

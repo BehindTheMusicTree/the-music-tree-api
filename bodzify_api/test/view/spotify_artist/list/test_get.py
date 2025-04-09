@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.model.spotify.children.artist.Fields import Fields
+from bodzify_api.model.spotify_resource.children.artist.Fields import Fields
 from bodzify_api.test.view.spotify_artist.SpotifyArtistTestCase import SpotifyArtistTestCase
 
 

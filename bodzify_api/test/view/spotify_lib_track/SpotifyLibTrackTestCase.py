@@ -1,7 +1,7 @@
 
 from django.urls import reverse
 
-from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
+from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.test.utils.AppTestCase import AppTestCase
 
 

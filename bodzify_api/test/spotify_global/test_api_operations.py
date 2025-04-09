@@ -5,7 +5,7 @@ from bodzify_api.exception.spotify import (
     SpotifyResourceNotFoundException,
     SpotifyNetworkException
 )
-from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
+from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.test.utils.AppTestCase import AppTestCase
 from bodzify_api.utils.spotify.service import SpotifyAPIService, search_spotify_lib_tracks, get_or_create_spotify_lib_track
 from bodzify_api.utils.spotify.ApiFields import ApiFields

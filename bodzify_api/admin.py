@@ -21,8 +21,8 @@ from .model.uploaded_track.file.TrackFile import TrackFile
 from .model.uploaded_track.UploadedTrack import UploadedTrack
 from .model.user.admin.UserAdmin import UserAdmin
 from .model.user.User import User
-from .model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
-from .model.spotify.children.artist.SpotifyArtist import SpotifyArtist
+from .model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
+from .model.spotify_resource.children.artist.SpotifyArtist import SpotifyArtist
 
 
 admin.site.register(User, UserAdmin)

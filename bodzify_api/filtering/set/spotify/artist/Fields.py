@@ -1,4 +1,4 @@
-from bodzify_api.model.spotify.children.artist.Fields import Fields as ModelFields
+from bodzify_api.model.spotify_resource.children.artist.Fields import Fields as ModelFields
 from bodzify_api.filtering.set.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
 
 

@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 
-from bodzify_api.model.spotify.children.artist.SpotifyArtist import SpotifyArtist
-from bodzify_api.model.spotify.children.track.SpotifyLibTrack import SpotifyLibTrack
+from bodzify_api.model.spotify_resource.children.artist.SpotifyArtist import SpotifyArtist
+from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
 from .ApiFields import ApiFields
 
 

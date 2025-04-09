@@ -3,8 +3,8 @@ from bodzify_api.filtering.filter.char.NonEmptiableCharFilter import NonEmptiabl
 from bodzify_api.filtering.set.private_unique_resource.PrivateUniqueResourceFilterSet import (
     PrivateUniqueResourceFilterSet
 )
-from bodzify_api.model.spotify.children.artist.SpotifyArtist import SpotifyArtist
-from bodzify_api.model.spotify.children.artist.Fields import Fields as ModelFields
+from bodzify_api.model.spotify_resource.children.artist.SpotifyArtist import SpotifyArtist
+from bodzify_api.model.spotify_resource.children.artist.Fields import Fields as ModelFields
 
 from .Fields import Fields
 

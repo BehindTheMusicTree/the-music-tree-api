@@ -1,4 +1,4 @@
-from bodzify_api.model.spotify.children.artist.Fields import Fields as SpotifyArtistFields
+from bodzify_api.model.spotify_resource.children.artist.Fields import Fields as SpotifyArtistFields
 
 
 class Fields:

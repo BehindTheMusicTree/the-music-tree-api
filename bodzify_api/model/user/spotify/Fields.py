@@ -1,4 +1,4 @@
-from bodzify_api.model.spotify.Fields import Fields as SpotifyFields
+from bodzify_api.model.spotify_resource.Fields import Fields as SpotifyFields
 from bodzify_api.model.user.Fields import Fields as UserFields
 
 
