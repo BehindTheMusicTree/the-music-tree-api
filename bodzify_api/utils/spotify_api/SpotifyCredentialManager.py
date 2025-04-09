@@ -1,5 +1,5 @@
-from django.conf import settings
 
+from bodzify_api import settings
 from bodzify_api.exception import spotify as spotify_exception
 
 

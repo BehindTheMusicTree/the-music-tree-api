@@ -108,6 +108,9 @@ SECRET_KEY: str
 FILE_UPLOAD_TEMP_DIR: str | None
 FILE_UPLOAD_ENABLED: bool
 
+# Spotify API settings
+SPOTIFY_SCOPE = "user-library-read"
+
 
 def init_logs_if_needed():
     from bodzify_api.logging.LoggersName import LoggersName
