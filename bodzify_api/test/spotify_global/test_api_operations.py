@@ -23,8 +23,22 @@ class TestSpotifyAPIOperations(AppTestCase):
         self.mock_spotify = self.mock_spotify_patcher.start()
         self.mock_spotify_instance = self.mock_spotify.return_value
 
+        # Set up requests mock
+        self.mock_requests_patcher = mock.patch('bodzify_api.utils.spotify_api.SpotifyClient.requests')
+        self.mock_requests = self.mock_requests_patcher.start()
+        self.mock_response = mock.MagicMock()
+        self.mock_requests.post.return_value = self.mock_response
+        self.mock_requests.request.return_value = self.mock_response
+        self.mock_response.status_code = 200
+        self.mock_response.json.return_value = {
+            "access_token": "test_access_token",
+            "refresh_token": "test_refresh_token",
+            "expires_in": 3600
+        }
+
     def tearDown(self):
         self.mock_spotify_patcher.stop()
+        self.mock_requests_patcher.stop()
         super().tearDown()
 
     def test_search_track_with_valid_query_then_returns_results(self):
