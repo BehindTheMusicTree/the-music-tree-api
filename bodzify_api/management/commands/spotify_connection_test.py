@@ -3,7 +3,7 @@ import logging
 from django.core.management.base import BaseCommand, CommandError
 
 from bodzify_api.exception import spotify as spotify_exception
-from bodzify_api.utils.spotify.service import SpotifyAPIService
+from bodzify_api.utils.spotify_api.SpotifyClient import SpotifyClient
 
 
 logger = logging.getLogger('bodzify_api')
@@ -21,7 +21,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             self.stdout.write(self.style.SUCCESS('Creating Spotify API service...'))
-            service = SpotifyAPIService()
+            service = SpotifyClient()
             self.stdout.write(self.style.SUCCESS('Successfully authenticated with Spotify API!'))
 
             # Test search functionality if search query provided
