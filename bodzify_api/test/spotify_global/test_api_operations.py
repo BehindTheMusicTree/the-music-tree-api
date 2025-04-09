@@ -13,9 +13,6 @@ from bodzify_api.utils.spotify_api.ApiFields import ApiFields
 
 
 class TestSpotifyAPIOperations(AppTestCase):
-    """
-    Test suite for Spotify API operations
-    """
 
     def setUp(self):
         super().setUp()
