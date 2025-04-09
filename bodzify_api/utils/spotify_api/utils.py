@@ -62,23 +62,3 @@ def create_spotify_lib_track_instance_from_dict(
                 spotify_lib_track.spotify_artists.add(artist)
 
     return spotify_lib_track
-
-
-def retrieve_track_by_isrc_from_track_results(track_results, isrc):
-    """
-    Find a track with a specific ISRC code in track search results
-
-    Args:
-        track_results: Dictionary containing track search results from Spotify API
-        isrc: The ISRC code to search for
-
-    Returns:
-        Track dictionary or None if not found
-    """
-    if ApiFields.Names.TRACKS in track_results and ApiFields.Names.ITEMS in track_results[ApiFields.Names.TRACKS]:
-        for track in track_results[ApiFields.Names.TRACKS][ApiFields.Names.ITEMS]:
-            # Check external IDs for ISRC if available
-            external_ids = track.get('external_ids', {})
-            if external_ids.get('isrc') == isrc:
-                return track
-    return None

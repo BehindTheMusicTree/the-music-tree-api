@@ -78,7 +78,7 @@ class TestSpotifyAPIOperations(AppTestCase):
         service = SpotifyClient()
         result = service.search_track("Nonexistent Track")
 
-        # Verify the search was performed and returned empty results
+        assert result
         assert result[ApiFields.Names.TRACKS][ApiFields.Names.ITEMS] == []
 
     def test_search_track_with_api_error_then_raises_spotify_api_exception(self):
@@ -87,9 +87,9 @@ class TestSpotifyAPIOperations(AppTestCase):
         self.mock_spotify_instance.search.side_effect = spotify_exception("API error")
 
         # Test the search function raises the appropriate exception
-        service = SpotifyClient()
+        client = SpotifyClient()
         with self.assertRaises(SpotifyNetworkException):
-            service.search_track("Test Query")
+            client.search_track("Test Query")
 
     def test_retrieve_track_by_id_with_valid_id_then_returns_track(self):
         # Configure the mock to return a track
@@ -134,11 +134,8 @@ class TestSpotifyAPIOperations(AppTestCase):
 
         self.mock_spotify_instance.search.return_value = mock_search_result
 
-        # Test finding a track by ISRC
-        service = SpotifyClient()
-        result = service.retrieve_track_by_isrc("USRC12345678")
-
-        # Verify the search was performed correctly
+        result = spotify_api_lib_track_manager.retrieve_track_by_isrc("USRC12345678")
+        assert result
         self.mock_spotify_instance.search.assert_called_once_with(q="isrc:USRC12345678", type='track')
 
     @mock.patch('bodzify_api.utils.spotify_api.utils.create_spotify_lib_track_instance_from_dict')

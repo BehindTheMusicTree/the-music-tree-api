@@ -82,3 +82,24 @@ def search_spotify_lib_tracks(user: SpotifyUser, query: str, limit: int = 5) -> 
         logger.error(f"Unexpected error searching Spotify tracks: {str(e)}")
 
     return tracks
+
+
+def retrieve_track_by_isrc(isrc: str) -> Optional[SpotifyLibTrack]:
+    """
+    Retrieve a SpotifyLibTrack instance by ISRC code
+
+    Args:
+        isrc: ISRC code
+
+    Returns:
+        SpotifyLibTrack instance or None if track not found
+    """
+    try:
+        results = spotify_client.search_track(f"isrc:{isrc}", limit=1)
+        if results and ApiFields.Names.TRACKS in results and ApiFields.Names.ITEMS in results[ApiFields.Names.TRACKS]:
+            for track_data in results[ApiFields.Names.TRACKS][ApiFields.Names.ITEMS]:
+                track_id = track_data.get(ApiFields.Names.ID)
+                if track_id:
+                    return utils.create_spotify_lib_track_instance_from_dict(track_id, track_data)
+    except Exception as e:
+        logger.error(f"Unexpected error retrieving track by ISRC: {str(e)}")
