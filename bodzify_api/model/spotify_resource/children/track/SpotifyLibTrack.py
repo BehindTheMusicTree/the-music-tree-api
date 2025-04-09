@@ -31,6 +31,10 @@ class SpotifyLibTrack(SpotifyResource):
                                      editable=False,
                                      help_text="Indicates if the track has been removed from Spotify",
                                      db_column=Fields.IS_REMOVED)
+    followers = models.IntegerField(null=True, editable=False, db_column=Fields.FOLLOWERS)
+    href = models.URLField(null=True, blank=True, editable=False, max_length=512, db_column=Fields.HREF)
+    type = AppCharField(max_length=50, null=True, editable=False, db_column=Fields.TYPE)
+    uri = AppCharField(max_length=256, null=True, editable=False, db_column=Fields.URI)
 
     objects = SpotifyLibTrackManager()
 
