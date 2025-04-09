@@ -12,3 +12,8 @@ class Fields(SpotifyFields):
     SPOTIFY_ARTISTS = 'spotify_artists'
     LAST_SYNCED_AT = 'last_synced_at'
     IS_REMOVED = 'is_removed'
+    SPOTIFY_ID = "spotify_id"
+    FOLLOWERS = "followers"
+    HREF = "href"
+    TYPE = "type"
+    URI = "uri"
