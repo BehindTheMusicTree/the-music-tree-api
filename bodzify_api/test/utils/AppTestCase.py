@@ -182,10 +182,12 @@ class AppTestCase(TestCase, Generic[T]):
             username='pytest_user2', password='pytest_user2', email='pytest@user2.com', is_test_user=True)
 
         self.spotify_test_user_1: SpotifyUser = SpotifyUser.objects.create_instance(
-            username='spotify_test_user_1', password='spotify_test_user_1', email='spotify@test.com', is_test_user=True)
+            username='spotify_test_user_1', password='spotify_test_user_1', spotify_id='spotify_test_user_1',
+            email='spotify@test.com', is_test_user=True)
 
         self.spotify_test_user_2: SpotifyUser = SpotifyUser.objects.create_instance(
-            username='spotify_test_user_2', password='spotify_test_user_2', email='spotify@test.com', is_test_user=True)
+            username='spotify_test_user_2', password='spotify_test_user_2', spotify_id='spotify_test_user_2',
+            email='spotify@test.com', is_test_user=True)
 
         self.model_fixture_factory = ModelFixtureFactory(
             default_test_user=self.test_user1, test_uploaded_track_dir=self.TEST_FILES_BASE_DIR,)
