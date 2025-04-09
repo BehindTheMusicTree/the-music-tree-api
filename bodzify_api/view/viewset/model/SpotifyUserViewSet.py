@@ -1,17 +1,13 @@
 from django.utils import timezone
-from django.db import transaction
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema, OpenApiParameter
-from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema
 
 from bodzify_api.model.user.spotify.SpotifyUser import SpotifyUser
 from bodzify_api.serializer.model.user.spotify.output.detailed import SpotifyUserDetailedSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.utils.spotify_api.oauth import SpotifyOAuthService
-from bodzify_api.utils.spotify_api.managers import lib_track_sync_manager as spotify_api_lib_track_sync_manager
-from bodzify_api.exception.spotify import SpotifyException, SpotifyForbiddenException
 
 
 class SpotifyUserViewSet(AppModelViewSet[SpotifyUser]):
@@ -83,176 +79,6 @@ class SpotifyUserViewSet(AppModelViewSet[SpotifyUser]):
                 'message': 'Token refreshed successfully',
                 'expires_in': token_info['expires_in']
             }, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
-    @extend_schema(
-        description="Perform a quick sync of the user's Spotify library. This only fetches new additions since the last sync and is faster than a full sync.",
-        responses={
-            200: {
-                "type": "object",
-                "properties": {
-                    "message": {"type": "string"},
-                    "new_tracks_count": {"type": "integer"}
-                }
-            },
-            409: {
-                "type": "object",
-                "properties": {
-                    "error": {"type": "string"}
-                }
-            },
-            500: {
-                "type": "object",
-                "properties": {
-                    "error": {"type": "string"}
-                }
-            }
-        }
-    )
-    @action(detail=False, methods=['post'], url_path='sync/quick')
-    def quick_sync(self, request):
-        try:
-            with transaction.atomic():
-                if request.user.spotify_sync_in_progress:
-                    return Response(
-                        {'error': 'A sync is already in progress. Please wait for it to complete.'},
-                        status=status.HTTP_409_CONFLICT
-                    )
-
-                request.user.spotify_sync_in_progress = True
-                request.user.save(update_fields=['spotify_sync_in_progress'])
-
-            try:
-                tracks = spotify_api_lib_track_sync_manager.quick_sync_spotify_lib_tracks(request.user)
-                return Response(
-                    {
-                        'message': 'Spotify library quick sync completed successfully',
-                        'new_tracks_count': len(tracks)
-                    },
-                    status=status.HTTP_200_OK
-                )
-            finally:
-                with transaction.atomic():
-                    request.user.spotify_sync_in_progress = False
-                    request.user.save(update_fields=['spotify_sync_in_progress'])
-
-        except Exception as e:
-            with transaction.atomic():
-                request.user.spotify_sync_in_progress = False
-                request.user.save(update_fields=['spotify_sync_in_progress'])
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
-    @extend_schema(
-        description="Perform a full sync of the user's Spotify library. This checks for both additions and removals, but is more resource-intensive.",
-        responses={
-            200: {
-                "type": "object",
-                "properties": {
-                    "message": {"type": "string"}
-                }
-            },
-            409: {
-                "type": "object",
-                "properties": {
-                    "error": {"type": "string"}
-                }
-            },
-            500: {
-                "type": "object",
-                "properties": {
-                    "error": {"type": "string"}
-                }
-            }
-        }
-    )
-    @action(detail=False, methods=['post'], url_path='sync/full')
-    def full_sync(self, request):
-        try:
-            with transaction.atomic():
-                if request.user.spotify_sync_in_progress:
-                    return Response(
-                        {'error': 'A sync is already in progress. Please wait for it to complete.'},
-                        status=status.HTTP_409_CONFLICT
-                    )
-
-                request.user.spotify_sync_in_progress = True
-                request.user.save(update_fields=['spotify_sync_in_progress'])
-
-            try:
-                spotify_api_lib_track_sync_manager.full_sync_spotify_lib_tracks(request.user)
-                return Response(
-                    {'message': 'Spotify library synced successfully'},
-                    status=status.HTTP_200_OK
-                )
-            finally:
-                with transaction.atomic():
-                    request.user.spotify_sync_in_progress = False
-                    request.user.save(update_fields=['spotify_sync_in_progress'])
-
-        except Exception as e:
-            with transaction.atomic():
-                request.user.spotify_sync_in_progress = False
-                request.user.save(update_fields=['spotify_sync_in_progress'])
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
-    @extend_schema(
-        parameters=[
-            OpenApiParameter(
-                name='full_sync',
-                type=OpenApiTypes.BOOL,
-                location=OpenApiParameter.QUERY,
-                description='Whether to perform a full sync of the user\'s library',
-                required=False,
-                default=False
-            )
-        ],
-        responses={
-            200: SpotifyUserDetailedSerializer,
-            400: 'Bad Request',
-            401: 'Unauthorized',
-            403: 'Forbidden',
-            404: 'Not Found',
-            500: 'Internal Server Error'
-        }
-    )
-    @action(detail=True, methods=['post'])
-    def sync_library(self, request, pk=None):
-        """
-        Synchronize the user's Spotify library with the database.
-        """
-        try:
-            spotify_user = self.get_object()
-            full_sync = request.query_params.get('full_sync', 'false').lower() == 'true'
-
-            if full_sync:
-                full_sync_spotify_lib_tracks(spotify_user)
-            else:
-                quick_sync_spotify_lib_tracks(spotify_user)
-
-            return Response(
-                {'message': 'Library synchronized successfully'},
-                status=status.HTTP_200_OK
-            )
-        except SpotifyForbiddenException as e:
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        except SpotifyException as e:
-            return Response(
-                {'error': str(e)},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
         except Exception as e:
             return Response(
                 {'error': str(e)},
