@@ -8,7 +8,7 @@ from bodzify_api.utils.spotify_api.SpotifyClient import SpotifyClient
 
 
 class TestClientCredentialsAuth(AppTestCase):
-    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.SpotifyClientCredentials')
+    @mock.patch('bodzify_api.utils.spotify_api.SpotifyClientCredentials')
     @mock.patch('bodzify_api.utils.spotify_api.SpotifyClient.spotipy.Spotify')
     def test_authenticate_with_valid_credentials_then_succeeds(self, mock_spotify, mock_credentials):
         mock_instance = mock_spotify.return_value
@@ -20,7 +20,7 @@ class TestClientCredentialsAuth(AppTestCase):
         mock_spotify.assert_called_once()
         assert service.spotify == mock_instance
 
-    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.SpotifyClientCredentials')
+    @mock.patch('bodzify_api.utils.spotify_api.SpotifyClientCredentials')
     @mock.patch('bodzify_api.utils.spotify_api.SpotifyClient.spotipy.Spotify')
     @override_settings(SPOTIFY_CLIENT_ID="", SPOTIFY_CLIENT_SECRET="")
     def test_authenticate_with_empty_credentials_then_raises_exception(self, mock_spotify, mock_credentials):
@@ -30,7 +30,7 @@ class TestClientCredentialsAuth(AppTestCase):
             SpotifyClient()
         assert "Client ID and Secret cannot be empty" in str(context.exception)
 
-    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.SpotifyClientCredentials')
+    @mock.patch('bodzify_api.utils.spotify_api.SpotifyClientCredentials')
     @mock.patch('bodzify_api.utils.spotify_api.SpotifyClient.spotipy.Spotify')
     def test_authenticate_with_invalid_credentials_then_raises_exception(self, mock_spotify, mock_credentials):
         mock_credentials.return_value = mock.MagicMock()
@@ -41,7 +41,7 @@ class TestClientCredentialsAuth(AppTestCase):
             SpotifyClient()
         assert "Invalid client" in str(context.exception)
 
-    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.SpotifyClientCredentials')
+    @mock.patch('bodzify_api.utils.spotify_api.SpotifyClientCredentials')
     @mock.patch('bodzify_api.utils.spotify_api.SpotifyClient.spotipy.Spotify')
     def test_authenticate_with_network_error_then_raises_exception(self, mock_spotify, mock_credentials):
         mock_credentials.return_value = mock.MagicMock()
@@ -52,7 +52,7 @@ class TestClientCredentialsAuth(AppTestCase):
             SpotifyClient()
         assert "Connection error" in str(context.exception)
 
-    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.SpotifyClientCredentials')
+    @mock.patch('bodzify_api.utils.spotify_api.SpotifyClientCredentials')
     @mock.patch('bodzify_api.utils.spotify_api.SpotifyClient.spotipy.Spotify')
     def test_authenticate_with_rate_limit_then_raises_exception(self, mock_spotify, mock_credentials):
         mock_credentials.return_value = mock.MagicMock()
