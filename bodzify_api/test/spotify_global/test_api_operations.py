@@ -8,7 +8,7 @@ from bodzify_api.exception.spotify import (
 from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.test.utils.AppTestCase import AppTestCase
 from bodzify_api.utils.spotify_api.SpotifyClient import SpotifyClient
-from bodzify_api.utils.spotify_api import lib_track_manager as spotify_api_lib_track_manager
+from bodzify_api.utils.spotify_api.managers import lib_track_manager as spotify_api_lib_track_manager
 from bodzify_api.utils.spotify_api.ApiFields import ApiFields
 
 

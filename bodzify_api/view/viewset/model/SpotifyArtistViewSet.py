@@ -8,6 +8,7 @@ from bodzify_api.model.spotify_resource.children.artist.SpotifyArtist import Spo
 from bodzify_api.serializer.model.spotify.artist.output.detailed import SpotifyArtistDetailedSerializer
 from bodzify_api.serializer.model.spotify.artist.output.simple import SpotifyArtistSimpleSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
+from bodzify_api.utils.spotify_api.SpotifyClient import SpotifyClient
 
 
 class SpotifyArtistViewSet(AppModelViewSet[SpotifyArtist]):
@@ -18,6 +19,7 @@ class SpotifyArtistViewSet(AppModelViewSet[SpotifyArtist]):
                          simple_serializer_class=SpotifyArtistSimpleSerializer,
                          is_private_resource=False,
                          **kwargs)
+        self.spotify_client = SpotifyClient()
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:

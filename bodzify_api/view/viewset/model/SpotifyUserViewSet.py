@@ -3,13 +3,15 @@ from django.db import transaction
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 from bodzify_api.model.user.spotify.SpotifyUser import SpotifyUser
 from bodzify_api.serializer.model.user.spotify.output.detailed import SpotifyUserDetailedSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.utils.spotify_api.oauth import SpotifyOAuthService
-from bodzify_api.utils.spotify_api.lib_track_manager import quick_sync_spotify_lib_tracks, full_sync_spotify_lib_tracks
+from bodzify_api.utils.spotify_api.managers.lib_track_manager import quick_sync_spotify_lib_tracks, full_sync_spotify_lib_tracks
+from bodzify_api.exception.spotify import SpotifyException, SpotifyForbiddenException
 
 
 class SpotifyUserViewSet(AppModelViewSet[SpotifyUser]):
@@ -198,6 +200,60 @@ class SpotifyUserViewSet(AppModelViewSet[SpotifyUser]):
             with transaction.atomic():
                 request.user.spotify_sync_in_progress = False
                 request.user.save(update_fields=['spotify_sync_in_progress'])
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                name='full_sync',
+                type=OpenApiTypes.BOOL,
+                location=OpenApiParameter.QUERY,
+                description='Whether to perform a full sync of the user\'s library',
+                required=False,
+                default=False
+            )
+        ],
+        responses={
+            200: SpotifyUserDetailedSerializer,
+            400: 'Bad Request',
+            401: 'Unauthorized',
+            403: 'Forbidden',
+            404: 'Not Found',
+            500: 'Internal Server Error'
+        }
+    )
+    @action(detail=True, methods=['post'])
+    def sync_library(self, request, pk=None):
+        """
+        Synchronize the user's Spotify library with the database.
+        """
+        try:
+            spotify_user = self.get_object()
+            full_sync = request.query_params.get('full_sync', 'false').lower() == 'true'
+
+            if full_sync:
+                full_sync_spotify_lib_tracks(spotify_user)
+            else:
+                quick_sync_spotify_lib_tracks(spotify_user)
+
+            return Response(
+                {'message': 'Library synchronized successfully'},
+                status=status.HTTP_200_OK
+            )
+        except SpotifyForbiddenException as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        except SpotifyException as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        except Exception as e:
             return Response(
                 {'error': str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR

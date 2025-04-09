@@ -10,11 +10,8 @@ from bodzify_api.utils.jwt import create_jwt_token
 from bodzify_api.model.user.spotify.SpotifyUser import SpotifyUser
 from bodzify_api.model.user.spotify.Fields import Fields as SpotifyUserFields
 from bodzify_api.model.spotify_resource.Fields import Fields as SpotifyFields
-from bodzify_api.utils.spotify_api.SpotifyClient import SpotifyClient
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-
-spotify_client = SpotifyClient()
 
 
 @api_view(['POST'])
@@ -142,8 +139,8 @@ def spotify_callback(request):
             'accessToken': jwt_token,
             'user': {
                 'spotify_profile': user.spotify_profile,
-                Fields.ID: user.id,
-                Fields.EMAIL: user.email,
+                SpotifyUserFields.ID: user.id,
+                SpotifyUserFields.EMAIL: user.email,
                 SpotifyFields.SPOTIFY_ID: user.spotify_id,
                 'display_name': user.spotify_profile.get('display_name'),
                 'external_urls': user.spotify_profile.get('external_urls'),
