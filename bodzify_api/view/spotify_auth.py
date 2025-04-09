@@ -6,15 +6,15 @@ from django.utils import timezone
 from django.contrib.auth import login
 
 from bodzify_api.utils.spotify_api.oauth import SpotifyOAuthService
-from bodzify_api.model.user.spotify.SpotifyUser import SpotifyUser
 from bodzify_api.utils.jwt import create_jwt_token
-from bodzify_api.model.user.Fields import Fields
+from bodzify_api.model.user.spotify.SpotifyUser import SpotifyUser
+from bodzify_api.model.user.spotify.Fields import Fields as SpotifyUserFields
 from bodzify_api.model.spotify_resource.Fields import Fields as SpotifyFields
-from bodzify_api.utils.spotify_api.SpotifyClient import SpotifyAPIService
+from bodzify_api.utils.spotify_api.SpotifyClient import SpotifyClient
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 
-spotify_service = SpotifyAPIService()
+spotify_client = SpotifyClient()
 
 
 @api_view(['POST'])
@@ -73,17 +73,16 @@ def spotify_auth(request):
     return Response({
         'accessToken': jwt_token,
         'user': {
-            'spotify_profile': user.spotify_profile,
-            Fields.ID: user.id,
-            Fields.EMAIL: user.email,
+            SpotifyUserFields.SPOTIFY_PROFILE: user.spotify_profile,
+            SpotifyUserFields.ID: user.id,
+            SpotifyUserFields.EMAIL: user.email,
             SpotifyFields.SPOTIFY_ID: user.spotify_id,
-            'display_name': user.spotify_profile.get('display_name'),
-            'external_urls': user.spotify_profile.get('external_urls'),
-            'followers': user.spotify_profile.get('followers'),
-            'href': user.spotify_profile.get('href'),
-            'images': user.spotify_profile.get('images'),
-            'type': user.spotify_profile.get('type'),
-            'uri': user.spotify_profile.get('uri')
+            SpotifyUserFields.DISPLAY_NAME: user.spotify_profile.get('display_name'),
+            SpotifyUserFields.FOLLOWERS: user.spotify_profile.get('followers'),
+            SpotifyUserFields.HREF: user.spotify_profile.get('href'),
+            SpotifyUserFields.IMAGES: user.spotify_profile.get('images'),
+            SpotifyUserFields.TYPE: user.spotify_profile.get('type'),
+            SpotifyUserFields.URI: user.spotify_profile.get('uri')
         }
     })
 
