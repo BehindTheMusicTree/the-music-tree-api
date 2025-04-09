@@ -5,7 +5,7 @@ from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import Sp
 from bodzify_api.model.user.spotify.SpotifyUser import SpotifyUser
 from bodzify_api.exception import spotify as spotify_exception
 from bodzify_api.utils.spotify_api.SpotifyClient import spotify_client
-from bodzify_api.utils.spotify_api.managers.lib_track_manager import create_spotify_lib_track_instance_from_dict
+from bodzify_api.utils.spotify_api import utils as spotify_api_utils
 
 
 def quick_sync_spotify_lib_tracks(user: SpotifyUser) -> list[SpotifyLibTrack]:
@@ -77,7 +77,7 @@ def quick_sync_spotify_lib_tracks(user: SpotifyUser) -> list[SpotifyLibTrack]:
                     track.save(update_fields=['last_synced_at', 'is_removed'])
                 else:
                     # Create new track
-                    track = create_spotify_lib_track_instance_from_dict(track_id, track_data)
+                    track = spotify_api_utils.create_spotify_lib_track_instance_from_dict(track_id, track_data)
                     if track:
                         track.last_synced_at = now
                         track.save()
@@ -174,7 +174,7 @@ def full_sync_spotify_lib_tracks(user: SpotifyUser) -> list[SpotifyLibTrack]:
                         continue
 
                 if needs_update:
-                    track = create_spotify_lib_track_instance_from_dict(track_id, track_data)
+                    track = spotify_api_utils.create_spotify_lib_track_instance_from_dict(track_id, track_data)
                     if track:
                         track.last_synced_at = now
                         track.is_removed = False  # Mark as not removed
