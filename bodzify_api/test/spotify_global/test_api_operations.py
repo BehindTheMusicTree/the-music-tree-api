@@ -19,8 +19,9 @@ class TestSpotifyAPIOperations(AppTestCase):
         self._login_as_test_user1()
 
         # Set up common mocks
-        self.mock_spotify_patcher = mock.patch('bodzify_api.utils.spotify.service.spotipy.Spotify')
-        self.mock_credentials_patcher = mock.patch('bodzify_api.utils.spotify.service.SpotifyClientCredentials')
+        self.mock_spotify_patcher = mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.spotipy.Spotify')
+        self.mock_credentials_patcher = mock.patch(
+            'bodzify_api.utils.spotify_api.lib_track_manager.SpotifyClientCredentials')
 
         self.mock_spotify = self.mock_spotify_patcher.start()
         self.mock_credentials = self.mock_credentials_patcher.start()
@@ -140,7 +141,7 @@ class TestSpotifyAPIOperations(AppTestCase):
         # Verify the search was performed correctly
         self.mock_spotify_instance.search.assert_called_once_with(q="isrc:USRC12345678", type='track')
 
-    @mock.patch('bodzify_api.utils.spotify.utils.create_spotify_lib_track_instance_from_dict')
+    @mock.patch('bodzify_api.utils.spotify_api.utils.create_spotify_lib_track_instance_from_dict')
     def test_search_spotify_lib_tracks_with_valid_query_then_creates_track_models(self, mock_create_track):
         # Configure mocks
         mock_track_data = {
@@ -170,7 +171,7 @@ class TestSpotifyAPIOperations(AppTestCase):
         assert len(result) == 1
         assert result[0] == mock_track_instance
 
-    @mock.patch('bodzify_api.utils.spotify.utils.create_spotify_lib_track_instance_from_dict')
+    @mock.patch('bodzify_api.utils.spotify_api.utils.create_spotify_lib_track_instance_from_dict')
     @mock.patch('bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack.SpotifyLibTrack.objects.get')
     def test_get_or_create_spotify_lib_track_with_existing_track_then_returns_existing_track(
             self, mock_track_get, mock_create_track):
@@ -185,7 +186,7 @@ class TestSpotifyAPIOperations(AppTestCase):
         mock_create_track.assert_not_called()
         assert result == mock_track
 
-    @mock.patch('bodzify_api.utils.spotify.utils.create_spotify_lib_track_instance_from_dict')
+    @mock.patch('bodzify_api.utils.spotify_api.utils.create_spotify_lib_track_instance_from_dict')
     def test_get_or_create_spotify_lib_track_with_new_track_then_creates_and_returns_track(self, mock_create_track):
 
         self.mock_spotify_instance.track.return_value = {

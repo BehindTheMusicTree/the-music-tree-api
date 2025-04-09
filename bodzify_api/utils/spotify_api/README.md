@@ -81,7 +81,7 @@ python manage.py spotify_connection_test --isrc "isrc_code"
 ### Searching for tracks
 
 ```python
-from bodzify_api.utils.spotify.service import search_spotify_lib_tracks
+from bodzify_api.utils.spotify_api.lib_track_manager import search_spotify_lib_tracks
 
 # Search for tracks
 tracks = search_spotify_lib_tracks(user, "search query", limit=5)
@@ -92,7 +92,7 @@ for track in tracks:
 ### Getting a track by ID
 
 ```python
-from bodzify_api.utils.spotify.service import get_or_create_spotify_lib_track
+from bodzify_api.utils.spotify_api.lib_track_manager import get_or_create_spotify_lib_track
 
 # Get a track by Spotify ID
 track = get_or_create_spotify_lib_track(user, "spotify_lib_track_id")
@@ -103,7 +103,7 @@ if track:
 ### Using the Spotify API service directly
 
 ```python
-from bodzify_api.utils.spotify.service import SpotifyAPIService
+from bodzify_api.utils.spotify_api.lib_track_manager import SpotifyAPIService
 
 # Create a service instance
 service = SpotifyAPIService()
@@ -131,7 +131,7 @@ Example error handling:
 
 ```python
 from bodzify_api.exception import spotify as spotify_exception
-from bodzify_api.utils.spotify.service import SpotifyAPIService
+from bodzify_api.utils.spotify_api.lib_track_manager import SpotifyAPIService
 
 try:
     service = SpotifyAPIService()

@@ -8,8 +8,8 @@ from bodzify_api.utils.spotify_api.SpotifyClient import SpotifyClient
 
 
 class TestClientCredentialsAuth(AppTestCase):
-    @mock.patch('bodzify_api.utils.spotify.service.SpotifyClientCredentials')
-    @mock.patch('bodzify_api.utils.spotify.service.spotipy.Spotify')
+    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.SpotifyClientCredentials')
+    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.spotipy.Spotify')
     def test_authenticate_with_valid_credentials_then_succeeds(self, mock_spotify, mock_credentials):
         mock_instance = mock_spotify.return_value
         mock_instance.me.return_value = {"id": "test_user", "product": "premium"}
@@ -20,8 +20,8 @@ class TestClientCredentialsAuth(AppTestCase):
         mock_spotify.assert_called_once()
         assert service.spotify == mock_instance
 
-    @mock.patch('bodzify_api.utils.spotify.service.SpotifyClientCredentials')
-    @mock.patch('bodzify_api.utils.spotify.service.spotipy.Spotify')
+    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.SpotifyClientCredentials')
+    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.spotipy.Spotify')
     @override_settings(SPOTIFY_CLIENT_ID="", SPOTIFY_CLIENT_SECRET="")
     def test_authenticate_with_empty_credentials_then_raises_exception(self, mock_spotify, mock_credentials):
         mock_credentials.side_effect = ValueError("Client ID and Secret cannot be empty")
@@ -30,8 +30,8 @@ class TestClientCredentialsAuth(AppTestCase):
             SpotifyClient()
         assert "Client ID and Secret cannot be empty" in str(context.exception)
 
-    @mock.patch('bodzify_api.utils.spotify.service.SpotifyClientCredentials')
-    @mock.patch('bodzify_api.utils.spotify.service.spotipy.Spotify')
+    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.SpotifyClientCredentials')
+    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.spotipy.Spotify')
     def test_authenticate_with_invalid_credentials_then_raises_exception(self, mock_spotify, mock_credentials):
         mock_credentials.return_value = mock.MagicMock()
         spotify_exception = type('SpotipyException', (Exception,), {'http_status': 401})
@@ -41,8 +41,8 @@ class TestClientCredentialsAuth(AppTestCase):
             SpotifyClient()
         assert "Invalid client" in str(context.exception)
 
-    @mock.patch('bodzify_api.utils.spotify.service.SpotifyClientCredentials')
-    @mock.patch('bodzify_api.utils.spotify.service.spotipy.Spotify')
+    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.SpotifyClientCredentials')
+    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.spotipy.Spotify')
     def test_authenticate_with_network_error_then_raises_exception(self, mock_spotify, mock_credentials):
         mock_credentials.return_value = mock.MagicMock()
         spotify_exception = type('SpotipyException', (Exception,), {'http_status': None})
@@ -52,8 +52,8 @@ class TestClientCredentialsAuth(AppTestCase):
             SpotifyClient()
         assert "Connection error" in str(context.exception)
 
-    @mock.patch('bodzify_api.utils.spotify.service.SpotifyClientCredentials')
-    @mock.patch('bodzify_api.utils.spotify.service.spotipy.Spotify')
+    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.SpotifyClientCredentials')
+    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.spotipy.Spotify')
     def test_authenticate_with_rate_limit_then_raises_exception(self, mock_spotify, mock_credentials):
         mock_credentials.return_value = mock.MagicMock()
         spotify_exception = type('SpotipyException', (Exception,), {'http_status': 429})
@@ -63,7 +63,7 @@ class TestClientCredentialsAuth(AppTestCase):
             SpotifyClient()
         assert "Rate limit exceeded" in str(context.exception)
 
-    @mock.patch('bodzify_api.utils.spotify.service.settings')
+    @mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.settings')
     def test_authenticate_with_settings_then_uses_configured_values(self, mock_settings):
         mock_settings.SPOTIFY_CLIENT_ID = "test_client_id"
         mock_settings.SPOTIFY_CLIENT_SECRET = "test_client_secret"
