@@ -11,6 +11,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.model.user.User import User
+from bodzify_api.model.user.spotify.SpotifyUser import SpotifyUser
 from bodzify_api.model.uuid.Fields import Fields as UuidModelFields
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as UploadedTrackPostFields
 from bodzify_api.test.utils.AppApiClient import AppApiClient
@@ -44,6 +45,12 @@ class AppTestCase(TestCase, Generic[T]):
 
     def _login_as_test_user2(self):
         self._login_as_user(self.test_user2)
+
+    def _login_as_spotify_test_user_1(self):
+        self._login_as_user(self.spotify_test_user_1)
+
+    def _login_as_spotify_test_user_2(self):
+        self._login_as_user(self.spotify_test_user_2)
 
     def _login_as_test_admin(self):
         self._login_as_user(self.test_admin_user)
@@ -173,6 +180,12 @@ class AppTestCase(TestCase, Generic[T]):
 
         self.test_user2 = User.objects.create_instance(
             username='pytest_user2', password='pytest_user2', email='pytest@user2.com', is_test_user=True)
+
+        self.spotify_test_user_1: SpotifyUser = SpotifyUser.objects.create_instance(
+            username='spotify_test_user_1', password='spotify_test_user_1', email='spotify@test.com', is_test_user=True)
+
+        self.spotify_test_user_2: SpotifyUser = SpotifyUser.objects.create_instance(
+            username='spotify_test_user_2', password='spotify_test_user_2', email='spotify@test.com', is_test_user=True)
 
         self.model_fixture_factory = ModelFixtureFactory(
             default_test_user=self.test_user1, test_uploaded_track_dir=self.TEST_FILES_BASE_DIR,)
