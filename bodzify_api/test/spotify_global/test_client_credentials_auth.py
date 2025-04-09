@@ -4,7 +4,7 @@ from django.test import override_settings
 
 from bodzify_api.exception.spotify import SpotifyAPIException
 from bodzify_api.test.utils.AppTestCase import AppTestCase
-from bodzify_api.utils.spotify.service import SpotifyAPIService
+from bodzify_api.utils.spotify_api.SpotifyClient import SpotifyClient
 
 
 class TestClientCredentialsAuth(AppTestCase):
@@ -14,7 +14,7 @@ class TestClientCredentialsAuth(AppTestCase):
         mock_instance = mock_spotify.return_value
         mock_instance.me.return_value = {"id": "test_user", "product": "premium"}
 
-        service = SpotifyAPIService()
+        service = SpotifyClient()
 
         mock_credentials.assert_called_once()
         mock_spotify.assert_called_once()
@@ -27,7 +27,7 @@ class TestClientCredentialsAuth(AppTestCase):
         mock_credentials.side_effect = ValueError("Client ID and Secret cannot be empty")
 
         with self.assertRaises(SpotifyAPIException) as context:
-            SpotifyAPIService()
+            SpotifyClient()
         assert "Client ID and Secret cannot be empty" in str(context.exception)
 
     @mock.patch('bodzify_api.utils.spotify.service.SpotifyClientCredentials')
@@ -38,7 +38,7 @@ class TestClientCredentialsAuth(AppTestCase):
         mock_spotify.side_effect = spotify_exception("Invalid client")
 
         with self.assertRaises(SpotifyAPIException) as context:
-            SpotifyAPIService()
+            SpotifyClient()
         assert "Invalid client" in str(context.exception)
 
     @mock.patch('bodzify_api.utils.spotify.service.SpotifyClientCredentials')
@@ -49,7 +49,7 @@ class TestClientCredentialsAuth(AppTestCase):
         mock_spotify.side_effect = spotify_exception("Connection error")
 
         with self.assertRaises(SpotifyAPIException) as context:
-            SpotifyAPIService()
+            SpotifyClient()
         assert "Connection error" in str(context.exception)
 
     @mock.patch('bodzify_api.utils.spotify.service.SpotifyClientCredentials')
@@ -60,7 +60,7 @@ class TestClientCredentialsAuth(AppTestCase):
         mock_spotify.side_effect = spotify_exception("Rate limit exceeded")
 
         with self.assertRaises(SpotifyAPIException) as context:
-            SpotifyAPIService()
+            SpotifyClient()
         assert "Rate limit exceeded" in str(context.exception)
 
     @mock.patch('bodzify_api.utils.spotify.service.settings')
@@ -68,5 +68,5 @@ class TestClientCredentialsAuth(AppTestCase):
         mock_settings.SPOTIFY_CLIENT_ID = "test_client_id"
         mock_settings.SPOTIFY_CLIENT_SECRET = "test_client_secret"
 
-        service = SpotifyAPIService()
+        service = SpotifyClient()
         assert service.spotify is not None
