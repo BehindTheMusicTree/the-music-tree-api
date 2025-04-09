@@ -9,7 +9,7 @@ from django.db import transaction
 from bodzify_api.filtering.set.spotify.artist.SpotifyArtistFilterSet import SpotifyArtistFilterSet
 from bodzify_api.filtering.set.spotify.artist.Fields import Fields as FilterFields
 from bodzify_api.model.spotify_resource.children.artist.SpotifyArtist import SpotifyArtist
-from bodzify_api.utils.spotify.service import full_sync_spotify_library, quick_sync_spotify_library
+from bodzify_api.utils.spotify_api.SpotifyClient import full_sync_spotify_library, quick_sync_spotify_library
 from bodzify_api.serializer.model.spotify.artist.output.detailed import SpotifyArtistDetailedSerializer
 from bodzify_api.serializer.model.spotify.artist.output.simple import SpotifyArtistSimpleSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet

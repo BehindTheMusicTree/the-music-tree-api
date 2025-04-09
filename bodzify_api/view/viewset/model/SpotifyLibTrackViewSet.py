@@ -10,7 +10,7 @@ from bodzify_api.filtering.set.spotify.lib_track.SpotifyLibTrackFilterSet import
 from bodzify_api.filtering.set.spotify.lib_track.Fields import Fields as FilterFields
 from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.model.spotify_resource.children.track.Fields import Fields
-from bodzify_api.utils.spotify.service import full_sync_spotify_library, quick_sync_spotify_library
+from bodzify_api.utils.spotify_api.SpotifyClient import full_sync_spotify_library, quick_sync_spotify_library
 from bodzify_api.serializer.model.spotify.lib_track.output.detailed import SpotifyLibTrackDetailedSerializer
 from bodzify_api.serializer.model.spotify.lib_track.output.simple import SpotifyLibTrackSimpleSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet

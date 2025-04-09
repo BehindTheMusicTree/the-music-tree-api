@@ -5,12 +5,12 @@ from rest_framework.permissions import AllowAny
 from django.utils import timezone
 from django.contrib.auth import login
 
-from bodzify_api.utils.spotify.oauth import SpotifyOAuthService
+from bodzify_api.utils.spotify_api.oauth import SpotifyOAuthService
 from bodzify_api.model.user.spotify.SpotifyUser import SpotifyUser
 from bodzify_api.utils.jwt import create_jwt_token
 from bodzify_api.model.user.Fields import Fields
 from bodzify_api.model.spotify_resource.Fields import Fields as SpotifyFields
-from bodzify_api.utils.spotify.service import SpotifyAPIService
+from bodzify_api.utils.spotify_api.SpotifyClient import SpotifyAPIService
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 
