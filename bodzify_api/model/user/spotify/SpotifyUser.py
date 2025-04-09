@@ -1,6 +1,7 @@
 from django.db import models
 
 from bodzify_api.model.user.User import User
+from bodzify_api.model.user.UserManager import UserManager
 
 
 class SpotifyUser(User):
@@ -18,6 +19,8 @@ class SpotifyUser(User):
         default=False,
         help_text="Indicates if a Spotify library sync is currently in progress"
     )
+
+    objects: UserManager = UserManager['SpotifyUser']()
 
     def __str__(self):
         return f"{self.username} (Spotify)"

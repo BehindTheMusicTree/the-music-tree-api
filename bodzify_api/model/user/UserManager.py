@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
 from django.contrib.auth.models import BaseUserManager
 from django.db.models.signals import post_save
@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from django.db import transaction
 
 from bodzify_api import settings
+from bodzify_api.model.base.BaseManager import BaseManager
 from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
 from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
@@ -17,26 +18,26 @@ if TYPE_CHECKING:
     from bodzify_api.model.user.User import User
 
 
-class UserManager(BaseUserManager):
-    model: 'User'
+T = TypeVar('T', bound='User')
 
+
+class UserManager(BaseManager[T], BaseUserManager):
     def get_default_ordering(self):
         return [Fields.USERNAME]
 
-    def create_instance(self, **kwargs) -> 'User':
-        from bodzify_api.model.user.User import User
+    def create_instance(self, **kwargs) -> T:
         if not kwargs[Fields.EMAIL]:
             raise ValueError('The Email field must be set')
 
         email = self.normalize_email(kwargs.pop(Fields.EMAIL))
         password = kwargs.pop(Fields.PASSWORD)
 
-        user: User = User(username=kwargs.pop(Fields.USERNAME), email=email, **kwargs)
+        user: T = self.model(username=kwargs.pop(Fields.USERNAME), email=email, **kwargs)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, password=None, **extra_fields) -> 'User':
+    def create_superuser(self, username, email, password=None, **extra_fields) -> T:
         extra_fields.setdefault(Fields.IS_STAFF, True)
         extra_fields.setdefault(Fields.IS_SUPERUSER, True)
 
@@ -47,7 +48,7 @@ class UserManager(BaseUserManager):
 
         return self.create_instance(username=username, email=email, password=password, **extra_fields)
 
-    def delete_instance(self, instance: 'User'):
+    def delete_instance(self, instance: T):
         with transaction.atomic():
             instance.delete()
 
