@@ -9,6 +9,7 @@ from bodzify_api.utils.AppStaticFileStates import StaticFileStates
 from bodzify_api.view.viewset.model.AllUploadedTracksMixinViewSet import AllUploadedTracksViewSet
 from bodzify_api.view.spotify_auth import spotify_auth, spotify_callback
 from bodzify_api.view.viewset.model.SpotifyArtistViewSet import SpotifyArtistViewSet
+from bodzify_api.view.viewset.model.SpotifyUserViewSet import SpotifyUserViewSet
 
 from . import settings
 from .view.viewset.model.AlbumViewSet import AlbumViewSet
@@ -28,6 +29,7 @@ from .view.viewset.SearchViewSet import SearchViewSet
 
 router = routers.DefaultRouter()
 router.register(r'users', UserViewSet, basename='user')
+router.register(r'users/spotify', SpotifyUserViewSet, basename='spotify-user')
 router.register(r'library/uploaded', UploadedTrackViewSet, basename='uploaded-track')
 router.register(r'library/spotify', SpotifyLibTrackViewSet, basename='spotify-lib-track')
 router.register(r'spotify-artists', SpotifyArtistViewSet, basename='spotify-artist')
