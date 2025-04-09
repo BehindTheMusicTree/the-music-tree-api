@@ -19,7 +19,7 @@ class TestSpotifyAPIOperations(AppTestCase):
         self._login_as_test_user1()
 
         # Set up common mocks
-        self.mock_spotify_patcher = mock.patch('bodzify_api.utils.spotify_api.lib_track_manager.spotipy.Spotify')
+        self.mock_spotify_patcher = mock.patch('bodzify_api.utils.spotify_api.SpotifyClient.spotipy.Spotify')
         self.mock_credentials_patcher = mock.patch(
             'bodzify_api.utils.spotify_api.lib_track_manager.SpotifyClientCredentials')
 
