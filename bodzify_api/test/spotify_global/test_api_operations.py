@@ -18,23 +18,13 @@ class TestSpotifyAPIOperations(AppTestCase):
         super().setUp()
         self._login_as_test_user1()
 
-        # Set up common mocks
+        # Set up spotipy mock
         self.mock_spotify_patcher = mock.patch('bodzify_api.utils.spotify_api.SpotifyClient.spotipy.Spotify')
-        self.mock_credentials_patcher = mock.patch(
-            'bodzify_api.utils.spotify_api.SpotifyClientCredentials')
-
         self.mock_spotify = self.mock_spotify_patcher.start()
-        self.mock_credentials = self.mock_credentials_patcher.start()
-
-        # Configure the SpotifyClientCredentials mock
-        self.mock_credentials.return_value = mock.MagicMock()
-
-        # Configure the Spotify client mock
         self.mock_spotify_instance = self.mock_spotify.return_value
 
     def tearDown(self):
         self.mock_spotify_patcher.stop()
-        self.mock_credentials_patcher.stop()
         super().tearDown()
 
     def test_search_track_with_valid_query_then_returns_results(self):
