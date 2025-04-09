@@ -10,7 +10,7 @@ from bodzify_api.model.user.spotify.SpotifyUser import SpotifyUser
 from bodzify_api.serializer.model.user.spotify.output.detailed import SpotifyUserDetailedSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 from bodzify_api.utils.spotify_api.oauth import SpotifyOAuthService
-from bodzify_api.utils.spotify_api.managers.lib_track_manager import quick_sync_spotify_lib_tracks, full_sync_spotify_lib_tracks
+from bodzify_api.utils.spotify_api.managers import lib_track_sync_manager as spotify_api_lib_track_sync_manager
 from bodzify_api.exception.spotify import SpotifyException, SpotifyForbiddenException
 
 
@@ -127,7 +127,7 @@ class SpotifyUserViewSet(AppModelViewSet[SpotifyUser]):
                 request.user.save(update_fields=['spotify_sync_in_progress'])
 
             try:
-                tracks = quick_sync_spotify_lib_tracks(request.user)
+                tracks = spotify_api_lib_track_sync_manager.quick_sync_spotify_lib_tracks(request.user)
                 return Response(
                     {
                         'message': 'Spotify library quick sync completed successfully',
@@ -186,7 +186,7 @@ class SpotifyUserViewSet(AppModelViewSet[SpotifyUser]):
                 request.user.save(update_fields=['spotify_sync_in_progress'])
 
             try:
-                full_sync_spotify_lib_tracks(request.user)
+                spotify_api_lib_track_sync_manager.full_sync_spotify_lib_tracks(request.user)
                 return Response(
                     {'message': 'Spotify library synced successfully'},
                     status=status.HTTP_200_OK
