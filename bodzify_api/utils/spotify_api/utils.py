@@ -99,6 +99,10 @@ def create_spotify_lib_track_instance_from_dict(
     album = spotify_lib_track_dict.get(ApiFields.Names.ALBUM, {})
     preview_url = spotify_lib_track_dict.get(ApiFields.Names.PREVIEW_URL)
     explicit = spotify_lib_track_dict.get(ApiFields.Names.EXPLICIT, False)
+    followers = spotify_lib_track_dict.get(ApiFields.Names.FOLLOWERS, {}).get('total', 0)
+    href = spotify_lib_track_dict.get(ApiFields.Names.HREF)
+    type = spotify_lib_track_dict.get(ApiFields.Names.TYPE)
+    uri = spotify_lib_track_dict.get(ApiFields.Names.URI)
 
     # Try to get existing track or create a new one
     try:
@@ -111,7 +115,11 @@ def create_spotify_lib_track_instance_from_dict(
             popularity=popularity,
             album=album,
             preview_url=preview_url,
-            explicit=explicit
+            explicit=explicit,
+            followers=followers,
+            href=href,
+            type=type,
+            uri=uri
         )
 
     # Process artists
