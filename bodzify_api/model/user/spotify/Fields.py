@@ -16,3 +16,7 @@ class Fields(SpotifyFields, UserFields):
     PRODUCT = "product"
     IMAGES = "images"
     URL = "url"
+    FOLLOWERS = "followers"
+    HREF = "href"
+    TYPE = "type"
+    URI = "uri"
