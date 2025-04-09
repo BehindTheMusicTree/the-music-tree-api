@@ -1,13 +1,13 @@
-from typing import Optional
-import requests
+from typing import Any
 import spotipy
+from spotipy.oauth2 import SpotifyOAuth
 
 from bodzify_api.exception import spotify as spotify_exception
 from bodzify_api.utils.spotify_api.SpotifyCredentialManager import SpotifyCredentialManager
 
 
 class SpotifyClient:
-    _instance = None
+    _instance: 'SpotifyClient | None' = None
 
     def __new__(cls):
         if cls._instance is None:
@@ -21,152 +21,119 @@ class SpotifyClient:
 
         self.credential_manager = SpotifyCredentialManager()
         self.credential_manager.validate_credentials()
-        self.base_url = "https://api.spotify.com/v1"
-        self.auth_url = "https://accounts.spotify.com/api/token"
-        self.spotify = spotipy.Spotify()
+        credentials = self.credential_manager.get_client_credentials()
+
+        self.auth_manager = SpotifyOAuth(
+            client_id=credentials["client_id"],
+            client_secret=credentials["client_secret"],
+            redirect_uri=credentials["redirect_uri"],
+            scope=credentials["scope"]
+        )
+        self.spotify = spotipy.Spotify(auth_manager=self.auth_manager)
         self._initialized = True
 
-    def get_access_token_from_code(self, code: str) -> dict:
-        """
-        Get access token from Spotify API using authorization code.
-        """
-        credentials = self.credential_manager.get_client_credentials()
-        data = {
-            "grant_type": "authorization_code",
-            "code": code,
-            "redirect_uri": credentials["redirect_uri"],
-            "client_id": credentials["client_id"],
-            "client_secret": credentials["client_secret"],
-        }
-        response = requests.post(self.auth_url, data=data)
-        if response.status_code != 200:
-            raise spotify_exception.SpotifyAuthenticationException(
-                f"Failed to get access token: {response.text}"
-            )
-        return response.json()
-
-    def refresh_access_token(self, refresh_token: str) -> dict:
-        """
-        Refresh access token using refresh token.
-        """
-        credentials = self.credential_manager.get_client_credentials()
-        data = {
-            "grant_type": "refresh_token",
-            "refresh_token": refresh_token,
-            "client_id": credentials["client_id"],
-            "client_secret": credentials["client_secret"],
-        }
-        response = requests.post(self.auth_url, data=data)
-        if response.status_code != 200:
-            raise spotify_exception.SpotifyAuthenticationException(
-                f"Failed to refresh access token: {response.text}"
-            )
-        return response.json()
-
-    def retrieve_track_by_id(self, track_id: str) -> dict | None:
+    def get_access_token_from_code(self, code: str) -> dict[str, Any]:
         try:
-            return self.spotify.track(track_id)
+            token = self.auth_manager.get_access_token(code)
+            if not token:
+                raise spotify_exception.SpotifyAuthenticationException("Failed to get access token: No token returned")
+            return token
+        except Exception as e:
+            raise spotify_exception.SpotifyAuthenticationException(
+                f"Failed to get access token: {str(e)}"
+            )
+
+    def refresh_access_token(self, refresh_token: str) -> dict[str, Any]:
+        try:
+            token = self.auth_manager.refresh_access_token(refresh_token)
+            if not token:
+                raise spotify_exception.SpotifyAuthenticationException(
+                    "Failed to refresh access token: No token returned")
+            return token
+        except Exception as e:
+            raise spotify_exception.SpotifyAuthenticationException(
+                f"Failed to refresh access token: {str(e)}"
+            )
+
+    def retrieve_track_by_id(self, track_id: str) -> dict[str, Any]:
+        try:
+            track = self.spotify.track(track_id)
+            if not track:
+                raise spotify_exception.SpotifyResourceNotFoundException(f"Track not found: {track_id}")
+            return track
         except Exception as e:
             raise spotify_exception.SpotifyException(f"Failed to retrieve track: {str(e)}")
 
-    def search_track(self, query: str, limit: int = 5) -> dict | None:
+    def search_track(self, query: str, limit: int = 5) -> dict[str, Any]:
         try:
-            return self.spotify.search(q=query, type='track', limit=limit)
+            result = self.spotify.search(q=query, type='track', limit=limit)
+            if not result:
+                return {"tracks": {"items": []}}
+            return result
         except Exception as e:
             raise spotify_exception.SpotifyException(f"Failed to search tracks: {str(e)}")
 
-    def _make_request(
-        self, method: str, endpoint: str, access_token: str, params: Optional[dict] = None
-    ) -> dict:
-        headers = {"Authorization": f"Bearer {access_token}"}
-        url = f"{self.base_url}/{endpoint}"
-        response = requests.request(method, url, headers=headers, params=params)
-
-        if response.status_code == 401:
-            raise spotify_exception.SpotifyAuthenticationException(
-                "Invalid or expired access token"
-            )
-        elif response.status_code == 403:
-            raise spotify_exception.SpotifyException(
-                "Insufficient permissions"
-            )
-        elif response.status_code == 404:
-            raise spotify_exception.SpotifyResourceNotFoundException(
-                "Resource not found"
-            )
-        elif response.status_code == 429:
-            raise spotify_exception.SpotifyRateLimitException(
-                "Rate limit exceeded"
-            )
-        elif response.status_code != 200:
-            raise spotify_exception.SpotifyException(
-                f"Spotify API error: {response.text}"
-            )
-
-        return response.json()
-
     def get_user_saved_tracks(
         self, access_token: str, limit: int = 50, offset: int = 0
-    ) -> dict:
-        return self._make_request(
-            "GET",
-            "me/tracks",
-            access_token,
-            params={"limit": limit, "offset": offset},
-        )
+    ) -> dict[str, Any]:
+        try:
+            tracks = self.spotify.current_user_saved_tracks(limit=limit, offset=offset)
+            if not tracks:
+                return {"items": []}
+            return tracks
+        except Exception as e:
+            raise spotify_exception.SpotifyException(f"Failed to get saved tracks: {str(e)}")
 
     def get_user_playlists(
         self, access_token: str, limit: int = 50, offset: int = 0
-    ) -> dict:
-        return self._make_request(
-            "GET",
-            "me/playlists",
-            access_token,
-            params={"limit": limit, "offset": offset},
-        )
+    ) -> dict[str, Any]:
+        try:
+            playlists = self.spotify.current_user_playlists(limit=limit, offset=offset)
+            if not playlists:
+                return {"items": []}
+            return playlists
+        except Exception as e:
+            raise spotify_exception.SpotifyException(f"Failed to get playlists: {str(e)}")
 
     def get_playlist_tracks(
         self, access_token: str, playlist_id: str, limit: int = 50, offset: int = 0
-    ) -> dict:
-        """
-        Get tracks from a playlist.
-        """
-        return self._make_request(
-            "GET",
-            f"playlists/{playlist_id}/tracks",
-            access_token,
-            params={"limit": limit, "offset": offset},
-        )
+    ) -> dict[str, Any]:
+        try:
+            tracks = self.spotify.playlist_tracks(playlist_id, limit=limit, offset=offset)
+            if not tracks:
+                return {"items": []}
+            return tracks
+        except Exception as e:
+            raise spotify_exception.SpotifyException(f"Failed to get playlist tracks: {str(e)}")
 
-    def get_track(self, access_token: str, track_id: str) -> dict:
-        """
-        Get track details.
-        """
-        return self._make_request("GET", f"tracks/{track_id}", access_token)
+    def get_track(self, access_token: str, track_id: str) -> dict[str, Any]:
+        try:
+            track = self.spotify.track(track_id)
+            if not track:
+                raise spotify_exception.SpotifyResourceNotFoundException(f"Track not found: {track_id}")
+            return track
+        except Exception as e:
+            raise spotify_exception.SpotifyException(f"Failed to get track: {str(e)}")
 
     def search_tracks(
         self, access_token: str, query: str, limit: int = 50, offset: int = 0
-    ) -> dict:
-        """
-        Search for tracks.
-        """
-        return self._make_request(
-            "GET",
-            "search",
-            access_token,
-            params={
-                "q": query,
-                "type": "track",
-                "limit": limit,
-                "offset": offset,
-            },
-        )
+    ) -> dict[str, Any]:
+        try:
+            result = self.spotify.search(q=query, type='track', limit=limit, offset=offset)
+            if not result:
+                return {"tracks": {"items": []}}
+            return result
+        except Exception as e:
+            raise spotify_exception.SpotifyException(f"Failed to search tracks: {str(e)}")
 
-    def get_user_profile(self, access_token: str) -> dict:
-        """
-        Get user's profile.
-        """
-        return self._make_request("GET", "me", access_token)
+    def get_user_profile(self, access_token: str) -> dict[str, Any]:
+        try:
+            profile = self.spotify.current_user()
+            if not profile:
+                raise spotify_exception.SpotifyResourceNotFoundException("User profile not found")
+            return profile
+        except Exception as e:
+            raise spotify_exception.SpotifyException(f"Failed to get user profile: {str(e)}")
 
 
 spotify_client = SpotifyClient()
