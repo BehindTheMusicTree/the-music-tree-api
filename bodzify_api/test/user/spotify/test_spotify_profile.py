@@ -2,7 +2,7 @@ from unittest import mock
 
 from bodzify_api.exception.spotify import SpotifyAuthenticationException
 from bodzify_api.test.utils.AppTestCase import AppTestCase
-from bodzify_api.utils.spotify.oauth import SpotifyOAuthService
+from bodzify_api.utils.spotify_api.oauth import SpotifyOAuthService
 from bodzify_api.model.user.spotify.Fields import Fields
 from bodzify_api.model.user.spotify.SpotifyUser import SpotifyUser
 
