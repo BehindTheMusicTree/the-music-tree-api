@@ -9,7 +9,7 @@ from django.db import transaction
 from bodzify_api.filtering.set.spotify.artist.SpotifyArtistFilterSet import SpotifyArtistFilterSet
 from bodzify_api.filtering.set.spotify.artist.Fields import Fields as FilterFields
 from bodzify_api.model.spotify_resource.children.artist.SpotifyArtist import SpotifyArtist
-from bodzify_api.utils.spotify_api.SpotifyClient import full_sync_spotify_library, quick_sync_spotify_library
+from bodzify_api.utils.spotify_api import lib_track_manager as spotify_api_lib_track_manager
 from bodzify_api.serializer.model.spotify.artist.output.detailed import SpotifyArtistDetailedSerializer
 from bodzify_api.serializer.model.spotify.artist.output.simple import SpotifyArtistSimpleSerializer
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
@@ -70,7 +70,7 @@ class SpotifyArtistViewSet(AppModelViewSet[SpotifyArtist]):
                 request.user.save(update_fields=['spotify_sync_in_progress'])
 
             try:
-                tracks = quick_sync_spotify_library(request.user)
+                tracks = spotify_api_lib_track_manager.quick_sync_spotify_lib_tracks(request.user)
                 return Response(
                     {
                         'message': 'Spotify library quick sync completed successfully',
@@ -114,7 +114,7 @@ class SpotifyArtistViewSet(AppModelViewSet[SpotifyArtist]):
                 request.user.save(update_fields=['spotify_sync_in_progress'])
 
             try:
-                full_sync_spotify_library(request.user)
+                spotify_api_lib_track_manager.full_sync_spotify_lib_tracks(request.user)
                 return Response(
                     {'message': 'Spotify library synced successfully'},
                     status=status.HTTP_200_OK
