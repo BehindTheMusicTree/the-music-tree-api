@@ -135,7 +135,7 @@ from bodzify_api.utils.spotify.service import SpotifyAPIService
 
 try:
     service = SpotifyAPIService()
-    track = service.get_track_by_id("spotify_lib_track_id")
+    track = service.retrieve_track_by_id("spotify_lib_track_id")
     # Process track data
 except spotify_exception.SpotifyResourceNotFoundException:
     # Handle resource not found

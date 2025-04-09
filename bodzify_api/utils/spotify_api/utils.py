@@ -16,8 +16,8 @@ def batch_fetch_artist_details(artist_ids: list[str], user) -> dict[str, dict]:
     Returns:
         Dictionary mapping artist IDs to their full details
     """
-    from .service import SpotifyAPIService
-    service = SpotifyAPIService()
+    from .SpotifyClient import SpotifyClient
+    client = SpotifyClient()
     artist_details = {}
 
     # Process in batches of 50 (Spotify's limit)
@@ -26,7 +26,7 @@ def batch_fetch_artist_details(artist_ids: list[str], user) -> dict[str, dict]:
         batch = artist_ids[i:i + batch_size]
         try:
             # Fetch all artists in the batch
-            results = service.spotify.artists(batch)
+            results = client.spotify.artists(batch)
             if results and 'artists' in results:
                 for artist in results['artists']:
                     if artist:  # Skip any None results
@@ -126,7 +126,7 @@ def create_spotify_lib_track_instance_from_dict(
     return spotify_lib_track
 
 
-def retrieve_track_by_isrc(track_results, isrc):
+def retrieve_track_by_isrc_from_track_results(track_results, isrc):
     """
     Find a track with a specific ISRC code in track search results
 
