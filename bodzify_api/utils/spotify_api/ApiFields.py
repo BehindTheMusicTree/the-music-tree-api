@@ -19,3 +19,7 @@ class ApiFields:
         TRACK = 'track'
         TRACKS = 'tracks'
         ITEMS = 'items'
+        FOLLOWERS = 'followers'
+        HREF = 'href'
+        TYPE = 'type'
+        URI = 'uri'
