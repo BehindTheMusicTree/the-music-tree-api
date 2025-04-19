@@ -5,7 +5,7 @@ from bodzify_api.utils.spotify_api.SpotifyClient import SpotifyClient
 from bodzify_api.utils.spotify_api.ApiFields import ApiFields
 
 
-class SpotifyArtistManager:
+class SpotifyApiArtistManager:
     def __init__(self):
         self.spotify_client = SpotifyClient()
 
