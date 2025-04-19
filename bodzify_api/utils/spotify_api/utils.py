@@ -1,16 +1,16 @@
+import logging
 from django.core.exceptions import ObjectDoesNotExist
 
 from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
-from bodzify_api.utils.spotify_api.SpotifyClient import SpotifyClient
-from bodzify_api.utils.spotify_api.ApiFields import ApiFields
-from bodzify_api.utils.spotify_api.managers.SpotifyArtistManager import SpotifyArtistManager
+from bodzify_api.utils.spotify_api.managers.SpotifyApiArtistManager import SpotifyApiArtistManager
+from .ApiFields import ApiFields
 
-spotify_client = SpotifyClient()
-spotify_artist_manager = SpotifyArtistManager()
+logger = logging.getLogger(__name__)
 
 
 def create_spotify_lib_track_instance_from_dict(
-        spotify_lib_track_id: str, spotify_lib_track_dict: dict, artist_details: dict | None = None) -> SpotifyLibTrack:
+        spotify_lib_track_id: str, spotify_lib_track_dict: dict, artist_details: dict | None = None
+) -> SpotifyLibTrack:
     """
     Create a SpotifyLibTrack instance from a Spotify API response dictionary.
 
@@ -57,7 +57,7 @@ def create_spotify_lib_track_instance_from_dict(
         for artist_data in artists_data:
             artist_id = artist_data.get(ApiFields.Names.ID)
             if artist_id:
-                artist = spotify_artist_manager.create_spotify_artist_instance_from_dict(
+                artist = SpotifyApiArtistManager().create_spotify_artist_instance_from_dict(
                     artist_id, artist_data, artist_details)
                 spotify_lib_track.spotify_artists.add(artist)
 
