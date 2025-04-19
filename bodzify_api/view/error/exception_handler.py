@@ -1,8 +1,5 @@
 
-
-import logging
 from django.http.response import Http404
-from django.core.exceptions import DisallowedHost
 from django.conf import settings
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework.exceptions import (
@@ -51,6 +48,7 @@ def custom_exception_handler(exc, context):
         None in debug mode to let Django's default handler show the traceback page
     """
 
+    print('exception_handler', exc)
     if settings.DEBUG and not isinstance(
         exc,
         (ValidationError, InvalidToken, NotAuthenticated, AuthenticationFailed, MethodNotAllowed, Http404,
