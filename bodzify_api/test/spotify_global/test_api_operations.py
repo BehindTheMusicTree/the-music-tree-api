@@ -8,7 +8,7 @@ from bodzify_api.exception.spotify import (
 from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.test.utils.AppTestCase import AppTestCase
 from bodzify_api.utils.spotify_api.SpotifyClient import SpotifyClient
-from bodzify_api.utils.spotify_api.managers import lib_track_manager as spotify_api_lib_track_manager
+from bodzify_api.utils.spotify_api.managers import SpotifyApiLibTrackManager as spotify_api_lib_track_manager
 from bodzify_api.utils.spotify_api.ApiFields import ApiFields
 
 
@@ -16,29 +16,57 @@ class TestSpotifyAPIOperations(AppTestCase):
 
     def setUp(self):
         super().setUp()
-        self._login_as_test_user1()
+        self._login_as_spotify_test_user_1()
 
         # Set up spotipy mock
-        self.mock_spotify_patcher = mock.patch('bodzify_api.utils.spotify_api.SpotifyClient.spotipy.Spotify')
+        self.mock_spotify_patcher = mock.patch('spotipy.Spotify')
         self.mock_spotify = self.mock_spotify_patcher.start()
         self.mock_spotify_instance = self.mock_spotify.return_value
 
-        # Set up requests mock
-        self.mock_requests_patcher = mock.patch('bodzify_api.utils.spotify_api.SpotifyClient.requests')
-        self.mock_requests = self.mock_requests_patcher.start()
-        self.mock_response = mock.MagicMock()
-        self.mock_requests.post.return_value = self.mock_response
-        self.mock_requests.request.return_value = self.mock_response
-        self.mock_response.status_code = 200
-        self.mock_response.json.return_value = {
-            "access_token": "test_access_token",
-            "refresh_token": "test_refresh_token",
-            "expires_in": 3600
+        # Configure spotipy client with test data
+        self.mock_spotify_instance.track.return_value = {
+            ApiFields.Names.ID: "track123",
+            ApiFields.Names.NAME: "Test Track",
+            ApiFields.Names.POPULARITY: 85
+        }
+        self.mock_spotify_instance.search.return_value = {
+            ApiFields.Names.TRACKS: {
+                ApiFields.Names.ITEMS: [{
+                    ApiFields.Names.ID: "track123",
+                    ApiFields.Names.NAME: "Test Track",
+                    ApiFields.Names.POPULARITY: 85
+                }]
+            }
+        }
+        self.mock_spotify_instance.current_user_saved_tracks.return_value = {
+            ApiFields.Names.ITEMS: [{
+                ApiFields.Names.TRACK: {
+                    ApiFields.Names.ID: "track123",
+                    ApiFields.Names.NAME: "Test Track"
+                }
+            }]
+        }
+        self.mock_spotify_instance.current_user_playlists.return_value = {
+            ApiFields.Names.ITEMS: [{
+                ApiFields.Names.ID: "playlist123",
+                ApiFields.Names.NAME: "Test Playlist"
+            }]
+        }
+        self.mock_spotify_instance.playlist_tracks.return_value = {
+            ApiFields.Names.ITEMS: [{
+                ApiFields.Names.TRACK: {
+                    ApiFields.Names.ID: "track123",
+                    ApiFields.Names.NAME: "Test Track"
+                }
+            }]
+        }
+        self.mock_spotify_instance.current_user.return_value = {
+            ApiFields.Names.ID: "user123",
+            ApiFields.Names.NAME: "Test User"
         }
 
     def tearDown(self):
         self.mock_spotify_patcher.stop()
-        self.mock_requests_patcher.stop()
         super().tearDown()
 
     def test_search_track_with_valid_query_then_returns_results(self):
@@ -67,8 +95,8 @@ class TestSpotifyAPIOperations(AppTestCase):
         self.mock_spotify_instance.search.return_value = mock_search_result
 
         # Test the search function
-        service = SpotifyClient()
-        result = service.search_track("Test Query")
+        spotify_client = SpotifyClient()
+        result = spotify_client.search_track("Test Query")
 
         # Verify the search was performed correctly
         self.mock_spotify_instance.search.assert_called_once_with(q="Test Query", type='track', limit=5)
