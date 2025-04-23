@@ -9,7 +9,7 @@ from bodzify_api.utils.AppStaticFileStates import StaticFileStates
 from bodzify_api.view.viewset.model.AllUploadedTracksMixinViewSet import AllUploadedTracksViewSet
 from bodzify_api.view.spotify_auth import spotify_auth
 from bodzify_api.view.viewset.model.SpotifyArtistViewSet import SpotifyArtistViewSet
-from bodzify_api.view.viewset.model.SpotifyUserViewSet import SpotifyUserViewSet
+from bodzify_api.view.viewset.model.user.SpotifyUserViewSet import SpotifyUserViewSet
 
 from . import settings
 from .view.viewset.model.AlbumViewSet import AlbumViewSet
