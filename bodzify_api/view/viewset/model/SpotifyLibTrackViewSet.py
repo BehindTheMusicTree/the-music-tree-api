@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db import transaction
 
+from bodzify_api.utils.decorators.spotify import spotify_user_required
 from bodzify_api.filtering.set.spotify.lib_track.SpotifyLibTrackFilterSet import SpotifyLibTrackFilterSet
 from bodzify_api.filtering.set.spotify.lib_track.Fields import Fields as FilterFields
 from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
@@ -57,18 +58,23 @@ class SpotifyLibTrackViewSet(AppModelViewSet[SpotifyLibTrack]):
         OpenApiParameter(name=FilterFields.UPDATED_ON_GTE, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
         OpenApiParameter(name=FilterFields.UPDATED_ON_LTE, type=OpenApiTypes.DATETIME, location=OpenApiParameter.QUERY),
     ])
-    def list(self, *args, **kwargs):
+    @spotify_user_required
+    def list(self, request, *args, **kwargs):
+        print('SpotifyLibTrackViewSet user', request.user)
         return self._handle_list()
 
+    @spotify_user_required
     def retrieve(self, *args, **kwargs):
         return self._handle_retrieve()
 
     @action(detail=False, methods=['post'], url_path='sync/quick')
+    @spotify_user_required
     def quick_sync(self, request):
         """
         Perform a quick sync of the user's Spotify library.
         This only fetches new additions since the last sync and is faster than a full sync.
         """
+        print("SpotifyLibTrackViewSet quick_sync user: ", request.user)
         try:
             with transaction.atomic():
                 # Check if a sync is already in progress
@@ -108,6 +114,7 @@ class SpotifyLibTrackViewSet(AppModelViewSet[SpotifyLibTrack]):
             )
 
     @action(detail=False, methods=['post'], url_path='sync/full')
+    @spotify_user_required
     def full_sync(self, request):
         """
         Perform a full sync of the user's Spotify library.
