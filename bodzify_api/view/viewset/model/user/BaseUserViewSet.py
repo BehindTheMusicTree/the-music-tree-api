@@ -8,7 +8,7 @@ from bodzify_api.serializer.model.user.base.output.detailed import UserDetailedS
 from bodzify_api.view.viewset.model.AppModelViewSet import AppModelViewSet
 
 
-class UserViewSet(AppModelViewSet[User]):
+class BaseUserViewSet(AppModelViewSet[User]):
     serializer_class = UserDetailedSerializer
     permission_classes = [IsAdminUser]
 

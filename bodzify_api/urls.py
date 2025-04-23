@@ -23,12 +23,12 @@ from .view.viewset.model.playlist.children.ManualPlaylistViewSet import ManualPl
 from .view.viewset.model.playlist.PlaylistViewSet import PlaylistViewSet
 from .view.viewset.model.PlayViewSet import PlayViewSet
 from .view.viewset.model.SpotifyLibTrackViewSet import SpotifyLibTrackViewSet
-from .view.viewset.model.UserViewSet import UserViewSet
+from .view.viewset.model.user.BaseUserViewSet import BaseUserViewSet
 from .view.viewset.SearchViewSet import SearchViewSet
 
 
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet, basename='user')
+router.register(r'users', BaseUserViewSet, basename='user')
 router.register(r'users/spotify', SpotifyUserViewSet, basename='spotify-user')
 router.register(r'library/uploaded', UploadedTrackViewSet, basename='uploaded-track')
 router.register(r'library/spotify', SpotifyLibTrackViewSet, basename='spotify-lib-track')
