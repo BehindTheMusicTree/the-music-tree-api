@@ -15,6 +15,9 @@ from django.db.models.fields.related import ForeignKey, ManyToManyField, Foreign
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(project_root)
 
+# Base directory for TypeScript exports
+BASE_DIR = 'frontend/domain'
+
 FieldType = Union[Field, ForeignObjectRel]
 
 
@@ -103,8 +106,12 @@ def get_model_path(model: Type[models.Model]) -> str:
     # Convert model name to kebab-case
     model_name = re.sub(r'([a-z0-9])([A-Z])', r'\1-\2', model.__name__).lower()
 
-    # Create the full path
-    ts_path = os.path.join('tsexport', 'models', 'domain', *path_parts[:-1], model_name + '.ts')
+    # If there's only one model in this path, don't create a directory
+    if len(path_parts) == 1:
+        return os.path.join(BASE_DIR, model_name + '.ts')
+
+    # Create the full path with directories
+    ts_path = os.path.join(BASE_DIR, *path_parts[:-1], model_name + '.ts')
 
     return ts_path
 
@@ -143,7 +150,7 @@ def generate_schemas():
   created_at: z.string().datetime(),
   updated_at: z.string().datetime().nullable(),
 });'''
-    base_schema_path = 'tsexport/models/domain/base-resource/uuid.ts'
+    base_schema_path = 'frontend/domain/base-resource/uuid.ts'
     os.makedirs(os.path.dirname(base_schema_path), exist_ok=True)
     with open(base_schema_path, 'w') as f:
         f.write(generate_imports() + base_schema)
