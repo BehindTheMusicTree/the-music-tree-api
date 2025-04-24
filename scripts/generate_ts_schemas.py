@@ -81,7 +81,25 @@ def generate_schema(model: Type[models.Model], base_schema: str | None = None) -
 
         ts_type = get_ts_type(field)
         validations = get_field_validations(field)
-        schema_lines.append(f'  {field_name}: {ts_type}{validations},')
+
+        # Add field properties
+        properties = []
+        if isinstance(field, Field):
+            if field.help_text:
+                properties.append(f'help_text: "{field.help_text}"')
+            if field.verbose_name:
+                properties.append(f'label: "{field.verbose_name}"')
+            if field.choices:
+                choices = field.choices
+                if callable(choices):
+                    choices = choices()
+                choices_list = [f'"{choice[0]}"' for choice in choices]
+                properties.append(f'choices: [{", ".join(choices_list)}]')
+
+        if properties:
+            schema_lines.append(f'  {field_name}: {ts_type}{validations}.describe({{ {", ".join(properties)} }}),')
+        else:
+            schema_lines.append(f'  {field_name}: {ts_type}{validations},')
 
     schema_lines.append('});')
 
@@ -220,8 +238,22 @@ def generate_schemas():
     with open(base_schema_path, 'w') as f:
         f.write(generate_imports() + base_schema)
 
+    # Create public standard resource schema
+    public_standard_schema = '''export const PublicStandardResourceSchema = z.object({
+  created_on: z.string().datetime(),
+  updated_on: z.string().datetime().nullable(),
+});'''
+    public_standard_schema_path = os.path.join(BASE_DIR, 'public-standard-resource.ts')
+    os.makedirs(os.path.dirname(public_standard_schema_path), exist_ok=True)
+    with open(public_standard_schema_path, 'w') as f:
+        f.write(generate_imports() + public_standard_schema)
+
     # Generate schemas for each model
     for model in your_models:
+        # Skip models that are already handled by base schemas
+        if model.__name__ in ['UuidResource', 'PublicStandardResource']:
+            continue
+
         schema = generate_schema(model, 'UuidResourceSchema')
         schema_path = get_model_path(model)
         # Get the final path, moving the file up if it would be alone
@@ -230,9 +262,14 @@ def generate_schemas():
         # Create parent directory
         os.makedirs(os.path.dirname(final_path), exist_ok=True)
 
+        # Determine which base schema to import
+        base_schema_import = 'UuidResourceSchema'
+        if hasattr(model, '_meta') and hasattr(model._meta, 'abstract') and model._meta.abstract:
+            base_schema_import = 'PublicStandardResourceSchema'
+
         relative_import = get_relative_import_path(final_path, base_schema_path)
         with open(final_path, 'w') as f:
-            f.write(generate_imports() + f'import {{ UuidResourceSchema }} from "{relative_import}";\n\n' + schema)
+            f.write(generate_imports() + f'import {{ {base_schema_import} }} from "{relative_import}";\n\n' + schema)
 
 
 if __name__ == '__main__':
