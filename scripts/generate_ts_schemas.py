@@ -135,7 +135,7 @@ def get_model_path(model: Type[models.Model]) -> str:
         return os.path.join(BASE_DIR, model_name + '.ts')
 
     # Create the full path with directories
-    ts_path = os.path.join(BASE_DIR, *path_parts[:-1], model_name + '.ts')
+    ts_path = os.path.join(BASE_DIR, 'model', *path_parts[:-1], model_name + '.ts')
 
     return ts_path
 
@@ -169,6 +169,23 @@ def count_files_in_directories(models: list[Type[models.Model]]) -> dict[str, in
         dir_path = os.path.dirname(path)
         counts[dir_path] = counts.get(dir_path, 0) + 1
     return counts
+
+
+def get_final_path(path: str, dir_counts: dict[str, int]) -> str:
+    """Get the final path for a file, moving it up if it would be alone in its entire subtree."""
+    dir_path = os.path.dirname(path)
+
+    # Check if there are any files in subdirectories
+    has_files_in_subtree = False
+    for count_path, count in dir_counts.items():
+        if count_path.startswith(dir_path + os.sep):
+            has_files_in_subtree = True
+            break
+
+    # Only move up if this is the only file in the entire subtree
+    if dir_counts.get(dir_path, 0) <= 1 and not has_files_in_subtree:
+        return os.path.join(os.path.dirname(dir_path), os.path.basename(path))
+    return path
 
 
 def clean_base_dir():
@@ -207,13 +224,14 @@ def generate_schemas():
     for model in your_models:
         schema = generate_schema(model, 'UuidResourceSchema')
         schema_path = get_model_path(model)
-        dir_path = os.path.dirname(schema_path)
+        # Get the final path, moving the file up if it would be alone
+        final_path = get_final_path(schema_path, dir_counts)
 
-        # Create parent directory for the file
-        os.makedirs(dir_path, exist_ok=True)
+        # Create parent directory
+        os.makedirs(os.path.dirname(final_path), exist_ok=True)
 
-        relative_import = get_relative_import_path(schema_path, base_schema_path)
-        with open(schema_path, 'w') as f:
+        relative_import = get_relative_import_path(final_path, base_schema_path)
+        with open(final_path, 'w') as f:
             f.write(generate_imports() + f'import {{ UuidResourceSchema }} from "{relative_import}";\n\n' + schema)
 
 
