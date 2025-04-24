@@ -25,10 +25,10 @@ class UploadedTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(serializers.M
 
     class Meta:
         model = UploadedTrack
-        fields = [Fields.TRACK_NUMBER,
-                  Fields.UUID,
+        fields = [Fields.UUID,
                   Fields.TITLE,
                   Fields.ARTISTS,
+                  Fields.TRACK_NUMBER,
                   Fields.GENRE,
                   Fields.RATING,
                   Fields.LANGUAGE,
