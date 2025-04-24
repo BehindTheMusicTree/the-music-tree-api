@@ -9,10 +9,10 @@ from bodzify_api.serializer.model.uploaded_track.output.simple.simple_without_al
 
 
 class AlbumDetailedSerializer(serializers.ModelSerializer):
-    library_tracks_sorted = UploadedTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(
+    uploaded_tracks_sorted = UploadedTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(
         source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_SORTED_INTERNAL, many=True)
-    library_tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
-    library_tracks_archived_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_ARCHIVED_COUNT_INTERNAL)
+    uploaded_tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+    uploaded_tracks_archived_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_ARCHIVED_COUNT_INTERNAL)
     album_artists = ArtistMinimumSerializer(many=True)
 
     class Meta:

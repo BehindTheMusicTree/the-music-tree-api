@@ -21,10 +21,10 @@ from .minimum import CriteriaMinimumSerializer
 
 
 class CriteriaDetailedSerializer(AppSerializer, serializers.ModelSerializer):
-    library_tracks = UploadedTrackWithoutAlbumPlaylistGenreSerializer(
+    uploaded_tracks = UploadedTrackWithoutAlbumPlaylistGenreSerializer(
         source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
-    library_tracks_count = IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
-    library_tracks_archived_count = IntegerField(source=Fields.UPLOADED_TRACKS_ARCHIVED_COUNT_INTERNAL)
+    uploaded_tracks_count = IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+    uploaded_tracks_archived_count = IntegerField(source=Fields.UPLOADED_TRACKS_ARCHIVED_COUNT_INTERNAL)
     parent = CriteriaMinimumSerializer()
     ascendants = CriteriaLineageRelWithoutDescendantSerializer(source=ModelFields.ASCENDANTS_RELS, many=True)
     descendants = CriteriaLineageRelWithoutAscendantSerializer(source=ModelFields.DESCENDANTS_RELS, many=True)

@@ -8,7 +8,7 @@ from bodzify_api.serializer.model.artist.minimum import ArtistMinimumSerializer
 
 class AlbumSimpleSerializer(serializers.ModelSerializer):
     album_artists = ArtistMinimumSerializer(many=True)
-    library_tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+    uploaded_tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
 
     class Meta:
         model = Album

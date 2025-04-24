@@ -268,7 +268,7 @@ paths:
           description: No response body
   /users/{username}/library/tracks/:
     get:
-      operationId: users_library_tracks_retrieve
+      operationId: users_uploaded_tracks_retrieve
       parameters:
       - in: path
         name: username
@@ -285,7 +285,7 @@ paths:
           description: No response body
   /users/{username}/library/tracks/{trackUuid}/:
     get:
-      operationId: users_library_tracks_retrieve_2
+      operationId: users_uploaded_tracks_retrieve_2
       parameters:
       - in: path
         name: trackUuid
@@ -306,7 +306,7 @@ paths:
         '200':
           description: No response body
     put:
-      operationId: users_library_tracks_update
+      operationId: users_uploaded_tracks_update
       parameters:
       - in: path
         name: trackUuid
@@ -327,7 +327,7 @@ paths:
         '200':
           description: No response body
     delete:
-      operationId: users_library_tracks_destroy
+      operationId: users_uploaded_tracks_destroy
       parameters:
       - in: path
         name: trackUuid
@@ -349,7 +349,7 @@ paths:
           description: No response body
   /users/{username}/library/tracks/{trackUuid}/download/:
     get:
-      operationId: users_library_tracks_download_retrieve
+      operationId: users_uploaded_tracks_download_retrieve
       parameters:
       - in: path
         name: trackUuid
