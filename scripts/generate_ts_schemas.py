@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import shutil
 from typing import Type, cast, Union
 from django.db import models
 from django.apps import apps
@@ -83,7 +84,30 @@ def generate_schema(model: Type[models.Model], base_schema: str | None = None) -
         schema_lines.append(f'  {field_name}: {ts_type}{validations},')
 
     schema_lines.append('});')
-    schema_lines.append(f'export type {model.__name__} = z.infer<typeof {model.__name__}Schema>;')
+
+    # Generate interface for abstract models
+    if model._meta.abstract:
+        schema_lines.append(f'export interface {model.__name__} {{')
+        for field in model._meta.get_fields():
+            if field.is_relation and not field.auto_created:
+                field = cast(FieldType, field)
+                field_name = field.name
+                if field.many_to_many:
+                    field_name = f'{field_name}_ids'
+                elif field.one_to_many:
+                    field_name = f'{getattr(field, "related_name", field.name)}_ids'
+                else:
+                    field_name = f'{field_name}_id'
+            else:
+                field_name = field.name
+
+            ts_type = get_ts_type(field).replace('z.', '').replace('()', '')
+            if field.null:
+                ts_type += ' | null'
+            schema_lines.append(f'  {field_name}: {ts_type};')
+        schema_lines.append('}')
+    else:
+        schema_lines.append(f'export type {model.__name__} = z.infer<typeof {model.__name__}Schema>;')
 
     return '\n'.join(schema_lines)
 
@@ -133,16 +157,39 @@ def get_relative_import_path(from_path: str, to_path: str) -> str:
     down = '/'.join(to_parts[common:])
 
     if down:
-        return up + down + '/uuid'
-    return up + 'uuid'
+        return f'@/models/domain/{down}/uuid'
+    return '@/models/domain/uuid'
+
+
+def count_files_in_directories(models: list[Type[models.Model]]) -> dict[str, int]:
+    """Count how many files would be in each directory."""
+    counts = {}
+    for model in models:
+        path = get_model_path(model)
+        dir_path = os.path.dirname(path)
+        counts[dir_path] = counts.get(dir_path, 0) + 1
+    return counts
+
+
+def clean_base_dir():
+    """Remove and recreate the base directory to ensure clean state."""
+    if os.path.exists(BASE_DIR):
+        shutil.rmtree(BASE_DIR)
+    os.makedirs(BASE_DIR)
 
 
 def generate_schemas():
+    # Clean base directory first
+    clean_base_dir()
+
     # Get all models from all installed apps
     all_models = apps.get_models()
 
     # Filter models that are in your app
     your_models = [model for model in all_models if model._meta.app_label.startswith('bodzify_api')]
+
+    # Count files in each directory
+    dir_counts = count_files_in_directories(your_models)
 
     # Create base resource schema
     base_schema = '''export const UuidResourceSchema = z.object({
@@ -150,20 +197,21 @@ def generate_schemas():
   created_at: z.string().datetime(),
   updated_at: z.string().datetime().nullable(),
 });'''
-    base_schema_path = 'frontend/domain/base-resource/uuid.ts'
+    base_schema_path = os.path.join(BASE_DIR, 'uuid.ts')
+    # Create parent directory for base schema
     os.makedirs(os.path.dirname(base_schema_path), exist_ok=True)
     with open(base_schema_path, 'w') as f:
         f.write(generate_imports() + base_schema)
 
     # Generate schemas for each model
     for model in your_models:
-        if model._meta.abstract:
-            continue
-
         schema = generate_schema(model, 'UuidResourceSchema')
         schema_path = get_model_path(model)
+        dir_path = os.path.dirname(schema_path)
 
-        os.makedirs(os.path.dirname(schema_path), exist_ok=True)
+        # Create parent directory for the file
+        os.makedirs(dir_path, exist_ok=True)
+
         relative_import = get_relative_import_path(schema_path, base_schema_path)
         with open(schema_path, 'w') as f:
             f.write(generate_imports() + f'import {{ UuidResourceSchema }} from "{relative_import}";\n\n' + schema)
