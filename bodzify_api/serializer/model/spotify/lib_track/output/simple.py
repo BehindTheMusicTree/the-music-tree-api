@@ -7,6 +7,7 @@ from bodzify_api.serializer.model.spotify.artist.output.detailed import SpotifyA
 
 class SpotifyLibTrackSimpleSerializer(serializers.ModelSerializer):
     spotify_artists = SpotifyArtistDetailedSerializer(many=True, read_only=True)
+    album = serializers.SerializerMethodField()
 
     class Meta:
         model = SpotifyLibTrack
@@ -17,8 +18,9 @@ class SpotifyLibTrackSimpleSerializer(serializers.ModelSerializer):
             Fields.SPOTIFY_LINK,
             Fields.ALBUM,
             Fields.SPOTIFY_ARTISTS,
-            Fields.CREATED_ON,
-            Fields.LAST_SYNCED_AT,
             Fields.IS_REMOVED,
             Fields.GENRES
         ]
+
+    def get_album(self, obj):
+        return obj.album.get('name') if obj.album else None

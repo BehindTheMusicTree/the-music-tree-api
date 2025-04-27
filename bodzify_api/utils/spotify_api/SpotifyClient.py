@@ -29,7 +29,7 @@ class SpotifyClient:
             redirect_uri=credentials["redirect_uri"],
             scope=credentials["scope"]
         )
-        self.spotify = spotipy.Spotify(auth_manager=self.auth_manager)
+        self.spotify = spotipy.Spotify(auth_manager=self.auth_manager, requests_timeout=30)
         self._initialized = True
 
     def get_access_token_from_code(self, code: str) -> dict[str, Any]:

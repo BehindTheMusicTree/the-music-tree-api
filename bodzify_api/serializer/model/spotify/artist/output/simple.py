@@ -12,5 +12,4 @@ class SpotifyArtistSimpleSerializer(serializers.ModelSerializer):
             Fields.NAME,
             Fields.SPOTIFY_LINK,
             Fields.GENRES,
-            Fields.CREATED_ON
         ]

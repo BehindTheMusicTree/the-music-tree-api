@@ -11,10 +11,10 @@ from .Fields import Fields
 
 
 class ManualPlaylistDetailedSerializer(serializers.ModelSerializer):
-    uploaded_tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
-    uploaded_tracks = UploadedTrackSimpleWithoutPlaylistAndAlbumSerializer(
+    library_tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+    library_tracks = UploadedTrackSimpleWithoutPlaylistAndAlbumSerializer(
         source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
-    uploaded_tracks_archived_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+    library_tracks_archived_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
     name = AppCharField()
 
     class Meta:

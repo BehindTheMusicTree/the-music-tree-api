@@ -10,10 +10,10 @@ from bodzify_api.serializer.model.playlist.children.criteria.output.minumum impo
 
 class Fields:
     UUID = AvailableFields.UUID
+    NAME = AvailableFields.NAME
     UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL = AvailableFields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL
     UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC = AvailableFields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC
     DURATION_STR_IN_HOUR_MIN_SEC = AvailableFields.DURATION_STR_IN_HOUR_MIN_SEC
-    NAME = AvailableFields.NAME
     CRITERIA = AvailableFields.CRITERIA
     PARENT = AvailableFields.PARENT
     ROOT = AvailableFields.ROOT

@@ -8,5 +8,3 @@ class Fields:
     SPOTIFY_LINK = SpotifyArtistFields.SPOTIFY_LINK
     GENRES = SpotifyArtistFields.GENRES
     IMAGES = SpotifyArtistFields.IMAGES
-    CREATED_ON = SpotifyArtistFields.CREATED_ON
-    UPDATED_ON = SpotifyArtistFields.UPDATED_ON

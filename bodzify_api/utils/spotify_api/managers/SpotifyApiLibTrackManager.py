@@ -116,12 +116,14 @@ class SpotifyApiLibTrackManager:
         Returns:
             list[SpotifyLibTrack]: List of newly synced track instances
         """
+        logger.info(f"Starting quick sync for user {user.spotify_id}")
         tracks = []
         offset = 0
         limit = 50
         now = timezone.now()
 
         if not user.spotify_access_token:
+            logger.warning(f"No access token found for user {user.spotify_id}")
             return tracks
 
         # Track which Spotify tracks we've seen in this quick sync
@@ -129,16 +131,20 @@ class SpotifyApiLibTrackManager:
 
         # Get the last sync time to optimize fetching
         last_sync_time = user.spotify_library_last_synced_at
+        logger.info(f"Last sync time: {last_sync_time}")
 
         while True:
             try:
+                logger.debug(f"Fetching saved tracks batch - offset: {offset}, limit: {limit}")
                 saved_tracks = self.spotify_client.get_user_saved_tracks(
                     user.spotify_access_token, limit=limit, offset=offset)
 
                 items = saved_tracks.get('items', [])
                 total = saved_tracks.get('total', 0)
+                logger.debug(f"Retrieved {len(items)} tracks out of {total} total")
 
                 if not items:
+                    logger.info("No more tracks to process")
                     break
 
                 all_processed = True
@@ -146,10 +152,12 @@ class SpotifyApiLibTrackManager:
                 for item in items:
                     track_data = item.get('track', {})
                     if not track_data:
+                        logger.warning("Skipping item with no track data")
                         continue
 
                     track_id = track_data.get('id')
                     if not track_id:
+                        logger.warning("Skipping track with no ID")
                         continue
 
                     # Check added_at timestamp if we're doing time-based sync
@@ -161,6 +169,7 @@ class SpotifyApiLibTrackManager:
 
                         # If we have a last sync time and this track was added before that, we can stop processing
                         if last_sync_time and added_at <= last_sync_time:
+                            logger.info(f"Reached tracks older than last sync time ({last_sync_time})")
                             all_processed = False
                             break
 
@@ -170,11 +179,13 @@ class SpotifyApiLibTrackManager:
 
                     if track:
                         # Update existing track
+                        logger.debug(f"Updating existing track {track_id}")
                         track.last_synced_at = now
                         track.is_removed = False  # Ensure it's marked as not removed
                         track.save(update_fields=['last_synced_at', 'is_removed'])
                     else:
                         # Create new track
+                        logger.info(f"Creating new track {track_id}")
                         track = utils.create_spotify_lib_track_instance_from_dict(track_id, track_data)
                         if track:
                             track.last_synced_at = now
@@ -188,21 +199,29 @@ class SpotifyApiLibTrackManager:
                     offset += limit
                 else:
                     # We found older tracks, no need to fetch more
+                    logger.info("Stopping sync as we reached older tracks")
                     break
 
             except spotify_exception.SpotifyResourceNotFoundException as e:
+                logger.error(f"Resource not found: {str(e)}")
                 break
             except spotify_exception.SpotifyRateLimitException as e:
+                logger.warning(f"Rate limit exceeded: {str(e)}")
                 break
             except spotify_exception.SpotifyException as e:
+                logger.error(f"Spotify API error: {str(e)}")
                 break
             except Exception as e:
+                logger.error(f"Unexpected error during sync: {str(e)}")
                 break
 
         # Update user's last sync time if we processed any tracks
         if tracks and len(seen_track_ids) > 0:
+            logger.info(f"Updating last sync time for user {user.spotify_id} - processed {len(tracks)} tracks")
             user.spotify_library_last_synced_at = now
             user.save(update_fields=['spotify_library_last_synced_at'])
+        else:
+            logger.info("No tracks processed, skipping last sync time update")
 
         return tracks
 

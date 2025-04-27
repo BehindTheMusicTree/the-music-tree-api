@@ -14,6 +14,4 @@ class SpotifyArtistDetailedSerializer(serializers.ModelSerializer):
             Fields.SPOTIFY_LINK,
             Fields.GENRES,
             Fields.IMAGES,
-            Fields.CREATED_ON,
-            Fields.UPDATED_ON
         ]

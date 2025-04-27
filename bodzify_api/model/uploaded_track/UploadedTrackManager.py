@@ -103,12 +103,12 @@ class UploadedTrackManager(StandardResourceManager['UploadedTrack']):
             return instance
 
     def create_instance_with_track_file(
-            self, track_file_data: dict[str, Any], uploaded_track_data: dict[str, Any]) -> 'UploadedTrack':
+            self, track_file_data: dict[str, Any], library_track_data: dict[str, Any]) -> 'UploadedTrack':
         from ..file.TrackFile import TrackFile
 
         with transaction.atomic():
-            artists = uploaded_track_data.pop(Fields.ARTISTS, None)
-            uploaded_track: UploadedTrack = self.model(**uploaded_track_data)
+            artists = library_track_data.pop(Fields.ARTISTS, None)
+            uploaded_track: UploadedTrack = self.model(**library_track_data)
             uploaded_track.save()
             if artists:
                 uploaded_track.artists.set(artists)
