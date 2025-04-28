@@ -10,7 +10,7 @@ from .Fields import Fields
 
 
 class PlaylistDetailedSerializer(serializers.ModelSerializer):
-    library_track_playlist_relations = UploadedTrackPlaylistRelWithoutPlaylist(
+    uploaded_track_playlist_relations = UploadedTrackPlaylistRelWithoutPlaylist(
         source=Fields.UPLOADED_TRACK_PLAYLIST_RELS_INTERNAL, many=True)
     uploaded_tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
     uploaded_tracks_archived_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_ARCHIVED_COUNT_INTERNAL)

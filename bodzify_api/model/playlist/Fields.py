@@ -5,7 +5,7 @@ from bodzify_api.model.trackable_play_count.Fields import Fields as TrackablePla
 class Fields(UploadedTrackMixinFields, TrackablePlayCountFields):
     UPLOADED_TRACKS_RELATED_NAME = 'uploaded_tracks_of_playlist'
     UPLOADED_TRACK_PLAYLIST_RELS_INTERNAL = 'uploaded_track_playlist_rels'
-    UPLOADED_TRACK_PLAYLIST_RELS_PUBLIC = 'library_track_playlist_relations'
+    UPLOADED_TRACK_PLAYLIST_RELS_PUBLIC = 'uploaded_track_playlist_relations'
     TYPE_LABEL_INTERNAL = 'type_label'
     TYPE_LABEL_PUBLIC = 'type'
     PLAYLIST_UPLOADED_TRACK_RELATIONS = 'uploaded_track_playlist_rels'
