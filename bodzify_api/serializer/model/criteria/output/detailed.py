@@ -24,7 +24,6 @@ class CriteriaDetailedSerializer(AppSerializer, serializers.ModelSerializer):
     uploaded_tracks = UploadedTrackWithoutAlbumPlaylistGenreSerializer(
         source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
     uploaded_tracks_count = IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
-    uploaded_tracks_archived_count = IntegerField(source=Fields.UPLOADED_TRACKS_ARCHIVED_COUNT_INTERNAL)
     parent = CriteriaMinimumSerializer()
     ascendants = CriteriaLineageRelWithoutDescendantSerializer(source=ModelFields.ASCENDANTS_RELS, many=True)
     descendants = CriteriaLineageRelWithoutAscendantSerializer(source=ModelFields.DESCENDANTS_RELS, many=True)
