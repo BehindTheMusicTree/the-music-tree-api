@@ -1,21 +1,24 @@
 from typing import TYPE_CHECKING, TypeVar
 
+from django.core.exceptions import ImproperlyConfigured
 from django.db import transaction
 from django.db.models import QuerySet
 
+from bodzify_api.model.criteria.type.CriteriaType import CriteriaType
+from bodzify_api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
+
 from bodzify_api.model.criteria.Fields import Fields as ModelFields
-from bodzify_api.model.uploaded_track_mixin.UploadedTrackMixinWithInternalNameManager import UploadedTrackMixinWithInternalNameManager
+from bodzify_api.model.uploaded_track_mixin.UploadedTrackMixinWithInternalNameManager import (
+    UploadedTrackMixinWithInternalNameManager
+)
 from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields as TreeImportFields
 from bodzify_api.serializer.model.criteria.input.Fields import Fields as InputFields
 
 from .Fields import Fields
-from .type.CriteriaType import CriteriaType
 
 
 if TYPE_CHECKING:
     from bodzify_api.model.user.User import User
-    from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-    from bodzify_api.model.playlist.Fields import Fields as PlaylistFields
 
     from .Criteria import Criteria
 
@@ -24,6 +27,20 @@ T = TypeVar('T', bound='Criteria')
 
 class CriteriaManager(UploadedTrackMixinWithInternalNameManager[T]):
     model: type[T]
+
+    def _get_criteria_type(self) -> 'CriteriaType':
+        from bodzify_api.model.criteria.children.genre.Genre import Genre
+        from bodzify_api.model.criteria.children.tag.Tag import Tag
+
+        type_pk: CriteriaTypePks
+        if issubclass(self.model, Genre):
+            type_pk = CriteriaTypePks.GENRE
+        elif issubclass(self.model, Tag):
+            type_pk = CriteriaTypePks.TAG
+        else:
+            raise ImproperlyConfigured(f"Invalid criteria type: {type(self.model)}")
+
+        return CriteriaType(pk=type_pk)
 
     def _refresh_ascendants_of_instance(self, instance: T):
         from .lineage_rel.CriteriaLineageRel import CriteriaLineageRel
@@ -51,11 +68,12 @@ class CriteriaManager(UploadedTrackMixinWithInternalNameManager[T]):
         return [ModelFields.NAME_INTERNAL]
 
     @transaction.atomic
-    def create(self, type_id: int, **kwargs) -> T:
+    def create(self, **kwargs) -> T:
         from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-        type = CriteriaType.objects.get(pk=type_id)
-        instance: T = super().create(type=type, **kwargs)
-        CriteriaPlaylist.objects.create(user=instance.user, criteria=instance, type=type)
+
+        criteria_type = self._get_criteria_type()
+        instance: T = super().create(type=criteria_type, **kwargs)
+        CriteriaPlaylist.objects.create(user=instance.user, criteria=instance, type=criteria_type)
         self._refresh_ascendants_of_instance(instance)
         return instance
 
@@ -274,13 +292,7 @@ class CriteriaManager(UploadedTrackMixinWithInternalNameManager[T]):
                 name_field = InputFields.NAME_PUBLIC
                 name = node.get(name_field)
                 print(f"IMPORT DEBUG - Creating node with name '{name}', parent: {parent}")
-
-                criteria = self.model(
-                    _name=name,
-                    parent=parent,
-                    user=user
-                )
-                criteria.save()
+                criteria = self.create(name=name, parent=parent, user=user)
                 print(f"IMPORT DEBUG - Created node with UUID {criteria.uuid}")
 
                 # Create children if any
