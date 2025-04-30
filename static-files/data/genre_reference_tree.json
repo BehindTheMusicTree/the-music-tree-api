@@ -6,9 +6,29 @@
         {
           "name": "House",
           "children": [
-            {"name": "Deep House", "children": []},
-            {"name": "Tech House", "children": []},
-            {"name": "Progressive House", "children": []}
+            {
+              "name": "Deep House",
+              "children": [
+                {
+                  "name": "Chicago Deep House",
+                  "children": [
+                    {
+                      "name": "Classic Chicago Deep",
+                      "children": [
+                        {
+                          "name": "Early Chicago Deep",
+                          "children": [
+                            {"name": "Frankie Knuckles Style", "children": []}
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {"name": "Tech House", "children": []},
+                {"name": "Progressive House", "children": []}
+              ]
+            }
           ]
         },
         {
@@ -40,9 +60,29 @@
         {
           "name": "Rock",
           "children": [
-            {"name": "Alternative Rock", "children": []},
-            {"name": "Indie Rock", "children": []},
-            {"name": "Progressive Rock", "children": []}
+            {
+              "name": "Alternative Rock",
+              "children": [
+                {
+                  "name": "Post-Grunge",
+                  "children": [
+                    {
+                      "name": "Early Post-Grunge",
+                      "children": [
+                        {
+                          "name": "Seattle Scene",
+                          "children": [
+                            {"name": "Pearl Jam Inspired", "children": []}
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {"name": "Indie Rock", "children": []},
+                {"name": "Progressive Rock", "children": []}
+              ]
+            }
           ]
         },
         {
