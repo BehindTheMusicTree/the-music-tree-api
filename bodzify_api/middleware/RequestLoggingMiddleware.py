@@ -1,6 +1,9 @@
 import logging
+import traceback
 import uuid
 import time
+
+from bodzify_api.view.error.ErrorResponse import ErrorResponse
 
 
 def _generate_log_about_headers(request):
@@ -14,21 +17,20 @@ class RequestLoggingMiddleware:
 
     def __init__(self, get_response):
         self.get_response = get_response
+        self.requestLogger = logging.getLogger('request')
+        self.requestDebugLogger = logging.getLogger('django.request')
 
     def __call__(self, request):
-        requestLogger = logging.getLogger('request')
-        requestDebugLogger = logging.getLogger('django.request')
-
         # Generate a unique request ID and start time
         request_id = str(uuid.uuid4())
         request.request_id = request_id
         start_time = time.time()
 
         # Log request details
-        logMessage = f"[{request_id}] Incoming Request: {request.method} {request.path} {request.META['REMOTE_ADDR']} "
-        requestLogger.info(logMessage)
-        requestDebugLogger.info(logMessage)
-        requestDebugLogger.info(_generate_log_about_headers(request))
+        logMessage = f"[{request_id}] Incoming Request: {request.method} {request.path} {request.META.get('REMOTE_ADDR')} "
+        self.requestLogger.info(logMessage)
+        self.requestDebugLogger.info(logMessage)
+        self.requestDebugLogger.info(_generate_log_about_headers(request))
 
         # Log request body for non-GET requests
         if request.method != 'GET':
@@ -45,36 +47,65 @@ class RequestLoggingMiddleware:
                     try:
                         body_str = body.decode('utf-8')
                         if body_str:
-                            requestDebugLogger.info(f"[{request_id}] Request Body: {body_str}")
+                            self.requestDebugLogger.info(f"[{request_id}] Request Body: {body_str}")
                     except UnicodeDecodeError:
-                        requestDebugLogger.info(f"[{request_id}] Request Body: <binary data>")
+                        self.requestDebugLogger.info(f"[{request_id}] Request Body: <binary data>")
             except Exception as e:
                 # Log the error but don't fail the request
-                requestDebugLogger.error(f"[{request_id}] Error reading request body: {str(e)}")
+                self.requestDebugLogger.error(f"[{request_id}] Error reading request body: {str(e)}")
 
         try:
+            self.requestDebugLogger.info(f"[{request_id}] DEBUG: About to call get_response")
             response = self.get_response(request)
             duration = time.time() - start_time
 
             # Log response details
             responseCodeMessage = f"[{request_id}] Response: {response.status_code} {response.reason_phrase} (took {duration:.3f}s)"
-            requestLogger.info(responseCodeMessage)
-            requestDebugLogger.info(responseCodeMessage)
+            self.requestLogger.info(responseCodeMessage)
+            self.requestDebugLogger.info(responseCodeMessage)
+
+            # Special logging for PUT requests to genres
+            if request.method == 'PUT' and '/genres/' in request.path:
+                self.requestDebugLogger.info(
+                    f"[{request_id}] DEBUG: PUT request to genres completed with status {response.status_code}")
 
             # Log response body for non-streaming responses
             if hasattr(response, 'content') and not getattr(response, 'streaming', False):
                 try:
                     content = response.content.decode('utf-8')
                     if content:
-                        requestDebugLogger.info(f"[{request_id}] Response Body: {content}")
+                        self.requestDebugLogger.info(f"[{request_id}] Response Body: {content}")
                 except UnicodeDecodeError:
-                    requestDebugLogger.info(f"[{request_id}] Response Body: <binary data>")
+                    self.requestDebugLogger.info(f"[{request_id}] Response Body: <binary data>")
 
             return response
 
         except Exception as e:
             duration = time.time() - start_time
             error_message = f"[{request_id}] Error: {str(e)} (took {duration:.3f}s)"
-            requestLogger.error(error_message)
-            requestDebugLogger.error(error_message)
+            self.requestLogger.error(error_message)
+            self.requestDebugLogger.error(error_message)
+
+            # Special logging for PUT requests to genres
+            if request.method == 'PUT' and '/genres/' in request.path:
+                self.requestDebugLogger.error(
+                    f"[{request_id}] DEBUG: PUT request to genres failed with exception: {type(e).__name__}: {str(e)}")
+                import traceback
+                self.requestDebugLogger.error(f"[{request_id}] DEBUG: Exception traceback: {traceback.format_exc()}")
+
             raise
+
+    def process_exception(self, request, exception):
+        request_id = getattr(request, 'request_id', 'unknown')
+        self.requestLogger.error(f"[{request_id}] Exception: {type(exception).__name__} - {str(exception)}")
+        self.requestLogger.error('\n'.join(traceback.format_exception(
+            type(exception), exception, exception.__traceback__)))
+
+        try:
+            response = ErrorResponse.handle_exception(exception)
+            self.requestLogger.error(f"[{request_id}] Error Response: {response.status_code} {response.reason_phrase}")
+        except Exception as e:
+            self.requestLogger.error(f"[{request_id}] Error in ErrorResponse Handling: {type(e).__name__} - {str(e)}")
+            self.requestLogger.error('\n'.join(traceback.format_exception(type(e), e, e.__traceback__)))
+
+        return None

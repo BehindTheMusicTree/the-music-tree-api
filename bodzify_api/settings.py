@@ -554,7 +554,7 @@ def setup_middlewares():
         f'{APP_NAME}.middleware.ContentTypeValidationMiddleware.ContentTypeValidationMiddleware',
         f'{APP_NAME}.middleware.CamelToSnakeMiddleware.CamelToSnakeMiddleware',
         f'{APP_NAME}.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware',
-        f'{APP_NAME}.middleware.RequestResponseLoggingMiddleware.RequestResponseLoggingMiddleware',
+        f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
