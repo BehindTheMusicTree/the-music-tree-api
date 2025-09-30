@@ -48,7 +48,6 @@ def custom_exception_handler(exc, context):
         None in debug mode to let Django's default handler show the traceback page
     """
 
-    print('exception_handler', exc)
     if settings.DEBUG and not isinstance(
         exc,
         (ValidationError, InvalidToken, NotAuthenticated, AuthenticationFailed, MethodNotAllowed, Http404,
