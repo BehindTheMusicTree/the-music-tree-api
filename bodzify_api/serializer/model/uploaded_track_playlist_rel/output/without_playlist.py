@@ -7,7 +7,7 @@ from .Fields import Fields
 
 
 class UploadedTrackPlaylistRelWithoutPlaylist(serializers.ModelSerializer):
-    uploaded_track = UploadedTrackDetailedSerializer(source=Fields.UPLOADED_TRACK_INTERNAL)
+    uploaded_track = UploadedTrackDetailedSerializer()
 
     class Meta:
         model = UploadedTrackPlaylistRel
