@@ -29,6 +29,13 @@ class GenreViewSet(CriteriaViewSet):
         serializer = CriteriaTreeImportSerializer(data={'tree': data['tree']})
         serializer.is_valid(raise_exception=True)
         print("Serializer validated")
+
+        # Set all track genres to null before importing new tree to avoid foreign key constraint violations
+        from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
+        from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackFields
+        UploadedTrack.objects.filter(user=request.user).update(**{UploadedTrackFields.GENRE: None})
+        print("Set all track genres to null")
+
         # Import the tree
         Genre.objects.import_criteria_tree(request.user, serializer.validated_data)
 
