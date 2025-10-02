@@ -14,15 +14,14 @@ from bodzify_api.utils.data_transformer import to_camel_case
 
 
 class TestCase(UploadedTrackTestCase):
-    def test_album_provided_but_album_artists_not_then_400_bad_request(self):
+    def test_album_provided_but_album_artists_not_then_201_created(self):
         data = {PostFields.ALBUM_NAME: "Koko"}
         response = self._post_uploaded_track(
             title="Time", test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01_MO_MP3, **data)
 
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        error = self.bad_request_result_field_errors[0]
-        assert error["field"] == to_camel_case(PostFields.ALBUM_ARTISTS_NAMES_MULTIPART)
-        assert error["code"] == FieldValidationErrorCode.DEPENDENCY_MISSING
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.album.name == "Koko"
+        assert self.saved_object.album.album_artists.count() == 0
 
     def test_album_artists_provided_but_album_not_then_400_bad_request(self):
         data = {PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["Koko"]}

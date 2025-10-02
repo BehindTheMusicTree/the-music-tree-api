@@ -59,10 +59,6 @@ class UploadedTrackInputSerializer(AppSerializer):
                 raise AppValidationException(message="Album name is required when album artists field is provided",
                                              field_name=Fields.ALBUM_NAME,
                                              field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
-        elif data.get(Fields.ALBUM_NAME, None) not in [None, ""]:
-            raise AppValidationException(message="Album artists are required when album name is provided",
-                                         field_name=Fields.ALBUM_ARTISTS_NAMES_MULTIPART,
-                                         field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
         if data.get(Fields.TRACK_NUMBER) is not None and data.get(Fields.ALBUM_NAME) in [None, ""]:
             AppValidationException(field_name=Fields.ALBUM_NAME,

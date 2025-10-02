@@ -60,12 +60,12 @@ class TestCase(UploadedTrackTestCase):
         assert error["field"] == to_camel_case(PostFields.ALBUM_NAME)
         assert error["code"] == FieldValidationErrorCode.DEPENDENCY_MISSING
 
-    def test_only_album_name_in_data_and_album_artists_in_metadata_then_400_bad_request(self):
+    def test_only_album_name_in_data_and_album_artists_in_metadata_then_201_created(self):
         data_album_name = "Best of"
         data = {PostFields.ALBUM_NAME: data_album_name}
         response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_LONG_A_ID3V1_SMALL_MP3, **data)
 
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        error = self.bad_request_result_field_errors[0]
-        assert error["field"] == to_camel_case(PostFields.ALBUM_ARTISTS_NAMES_MULTIPART)
-        assert error["code"] == FieldValidationErrorCode.DEPENDENCY_MISSING
+        assert response.status_code == status.HTTP_201_CREATED
+        album = self.saved_object.album
+        assert album
+        assert album.name == data_album_name
