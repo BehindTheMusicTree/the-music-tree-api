@@ -145,7 +145,17 @@ class ModelFixtureFactory:
 
         file_path = self.test_uploaded_track_dir / str(test_uploaded_track_filename)
         track_file_path_in_lib = user.lib_abs_path / str(test_uploaded_track_filename)
-        shutil.copy(file_path, track_file_path_in_lib)
+        try:
+            shutil.copy(file_path, track_file_path_in_lib)
+        except OSError as e:
+            if e.errno == 28:
+                stat = shutil.disk_usage(user.lib_abs_path)
+                raise OSError(
+                    f"No space left on device. Disk usage: {stat.used / (1024**3):.2f}GB used, "
+                    f"{stat.free / (1024**3):.2f}GB free out of {stat.total / (1024**3):.2f}GB total. "
+                    f"Please free up disk space to continue tests."
+                ) from e
+            raise
 
         if use_manager_for_genre_playlist_adding:
             with open(track_file_path_in_lib, 'rb') as f:
