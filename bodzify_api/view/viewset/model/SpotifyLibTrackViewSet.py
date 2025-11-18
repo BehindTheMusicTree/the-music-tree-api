@@ -29,9 +29,10 @@ class SpotifyLibTrackViewSet(AppModelViewSet[SpotifyLibTrack]):
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return super().get_queryset().none()
-        return super().get_queryset().filter(
-            **{Fields.IS_REMOVED: False}
-        ).distinct()
+        queryset = super().get_queryset()
+        if 'is_removed' not in self.request.query_params:
+            queryset = queryset.filter(**{Fields.IS_REMOVED: False})
+        return queryset.distinct()
 
     @extend_schema(parameters=[
         OpenApiParameter(name=FilterFields.NAME, type=OpenApiTypes.STR, location=OpenApiParameter.QUERY),
