@@ -6,6 +6,10 @@ from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import Sp
 
 
 class SpotifyLibTrackTestCase(AppTestCase[SpotifyLibTrack]):
+    def setUp(self):
+        super().setUp()
+        self._login_as_spotify_test_user_1()
+
     def _list_spotify_lib_tracks(self, **kwargs) -> HttpResponse:
         return self.api_client.get(reverse('spotify-lib-track-list'), data=kwargs, handle_response=self._set_results)
 
