@@ -58,8 +58,8 @@ class TestCase(SpotifyLibTrackTestCase):
         )
 
         response = self._list_spotify_lib_tracks(
-            duration_sec_min=3.5,
-            duration_sec_max=4.5,
+            duration_sec_min=2.5 * 60,
+            duration_sec_max=3.5 * 60,
             popularity_min=50,
             popularity_max=70
         )
@@ -129,8 +129,8 @@ class TestCase(SpotifyLibTrackTestCase):
         response = self._list_spotify_lib_tracks(
             name="Track",
             album_artist_name="Artist 1",
-            duration_sec_min=3.5,
-            duration_sec_max=4.5,
+            duration_sec_min=3.5 * 60,
+            duration_sec_max=4.5 * 60,
             popularity_min=30,
             popularity_max=50,
             explicit=True,
