@@ -252,7 +252,7 @@ class ModelFixtureFactory:
             TrackFields.ALBUM: kwargs.get(TrackFields.ALBUM),
             TrackFields.PREVIEW_URL: kwargs.get(TrackFields.PREVIEW_URL),
             TrackFields.EXPLICIT: kwargs.get(TrackFields.EXPLICIT, False),
-            TrackFields.LAST_SYNCED_AT: timezone.make_aware(datetime.now()),
+            TrackFields.LAST_SYNCED_AT: kwargs.get(TrackFields.LAST_SYNCED_AT, timezone.make_aware(datetime.now())),
             TrackFields.IS_REMOVED: kwargs.get(TrackFields.IS_REMOVED, False)
         }
         track = G(SpotifyLibTrack, **model_fields)

@@ -33,6 +33,10 @@ class SpotifyLibTrackViewSet(AppModelViewSet[SpotifyLibTrack]):
         is_removed_param = self.request.query_params.get('is_removed')
         if is_removed_param is None:
             queryset = queryset.filter(**{Fields.IS_REMOVED: False})
+        return queryset
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
         return queryset.distinct()
 
     @extend_schema(parameters=[
