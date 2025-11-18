@@ -1,5 +1,6 @@
 from typing import Any
 import spotipy
+from spotipy import exceptions as spotipy_exceptions
 from spotipy.oauth2 import SpotifyOAuth
 
 from bodzify_api.exception import spotify as spotify_exception
@@ -61,6 +62,10 @@ class SpotifyClient:
             if not track:
                 raise spotify_exception.SpotifyResourceNotFoundException(f"Track not found: {track_id}")
             return track
+        except spotipy_exceptions.SpotifyException as e:
+            if hasattr(e, 'http_status') and e.http_status == 404:
+                raise spotify_exception.SpotifyResourceNotFoundException(f"Track not found: {track_id}")
+            raise spotify_exception.SpotifyException(f"Failed to retrieve track: {str(e)}")
         except Exception as e:
             raise spotify_exception.SpotifyException(f"Failed to retrieve track: {str(e)}")
 
