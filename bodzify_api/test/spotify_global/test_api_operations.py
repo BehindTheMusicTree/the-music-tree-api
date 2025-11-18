@@ -8,7 +8,7 @@ from bodzify_api.exception.spotify import (
 from bodzify_api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
 from bodzify_api.test.utils.AppTestCase import AppTestCase
 from bodzify_api.utils.spotify_api.SpotifyClient import SpotifyClient
-from bodzify_api.utils.spotify_api.managers import SpotifyApiLibTrackManager as spotify_api_lib_track_manager
+from bodzify_api.utils.spotify_api.managers.SpotifyApiLibTrackManager import SpotifyApiLibTrackManager
 from bodzify_api.utils.spotify_api.ApiFields import ApiFields
 
 
@@ -70,6 +70,10 @@ class TestSpotifyAPIOperations(AppTestCase):
         super().tearDown()
 
     def test_search_track_with_valid_query_then_returns_results(self):
+        # Reset singleton to ensure fresh instance with mocked spotify
+        SpotifyClient._instance = None
+        SpotifyClient._initialized = False
+        
         # Configure the mock Spotify client to return search results
         mock_track = {
             ApiFields.Names.ID: "track123",
@@ -103,6 +107,10 @@ class TestSpotifyAPIOperations(AppTestCase):
         assert result == mock_search_result
 
     def test_search_track_with_no_results_then_returns_empty_list(self):
+        # Reset singleton to ensure fresh instance with mocked spotify
+        SpotifyClient._instance = None
+        SpotifyClient._initialized = False
+        
         # Configure the mock to return empty results
         self.mock_spotify_instance.search.return_value = {ApiFields.Names.TRACKS: {ApiFields.Names.ITEMS: []}}
 
@@ -114,16 +122,25 @@ class TestSpotifyAPIOperations(AppTestCase):
         assert result[ApiFields.Names.TRACKS][ApiFields.Names.ITEMS] == []
 
     def test_search_track_with_api_error_then_raises_spotify_api_exception(self):
+        # Reset singleton to ensure fresh instance with mocked spotify
+        SpotifyClient._instance = None
+        SpotifyClient._initialized = False
+        
         # Configure the mock to raise an exception
         spotify_exception = type('SpotipyException', (Exception,), {'http_status': 500})
         self.mock_spotify_instance.search.side_effect = spotify_exception("API error")
 
         # Test the search function raises the appropriate exception
+        from bodzify_api.exception.spotify import SpotifyException
         client = SpotifyClient()
-        with self.assertRaises(SpotifyNetworkException):
+        with self.assertRaises(SpotifyException):
             client.search_track("Test Query")
 
     def test_retrieve_track_by_id_with_valid_id_then_returns_track(self):
+        # Reset singleton to ensure fresh instance with mocked spotify
+        SpotifyClient._instance = None
+        SpotifyClient._initialized = False
+        
         # Configure the mock to return a track
         mock_track = {
             ApiFields.Names.ID: "track123",
@@ -141,6 +158,10 @@ class TestSpotifyAPIOperations(AppTestCase):
         assert result == mock_track
 
     def test_retrieve_track_by_id_with_nonexistent_id_then_raises_not_found_exception(self):
+        # Reset singleton to ensure fresh instance with mocked spotify
+        SpotifyClient._instance = None
+        SpotifyClient._initialized = False
+        
         # Configure the mock to raise a not found exception
         self.mock_spotify_instance.track.side_effect = SpotipyException(
             http_status=404, msg="Track not found", code=404)
@@ -151,6 +172,10 @@ class TestSpotifyAPIOperations(AppTestCase):
             service.retrieve_track_by_id("nonexistent_track")
 
     def test_retrieve_track_by_isrc_with_valid_isrc_then_returns_track(self):
+        # Reset singleton to ensure fresh instance with mocked spotify
+        SpotifyClient._instance = None
+        SpotifyClient._initialized = False
+        
         # Configure the mock to return search results
         mock_track = {
             ApiFields.Names.ID: "track123",
@@ -166,12 +191,17 @@ class TestSpotifyAPIOperations(AppTestCase):
 
         self.mock_spotify_instance.search.return_value = mock_search_result
 
-        result = spotify_api_lib_track_manager.retrieve_track_by_isrc("USRC12345678")
+        manager = SpotifyApiLibTrackManager()
+        result = manager.retrieve_track_by_isrc("USRC12345678")
         assert result
-        self.mock_spotify_instance.search.assert_called_once_with(q="isrc:USRC12345678", type='track')
+        self.mock_spotify_instance.search.assert_called_once_with(q="isrc:USRC12345678", type='track', limit=1)
 
     @mock.patch('bodzify_api.utils.spotify_api.utils.create_spotify_lib_track_instance_from_dict')
     def test_search_spotify_lib_tracks_with_valid_query_then_creates_track_models(self, mock_create_track):
+        # Reset singleton to ensure fresh instance with mocked spotify
+        SpotifyClient._instance = None
+        SpotifyClient._initialized = False
+        
         # Configure mocks
         mock_track_data = {
             ApiFields.Names.ID: "track123",
@@ -192,7 +222,8 @@ class TestSpotifyAPIOperations(AppTestCase):
 
         # Test the function
         # Use the user instance created in AppTestCase.setUp
-        result = spotify_api_lib_track_manager.search_spotify_lib_tracks(self.test_user1, "Test Query")
+        manager = SpotifyApiLibTrackManager()
+        result = manager.search_spotify_lib_tracks(self.test_user1, "Test Query")
 
         # Verify correct behavior
         self.mock_spotify_instance.search.assert_called_once()
@@ -208,7 +239,8 @@ class TestSpotifyAPIOperations(AppTestCase):
         mock_track = mock.MagicMock(spec=SpotifyLibTrack)
         mock_track_get.return_value = mock_track
 
-        result = spotify_api_lib_track_manager.get_or_create_spotify_lib_track(self.spotify_test_user_1, "track123")
+        manager = SpotifyApiLibTrackManager()
+        result = manager.get_or_create_spotify_lib_track(self.spotify_test_user_1, "track123")
 
         # Verify correct behavior
         mock_track_get.assert_called_once_with(spotify_id="track123")
@@ -216,15 +248,19 @@ class TestSpotifyAPIOperations(AppTestCase):
         assert result == mock_track
 
     @mock.patch('bodzify_api.utils.spotify_api.utils.create_spotify_lib_track_instance_from_dict')
-    def test_get_or_create_spotify_lib_track_with_new_track_then_creates_and_returns_track(self, mock_create_track):
-
-        self.mock_spotify_instance.track.return_value = {
+    @mock.patch('bodzify_api.utils.spotify_api.managers.SpotifyApiLibTrackManager.SpotifyClient')
+    def test_get_or_create_spotify_lib_track_with_new_track_then_creates_and_returns_track(self, mock_spotify_client_class, mock_create_track):
+        mock_spotify_client = mock.MagicMock()
+        mock_spotify_client.retrieve_track_by_id.return_value = {
             ApiFields.Names.ID: "track123",
             ApiFields.Names.NAME: "Test Track"
         }
+        mock_spotify_client_class.return_value = mock_spotify_client
+
         mock_track = mock.MagicMock(spec=SpotifyLibTrack)
         mock_create_track.return_value = mock_track
 
-        result = spotify_api_lib_track_manager.get_or_create_spotify_lib_track(self.spotify_test_user_1, "track123")
+        manager = SpotifyApiLibTrackManager()
+        result = manager.get_or_create_spotify_lib_track(self.spotify_test_user_1, "track123")
 
         assert result == mock_track

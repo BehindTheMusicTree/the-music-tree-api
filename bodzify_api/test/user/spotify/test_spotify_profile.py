@@ -11,9 +11,11 @@ class TestSpotifyProfile(AppTestCase):
     def setUp(self):
         super().setUp()
         self.test_user1 = SpotifyUser.objects.create_instance(
-            username='spotify_user1', password='spotify_user1', email='spotify@user1.com', is_test_user=True)
+            username='spotify_user1', password='spotify_user1', email='spotify@user1.com', is_test_user=True,
+            spotify_id='spotify_user1_id')
         self.test_user2 = SpotifyUser.objects.create_instance(
-            username='spotify_user2', password='spotify_user2', email='spotify@user2.com', is_test_user=True)
+            username='spotify_user2', password='spotify_user2', email='spotify@user2.com', is_test_user=True,
+            spotify_id='spotify_user2_id')
         self._login_as_test_user1()
 
     @mock.patch('bodzify_api.utils.spotify_api.oauth.spotipy.Spotify')
