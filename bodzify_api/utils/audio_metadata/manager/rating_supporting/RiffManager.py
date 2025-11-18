@@ -164,7 +164,7 @@ class RiffManager(RatingSupportingMetadataManager):
                                 field_value = field_data.decode('utf-8', errors='ignore')
                                 # Split on null byte and take first part if exists
                                 field_value = field_value.split('\x00')[0].strip()
-                                if field_id in self.RiffTagKey and field_value:
+                                if field_id in [tag.value for tag in self.RiffTagKey] and field_value:
                                     info_tags[field_id] = field_value
                             except UnicodeDecodeError:
                                 pass
@@ -214,7 +214,7 @@ class RiffManager(RatingSupportingMetadataManager):
         if hasattr(raw_mutagen_metadata_wav, 'info'):
             info_tags = getattr(raw_mutagen_metadata_wav, 'info')
             for key, value in info_tags.items():
-                if key in self.RiffTagKey:
+                if key in [tag.value for tag in self.RiffTagKey]:
                     raw_metadata_dict[key] = value
 
         return raw_metadata_dict
