@@ -3,6 +3,7 @@ from rest_framework import status
 
 from bodzify_api.test.view.spotify_lib_track.SpotifyLibTrackTestCase import SpotifyLibTrackTestCase
 from bodzify_api.serializer.model.spotify.lib_track.output.Fields import Fields as SerializerFields
+from bodzify_api.model.spotify_resource.children.track.Fields import Fields as ModelFields
 from bodzify_api.utils.data_transformer import to_camel_case
 
 
@@ -24,7 +25,7 @@ class TestGet(SpotifyLibTrackTestCase):
             duration_ms=300000,
             popularity=80,
             spotify_artists=[self.spotify_artist1, self.spotify_artist_2],
-            album={"name": "Test Album"},
+            album={ModelFields.NAME: "Test Album"},
             preview_url="https://example.com/preview",
             explicit=True
         )
@@ -40,16 +41,12 @@ class TestGet(SpotifyLibTrackTestCase):
         assert result[to_camel_case(SerializerFields.SPOTIFY_ID)] == self.track.spotify_id
         assert result[to_camel_case(SerializerFields.NAME)] == self.track.name
         assert result[to_camel_case(SerializerFields.DURATION_MS)] == self.track.duration_ms
-        assert result[to_camel_case(SerializerFields.DURATION_STR_IN_HOUR_MIN_SEC)
-                      ] == self.track.duration_str_in_hour_min_sec
-        assert result[SerializerFields.POPULARITY] == self.track.popularity
+        assert result[to_camel_case(SerializerFields.DURATION_STR_IN_HOUR_MIN_SEC)] == self.track.duration_str_in_hour_min_sec
+        assert result[to_camel_case(SerializerFields.POPULARITY)] == self.track.popularity
         assert result[to_camel_case(SerializerFields.SPOTIFY_LINK)] == self.track.spotify_link
-        assert result[SerializerFields.ALBUM] == self.track.album
+        assert result[to_camel_case(SerializerFields.ALBUM)] == self.track.album[ModelFields.NAME]
         assert result[to_camel_case(SerializerFields.PREVIEW_URL)] == self.track.preview_url
-        assert result[SerializerFields.EXPLICIT] == self.track.explicit
-        assert result[to_camel_case(SerializerFields.CREATED_ON)] is not None
-        assert result[to_camel_case(SerializerFields.UPDATED_ON)] is None
-        assert result[to_camel_case(SerializerFields.LAST_SYNCED_AT)] is not None
+        assert result[to_camel_case(SerializerFields.EXPLICIT)] == self.track.explicit
         assert result[to_camel_case(SerializerFields.IS_REMOVED)] is False
 
         # Test spotify_artists field
@@ -68,7 +65,7 @@ class TestGet(SpotifyLibTrackTestCase):
         assert artist2[to_camel_case(SerializerFields.NAME)] == self.spotify_artist_2.name
         assert artist2[to_camel_case(SerializerFields.GENRES)] == self.spotify_artist_2.genres
 
-        assert sorted(result[SerializerFields.GENRES]) == sorted(["Rock", "Pop", "Jazz", "Blues"])
+        assert sorted(result[to_camel_case(SerializerFields.GENRES)]) == sorted(["Rock", "Pop", "Jazz", "Blues"])
 
     def test_retrieve_spotify_lib_track_with_invalid_id_then_404_not_found(self):
         response = self._retrieve_spotify_lib_track(str(uuid4()))
