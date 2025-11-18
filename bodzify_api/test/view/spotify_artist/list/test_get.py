@@ -2,6 +2,7 @@ from rest_framework import status
 
 from bodzify_api.model.spotify_resource.children.artist.Fields import Fields
 from bodzify_api.test.view.spotify_artist.SpotifyArtistTestCase import SpotifyArtistTestCase
+from bodzify_api.utils.data_transformer import to_camel_case
 
 
 class TestGet(SpotifyArtistTestCase):
@@ -29,20 +30,20 @@ class TestGet(SpotifyArtistTestCase):
         artist1_result = self.results[0]
         assert artist1_result[Fields.NAME] == self.artist1.name
         assert artist1_result[Fields.POPULARITY] == self.artist1.popularity
-        assert artist1_result[Fields.SPOTIFY_LINK] == self.artist1.spotify_link
+        assert artist1_result[to_camel_case(Fields.SPOTIFY_LINK)] == self.artist1.spotify_link
         assert Fields.GENRES in artist1_result
         assert artist1_result[Fields.GENRES] == self.artist1.genres
         assert artist1_result[Fields.IMAGES] == self.artist1.images
-        assert artist1_result[Fields.CREATED_ON] is not None
-        assert artist1_result[Fields.UPDATED_ON] is not None
+        assert artist1_result[to_camel_case(Fields.CREATED_ON)] is not None
+        assert artist1_result[to_camel_case(Fields.UPDATED_ON)] is not None
 
         # Test second artist
         artist2_result = self.results[1]
         assert artist2_result[Fields.NAME] == self.artist2.name
         assert artist2_result[Fields.POPULARITY] == self.artist2.popularity
-        assert artist2_result[Fields.SPOTIFY_LINK] == self.artist2.spotify_link
+        assert artist2_result[to_camel_case(Fields.SPOTIFY_LINK)] == self.artist2.spotify_link
         assert Fields.GENRES in artist2_result
         assert artist2_result[Fields.GENRES] == self.artist2.genres
         assert artist2_result[Fields.IMAGES] == self.artist2.images
-        assert artist2_result[Fields.CREATED_ON] is not None
-        assert artist2_result[Fields.UPDATED_ON] is not None
+        assert artist2_result[to_camel_case(Fields.CREATED_ON)] is not None
+        assert artist2_result[to_camel_case(Fields.UPDATED_ON)] is not None
