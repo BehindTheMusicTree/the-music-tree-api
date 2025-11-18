@@ -53,56 +53,10 @@ def pytest_runtest_makereport(item, call):
             print(f"Output: {call.excinfo}")
 
 
-def _check_disk_space(min_free_gb: float = 0.5) -> bool:
-    """Check if there's enough disk space available.
-    
-    Args:
-        min_free_gb: Minimum free space required in GB (default: 0.5GB)
-        
-    Returns:
-        True if enough space is available, False otherwise
-    """
-    try:
-        stat = shutil.disk_usage(settings.LIBRARIES_DIR)
-        free_gb = stat.free / (1024**3)
-        return free_gb >= min_free_gb
-    except Exception:
-        return True
-
-
-def _test_requires_file_operations(item) -> bool:
-    """Check if a test requires file operations based on its path.
-    
-    Args:
-        item: The pytest test item
-        
-    Returns:
-        True if the test likely requires file operations
-    """
-    test_path = str(item.fspath)
-    file_operation_paths = [
-        'uploaded_track',
-        'test_lib_tracks',
-    ]
-    return any(path in test_path for path in file_operation_paths)
-
-
 @pytest.hookimpl(tryfirst=True)
 def pytest_runtest_setup(item):
     if critical_test_failed:
         pytest.skip("A critical test has failed. Skipping the rest of the tests..")
-    
-    if _test_requires_file_operations(item) and not _check_disk_space():
-        try:
-            stat = shutil.disk_usage(settings.LIBRARIES_DIR)
-            free_gb = stat.free / (1024**3)
-            pytest.skip(
-                f"Insufficient disk space. Free space: {free_gb:.2f}GB. "
-                f"Tests requiring file operations are skipped when free space is below 0.5GB. "
-                f"Please free up disk space to run these tests."
-            )
-        except Exception:
-            pass
 
 
 def pytest_collection_modifyitems(config, items):
