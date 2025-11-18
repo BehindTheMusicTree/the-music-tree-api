@@ -21,8 +21,7 @@ class TestCase(SpotifyLibTrackTestCase, NotNullableFreeCharFilterTestCase):
 
         response = self._list_spotify_lib_tracks(name='')
 
-        assert response.status_code == status.HTTP_200_OK
-        assert self.results_overall_total == 2
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     def test_contains_in_another_case_then_results(self):
         track = self.model_fixture_factory.create_spotify_lib_track(name="LIfe")
