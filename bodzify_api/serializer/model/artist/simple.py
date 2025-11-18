@@ -22,7 +22,7 @@ class Fields:
 class ArtistSimpleSerializer(serializers.ModelSerializer):
     albums = AlbumMinimumSerializer(many=True)
     uploaded_tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
-    uploaded_tracks_archived_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_ARCHIVED_COUNT_INTERNAL)
+    uploaded_tracks_archived_count = serializers.IntegerField()
 
     class Meta:
         model = Artist
