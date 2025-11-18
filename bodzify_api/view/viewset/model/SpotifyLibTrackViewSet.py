@@ -30,7 +30,8 @@ class SpotifyLibTrackViewSet(AppModelViewSet[SpotifyLibTrack]):
         if not self.request.user.is_authenticated:
             return super().get_queryset().none()
         queryset = super().get_queryset()
-        if 'is_removed' not in self.request.query_params:
+        is_removed_param = self.request.query_params.get('is_removed')
+        if is_removed_param is None:
             queryset = queryset.filter(**{Fields.IS_REMOVED: False})
         return queryset.distinct()
 
