@@ -8,6 +8,9 @@ class SpotifyArtistTestCase(AppTestCase[SpotifyArtist]):
     model_class = SpotifyArtist
     saved_object: SpotifyArtist
 
+    def _set_single_result(self, response):
+        self.result = response.json()
+
     def _list_spotify_artists(self, **params):
         return self.api_client.get(
             path=reverse('spotify-artist-list'),
@@ -17,6 +20,6 @@ class SpotifyArtistTestCase(AppTestCase[SpotifyArtist]):
 
     def _retrieve_spotify_artist(self, spotify_id: str):
         return self.api_client.get(
-            path=reverse('spotify-artist-detail', kwargs={'spotify_id': spotify_id}),
-            handle_response=self._set_results
+            path=reverse('spotify-artist-detail', kwargs={'pk': spotify_id}),
+            handle_response=self._set_single_result
         )

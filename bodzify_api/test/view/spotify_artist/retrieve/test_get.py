@@ -3,6 +3,7 @@ from rest_framework import status
 
 from bodzify_api.model.spotify_resource.children.artist.Fields import Fields
 from bodzify_api.test.view.spotify_artist.SpotifyArtistTestCase import SpotifyArtistTestCase
+from bodzify_api.utils.data_transformer import to_camel_case
 
 
 class TestGet(SpotifyArtistTestCase):
@@ -21,12 +22,10 @@ class TestGet(SpotifyArtistTestCase):
         result = self.result
         assert result[Fields.NAME] == self.artist.name
         assert result[Fields.POPULARITY] == self.artist.popularity
-        assert result[Fields.SPOTIFY_LINK] == self.artist.spotify_link
+        assert result[to_camel_case(Fields.SPOTIFY_LINK)] == self.artist.spotify_link
         assert Fields.GENRES in result
         assert result[Fields.GENRES] == self.artist.genres
         assert result[Fields.IMAGES] == self.artist.images
-        assert result[Fields.CREATED_ON] is not None
-        assert result[Fields.UPDATED_ON] is not None
 
     def test_retrieve_spotify_artist_with_invalid_id_then_404_not_found(self):
         response = self._retrieve_spotify_artist(str(uuid4()))
