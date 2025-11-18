@@ -30,8 +30,7 @@ class TestCase(UploadedTrackTestCase):
         expected_musicbrainz_recording_id = "9f3c3b61-41a6-4bb9-a49c-33606f536784"
         if (track_musicbrainz_recording is None
                 or track_musicbrainz_recording.musicbrainz_id != expected_musicbrainz_recording_id):
-            warnings.warn(f"The expected MusicBrainz recording id {
-                track_musicbrainz_recording} is not the one expected {expected_musicbrainz_recording_id}")
+            warnings.warn(f"The expected MusicBrainz recording id {track_musicbrainz_recording} is not the one expected {expected_musicbrainz_recording_id}")
 
     def test_different_format_but_same_musicbrainz_recording(self):
         response = self._post_uploaded_track(
