@@ -8,8 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- Replace audio metadata management module with audiometa-python 0.2.4
-- Upgrade mutagen to 1.46.0 (from 1.45.0 required by audiometa-python)
+- Replace audio metadata management module with audiometa-python 0.2.6
 - Note: psycopg2-binary 2.9.5 is not compatible with Python 3.13; requires Python 3.12 or earlier, or a newer version of psycopg2-binary
 
 ## [v0.2.0] - 2025-04-03
