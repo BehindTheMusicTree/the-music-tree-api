@@ -204,7 +204,7 @@ All adapter functions handle `FileCorruptedError` exceptions from the `audiometa
 **Note:** The adapter only handles `FileCorruptedError` (the library's custom exception for corrupted files). Other exceptions may also be raised and will propagate:
 
 - **Standard Python exceptions**: `FileNotFoundError`, `PermissionError`, `OSError`, `ValueError`, etc. may be raised from file operations
-- **Mutagen exceptions**: The `audiometa` library uses `mutagen` internally. Based on the library's source code (v0.2.6), all mutagen exceptions are properly caught and converted to the library's own exception types (e.g., `FileCorruptedError`, `DurationNotFoundError`, `FileByteMismatchError`). This includes comprehensive exception handling for FLAC operations (duration reading and MD5 checksum fixing) that was completed in v0.2.6. Standard I/O exceptions (IOError, OSError, PermissionError) are re-raised as-is, while all other exceptions (including mutagen-specific ones) are converted to `FileCorruptedError`
+- **Library exceptions**: The `audiometa` library converts all internal exceptions (including those from underlying dependencies) to its own exception types (e.g., `FileCorruptedError`, `DurationNotFoundError`, `FileByteMismatchError`). Standard I/O exceptions (IOError, OSError, PermissionError) are re-raised as-is, while all other exceptions are converted to `FileCorruptedError`
 - **Other exceptions**: Any other exceptions raised by the library or underlying dependencies will propagate unchanged
 
 Callers should be prepared to handle these exceptions as appropriate for their use case.
