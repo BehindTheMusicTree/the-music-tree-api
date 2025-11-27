@@ -1,5 +1,9 @@
 # Bodzify API
 
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue.svg)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/django-5.0-green.svg)](https://www.djangoproject.com/)
+
 Bodzify API is an online platform similar to iTunes, designed for managing and interacting with music tracks. It offers a range of features to help you organize, tag, and rate your music, as well as create automatic hierarchical genre playlists.
 
 ## Features
@@ -22,6 +26,7 @@ Bodzify API is an online platform similar to iTunes, designed for managing and i
    ```bash
    git clone https://github.com/mignot/bodzify-api-django.git
    cd bodzify-api
+   ```
 
 ### Environment Variables
 You need to set up several environment variables for development, build, and run. Below are the required variables and 
@@ -78,8 +83,12 @@ TODO
 ## API Endpoints
 TODO
 
+## Contributing
+
+Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
 ## License
-This project is licensed under the MIT License.
+This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
 
 ## Acknowledgements
 This project use acoustid to fingerprint the audio files in order to identify each track.
