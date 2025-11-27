@@ -1,0 +1,61 @@
+title: "[Q&A]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ask your question here! The community and maintainers are here to help.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What would you like to know?
+      placeholder: Your question here...
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Provide context about what you're trying to achieve
+      placeholder: |
+        I'm trying to...
+        I've already tried...
+        I'm using...
+    validations:
+      required: false
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment (if applicable)
+      description: Python version, Django version, OS, etc.
+      placeholder: |
+        - Python: 3.11
+        - Django: 5.0.3
+        - OS: macOS
+    validations:
+      required: false
+
+  - type: textarea
+    id: error-messages
+    attributes:
+      label: Error Messages or Logs (if applicable)
+      description: Paste any error messages or relevant logs
+      placeholder: Paste error messages here...
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: searched
+    attributes:
+      label: I have searched existing discussions and issues
+      description: Please confirm you've checked for similar questions
+      options:
+        - label: I have searched existing discussions
+          required: true
+        - label: I have searched existing issues
+          required: true
+
