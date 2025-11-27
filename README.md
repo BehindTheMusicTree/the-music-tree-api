@@ -15,67 +15,13 @@ Bodzify API is an online platform similar to iTunes, designed for managing and i
 
 ## Getting Started
 
-### Prerequisites
+For detailed setup and installation instructions, please see the [Contributing Guidelines](CONTRIBUTING.md#1-environment-setup).
 
-- Docker
-- Docker Compose
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/mignot/bodzify-api-django.git
-   cd bodzify-api
-   ```
-
-### Environment Variables
-You need to set up several environment variables for development, build, and run. Below are the required variables and 
-examples of how to set them.
-
-#### Development
-Create a copy of the file env/dev/.env.dev.template here: env/.env and set the values.
-
-#### Build
-The docker build requires the following environment variables:
-- `APP_NAME`
-- `APP_VERSION`
-- `TMP_UPLOADED_FILES_EXTERNAL`
-- `MEDIA_DIR_EXTERNAL`
-- `LIBRARIES_DIR_NAME`
-- `STATIC_FILES_EXTERNAL`
-- `STATIC_FILES_INTERNAL`
-- `DJANGO_LOG_DIR_EXTERNAL`
-- `DJANGO_LOG_GENERAL_FILENAME`
-- `DJANGO_LOG_INFO_FILENAME`
-- `DJANGO_LOG_REQUESTS_FILENAME`
-- `DJANGO_LOG_REQUESTS_DEBUG_FILENAME`
-- `DJANGO_LOG_EXCEPTIONS_FILENAME`
-- `DJANGO_LOG_DJANGO_FILENAME`
-- `DJANGO_LOG_APP_FILENAME`
-- `GUNICORN_LOG_DIR`
-- `GUNICORN_LOG_ERROR_FILENAME`
-- `GUNICORN_LOG_ACCESS_FILENAME`
-
-#### Running the container
-Running the container requires the following environment variables:
-- `DJANGO_SECRET_KEY`
-- `ACOUSTID_API_KEY`
-- `CSRF_TRUSTED_ORIGINS`
-- `ALLOWED_HOSTS`
-- `DB_CONTAINER_NAME`
-- `DB_PORT=5432`
-- `DB_BODZIFY_API_DB_NAME`
-- `DB_BODZIFY_API_USERNAME`
-- `DB_BODZIFY_API_USER_PASSWORD`
-- `AFP_CONTAINER_NAME` (AFP meaning Audio FingerPrinter)
-- `AFP_PORT`
-- `AFP_POST_ENDPOINT`
-
-## Database Requirement
-The Bodzify API requires a database to function. It has been tested with PostgreSQL, and it is recommended to use PostgreSQL for the best compatibility and performance.
-
-## Audio Meta Analyse Requirement
-For audio meta analysis, the Bodzify API requires an app called Audio Fingerprinter. You can find the Audio Fingerprinter app on GitHub at the following link: [Audio Fingerprinter](https://github.com/Bodzify/bodzify-audio-fingerprinter-flask)
+**Quick Start:**
+- Python 3.14
+- Docker and Docker Compose
+- PostgreSQL database
+- See [CONTRIBUTING.md](CONTRIBUTING.md) for full setup instructions
 
 ## Usage
 TODO
