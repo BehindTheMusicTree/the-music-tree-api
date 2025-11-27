@@ -122,39 +122,128 @@ cd bodzify-api-django
 
 ### 1. Environment Setup
 
-Ensure you're using:
+#### Prerequisites
 
 - **Python 3.14**
+- **Docker** and **Docker Compose** - Required for running the PostgreSQL database and Audio Fingerprinter containers
 
-- Virtual environment with dependencies:
+#### Installation
 
-  ```bash
-  python -m venv .venv
-  source .venv/bin/activate  # (Linux/macOS)
-  .venv\Scripts\activate     # (Windows)
-  pip install -r requirements.txt
-  ```
+1. Clone the repository:
 
-- **PostgreSQL database** - The project requires PostgreSQL. You can use Docker Compose or a local PostgreSQL installation.
+   ```bash
+   git clone https://github.com/mignot/bodzify-api-django.git
+   cd bodzify-api-django
+   ```
 
-- **Environment variables** - Create a copy of `env/dev/.env.dev.template` as `env/.env` and set the required values. See [README.md](README.md) for details on required environment variables.
+2. Set up environment variables:
 
-- **System dependencies** (required for testing and development):
+   Create a copy of the file `env/dev/.env.dev.template` as `env/.env` and set the required values. See the [Environment Variables](#environment-variables) section below for details on all required variables.
 
-  To ensure your local environment matches CI exactly, use the automated installation scripts:
+   **Note:** Environment variables are required for filesystem setup and running containers in the following steps.
 
-  ```bash
-  # Ubuntu/Linux
-  ./scripts/install-dependencies.sh
+3. Install system dependencies:
 
-  # macOS
-  # Install dependencies via Homebrew or use the Linux script as reference
-  ```
+   ```bash
+   # Ubuntu/Linux
+   sudo bash scripts/install-dependencies.sh
 
-  **Required tools:**
-  - PostgreSQL client libraries
-  - Audio processing tools (if working with audio features)
-  - Docker and Docker Compose (for running database and services)
+   # macOS
+   # Install dependencies via Homebrew or use the Linux script as reference
+   ```
+
+   This installs required system tools: `flac`, `ffmpeg`, `libchromaprint-tools`, `jq`, `postgresql-client`
+
+4. Create and activate a virtual environment:
+
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # (Linux/macOS)
+   .venv\Scripts\activate     # (Windows)
+   ```
+
+5. Install Python dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+6. Set up filesystem:
+
+   ```bash
+   bash scripts/setup-filesystem.sh
+   ```
+
+   This creates necessary directories for:
+   - Static files
+   - Django logs
+   - Gunicorn logs (if app is exposed)
+   - Media files and libraries
+   - Temporary uploaded files
+
+7. Run database and Audio Fingerprinter containers:
+
+   ```bash
+   bash scripts/run-db-and-afp-containers.sh
+   ```
+
+   This starts the required Docker containers:
+   - PostgreSQL database container
+   - Audio Fingerprinter (AFP) container
+
+   **Note:** Make sure Docker is running before running this script.
+
+#### Environment Variables
+
+You need to set up several environment variables for development, build, and run.
+
+**Development:**
+Create a copy of the file `env/dev/.env.dev.template` as `env/.env` and set the values.
+
+**Build:**
+The docker build requires the following environment variables:
+- `APP_NAME`
+- `APP_VERSION`
+- `TMP_UPLOADED_FILES_EXTERNAL`
+- `MEDIA_DIR_EXTERNAL`
+- `LIBRARIES_DIR_NAME`
+- `STATIC_FILES_EXTERNAL`
+- `STATIC_FILES_INTERNAL`
+- `DJANGO_LOG_DIR_EXTERNAL`
+- `DJANGO_LOG_GENERAL_FILENAME`
+- `DJANGO_LOG_INFO_FILENAME`
+- `DJANGO_LOG_REQUESTS_FILENAME`
+- `DJANGO_LOG_REQUESTS_DEBUG_FILENAME`
+- `DJANGO_LOG_EXCEPTIONS_FILENAME`
+- `DJANGO_LOG_DJANGO_FILENAME`
+- `DJANGO_LOG_APP_FILENAME`
+- `GUNICORN_LOG_DIR`
+- `GUNICORN_LOG_ERROR_FILENAME`
+- `GUNICORN_LOG_ACCESS_FILENAME`
+
+**Running the container:**
+Running the container requires the following environment variables:
+- `DJANGO_SECRET_KEY`
+- `ACOUSTID_API_KEY`
+- `CSRF_TRUSTED_ORIGINS`
+- `ALLOWED_HOSTS`
+- `DB_CONTAINER_NAME`
+- `DB_PORT=5432`
+- `DB_BODZIFY_API_DB_NAME`
+- `DB_BODZIFY_API_USERNAME`
+- `DB_BODZIFY_API_USER_PASSWORD`
+- `AFP_CONTAINER_NAME` (AFP meaning Audio FingerPrinter)
+- `AFP_PORT`
+- `AFP_POST_ENDPOINT`
+
+#### Database Requirement
+
+The Bodzify API requires a PostgreSQL database to function. The database runs in a Docker container, which is started by the `run-db-and-afp-containers.sh` script. This ensures a consistent development environment across all contributors.
+
+#### Audio Meta Analysis Requirement
+
+For audio meta analysis, the Bodzify API requires an app called Audio Fingerprinter. You can find the Audio Fingerprinter app on GitHub at the following link: [Audio Fingerprinter](https://github.com/Bodzify/bodzify-audio-fingerprinter-flask)
+
 
 ### 2. Branching
 
