@@ -22,6 +22,7 @@ This project is currently maintained by a solo developer, but contributions, sug
   - [7. Releasing _(For Maintainers)_](#7-releasing-for-maintainers)
 - [🪪 License & Attribution](#-license--attribution)
 - [📜 Code of Conduct](#-code-of-conduct)
+- [📋 TODO List](#-todo-list)
 - [🌍 Contact & Discussions](#-contact--discussions)
 
 ## Contributors vs Maintainers
@@ -336,14 +337,7 @@ We follow **strict Git Flow** with the following branch structure:
 
 ### 3. Developing
 
-See [DEVELOPMENT.md](DEVELOPMENT.md) for comprehensive coding standards and best practices. Key points:
-
-- One class per file
-- Use field name constants from `Fields.py` files
-- Follow Django best practices
-- Use type hints where appropriate
-- Use `AppValidationException` instead of DRF validation exceptions
-- Private resource filtering includes user in query
+See [DEVELOPMENT.md](DEVELOPMENT.md) for comprehensive coding standards and best practices.
 
 ### 4. Testing
 
@@ -713,6 +707,21 @@ You retain authorship of your code; the project retains redistribution rights un
 This project adheres to a Code of Conduct to ensure a welcoming and inclusive environment for all contributors. Please read and follow our [Code of Conduct](CODE_OF_CONDUCT.md) when participating in this project.
 
 Our Code of Conduct is based on the [Contributor Covenant](https://www.contributor-covenant.org), version 2.1. It outlines our expectations for behavior, unacceptable behavior, and how to report violations.
+
+## 📋 TODO List
+
+This project maintains a [TODO list](TODO.md) that tracks future work, improvements, and testing tasks. The TODO list is organized by priority and category:
+
+- **Features** - New functionality and enhancements
+- **Testing & Quality** - Test coverage, quality improvements, and validation
+- **Infrastructure** - CI/CD, deployment, monitoring, and technical improvements
+- **Documentation** - Documentation improvements and guides
+
+**Important Notes**:
+- **Maintainers are responsible** - Project maintainers are responsible for maintaining and updating the TODO list
+- **Contributors should NOT modify it** - Contributors should not edit the TODO list directly
+- **Suggest tasks via issues** - If you'd like to suggest a new task or work on an existing one, please open a GitHub issue first for discussion
+- **Updated during releases** - Maintainers align and update the TODO list when releasing new versions based on project priorities, completed work, and community feedback
 
 ## 🌍 Contact & Discussions
 
