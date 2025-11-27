@@ -1,0 +1,157 @@
+name: Bug Report
+description: Report a bug or unexpected behavior in the API
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug! Please fill out the sections below to help us understand and fix the issue.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of the API is affected?
+      options:
+        - Track
+        - Artist
+        - Album
+        - Genre
+        - Tag
+        - Playlist
+        - Play
+        - User
+        - Spotify Integration
+        - MusicBrainz Integration
+        - Audio Fingerprinting
+        - Filtering/Search
+        - Middleware
+        - Serializer
+        - Model
+        - View/API Endpoint
+        - Exception Handling
+        - Utils
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of the bug
+      placeholder: Describe what the bug is...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps-to-reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: Steps to reproduce the behavior
+      placeholder: |
+        1. Go to '...'
+        2. Call endpoint '...'
+        3. Send payload '...'
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen
+      placeholder: Describe what should have happened...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: Actual Behavior
+      description: What actually happened
+      placeholder: Describe what actually happened...
+    validations:
+      required: true
+
+  - type: textarea
+    id: error-response
+    attributes:
+      label: Error Response (if applicable)
+      description: Paste the error response from the API, including status code and error details
+      placeholder: |
+        Status Code: 400
+        {
+          "code": 2001,
+          "message": "Validation error",
+          "details": { ... }
+        }
+    validations:
+      required: false
+
+  - type: textarea
+    id: request-details
+    attributes:
+      label: Request Details
+      description: Include request method, endpoint, headers, and payload (remove sensitive data)
+      placeholder: |
+        Method: POST
+        Endpoint: /api/tracks/
+        Headers:
+          Authorization: Bearer <token>
+          Content-Type: application/json
+        Payload:
+        {
+          "name": "...",
+          ...
+        }
+    validations:
+      required: false
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is this bug?
+      options:
+        - Critical (API is down or data loss)
+        - High (Major feature broken)
+        - Medium (Feature partially broken)
+        - Low (Minor issue, workaround exists)
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Environment details
+      placeholder: |
+        - Python version: 3.11
+        - Django version: 5.0.3
+        - Database: PostgreSQL 14
+        - OS: macOS/Linux/Windows
+        - API version: (if known)
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs
+      description: Paste any relevant logs or stack traces (remove sensitive data)
+      placeholder: Paste logs here...
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other context, screenshots, or information about the problem
+      placeholder: Add any other context about the problem here...
+    validations:
+      required: false
+
