@@ -1,0 +1,82 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# PR Description in Separate File
+
+When creating Pull Requests, always provide the PR description in a separate markdown file located in `.github/PRS/` directory, rather than writing it directly in the PR body. This directory is git-ignored to keep draft descriptions out of version control.
+
+## File Naming Convention
+
+Create PR description files with descriptive names using kebab-case:
+
+- `.github/PRS/separate-publishing-workflow.md`
+- `.github/PRS/fix-track-upload-size-limit.md`
+- `.github/PRS/add-flac-audio-support.md`
+
+## File Structure
+
+Each PR description file should follow the structure from `.github/pull_request_template.md`:
+
+- Description
+- Related Issue
+- Type of Change
+- Target Branch
+- Changes Made
+- Testing
+- Checklist
+- Breaking Changes (if applicable)
+- Screenshots (if applicable)
+- Additional Notes
+
+## Usage
+
+1. Create the PR description file in `.github/PRS/` with a descriptive name
+2. Write the full PR description in that file following the PR template structure
+3. When creating the GitHub PR, copy the content from the file
+4. The file remains local and git-ignored (not committed to version control)
+
+## Benefits
+
+- **Draft management**: Work on PR descriptions without committing them
+- **Organization**: Keep PR descriptions organized locally
+- **Template compliance**: Ensures PR descriptions follow the template structure
+- **Reusability**: Can reference the file when updating PR descriptions
+- **Privacy**: Draft descriptions stay local and aren't tracked in git
+
+## Example
+
+Instead of writing the PR description directly in GitHub:
+
+```markdown
+# Bad - Writing directly in GitHub PR
+## Description
+This PR adds...
+```
+
+Create a file:
+
+```markdown
+# Good - Separate file: .github/PRS/my-pr.md
+## Description
+This PR adds...
+```
+
+Then copy the content from the file when creating the GitHub PR.
+
+## File Location
+
+All PR description files should be placed in:
+```
+.github/PRS/
+```
+
+This directory is git-ignored, so files won't be committed to version control.
+
+## Important Notes
+
+- The `.github/PRS/` directory is git-ignored - files here are not tracked
+- Always copy content from the file when creating the PR (don't reference the file in the PR)
+- Delete the file after the PR is created if desired, or keep it for reference
+- The file serves as a local draft and documentation
