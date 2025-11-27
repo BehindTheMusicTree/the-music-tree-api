@@ -4,9 +4,9 @@ on:
   workflow_call:
   workflow_dispatch:
   push:
-    branches: [main, dev, feature/archive-tracks]
+    branches: [main, develop, feature/archive-tracks]
   pull_request:
-    branches: [main, dev]
+    branches: [main, develop]
 
 env:
   SSH_DESTINATION: ${{ secrets.TEST_SERVER_BODZIFY_USERNAME }}@${{ vars.DOMAIN_NAME }}
