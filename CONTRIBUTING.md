@@ -240,9 +240,9 @@ Running the container requires the following environment variables:
 
 The Bodzify API requires a PostgreSQL database to function. The database runs in a Docker container, which is started by the `run-db-and-afp-containers.sh` script. This ensures a consistent development environment across all contributors.
 
-#### Audio Meta Analysis Requirement
+#### Audio Fingerprinting Requirement
 
-For audio meta analysis, the Bodzify API requires an app called Audio Fingerprinter. You can find the Audio Fingerprinter app on GitHub at the following link: [Audio Fingerprinter](https://github.com/Bodzify/bodzify-audio-fingerprinter-flask)
+For audio fingerprinting, the Bodzify API requires an app called Audio Fingerprinter. You can find the Audio Fingerprinter app on GitHub at the following link: [Audio Fingerprinter](https://github.com/Bodzify/bodzify-audio-fingerprinter-flask)
 
 
 ### 2. Branching
@@ -336,13 +336,14 @@ We follow **strict Git Flow** with the following branch structure:
 
 ### 3. Developing
 
-See [code-style.md](code-style.md) for coding standards and best practices. Key points:
+See [DEVELOPMENT.md](DEVELOPMENT.md) for comprehensive coding standards and best practices. Key points:
 
 - One class per file
 - Use field name constants from `Fields.py` files
 - Follow Django best practices
 - Use type hints where appropriate
-- Follow the project's code style conventions
+- Use `AppValidationException` instead of DRF validation exceptions
+- Private resource filtering includes user in query
 
 ### 4. Testing
 
@@ -419,7 +420,7 @@ Before submitting a Pull Request, ensure the following checks are completed:
 
 **1. Code Quality**
 
-- ✅ Follow code style standards in [code-style.md](code-style.md)
+- ✅ Follow code style standards in [DEVELOPMENT.md](DEVELOPMENT.md)
 - ✅ Code follows Django best practices
 - ✅ Type hints are used where appropriate
 - ✅ No debug statements or commented-out code
