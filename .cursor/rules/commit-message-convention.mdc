@@ -1,0 +1,47 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Commit Message Convention
+
+All commit messages must follow the Conventional Commits format: `<type>(<scope>): <summary>`
+
+## Commit Types
+
+- `feat` - New feature
+- `fix` - Bug fix
+- `refactor` - Code restructuring
+- `docs` - Documentation update
+- `chore` - Maintenance / infrastructure
+- `test` - Adding or updating tests
+- `style` - Formatting / lint-only changes
+- `ci` - CI/CD pipeline changes
+
+## Format Rules
+
+1. Use imperative mood ("Add…", "Fix…", "Update…")
+2. Keep summary under ~70 characters
+3. Include issue/ticket IDs when applicable: `fix(#482): handle null values`
+4. Use lowercase for type and scope
+5. Scope is optional but recommended for component-specific changes
+
+## Examples
+
+Good:
+- `feat(track): add audio fingerprint support`
+- `fix(genre): handle duplicate genre names`
+- `docs: update API documentation`
+- `test(track): add test for track upload`
+- `chore: update dependencies`
+- `fix(#482): handle null search values`
+
+Bad:
+- `Added audio fingerprint` (missing type)
+- `feat: Add audio fingerprint` (wrong mood, should be "add")
+- `FEAT(track): Add audio fingerprint` (uppercase type)
+- `feat(track): add audio fingerprint support for tracks` (too long)
+
+## Scope Examples
+
+Common scopes: `track`, `artist`, `album`, `genre`, `tag`, `playlist`, `play`, `user`, `spotify`, `musicbrainz`, `filtering`, `middleware`, `serializer`, `model`, `view`, `exception`, `utils`

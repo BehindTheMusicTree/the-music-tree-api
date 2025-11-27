@@ -1,0 +1,67 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Issue Description in Separate File
+
+When creating GitHub issues, always provide the issue description in a separate markdown file located in `.github/ISSUES/` directory, rather than writing it directly in the issue body.
+
+## File Naming Convention
+
+Create issue description files with descriptive names using kebab-case:
+
+- `.github/ISSUES/separate-publishing-workflow.md`
+- `.github/ISSUES/fix-track-upload-size-limit.md`
+- `.github/ISSUES/add-flac-audio-support.md`
+
+## File Structure
+
+Each issue description file should follow the appropriate issue template structure:
+
+- For bug reports: Follow the structure from `.github/ISSUE_TEMPLATE/bug_report.yml`
+- For feature requests: Follow the structure from `.github/ISSUE_TEMPLATE/feature_request.yml`
+
+## Usage
+
+1. Create the issue description file in `.github/ISSUES/` with a descriptive name
+2. Write the full issue description in that file
+3. When creating the GitHub issue, reference the file or copy its content
+4. The file serves as documentation and can be referenced in PRs and discussions
+
+## Benefits
+
+- **Version control**: Issue descriptions are tracked in git
+- **Reusability**: Can be referenced in PRs, discussions, and documentation
+- **Organization**: All issue descriptions are centralized in one location
+- **Documentation**: Provides a historical record of issues and their context
+- **Collaboration**: Team members can review and suggest changes via PRs
+
+## Example
+
+Instead of writing the issue description directly in GitHub:
+
+```markdown
+# Bad - Writing directly in GitHub issue
+## Description
+This is the issue description...
+```
+
+Create a file:
+
+```markdown
+# Good - Separate file: .github/ISSUES/my-issue.md
+## Description
+This is the issue description...
+```
+
+Then reference or copy from the file when creating the GitHub issue.
+
+## File Location
+
+All issue description files should be placed in:
+```
+.github/ISSUES/
+```
+
+This keeps them organized and easy to find.
