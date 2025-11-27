@@ -124,7 +124,7 @@ cd bodzify-api-django
 
 Ensure you're using:
 
-- **Python 3.11 or 3.12** (as specified in CI/CD configuration)
+- **Python 3.14**
 
 - Virtual environment with dependencies:
 
