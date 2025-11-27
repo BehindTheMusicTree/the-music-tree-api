@@ -115,7 +115,7 @@ documentation:
   - CHANGELOG.md
   - code-style.md
   - docs/**
-  - *.md
+  - "*.md"
 
 ci:
   - .github/workflows/**
