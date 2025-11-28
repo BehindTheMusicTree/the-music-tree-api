@@ -1,6 +1,6 @@
 # Audio Metadata Handling
 
-This module provides audio metadata handling capabilities for the Bodzify API using [`audiometa-python`](https://github.com/your-username/audiometa-python) version 0.2.6.
+This module provides audio metadata handling capabilities for the Bodzify API using [`audiometa-python`](https://github.com/your-username/audiometa-python) version 0.3.1.
 
 ## Table of Contents
 
@@ -254,8 +254,8 @@ except FileCorruptedError as e:
 
 ## Dependencies
 
-- `audiometa-python==0.2.6`: Core metadata library
-- `mutagen==1.45.0`: Required by audiometa-python for metadata operations
+- `audiometa-python==0.3.1`: Core metadata library
+- `mutagen`: Installed as a transitive dependency via `audiometa-python` (not a direct dependency)
 
 ## Notes
 

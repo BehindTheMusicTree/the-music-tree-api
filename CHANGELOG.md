@@ -65,7 +65,7 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### Changed
 
-- **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.2.9
+- **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.3.1
 
 ### CI
 
