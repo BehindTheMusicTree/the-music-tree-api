@@ -1,0 +1,24 @@
+{
+  "name": "bodzify-api-django",
+  "version": "1.0.0",
+  "description": "Bodzify API is an online platform similar to iTunes, designed for managing and interacting with music tracks. It offers a range of features to help you organize, tag, and rate your music, as well as create automatic hierarchical genre playlists.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bodzify/bodzify-api-django.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bodzify/bodzify-api-django/issues"
+  },
+  "homepage": "https://github.com/Bodzify/bodzify-api-django#readme",
+  "devDependencies": {
+    "git-worktree-scripts": "1.2.7"
+  }
+}
+

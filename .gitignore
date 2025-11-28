@@ -10,7 +10,12 @@ bodzify_api/fixtures/*
 !bodzify_api/fixtures/*/
 
 bodzify_api/fixtures/genres/complete_genre_tree.json
-.cache
+
+# PR descriptions (draft files, not version controlled)
+.github/pr-descriptions/
 
 # Node modules
 node_modules/
+
+# Cache files (may contain sensitive tokens)
+.cache

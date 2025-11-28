@@ -1,0 +1,55 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Test Structure
+
+Tests must follow the project's testing structure and conventions as specified in CONTRIBUTING.md.
+
+## Test Location
+
+- Tests are located in `bodzify_api/test/`
+
+## Test Naming Convention
+
+- Follow the naming convention: `test_{scenario}_then_{expected_result}`
+- Use descriptive scenario names that include action and relevant conditions
+- Examples:
+  - `test_import_empty_tree_then_400_bad_request`
+  - `test_create_genre_with_duplicate_name_then_400_bad_request`
+  - `test_update_genre_with_invalid_parent_then_400_bad_request`
+
+## Assertion Style
+
+- Use `assert` instead of `assertEqual`
+- Keep assertions simple and readable
+- Use descriptive variable names to make assertions clear
+
+## Test Focus
+
+- Each test should focus on a single scenario
+- Divide large test cases into multiple focused tests
+- Avoid testing multiple unrelated conditions in the same test
+
+## Examples
+
+```python
+# Good - Single scenario, proper naming, uses assert
+def test_empty_name_then_400_bad_request(self):
+    tree_data = [{"name": "", "children": []}]
+    response = self._post_genres_tree_import(tree_data)
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+# Bad - Multiple scenarios, wrong naming, uses assertEqual
+def test_invalid_input_then_error(self):
+    # Test empty name
+    tree_data = [{"name": "", "children": []}]
+    response = self._post_genres_tree_import(tree_data)
+    self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)  # Bad
+    
+    # Test duplicate name - should be separate test
+    tree_data = [{"name": "Rock", "children": []}, {"name": "Rock", "children": []}]
+    response = self._post_genres_tree_import(tree_data)
+    self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)  # Bad
+```

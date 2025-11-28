@@ -1,0 +1,53 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Issue Template Usage
+
+When creating issues, always use the appropriate template from `.github/ISSUE_TEMPLATE/`.
+
+## Available Templates
+
+1. **Bug Report** (`.github/ISSUE_TEMPLATE/bug_report.yml`)
+   - Use for reporting bugs or unexpected behavior
+   - Automatically adds `bug` label
+   - Includes fields for: component, description, steps to reproduce, error response, request details, severity
+
+2. **Feature Request** (`.github/ISSUE_TEMPLATE/feature_request.yml`)
+   - Use for suggesting new features or enhancements
+   - Automatically adds `enhancement` and `feature` labels
+   - Includes fields for: component, problem statement, proposed solution, API design, priority, use cases
+
+## Component Labels
+
+When selecting a component in issue templates, choose from:
+- Track, Artist, Album, Genre, Tag, Playlist, Play, User
+- Spotify Integration, MusicBrainz Integration, Audio Fingerprinting
+- Filtering/Search, Middleware, Serializer, Model, View/API Endpoint
+- Exception Handling, Utils, Documentation, Other
+
+## Bug Report Guidelines
+
+For bug reports, include:
+- Clear description of the bug
+- Steps to reproduce
+- Expected vs actual behavior
+- Error response (status code and error details)
+- Request details (method, endpoint, headers, payload - remove sensitive data)
+- Severity level
+- Environment details (Python version, Django version, etc.)
+
+## Feature Request Guidelines
+
+For feature requests, include:
+- Problem statement
+- Proposed solution
+- Alternatives considered
+- Proposed API design (if applicable)
+- Use cases
+- Priority level
+
+## Blank Issues
+
+Blank issues are disabled - users must use a template. This ensures all issues have the necessary information for proper triage and resolution.

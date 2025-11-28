@@ -4,9 +4,9 @@ on:
   workflow_call:
   workflow_dispatch:
   push:
-    branches: [main, dev, feature/archive-tracks]
+    branches: [main, develop, feature/archive-tracks]
   pull_request:
-    branches: [main, dev]
+    branches: [main, develop]
 
 env:
   SSH_DESTINATION: ${{ secrets.TEST_SERVER_BODZIFY_USERNAME }}@${{ vars.DOMAIN_NAME }}
@@ -64,7 +64,7 @@ jobs:
       - name: Setup Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
-          python-version: 3.12
+          python-version: 3.14
 
       - name: Cache apt packages
         uses: actions/cache@v4
@@ -147,7 +147,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.11
+          python-version: 3.14
 
       - name: Install dependencies
         run: |

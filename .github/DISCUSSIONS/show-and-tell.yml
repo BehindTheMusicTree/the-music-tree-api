@@ -1,0 +1,59 @@
+title: "[Show & Tell]: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Share your project, integration, or experience with Bodzify API! We'd love to see what you've built.
+
+  - type: textarea
+    id: project-description
+    attributes:
+      label: Project Description
+      description: Tell us about your project or integration
+      placeholder: Describe what you've built or how you're using Bodzify API...
+    validations:
+      required: true
+
+  - type: textarea
+    id: features
+    attributes:
+      label: Key Features
+      description: What are the main features or highlights?
+      placeholder: |
+        - Feature 1
+        - Feature 2
+        - Feature 3
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or Links
+      description: Share screenshots, demo links, or repository links
+      placeholder: |
+        Screenshot: [image]
+        Demo: [link]
+        Repository: [link]
+    validations:
+      required: false
+
+  - type: textarea
+    id: lessons-learned
+    attributes:
+      label: Lessons Learned
+      description: Any tips, tricks, or insights you'd like to share?
+      placeholder: Share what you learned or what might help others...
+    validations:
+      required: false
+
+  - type: textarea
+    id: feedback
+    attributes:
+      label: Feedback
+      description: Any feedback about the API or suggestions for improvement?
+      placeholder: What worked well? What could be improved?
+    validations:
+      required: false
+
