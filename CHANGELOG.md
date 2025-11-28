@@ -82,7 +82,12 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 - **Dependencies**: 
   - Updated `psycopg2-binary` from 2.9.5 to 2.9.11 for Python 3.14 compatibility
-  - Updated `mutagen` from 1.45.0 to 1.46.0
+
+### Removed
+
+- **Dependencies**: Removed `mutagen` from direct dependencies
+  - No longer needed as direct dependency since all audio operations now use `audiometa-python`
+  - `mutagen` is still installed as a transitive dependency via `audiometa-python`
 
 ### Documentation
 

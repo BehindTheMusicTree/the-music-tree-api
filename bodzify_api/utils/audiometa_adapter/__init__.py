@@ -10,11 +10,12 @@ from audiometa import UnifiedMetadataKey
 from audiometa.exceptions import FileCorruptedError as AudiometaFileCorruptedError
 from audiometa.utils.metadata_format import MetadataFormat as AudiometaMetadataFormat
 from django.core.exceptions import ImproperlyConfigured
+from django.core.files import File as DjangoFile
+from django.core.files.base import File as DjangoBaseFile
 from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.db.models.fields.files import FieldFile
-from mutagen.id3 import ID3
 
-from ..AudioFile import AudioFile
+from ..file_path_utils import get_file_path as _get_file_path_util
 from .utils.types import AppMetadata, AppMetadataValue
 from .utils.TagFormat import MetadataFormat
 from .utils.AppMetadataKey import AppMetadataKey
@@ -22,7 +23,7 @@ from .exceptions import FileCorruptedError
 
 FILE_EXTENSION_NOT_HANDLED_MESSAGE = "The file's format is not handled by the service."
 
-FILE_TYPE = AudioFile | TemporaryUploadedFile | FieldFile | str
+FILE_TYPE = TemporaryUploadedFile | FieldFile | str | DjangoFile
 
 _APP_TO_UNIFIED_KEY_MAP = {
     AppMetadataKey.TITLE: UnifiedMetadataKey.TITLE,
@@ -39,18 +40,7 @@ _UNIFIED_TO_APP_KEY_MAP = {v: k for k, v in _APP_TO_UNIFIED_KEY_MAP.items()}
 
 def _get_file_path(file: FILE_TYPE) -> str:
     """Convert file to path string."""
-    if isinstance(file, AudioFile):
-        return file.file_path
-    if isinstance(file, TemporaryUploadedFile):
-        return file.temporary_file_path()
-    if isinstance(file, FieldFile):
-        if file.file:
-            return file.file.name
-        name = file.name
-        if name is None:
-            raise ValueError("FieldFile has no name")
-        return name
-    return str(file)
+    return _get_file_path_util(file)
 
 
 def _convert_unified_to_app_metadata(unified_metadata: dict) -> AppMetadata:
@@ -65,7 +55,7 @@ def _convert_unified_to_app_metadata(unified_metadata: dict) -> AppMetadata:
                 elif isinstance(value, str):
                     app_metadata[app_key] = value
     else:
-                app_metadata[app_key] = value
+        app_metadata[app_key] = value
     return app_metadata
 
 
@@ -189,7 +179,6 @@ def delete_potential_id3_metadata_with_header(file: FILE_TYPE) -> None:
     """Delete ID3 metadata header if present."""
     file_path = _get_file_path(file)
     try:
-        id_metadata = ID3(file_path)
-        id_metadata.delete()
+        audiometa.delete_all_metadata(file=file_path, metadata_format=AudiometaMetadataFormat.ID3V2)
     except Exception:
         pass

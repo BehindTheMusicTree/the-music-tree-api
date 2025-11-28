@@ -1,12 +1,13 @@
 from pathlib import Path
 
+import audiometa
 from django.utils.deconstruct import deconstructible
 from django.utils.translation import gettext as _
-from mutagen import File  # type: ignore
 
 from bodzify_api import settings
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields
+from bodzify_api.utils.file_path_utils import get_file_path
 
 
 @deconstructible
@@ -89,14 +90,15 @@ class TrackFileValidator:
             if first_few_bytes.startswith(magic_bytes):
                 return
 
-        audio = None
+        is_valid_audio = False
         try:
-            audio = File(file)
+            file_path = get_file_path(file)
+            audiometa.get_unified_metadata(file=file_path)
+            is_valid_audio = True
         except Exception:
             pass
 
-        error = audio is None
-        if error:
+        if not is_valid_audio:
             message = 'Invalid file format. Only audio files are allowed.'
             if field and hasattr(field, 'fail'):
                 field.fail(FieldValidationErrorCode.TRACK_FILE_TYPE_INVALID, message)

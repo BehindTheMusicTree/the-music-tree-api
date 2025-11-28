@@ -71,10 +71,10 @@ The adapter supports the following metadata fields (via `UnifiedMetadataKey`):
 ## Supported File Types
 
 The adapter accepts the following file types:
-- `AudioFile`: Custom audio file wrapper
 - `TemporaryUploadedFile`: Django temporary uploaded file
 - `FieldFile`: Django model field file
 - `str`: File path string
+- `DjangoFile`: Django file object
 
 ## Usage
 
