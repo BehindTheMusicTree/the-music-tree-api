@@ -4,7 +4,7 @@ from django.db import models
 
 from bodzify_api import settings
 from bodzify_api.model.field.AppCharField import AppCharField
-from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
+from bodzify_api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
 
 from .ArtistManager import ArtistManager
 from .Fields import Fields
@@ -12,10 +12,10 @@ from .Fields import Fields
 
 if TYPE_CHECKING:
     from bodzify_api.model.album.Album import Album
-    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+    from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 
 
-class Artist(LibTrackMixin):
+class Artist(UploadedTrackMixin):
     _name = AppCharField(max_length=settings.ARTIST_NAME_LEN_MAX, default=None, db_column=Fields.NAME_PUBLIC)
 
     @property
@@ -28,8 +28,8 @@ class Artist(LibTrackMixin):
     objects: ArtistManager = ArtistManager()
 
     @property
-    def lib_tracks(self) -> models.QuerySet['LibraryTrack']:
-        return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
+    def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
+        return getattr(self, Fields.UPLOADED_TRACKS_RELATED_NAME)
 
     class Meta:
         constraints = [models.CheckConstraint(check=~models.Q(_name=""), name="artist_non_empty_name")]

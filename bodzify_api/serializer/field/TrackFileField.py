@@ -154,8 +154,8 @@ class TrackFileField(AppField):
                                              field_validation_error_code=e.field_validation_error_code)
 
             # Rename file if too long
-            if len(validated_file.name) > settings.LIB_TRACK_FILENAME_LEN_MAX:
-                validated_file.name = validated_file.name[-settings.LIB_TRACK_FILENAME_LEN_MAX:]
+            if len(validated_file.name) > settings.UPLOADED_TRACK_FILENAME_LEN_MAX:
+                validated_file.name = validated_file.name[-settings.UPLOADED_TRACK_FILENAME_LEN_MAX:]
             return validated_file
 
         self.fail('invalid', detail='Field must be either a valid audio file or URL.')

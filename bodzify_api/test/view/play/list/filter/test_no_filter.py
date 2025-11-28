@@ -6,7 +6,7 @@ from bodzify_api.test.view.play.PlayTestCase import PlayTestCase
 class TestCase(PlayTestCase):
 
     def test_no_filter_then_ok(self):
-        track = self.model_fixture_factory.create_lib_track_with_file(title='track')
+        track = self.model_fixture_factory.create_uploaded_track_with_file(title='track')
         self.model_fixture_factory.create_play(content=track)
         self.model_fixture_factory.create_play(content=track)
 

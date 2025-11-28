@@ -53,9 +53,9 @@ class CriteriaPlaylist(Playlist):
 
     @property
     def name_when_no_criteria(self) -> str:
-        if self.type.pk == CriteriaTypePks.GENRE:
+        if self.type.pk == int(CriteriaTypePks.GENRE):
             return CriterialessPlaylistNames.GENRE
-        if self.type.pk == CriteriaTypePks.TAG:
+        if self.type.pk == int(CriteriaTypePks.TAG):
             return CriterialessPlaylistNames.TAG
         else:
             raise ImproperlyConfigured(f'Unknown criteria type: {self.type.pk}')

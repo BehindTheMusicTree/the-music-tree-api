@@ -1,11 +1,11 @@
 
 from django.core.files.base import File as DjangoFile
 
-from bodzify_api.model.track.file.fingerprinting.FingerprintingResult import FingerprintingResult
-from bodzify_api.model.track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import (
+from bodzify_api.model.uploaded_track.file.fingerprinting.FingerprintingResult import FingerprintingResult
+from bodzify_api.model.uploaded_track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import (
     FingerprintMissingCauseCode
 )
-from bodzify_api.model.track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
+from bodzify_api.model.uploaded_track.file.fingerprinting.missing_cause.FingerprintMissingCause import FingerprintMissingCause
 from bodzify_api.model.user.User import User
 
 from . import utils
@@ -13,8 +13,8 @@ from .utils import exception as audio_fingerprinter_exc
 
 
 def _get_fingerprint_and_duration_from_file(user_id: str, file, title: str) -> tuple[bytes, int]:
-    from bodzify_api.utils.AudioFile import AudioFile
-    filename = AudioFile(file).get_file_name_system()
+    from bodzify_api.utils.file_path_utils import get_file_name_system
+    filename = get_file_name_system(file)
     fingerprint, duration_in_sec = utils.post_fingerprint_audio(filename=filename, title=title, user_id=user_id)
     return fingerprint, int(duration_in_sec)
 

@@ -35,7 +35,7 @@ class BaseManager(models.Manager, Generic[T]):
 
     def _transform_field_key(self, instance: T, key: str) -> str:
         """Transform field key based on model's field configuration"""
-        from bodzify_api.model.lib_track_mixin.query_utils import uses_internal_name, Fields
+        from bodzify_api.model.uploaded_track_mixin.query_utils import uses_internal_name, Fields
 
         # Handle internal name transformation if applicable
         if key == Fields.NAME_PUBLIC and uses_internal_name(instance.__class__):

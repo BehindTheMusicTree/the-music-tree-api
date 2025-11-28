@@ -13,7 +13,7 @@ from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.field.foreign_key.AppForeignKey import AppForeignKey
 from bodzify_api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
 from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
-from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
+from bodzify_api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
 from bodzify_api.utils.model import SaveContext
 
 from .Fields import Fields
@@ -22,12 +22,12 @@ from .type.CriteriaType import CriteriaType
 
 if TYPE_CHECKING:
     from bodzify_api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+    from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 
     from .lineage_rel.CriteriaLineageRel import CriteriaLineageRel
 
 
-class Criteria(LibTrackMixin):
+class Criteria(UploadedTrackMixin):
     _name = AppCharField(max_length=settings.CRITERIA_NAME_LEN_MAX, db_column=Fields.NAME_PUBLIC)
     ascendants: QuerySet['Criteria'] = PrivateManyToManyField('self',
                                                               through='CriteriaLineageRel',
@@ -56,8 +56,8 @@ class Criteria(LibTrackMixin):
         return self._name
 
     @property
-    def lib_tracks(self) -> models.QuerySet['LibraryTrack']:
-        return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
+    def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
+        return getattr(self, Fields.UPLOADED_TRACKS_RELATED_NAME)
 
     @property
     def is_root(self) -> bool:

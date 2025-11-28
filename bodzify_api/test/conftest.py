@@ -60,19 +60,24 @@ def pytest_runtest_setup(item):
 
 
 def pytest_collection_modifyitems(config, items):
-    # Set critical tests first
+    # Set critical tests first and slow tests last
     critical_tests = []
-    non_critical_tests = []
+    normal_tests = []
+    slow_tests = []
 
-    print("Setting critical tests first")
+    print("Ordering tests: critical tests first, slow tests last")
     for item in items:
         critical_marker = item.get_closest_marker("critical")
+        slow_marker = item.get_closest_marker("slow")
+
         if critical_marker:
             critical_tests.append(item)
+        elif slow_marker:
+            slow_tests.append(item)
         else:
-            non_critical_tests.append(item)
+            normal_tests.append(item)
 
-    items[:] = critical_tests + non_critical_tests
+    items[:] = critical_tests + normal_tests + slow_tests
 
 
 @pytest.fixture()
@@ -106,6 +111,51 @@ def enable_audio_metadata_analysis(request):
     os.environ['AUDIO_META_ANALYSIS_ENABLED_OVERRIDE'] = 'false'
 
 
+def _cleanup_test_user_directories() -> None:
+    """Cleanup test user library directories.
+    
+    This function removes all test user library directories that start with
+    TEST_USER_LIBRARIES_DIR_NAME_PREFIXE. It's called from multiple hooks to ensure
+    cleanup happens even if tests are interrupted or fail.
+    """
+    libraries_path = Path(settings.LIBRARIES_DIR)
+    removed_dirs: list[str] = []
+    failed_dirs: list[str] = []
+
+    try:
+        if not libraries_path.exists():
+            return
+
+        for entry in libraries_path.iterdir():
+            if entry.is_dir() and entry.name.startswith(settings.TEST_USER_LIBRARIES_DIR_NAME_PREFIXE):
+                try:
+                    shutil.rmtree(entry)
+                    removed_dirs.append(str(entry))
+                except (OSError, shutil.Error) as e:
+                    failed_dirs.append(str(entry))
+                    print(f"Error: Failed to remove directory {entry}: {str(e)}")
+
+        if removed_dirs:
+            print(f"\nSuccessfully removed {len(removed_dirs)} test directories:")
+            for dir_path in removed_dirs:
+                print(f"- {dir_path}")
+
+        if failed_dirs:
+            print(f"\nFailed to remove {len(failed_dirs)} test directories:")
+            for dir_path in failed_dirs:
+                print(f"- {dir_path}")
+
+    except Exception as e:
+        print(f"Error: Unexpected error during cleanup: {str(e)}")
+
+
+@pytest.hookimpl(trylast=True)
+def pytest_runtest_teardown(item, nextitem):
+    """Cleanup test user directories after each test if it's the last test in the class."""
+    if nextitem is None or nextitem.cls != item.cls:
+        _cleanup_test_user_directories()
+
+
 def pytest_sessionfinish(session: Session, exitstatus: int) -> None:
     """
     Cleanup test user libraries after test run completion.
@@ -122,43 +172,11 @@ def pytest_sessionfinish(session: Session, exitstatus: int) -> None:
         None
     """
     print("Executing post-test cleanup operations...")
+    _cleanup_test_user_directories()
+    print("Cleanup complete.")
 
-    libraries_path = Path(settings.LIBRARIES_DIR)
-    removed_dirs: list[str] = []
-    failed_dirs: list[str] = []
 
-    try:
-        # Ensure the libraries directory exists
-        if not libraries_path.exists():
-            print(f"Warning: Libraries directory not found: {libraries_path}")
-            return
-
-        # Iterate through directory entries
-        for entry in libraries_path.iterdir():
-            print(f'Entry: {entry}')
-            if entry.is_dir() and entry.name.startswith(settings.TEST_USER_LIBRARIES_DIR_NAME_PREFIXE):
-                print(f"Removing test directory: {entry}")
-                try:
-                    shutil.rmtree(entry)
-                    removed_dirs.append(str(entry))
-                except (OSError, shutil.Error) as e:
-                    failed_dirs.append(str(entry))
-                    print(f"Error: Failed to remove directory {entry}: {str(e)}")
-            else:
-                print(f"Skipping non-test directory: {entry}")
-
-        # Print summary
-        if removed_dirs:
-            print(f"\nSuccessfully removed {len(removed_dirs)} test directories:")
-            for dir_path in removed_dirs:
-                print(f"- {dir_path}")
-
-        if failed_dirs:
-            print(f"\nFailed to remove {len(failed_dirs)} test directories:")
-            for dir_path in failed_dirs:
-                print(f"- {dir_path}")
-
-        print("Cleanup complete.")
-
-    except Exception as e:
-        print(f"Error: Unexpected error during cleanup: {str(e)}")
+@pytest.hookimpl(trylast=True)
+def pytest_unconfigure(config):
+    """Cleanup test user directories when pytest is unconfigured (e.g., on interruption)."""
+    _cleanup_test_user_directories()

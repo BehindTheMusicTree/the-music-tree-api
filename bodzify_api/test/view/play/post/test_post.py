@@ -4,7 +4,7 @@ from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.serializer.model.play.input.schema.PostFields import Fields
 from bodzify_api.test.view.play.PlayTestCase import PlayTestCase
 from bodzify_api.utils.data_transformer import to_camel_case
@@ -55,9 +55,9 @@ class TestCase(PlayTestCase):
         assert self.saved_object.content.uuid == playlist_before_update.uuid
         assert self.saved_object.content.play_count == current_play_count + 1
 
-    def test_playlist_play_then_returns_lib_tracks(self) -> None:
+    def test_playlist_play_then_returns_uploaded_tracks(self) -> None:
         criteria = self.model_fixture_factory.create_genre(name='criteria1')
-        lib_track = self.model_fixture_factory.create_lib_track_with_file(
+        uploaded_track = self.model_fixture_factory.create_uploaded_track_with_file(
             title="track", genre=criteria, use_manager_for_genre_playlist_adding=True)
 
         data = {to_camel_case(Fields.CONTENT): criteria.criteria_playlist.uuid}
@@ -65,17 +65,18 @@ class TestCase(PlayTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         playlist: Playlist = self.saved_object.content  # type: ignore
-        assert playlist.lib_tracks.count() == 1
-        playlist_lib_track: LibraryTrack | None = playlist.lib_tracks.first()
-        assert playlist_lib_track
-        assert playlist_lib_track.uuid == lib_track.uuid
+        assert playlist.uploaded_tracks.count() == 1
+        playlist_uploaded_track: UploadedTrack | None = playlist.uploaded_tracks.first()
+        assert playlist_uploaded_track
+        assert playlist_uploaded_track.uuid == uploaded_track.uuid
 
-    def test_lib_track_play(self) -> None:
+    def test_uploaded_track_play(self) -> None:
         current_play_count = 455
-        lib_track = self.model_fixture_factory.create_lib_track_with_file(title='test', play_count=current_play_count)
+        uploaded_track = self.model_fixture_factory.create_uploaded_track_with_file(
+            title='test', play_count=current_play_count)
 
-        response = self._post_play(**{to_camel_case(Fields.CONTENT): lib_track.uuid})
+        response = self._post_play(**{to_camel_case(Fields.CONTENT): uploaded_track.uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.content.uuid == lib_track.uuid
+        assert self.saved_object.content.uuid == uploaded_track.uuid
         assert self.saved_object.content.play_count == current_play_count + 1

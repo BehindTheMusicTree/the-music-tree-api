@@ -1,0 +1,20 @@
+meta {
+  name: uuid null
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}library/uploaded/
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/uploaded_track/files/metadata=none.mp3)
+  genre: 8adfc3f9-18f6-4f06-b3cb-e16d5032121w
+}
+
+vars:post-response {
+  trackBeer2Uuid: res.body.uuid
+}

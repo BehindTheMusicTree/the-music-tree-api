@@ -1,0 +1,27 @@
+meta {
+  name: | position in album 1
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}library/uploaded/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/utils/uploaded_track/files/metadata=none.mp3)
+  positionInAlbum: 1
+}
+
+vars:post-response {
+  libTrackHorsesUuid: res.body.uuid
+  genreOutlawUuid: res.body.genre.uuid
+  genreOutlawPlaylistUuid: res.body.playlists[0].uuid
+  title: horses
+}

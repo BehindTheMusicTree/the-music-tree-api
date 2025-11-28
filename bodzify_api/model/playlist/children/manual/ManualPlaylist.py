@@ -3,7 +3,7 @@ from django.db import models
 from bodzify_api import settings
 from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
-from bodzify_api.model.lib_track_mixin.LibTrackMixinWithInternalNameManager import LibTrackMixinWithInternalNameManager
+from bodzify_api.model.uploaded_track_mixin.UploadedTrackMixinWithInternalNameManager import UploadedTrackMixinWithInternalNameManager
 from bodzify_api.model.playlist.children.manual import ManualPlaylistTypeLabel
 from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.playlist.Playlist import Playlist
@@ -22,7 +22,7 @@ class ManualPlaylist(Playlist):
                          null=False,
                          db_column=Fields.NAME_PUBLIC)  # type: ignore
 
-    objects: LibTrackMixinWithInternalNameManager = LibTrackMixinWithInternalNameManager()
+    objects: UploadedTrackMixinWithInternalNameManager = UploadedTrackMixinWithInternalNameManager()
 
     @property
     def name(self) -> str:

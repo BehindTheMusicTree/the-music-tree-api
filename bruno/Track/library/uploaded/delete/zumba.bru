@@ -1,0 +1,11 @@
+meta {
+  name: zumba
+  type: http
+  seq: 2
+}
+
+delete {
+  url: {{BASE_URL}}library/uploaded/{{trackZumbaUuid}}/
+  body: none
+  auth: inherit
+}

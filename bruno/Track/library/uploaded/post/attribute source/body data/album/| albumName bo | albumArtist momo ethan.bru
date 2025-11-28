@@ -1,0 +1,28 @@
+meta {
+  name: | albumName bo | albumArtist momo ethan
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}library/uploaded/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/uploaded_track/files/metadata=none.mp3)
+  albumName: bo
+  albumArtistsNames[]: momo
+  albumArtistsNames[]: ethan
+}
+
+vars:post-response {
+  artistMomoUuid: res.body.album.albumArtists[0].uuid
+  albumBoUuid: res.body.album.uuid
+  artistEthanUuid: res.body.album.albumArtists[1].uuid
+}

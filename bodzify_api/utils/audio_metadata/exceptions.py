@@ -1,35 +1,23 @@
-class FileCorruptedError(Exception):
-    pass
+"""Backward compatibility for audio_metadata exceptions."""
+
+from bodzify_api.utils.audiometa_adapter.exceptions import (
+    DurationNotFoundError,
+    FileByteMismatchError,
+    FileCorruptedError,
+    FileTypeNotSupportedError,
+    FlacMd5CheckFailedError,
+    InvalidChunkDecodeError,
+    MetadataNotSupportedError,
+)
+
+__all__ = [
+    "FileCorruptedError",
+    "FlacMd5CheckFailedError",
+    "FileByteMismatchError",
+    "InvalidChunkDecodeError",
+    "DurationNotFoundError",
+    "FileTypeNotSupportedError",
+    "MetadataNotSupportedError",
+]
 
 
-class FlacMd5CheckFailedError (FileCorruptedError):
-    pass
-
-
-class FileByteMismatchError(FileCorruptedError):
-    pass
-
-
-class InvalidChunkDecodeError(FileCorruptedError):
-    pass
-
-
-class DurationNotFoundError(FileCorruptedError):
-    pass
-
-
-class FileTypeNotSupportedError(Exception):
-    pass
-
-
-class MetadataNotSupportedError(Exception):
-    """Raised when attempting to read or write metadata not supported by the format.
-
-    This error indicates a format limitation (e.g., trying to write BPM to RIFF),
-    not a code error. The format simply does not support the requested metadata field.
-
-    Examples:
-        - Trying to write ratings to WAV (RIFF) files
-        - Trying to write BPM to ID3v1 tags
-        - Trying to write album artist to ID3v1 tags
-    """

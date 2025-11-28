@@ -8,8 +8,8 @@ class TestCase(UserTestCase):
 
     def test_exception_then_rollback(self):
         user = self.model_fixture_factory.create_user('jojo')
-        self.model_fixture_factory.create_lib_track_with_file(user=user, title="joie")
-        with patch('bodzify_api.model.track.lib.LibraryTrack.LibraryTrack.save') as mock:
+        self.model_fixture_factory.create_uploaded_track_with_file(user=user, title="joie")
+        with patch('bodzify_api.model.uploaded_track.UploadedTrack.UploadedTrack.save') as mock:
             exception_message = "Save failed!"
             mock.side_effect = Exception(exception_message)
 

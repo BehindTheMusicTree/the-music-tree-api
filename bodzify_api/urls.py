@@ -6,28 +6,33 @@ from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from bodzify_api.utils.AppStaticFileStates import StaticFileStates
-from bodzify_api.view.viewset.model.AllLibTracksMixinViewSet import AllLibTracksViewSet
-from bodzify_api.view.spotify.auth import spotify_auth, spotify_callback
+from bodzify_api.view.viewset.model.AllUploadedTracksMixinViewSet import AllUploadedTracksViewSet
+from bodzify_api.view.spotify_auth import spotify_auth
+from bodzify_api.view.viewset.model.SpotifyArtistViewSet import SpotifyArtistViewSet
+from bodzify_api.view.viewset.model.user.SpotifyUserViewSet import SpotifyUserViewSet
 
 from . import settings
 from .view.viewset.model.AlbumViewSet import AlbumViewSet
 from .view.viewset.model.ArtistViewSet import ArtistViewSet
 from .view.viewset.model.criteria.children.GenreViewSet import GenreViewSet
 from .view.viewset.model.criteria.children.TagViewSet import TagViewSet
-from .view.viewset.model.lib_track.LibTrackViewSet import LibTrackViewSet
+from .view.viewset.model.UploadedTrackViewSet import UploadedTrackViewSet
 from .view.viewset.model.playlist.children.criteria.GenrePlaylistViewSet import GenrePlaylistViewSet
 from .view.viewset.model.playlist.children.criteria.TagPlaylistViewSet import TagPlaylistViewSet
 from .view.viewset.model.playlist.children.ManualPlaylistViewSet import ManualPlaylistViewSet
 from .view.viewset.model.playlist.PlaylistViewSet import PlaylistViewSet
 from .view.viewset.model.PlayViewSet import PlayViewSet
-from .view.viewset.model.UserViewSet import UserViewSet
+from .view.viewset.model.SpotifyLibTrackViewSet import SpotifyLibTrackViewSet
+from .view.viewset.model.user.BaseUserViewSet import BaseUserViewSet
 from .view.viewset.SearchViewSet import SearchViewSet
-from .view.spotify.auth import spotify_auth_api
 
 
 router = routers.DefaultRouter()
-router.register(r'users', UserViewSet, basename='user')
-router.register(r'tracks', LibTrackViewSet, basename='library-track')
+router.register(r'users', BaseUserViewSet, basename='user')
+router.register(r'users/spotify', SpotifyUserViewSet, basename='spotify-user')
+router.register(r'library/uploaded', UploadedTrackViewSet, basename='uploaded-track')
+router.register(r'library/spotify', SpotifyLibTrackViewSet, basename='spotify-lib-track')
+router.register(r'spotify-artists', SpotifyArtistViewSet, basename='spotify-artist')
 router.register(r'artists', ArtistViewSet, basename='artist')
 router.register(r'albums', AlbumViewSet, basename='album')
 router.register(r'tags', TagViewSet, basename='tag')
@@ -40,27 +45,24 @@ router.register(r'playlists', PlaylistViewSet, basename='playlist')
 router.register(r'manual-playlists', ManualPlaylistViewSet, basename='manual-playlist')
 router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
 router.register(r'tag-playlists', TagPlaylistViewSet, basename='tag-playlist')
-router.register(r'all-tracks', AllLibTracksViewSet, basename='all-library-tracks')
+router.register(r'all-tracks', AllUploadedTracksViewSet, basename='all-uploaded-tracks')
 router.register(r'search', SearchViewSet, basename='search')
 
 urlpatterns = [
     path(settings.API_ROOT_BASE, include(router.urls)),
 
-    path(settings.API_ROOT_BASE + 'admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
 
     path(settings.API_ROOT_BASE + 'auth/', include('django.contrib.auth.urls')),
     path(settings.API_ROOT_BASE + 'auth/token/', TokenObtainPairView.as_view(), name='token-obtain-pair'),
     path(settings.API_ROOT_BASE + 'auth/token/refresh/', TokenRefreshView.as_view(), name='token-refresh'),
-    path(settings.API_ROOT_BASE + 'auth/spotify/', spotify_auth_api, name='api-auth-spotify'),
 
-    path('auth/spotify/', spotify_auth, name='auth-spotify'),
-    path('auth/spotify/callback/', spotify_callback, name='auth-spotify-callback'),
+    path(settings.API_ROOT_BASE + 'auth/spotify/', spotify_auth, name='api-auth-spotify'),
 
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
-
 
 if settings.STATIC_FILES_STATE in [StaticFileStates.COLLECTING, StaticFileStates.SERVING]:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -14,6 +14,7 @@ from rest_framework.exceptions import (
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
+from bodzify_api.exception.spotify import SpotifyAuthenticationException
 from bodzify_api.utils.data_transformer import to_camel_case
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCodeNumeric
 from bodzify_api.view.error.DrfValidationErrorResponseDetail import DrfValidationErrorResponseDetail
@@ -142,9 +143,82 @@ class ErrorResponse:
     @staticmethod
     def _from_validation_error(
             exception: Union[AppValidationException, DrfValidationError, DjangoValidationError]) -> JsonResponse:
+        """
+        Custom validation error that maintains a consistent structure through DRF's middleware.
 
+        This error always includes:
+        - Field name (both in error detail and as dict key)
+        - Error type marker (to identify our errors after DRF processing)
+        - Message and code
+
+        Args:
+            exception: Can be one of AppValidationException, DrfValidationError, or DjangoValidationError
+
+        Returns:
+            JsonResponse with one of these formats:
+
+            1. For AppValidationException:
+            {
+                "code": 2001,
+                "message": "Bad Request",
+                "success": false,
+                "details": {
+                    "message": "One or more fields contain invalid data...",
+                    "code": "invalid_input",
+                    "fieldErrors": {
+                        "fieldName": [{
+                            "message": "Error message",
+                            "code": "error_code"
+                        }]
+                    }
+                }
+            }
+
+            2. For DrfValidationError with field errors:
+            {
+                "code": 2001,
+                "message": "Bad Request",
+                "success": false,
+                "details": {
+                    "message": "One or more fields contain invalid data...",
+                    "fieldErrors": {
+                        "fieldName": [{
+                            "message": "Error message",
+                            "code": "validation_error"
+                        }]
+                    }
+                }
+            }
+
+            3. For DjangoValidationError with message_dict:
+            {
+                "code": 2001,
+                "message": "Bad Request",
+                "success": false,
+                "details": {
+                    "message": "One or more fields contain invalid data...",
+                    "code": "invalid_input",
+                    "fieldErrors": {
+                        "fieldName": [{
+                            "message": "Error message",
+                            "code": "validation_error"
+                        }]
+                    }
+                }
+            }
+
+            4. For generic validation error:
+            {
+                "code": 2001,
+                "message": "Bad Request",
+                "success": false,
+                "details": {
+                    "message": "Error message",
+                    "code": "validation_invalid_input"
+                }
+            }
+        """
         if isinstance(exception, AppValidationException):
-
             formatted_error = {
                 'message': ErrorResponseFields.MESSAGES[ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT],
                 'code': 'invalid_input',
@@ -184,7 +258,7 @@ class ErrorResponse:
                 },
                 ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT)
 
-        if isinstance(exception, DjangoValidationError):
+        elif isinstance(exception, DjangoValidationError):
             if hasattr(exception, 'message_dict'):
                 # Multiple field errors
                 formatted_error = {
@@ -219,7 +293,9 @@ class ErrorResponse:
         # Generic validation error
         error_detail = {'message': str(exception), 'code': ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT.name.lower()}
         return ErrorResponse.create_error_response(
-            error_detail=error_detail, api_error_code=ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT)
+            error_detail=error_detail,
+            api_error_code=ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT
+        )
 
     @staticmethod
     def _from_method_not_allowed_exception(exception: MethodNotAllowed) -> JsonResponse:
@@ -258,6 +334,12 @@ class ErrorResponse:
         )
 
     @staticmethod
+    def _from_spotify_authentication_exception(exception: SpotifyAuthenticationException) -> JsonResponse:
+        return ErrorResponse.create_error_response(
+            error_detail={'message': str(exception), 'code': 'spotify_authentication_error'},
+            api_error_code=ApiErrorCodeNumeric.AUTH_INVALID_CREDENTIALS)
+
+    @staticmethod
     def handle_exception(exc: Exception) -> JsonResponse:
         """
         Routes different types of exceptions to their appropriate handlers.
@@ -283,5 +365,7 @@ class ErrorResponse:
             return ErrorResponse._from_permission_denied_exception(exc)
         elif isinstance(exc, DisallowedHost):
             return ErrorResponse._from_disallowed_host_exception(exc)
+        elif isinstance(exc, SpotifyAuthenticationException):
+            return ErrorResponse._from_spotify_authentication_exception(exc)
         else:
             return ErrorResponse._from_unhandled_exception(exc)

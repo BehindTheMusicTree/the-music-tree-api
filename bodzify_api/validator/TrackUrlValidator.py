@@ -32,7 +32,7 @@ class TrackUrlValidator(BaseValidator):
                                          field_validation_error_code=FieldValidationErrorCode.URL_INVALID)
 
     def _validate_audio_extension(self, value: str):
-        if not any(value.lower().endswith(ext) for ext in settings.LIB_TRACK_FILE_EXTENSIONS):
+        if not any(value.lower().endswith(ext) for ext in settings.UPLOADED_TRACK_FILE_EXTENSIONS):
             raise AppValidationException(
                 field_name=self.field_name,
                 message='Invalid audio file extension',

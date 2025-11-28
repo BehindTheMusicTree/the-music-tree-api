@@ -31,3 +31,8 @@ class SpotifyNetworkException(SpotifyException):
 class SpotifyAPIException(SpotifyException):
     """Exception raised for general Spotify API errors"""
     pass
+
+
+class SpotifyForbiddenException(SpotifyException):
+    """Exception raised when access to a resource is forbidden"""
+    pass

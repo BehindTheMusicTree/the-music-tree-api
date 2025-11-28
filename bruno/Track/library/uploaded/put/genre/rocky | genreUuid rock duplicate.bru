@@ -1,0 +1,17 @@
+meta {
+  name: rocky | genre rock duplicate
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{BASE_URL}}library/uploaded/{{trackRockyUuid}}/
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "genre": 
+  }
+}

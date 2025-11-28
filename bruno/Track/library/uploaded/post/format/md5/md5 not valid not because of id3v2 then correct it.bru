@@ -1,0 +1,19 @@
+meta {
+  name: md5 not valid not because of id3v2 then correct it
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}library/uploaded/
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  : 
+}
+
+body:multipart-form {
+  file: @file(/Users/mignot/git/bodzify-api-django/bodzify_api/test/utils/uploaded_track/files/format=md5 not valid not because of id3 metadata.flac)
+}

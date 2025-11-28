@@ -42,7 +42,7 @@ class TestCase(GenreTestCase):
 
     def test_new_parent_then_update_new_parent_playlist(self):
         genre_punk = self.model_fixture_factory.create_genre(name="Punk")
-        track = self.model_fixture_factory.create_lib_track_with_file(
+        track = self.model_fixture_factory.create_uploaded_track_with_file(
             title="Punk song", genre=genre_punk, use_manager_for_genre_playlist_adding=True)
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
 
@@ -50,31 +50,31 @@ class TestCase(GenreTestCase):
 
         assert response.status_code == status.HTTP_200_OK
         playlist_rock: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=genre_rock)
-        assert playlist_rock.lib_tracks.first() == track
+        assert playlist_rock.uploaded_tracks.first() == track
 
     def test_new_parent_not_acendant_of_old_parent_then_remove_criteria_playlist_tracks_from_old_criteria_ascendants_playlist(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
-        track = self.model_fixture_factory.create_lib_track_with_file(
+        track = self.model_fixture_factory.create_uploaded_track_with_file(
             title="Rock song", genre=genre_punk, use_manager_for_genre_playlist_adding=True)
 
         response = self._put_genre(uuid=genre_punk.uuid, **{PutFields.PARENT: ''})
 
         assert response.status_code == status.HTTP_200_OK
         playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria=genre_rock)
-        assert playlist.lib_tracks.first() != track
+        assert playlist.uploaded_tracks.first() != track
 
     def test_new_parent_undirect_ascendant_of_old_parent_then_update_positions_in_criterias_in_between(self):
         genre_rock = self.model_fixture_factory.create_genre(name="Rock")
         genre_punk = self.model_fixture_factory.create_genre(name="Punk", parent=genre_rock)
         punk_fr_genre = self.model_fixture_factory.create_genre(name="Punk FR", parent=genre_punk)
-        track_punk = self.model_fixture_factory.create_lib_track_with_file(
+        track_punk = self.model_fixture_factory.create_uploaded_track_with_file(
             title="Punk song", genre=genre_punk, use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_lib_track_with_file(
+        self.model_fixture_factory.create_uploaded_track_with_file(
             title="punk fr song", genre=punk_fr_genre, use_manager_for_genre_playlist_adding=True)
 
         response = self._put_genre(uuid=punk_fr_genre.uuid, **{PutFields.PARENT: genre_rock.uuid})
 
         assert response.status_code == status.HTTP_200_OK
-        assert genre_punk.criteria_playlist.lib_tracks.count() == 1
-        assert genre_punk.criteria_playlist.lib_tracks.first() == track_punk
+        assert genre_punk.criteria_playlist.uploaded_tracks.count() == 1
+        assert genre_punk.criteria_playlist.uploaded_tracks.first() == track_punk

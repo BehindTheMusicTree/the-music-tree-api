@@ -1,16 +1,21 @@
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from datetime import datetime, timedelta
 
-from rest_framework_simplejwt.tokens import RefreshToken
 
-
-def create_jwt_token(user) -> str:
+def create_jwt_token(user) -> dict:
     """
-    Create a JWT token for the given user
+    Create JWT tokens for the given user
 
     Args:
         user: The user instance
 
     Returns:
-        The JWT access token
+        Dictionary containing access token, refresh token and expiration time
     """
     refresh = RefreshToken.for_user(user)
-    return str(refresh.access_token)
+    access = AccessToken.for_user(user)
+    return {
+        'access': str(access),
+        'refresh': str(refresh),
+        'expires_at': datetime.now() + timedelta(minutes=5)  # Default JWT access token expiration
+    }

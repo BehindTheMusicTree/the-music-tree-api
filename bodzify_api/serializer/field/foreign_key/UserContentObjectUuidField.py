@@ -5,17 +5,17 @@ from django.contrib.contenttypes.models import ContentType
 
 from bodzify_api.model.ContentObjectFields import ContentObjectFields
 from bodzify_api.model.playlist.Playlist import Playlist
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.serializer.field.foreign_key.PrivateUuidField import PrivateUuidField
 
 
 class PrivateContentUuidField(PrivateUuidField):
     """
-    Special case of UserOwnedUuidField that allows references to either Playlists or LibraryTracks.
+    Special case of UserOwnedUuidField that allows references to either Playlists or UploadedTracks.
     Used when a field can accept either type of user content.
 
     This field is used when:
-    1. The UUID could point to either a Playlist or LibraryTrack
+    1. The UUID could point to either a Playlist or UploadedTrack
     2. Both model types are treated as valid options
     3. The referenced object must belong to the current user
 
@@ -36,23 +36,23 @@ class PrivateContentUuidField(PrivateUuidField):
         super().__init__(**kwargs)
         # Initialize content type cache as None
         self._playlist_ct = None
-        self._lib_track_ct = None
+        self._uploaded_track_ct = None
 
     def _get_playlist_ct(self):
         if self._playlist_ct is None:
             self._playlist_ct = ContentType.objects.get_for_model(Playlist)
         return self._playlist_ct
 
-    def _get_lib_track_ct(self):
-        if self._lib_track_ct is None:
-            self._lib_track_ct = ContentType.objects.get_for_model(LibraryTrack)
-        return self._lib_track_ct
+    def _get_uploaded_track_ct(self):
+        if self._uploaded_track_ct is None:
+            self._uploaded_track_ct = ContentType.objects.get_for_model(UploadedTrack)
+        return self._uploaded_track_ct
 
     def get_queryset(self):
         user = self.get_request_user()
         return (
             Playlist.objects.filter(user=user) |
-            LibraryTrack.objects.filter(user=user)
+            UploadedTrack.objects.filter(user=user)
         )
 
     def to_internal_value(self, data: Any) -> dict[str, Any]:
@@ -75,11 +75,11 @@ class PrivateContentUuidField(PrivateUuidField):
                 ContentObjectFields.CONTENT: playlist
             }
 
-        lib_track = LibraryTrack.objects.filter(user=user, uuid=uuid).first()
-        if lib_track:
+        uploaded_track = UploadedTrack.objects.filter(user=user, uuid=uuid).first()
+        if uploaded_track:
             return {
-                ContentObjectFields.CONTENT_TYPE: self._get_lib_track_ct(),
-                ContentObjectFields.CONTENT: lib_track
+                ContentObjectFields.CONTENT_TYPE: self._get_uploaded_track_ct(),
+                ContentObjectFields.CONTENT: uploaded_track
             }
         self.fail('does_not_exist')
 

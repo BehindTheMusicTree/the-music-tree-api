@@ -63,6 +63,10 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 - **Git Worktree Scripts**: Added npm `git-worktree-scripts` package (v1.2.7) for managing git worktrees
   - Includes `setup-worktree.sh` script for automated worktree setup with virtual environment and dependencies
 
+### Changed
+
+- **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.3.1
+
 ### CI
 
 - **GitHub Automation**:
@@ -76,7 +80,14 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### Changed
 
-- **Dependencies**: Updated `psycopg2-binary` from 2.9.5 to 2.9.11 for Python 3.14 compatibility
+- **Dependencies**: 
+  - Updated `psycopg2-binary` from 2.9.5 to 2.9.11 for Python 3.14 compatibility
+
+### Removed
+
+- **Dependencies**: Removed `mutagen` from direct dependencies
+  - No longer needed as direct dependency since all audio operations now use `audiometa-python`
+  - `mutagen` is still installed as a transitive dependency via `audiometa-python`
 
 ### Documentation
 

@@ -9,12 +9,13 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework_simplejwt.tokens import AccessToken
 
-from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 from bodzify_api.model.user.User import User
+from bodzify_api.model.user.spotify.SpotifyUser import SpotifyUser
 from bodzify_api.model.uuid.Fields import Fields as UuidModelFields
-from bodzify_api.serializer.model.lib_track.input.post.Fields import Fields as LibTrackPostFields
+from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as UploadedTrackPostFields
 from bodzify_api.test.utils.AppApiClient import AppApiClient
-from bodzify_api.test.utils.lib_track.LibTrackTestFilename import LibTrackTestFilename
+from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.utils.ModelFixtureFactory import ModelFixtureFactory
 from bodzify_api.utils import audio_metadata, data_transformer
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
@@ -27,12 +28,12 @@ T = TypeVar('T', bound=models.Model)
 class AppTestCase(TestCase, Generic[T]):
     model_class: Type[T]  # Must be defined in child classes
     saved_object: T  # Must be defined in child classes
-    is_from_lib_track_test_case: bool = False
+    is_from_uploaded_track_test_case: bool = False
 
     api_client: AppApiClient
-    saved_lib_track_metadata_with_raw_rating: dict
+    saved_uploaded_track_metadata_with_raw_rating: dict
 
-    TEST_FILES_BASE_DIR = Path(__file__).parent.parent / 'utils' / 'lib_track' / 'files'
+    TEST_FILES_BASE_DIR = Path(__file__).parent.parent / 'utils' / 'uploaded_track' / 'files'
 
     def _login_as_user(self, user: User):
         self.api_client.force_authenticate(user=user)
@@ -44,6 +45,12 @@ class AppTestCase(TestCase, Generic[T]):
 
     def _login_as_test_user2(self):
         self._login_as_user(self.test_user2)
+
+    def _login_as_spotify_test_user_1(self):
+        self._login_as_user(self.spotify_test_user_1)
+
+    def _login_as_spotify_test_user_2(self):
+        self._login_as_user(self.spotify_test_user_2)
 
     def _login_as_test_admin(self):
         self._login_as_user(self.test_admin_user)
@@ -58,8 +65,8 @@ class AppTestCase(TestCase, Generic[T]):
         uuid = response.json()[UuidModelFields.UUID]
         # At this point model_class is guaranteed to be a Model class with objects manager
         self.saved_object = self.model_class.objects.get(uuid=uuid)  # type: ignore
-        if isinstance(self.saved_object, LibraryTrack):
-            self._set_saved_lib_track_metadata()
+        if isinstance(self.saved_object, UploadedTrack):
+            self._set_saved_uploaded_track_metadata()
 
     def _set_single_result(self, response):
         self.result = response.json()
@@ -106,8 +113,8 @@ class AppTestCase(TestCase, Generic[T]):
             return
 
         self.bad_request_result = response.json()
-        bad_request_result_details = self.bad_request_result[ErrorResponseFields.DETAILS]
-        self.bad_request_result_field_errors_json = bad_request_result_details.get(ErrorResponseFields.FIELD_ERRORS)
+        bad_request_result_details = self.bad_request_result.get(ErrorResponseFields.DETAILS, {})
+        self.bad_request_result_field_errors_json = bad_request_result_details.get(ErrorResponseFields.FIELD_ERRORS) if isinstance(bad_request_result_details, dict) else None
         if self.bad_request_result_field_errors_json:
             # Convert field errors to a list format for easier testing
             self.bad_request_result_field_errors = []
@@ -125,42 +132,42 @@ class AppTestCase(TestCase, Generic[T]):
         self.results = response_json[PaginatedResponseFields.RESULTS]
         self.results_overall_total = response_json[PaginatedResponseFields.OVERALL_TOTAL]
 
-    def _set_saved_lib_track_metadata(self):
-        saved_lib_track = cast(LibraryTrack, self.saved_object)
-        self.saved_lib_track_metadata_with_raw_rating = audio_metadata.get_merged_app_metadata(
-            file=saved_lib_track.track_file.file)
+    def _set_saved_uploaded_track_metadata(self):
+        saved_uploaded_track = cast(UploadedTrack, self.saved_object)
+        self.saved_uploaded_track_metadata_with_raw_rating = audio_metadata.get_merged_app_metadata(
+            file=saved_uploaded_track.track_file.file)
 
-    # Defined here and not in LibTrackTestCase because other views needs sometimes to post a track for testing purposes
+    # Defined here and not in UploadedTrackTestCase because other views needs sometimes to post a track for testing purposes
     # (testing metadata updates for example)
-    def _post_lib_track(self, test_lib_track_filename: LibTrackTestFilename = LibTrackTestFilename.DEFAULT_MP3, **kwargs
-                        ) -> Union[JsonResponse, HttpResponse]:
-        file_abs_path = self.TEST_FILES_BASE_DIR / test_lib_track_filename
+    def _post_uploaded_track(self, test_uploaded_track_filename: UploadedTrackTestFilename = UploadedTrackTestFilename.DEFAULT_MP3,
+                             **kwargs) -> Union[JsonResponse, HttpResponse]:
+        file_abs_path = self.TEST_FILES_BASE_DIR / test_uploaded_track_filename
 
         with open(file_abs_path, "rb") as sample_file:
-            file_field_dict = {LibTrackPostFields.TRACK_FILE_PUBLIC: sample_file}
+            file_field_dict = {UploadedTrackPostFields.TRACK_FILE_PUBLIC: sample_file}
             if kwargs:
                 kwargs = data_transformer.merge_two_dicts(file_field_dict, kwargs)
             else:
                 kwargs = file_field_dict
 
             return self.api_client.post(
-                path=reverse('library-track-list'), data=kwargs, format='multipart', handle_response=self._set_results)
+                path=reverse('uploaded-track-list'), data=kwargs, format='multipart', handle_response=self._set_results)
 
-    # Defined here and not in LibTrackTestCase because other views needs sometimes to put a track for testing purposes
+    # Defined here and not in UploadedTrackTestCase because other views needs sometimes to put a track for testing purposes
     # (testing Genre deletion for example)
-    def _put_lib_track(self, uuid, **kwargs):
-        if self.is_from_lib_track_test_case:
+    def _put_uploaded_track(self, uuid, **kwargs):
+        if self.is_from_uploaded_track_test_case:
             return self.api_client.put(
-                path=reverse('library-track-detail', kwargs={'pk': uuid}),
+                path=reverse('uploaded-track-detail', kwargs={'pk': uuid}),
                 data=kwargs, handle_response=self._set_results)
         else:
             return self.api_client.put(
-                path=reverse('library-track-detail', kwargs={'pk': uuid}), data=kwargs)
+                path=reverse('uploaded-track-detail', kwargs={'pk': uuid}), data=kwargs)
 
-    def _post_lib_track_being_logged_out(self):
+    def _post_uploaded_track_being_logged_out(self):
         self._logout()
         return self.api_client.post(
-            path=reverse('library-track-list'), data={}, format='multipart', handle_response=self._set_results)
+            path=reverse('uploaded-track-list'), data={}, format='multipart', handle_response=self._set_results)
 
     def setUp(self, methods_names_to_implement: list[str] | None = None) -> None:
 
@@ -174,8 +181,16 @@ class AppTestCase(TestCase, Generic[T]):
         self.test_user2 = User.objects.create_instance(
             username='pytest_user2', password='pytest_user2', email='pytest@user2.com', is_test_user=True)
 
+        self.spotify_test_user_1: SpotifyUser = SpotifyUser.objects.create_instance(
+            username='spotify_test_user_1', password='spotify_test_user_1', spotify_id='spotify_test_user_1',
+            email='spotify@test.com', is_test_user=True)
+
+        self.spotify_test_user_2: SpotifyUser = SpotifyUser.objects.create_instance(
+            username='spotify_test_user_2', password='spotify_test_user_2', spotify_id='spotify_test_user_2',
+            email='spotify@test.com', is_test_user=True)
+
         self.model_fixture_factory = ModelFixtureFactory(
-            default_test_user=self.test_user1, test_lib_track_dir=self.TEST_FILES_BASE_DIR,)
+            default_test_user=self.test_user1, test_uploaded_track_dir=self.TEST_FILES_BASE_DIR,)
 
         super().setUp()
 

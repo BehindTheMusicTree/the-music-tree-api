@@ -23,6 +23,9 @@ For detailed setup and installation instructions, please see the [Contributing G
 - PostgreSQL database
 - See [CONTRIBUTING.md](CONTRIBUTING.md) for full setup instructions
 
+## Audio Metadata Handling
+The Bodzify API uses [`audiometa-python`](https://github.com/your-username/audiometa-python) for reading and writing audio metadata. The implementation is format-agnostic and handles multiple metadata formats (ID3v1, ID3v2, Vorbis, RIFF) automatically. For more details, see the [Audio Metadata Handling documentation](bodzify_api/utils/audiometa_adapter/README.md).
+
 ## Usage
 TODO
 

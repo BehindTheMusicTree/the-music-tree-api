@@ -11,17 +11,17 @@ from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.artist.Fields import Fields as ArtistFields
 from bodzify_api.model.field.AppCharField import AppCharField
 from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
-from bodzify_api.model.lib_track_mixin.LibTrackMixin import LibTrackMixin
-from bodzify_api.model.track.lib.Fields import Fields as LibraryTrackFields
+from bodzify_api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
+from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackFields
 
 from .Fields import Fields
 
 
 if TYPE_CHECKING:
-    from bodzify_api.model.track.lib.LibraryTrack import LibraryTrack
+    from bodzify_api.model.uploaded_track.UploadedTrack import UploadedTrack
 
 
-class Album(LibTrackMixin):
+class Album(UploadedTrackMixin):
     _name = AppCharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None, db_column=Fields.NAME_PUBLIC)
     year = AppCharField(max_length=4, default=None, null=True)
     album_artists: QuerySet[Artist] = PrivateManyToManyField(Artist, related_name=ArtistFields.ALBUMS)  # type: ignore
@@ -33,14 +33,14 @@ class Album(LibTrackMixin):
         return self._name
 
     @property
-    def lib_tracks(self) -> models.QuerySet['LibraryTrack']:
-        return getattr(self, Fields.LIB_TRACKS_RELATED_NAME)
+    def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
+        return getattr(self, Fields.UPLOADED_TRACKS_RELATED_NAME)
 
     @property
-    def lib_tracks_not_archived_sorted(self) -> models.QuerySet['LibraryTrack']:
-        return self.lib_tracks_not_archived.annotate(
+    def uploaded_tracks_not_archived_sorted(self) -> models.QuerySet['UploadedTrack']:
+        return self.uploaded_tracks_not_archived.annotate(
             null_position=Q(track_number__isnull=True)).order_by(
-            'null_position', LibraryTrackFields.TRACK_NUMBER, LibraryTrackFields.TITLE)
+            'null_position', UploadedTrackFields.TRACK_NUMBER, UploadedTrackFields.TITLE)
 
     class Meta:
         constraints = [models.CheckConstraint(check=~models.Q(_name=""), name="album_non_empty_name")]
@@ -55,7 +55,7 @@ class Album(LibTrackMixin):
         else:
             string += " [No Artist]"
 
-        tracks: list[LibraryTrack] = list(self.lib_tracks_not_archived.all())
+        tracks: list[UploadedTrack] = list(self.uploaded_tracks_not_archived.all())
         if tracks:
             track_details = []
             for track in tracks:
