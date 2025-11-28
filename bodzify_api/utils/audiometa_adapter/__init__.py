@@ -65,7 +65,7 @@ def _convert_app_to_unified_metadata(app_metadata: AppMetadata) -> dict:
     for app_key, value in app_metadata.items():
         if app_key in _APP_TO_UNIFIED_KEY_MAP:
             unified_key = _APP_TO_UNIFIED_KEY_MAP[app_key]
-            if app_key == AppMetadataKey.GENRE_NAME:
+            if app_key in (AppMetadataKey.GENRE_NAME, AppMetadataKey.ARTISTS_NAMES, AppMetadataKey.ALBUM_ARTISTS_NAMES):
                 if isinstance(value, str):
                     unified_metadata[unified_key] = [value]
                 elif isinstance(value, list):

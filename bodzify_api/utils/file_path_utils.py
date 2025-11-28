@@ -13,6 +13,8 @@ def get_file_path(file: DiskBasedFile | DjangoFile) -> str:
     """Convert file to path string."""
     if isinstance(file, FieldFile):
         if file.file:
+            if isinstance(file.file, TemporaryUploadedFile):
+                return file.file.temporary_file_path()
             return file.file.name
         name = file.name
         if name is None:

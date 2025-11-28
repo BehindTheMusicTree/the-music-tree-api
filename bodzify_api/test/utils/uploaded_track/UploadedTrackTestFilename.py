@@ -17,3 +17,5 @@ class UploadedTrackTestFilename(str, Enum):
     METADATA_LONG_A_ID3V2_SMALL_MP3 = "metadata=long a_id3v2_small.mp3"
     METADATA_LONG_A_VORBIS_SMALL_FLAC = "metadata=long a_vorbis_small.flac"
     METADATA_LONG_A_RIFF_SMALL_WAV = "metadata=long a_riff_small.wav"
+    RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3 = "recording=juan hansen oostil - drown (massano remix) - 7m21.mp3"
+    RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M20_FLAC = "recording=juan hansen oostil - drown (massano remix) - 7m20.flac"
