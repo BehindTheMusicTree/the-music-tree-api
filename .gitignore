@@ -16,3 +16,6 @@ bodzify_api/fixtures/genres/complete_genre_tree.json
 
 # Node modules
 node_modules/
+
+# Cache files (may contain sensitive tokens)
+.cache

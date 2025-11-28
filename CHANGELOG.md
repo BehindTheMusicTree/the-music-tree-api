@@ -58,6 +58,11 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ## [Unreleased]
 
+### Added
+
+- **Git Worktree Scripts**: Added npm `git-worktree-scripts` package (v1.2.7) for managing git worktrees
+  - Includes `setup-worktree.sh` script for automated worktree setup with virtual environment and dependencies
+
 ### CI
 
 - **GitHub Automation**:
@@ -143,7 +148,7 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 ### Added
 - Enable genre tree JSON import
 - Enable genre tree JSON export
-- Enavle delete criteria
+- Enable delete criteria
 
 ### Changed
 - Arrays in JSON must be without [] and in multipart with []
@@ -163,5 +168,4 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 ## [v0.1.1] - 2024-09-06
 
 ### Added
-
 - Fingerprint check
