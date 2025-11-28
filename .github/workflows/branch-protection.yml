@@ -1,0 +1,49 @@
+name: Branch Protection Check
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  check-branch-name:
+    name: Verify PR source branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check source branch name
+        run: |
+          SOURCE_BRANCH="${{ github.head_ref }}"
+          TARGET_BRANCH="${{ github.base_ref }}"
+          
+          if [[ "$TARGET_BRANCH" == "main" ]]; then
+            if [[ "$SOURCE_BRANCH" =~ ^hotfix/.* ]] || [[ "$SOURCE_BRANCH" =~ ^release/.* ]]; then
+              echo "✅ Valid source branch: $SOURCE_BRANCH"
+              echo "PRs to main must come from hotfix/* or release/* branches (Git Flow)"
+            else
+              echo "❌ Invalid source branch: $SOURCE_BRANCH"
+              echo "Pull requests to main must come from hotfix/* or release/* branches only."
+              echo ""
+              echo "For features, bug fixes, or chores, please target the 'develop' branch instead."
+              echo "See CONTRIBUTING.md for Git Flow guidelines."
+              exit 1
+            fi
+          elif [[ "$TARGET_BRANCH" == "develop" ]]; then
+            if [[ "$SOURCE_BRANCH" =~ ^feature/.* ]] || \
+               [[ "$SOURCE_BRANCH" =~ ^chore/.* ]] || \
+               [[ "$SOURCE_BRANCH" =~ ^hotfix/.* ]] || \
+               [[ "$SOURCE_BRANCH" =~ ^release/.* ]]; then
+              echo "✅ Valid source branch: $SOURCE_BRANCH"
+              echo "PRs to develop must come from feature/*, chore/*, hotfix/*, or release/* branches (Git Flow)"
+            else
+              echo "❌ Invalid source branch: $SOURCE_BRANCH"
+              echo "Pull requests to develop must come from feature/*, chore/*, hotfix/*, or release/* branches only."
+              echo ""
+              echo "Direct PRs from main to develop are not allowed."
+              echo "See CONTRIBUTING.md for Git Flow guidelines."
+              exit 1
+            fi
+          fi
+
+
+

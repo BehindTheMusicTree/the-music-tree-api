@@ -1,0 +1,49 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Git Flow Workflow
+
+This project follows **strict Git Flow**. All changes must follow the branching strategy.
+
+## Branch Structure
+
+- **`main`**: Production-ready, stable branch. Only receives merges from `release/*` and `hotfix/*` branches.
+- **`develop`**: Integration branch for ongoing development. All feature branches merge into `develop`.
+- **`feature/<name>`**: New features or bug fixes. Branch from `develop`, merge into `develop`.
+- **`release/<version>`**: Preparing releases. Branch from `develop`, merge into both `main` and `develop`.
+- **`hotfix/<name>`**: Urgent production fixes. Branch from `main`, merge into both `main` and `develop`.
+- **`chore/<name>`**: Maintenance and infrastructure work. Branch from `develop`, merge into `develop`.
+
+## Branch Naming Rules
+
+1. Use lowercase with hyphens: `feature/add-track-upload`, not `Feature/AddTrackUpload`
+2. Include issue numbers when applicable: `feature/123-add-ogg-support`
+3. Be descriptive: `feature/improve-genre-classification`, not `feature/fix`
+
+## Important Rules
+
+- **No direct commits** to `main` or `develop` - all changes must go through Pull Requests
+- Feature branches **must** target `develop`
+- Hotfix branches **must** target `main`
+- Release branches merge into both `main` and `develop`
+
+## Examples
+
+```bash
+# Feature branch
+git checkout develop
+git pull origin develop
+git checkout -b feature/add-audio-fingerprint
+
+# Hotfix branch
+git checkout main
+git pull origin main
+git checkout -b hotfix/critical-security-patch
+
+# Release branch (maintainers only)
+git checkout develop
+git pull origin develop
+git checkout -b release/v0.2.1
+```

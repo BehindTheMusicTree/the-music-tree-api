@@ -5,11 +5,10 @@ alwaysApply: true
 ---
 # Test Naming Convention
 
-This rule applies to pytest-style test functions. Test function names must follow the pattern: `test_{action}_{conditions}_then_{expected_result}`
+This rule applies to pytest-style test functions. Test function names must follow the pattern: `test_{scenario}_then_{expected_result}`
 
 Components:
-- `action`: The operation being tested (e.g., import, create, update, delete)
-- `conditions`: Optional context or preconditions that affect the test
+- `scenario`: The scenario being tested, including the action and any relevant conditions (e.g., `import_empty_tree`, `create_genre_with_duplicate_name`, `update_genre_with_invalid_parent`)
 - `expected_result`: The expected outcome or error code
 
 Examples:
@@ -20,12 +19,13 @@ Examples:
 
 Guidelines:
 1. Use descriptive names that explain the test's purpose without reading the code
-2. Include relevant conditions that make the test case unique
+2. Include relevant conditions in the scenario part that make the test case unique
 3. For error cases, specify the expected HTTP status code
 4. Use underscores to separate words
 5. Keep the name concise but informative
-6. Avoid generic terms like "test", "check", "verify" in the conditions part
+6. Avoid generic terms like "test", "check", "verify"
 7. Test class names should be descriptive and follow the pattern `Test{Feature}` (e.g., `TestGenreImport`)
+8. Tests are located in `bodzify_api/test/`
 
 Bad examples:
 - `test_import` (too generic)
