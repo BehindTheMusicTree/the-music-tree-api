@@ -257,6 +257,7 @@ We follow **strict Git Flow** with the following branch structure:
 - Releases are tagged from `main`
 - **No direct commits allowed** - All changes must go through Pull Requests, including changes from maintainers
 - Only receives merges from `release/*` and `hotfix/*` branches
+- **Branch protection enforced** - GitHub Actions automatically blocks PRs to `main` that don't come from `hotfix/*` or `release/*` branches (see `.github/workflows/branch-protection.yml`)
 
 #### Develop Branch (`develop`)
 
@@ -264,6 +265,8 @@ We follow **strict Git Flow** with the following branch structure:
 - All feature branches merge into `develop`
 - `develop` is merged into `main` via release branches
 - **No direct commits allowed** - All changes must go through Pull Requests
+- Only receives merges from `feature/*`, `chore/*`, `release/*`, and `hotfix/*` branches
+- **Branch protection enforced** - GitHub Actions automatically blocks PRs to `develop` that don't come from allowed branch types (see `.github/workflows/branch-protection.yml`)
 
 #### Feature Branches (`feature/<name>`)
 
@@ -444,10 +447,12 @@ Before submitting a Pull Request, ensure the following checks are completed:
 
 **5. Branch Target**
 
-- ✅ Feature branches target `dev` branch
+- ✅ Feature branches target `develop` branch (NOT `main` - GitHub will block PRs to `main` from feature branches)
 - ✅ Hotfix branches target `main` branch
-- ✅ Release branches target both `main` and `dev` (maintainers only)
-- ✅ Chore branches target `dev` branch
+- ✅ Release branches target both `main` and `develop` (maintainers only)
+- ✅ Chore branches target `develop` branch (NOT `main`)
+
+**Important:** GitHub Actions automatically enforces that PRs to `main` can only come from `hotfix/*` or `release/*` branches. If you try to create a PR from a `feature/*` or `chore/*` branch to `main`, the CI will fail.
 
 #### For Maintainers (Before Opening/Merging a PR)
 

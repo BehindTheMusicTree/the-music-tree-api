@@ -1,0 +1,156 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Changelog Best Practices
+
+All contributors must update `CHANGELOG.md` when creating PRs. Follow these guidelines to ensure consistent and useful changelog entries.
+
+## General Principles
+
+- Changelogs are for humans, not machines
+- Include an entry for every version, with the latest first
+- Group similar changes under appropriate categories: Added, Changed, Improved, Deprecated, Removed, Fixed, Documentation, Performance, CI
+- **"Test" is NOT a valid changelog category** - tests should be mentioned within the related feature or fix entry, not as standalone entries
+- Use an "Unreleased" section for upcoming changes
+- Follow Semantic Versioning where possible
+- Use ISO 8601 date format: YYYY-MM-DD
+- Avoid dumping raw git logs; summarize notable changes clearly
+
+## Required Actions
+
+1. **Add entries to the `[Unreleased]` section** - Add your changes under the appropriate category
+2. **Follow the changelog format** - See examples in `CHANGELOG.md` for detailed guidelines
+3. **Group related changes** - Similar changes should be grouped together
+4. **Be descriptive** - Write clear, user-focused descriptions of what changed
+5. **Mention tests when relevant** - Tests should be mentioned within the related feature or fix entry, not as standalone entries
+
+## Categories
+
+### Added
+- New features, endpoints, functionality
+- New dependencies or integrations
+- New configuration options
+
+### Changed
+- Changes to existing functionality
+- API changes (non-breaking)
+- Dependency updates
+- Configuration changes
+
+### Fixed
+- Bug fixes
+- Security fixes
+- Error handling improvements
+
+### Documentation
+- Documentation additions or updates
+- README changes
+- Contributing guide updates
+- Code comments and docstrings (only if significant)
+
+### Performance
+- Performance improvements
+- Optimization changes
+- Caching improvements
+
+### CI
+- CI/CD pipeline changes
+- GitHub Actions workflow updates
+- Automation improvements
+- Branch protection rules
+
+### Deprecated
+- Features marked for removal
+- Deprecated API endpoints
+
+### Removed
+- Removed features or functionality
+- Removed dependencies
+
+## Format Guidelines
+
+### Entry Structure
+
+```markdown
+- **Component/Feature Name**: Brief description of the change
+  - Additional details or sub-features
+  - Test coverage information (if relevant)
+```
+
+### Examples
+
+**Good Examples:**
+
+```markdown
+### Added
+
+- **Track API**: Added batch upload endpoint for multiple tracks
+  - Includes comprehensive unit tests covering various file formats and error scenarios
+  - Supports parallel upload processing for improved performance
+
+### Fixed
+
+- **Track Upload**: Fixed issue with handling large audio files exceeding size limits
+  - Includes regression tests to prevent future occurrences
+  - Improved error messages for better user feedback
+
+### Documentation
+
+- **Contributing Guide**: Added comprehensive Git Flow workflow documentation
+  - Includes branch naming conventions and merging rules
+  - Added pre-PR checklist and review process guidelines
+
+### CI
+
+- **Branch Protection**: Added automated enforcement of Git Flow branching rules
+  - Blocks invalid PRs to main and develop branches
+```
+
+**Bad Examples:**
+
+```markdown
+# Bad - Too vague
+- Fixed bug
+
+# Bad - Test as standalone entry
+### Test
+- Added tests for track upload
+
+# Bad - Raw git log style
+- commit abc123: update dependencies
+
+# Bad - Wrong category
+### Added
+- Updated README.md (should be Documentation)
+```
+
+## Documentation Entries
+
+Documentation changes should be grouped under the **Documentation** category, not under Added or Changed. This includes:
+
+- README updates
+- Contributing guide changes
+- Development guidelines
+- API documentation
+- Code comments (only if significant additions)
+- Documentation infrastructure setup
+
+## Release Process
+
+During releases, maintainers will:
+1. Move entries from `[Unreleased]` to a versioned section (e.g., `## [v0.2.8] - 2025-01-15`)
+2. Review and consolidate related entries
+3. Ensure all entries follow the format guidelines
+4. Update version numbers and dates
+
+## Checklist
+
+Before submitting a PR, ensure:
+- ✅ All changes are documented in `CHANGELOG.md` under `[Unreleased]`
+- ✅ Entries are in the correct category
+- ✅ Entries follow the format guidelines
+- ✅ Tests are mentioned within related entries (not as standalone entries)
+- ✅ Documentation changes are in the Documentation category
+- ✅ Entries are clear and user-focused
