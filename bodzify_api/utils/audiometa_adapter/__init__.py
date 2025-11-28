@@ -54,8 +54,8 @@ def _convert_unified_to_app_metadata(unified_metadata: dict) -> AppMetadata:
                     app_metadata[app_key] = value[0]
                 elif isinstance(value, str):
                     app_metadata[app_key] = value
-    else:
-        app_metadata[app_key] = value
+            else:
+                app_metadata[app_key] = value
     return app_metadata
 
 
