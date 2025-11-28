@@ -1,7 +1,7 @@
 ## Description
 
 <!-- Provide a clear and concise description of what this PR does -->
-<!-- Note: PR descriptions should be drafted in `.github/PRS/` directory (git-ignored) before creating the PR -->
+<!-- Note: PR descriptions should be drafted in `.github/pr-descriptions/` directory (git-ignored) before creating the PR -->
 
 ## Related Issue
 
