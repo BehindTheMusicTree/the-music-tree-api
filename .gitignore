@@ -11,3 +11,6 @@ bodzify_api/fixtures/*
 
 bodzify_api/fixtures/genres/complete_genre_tree.json
 .cache
+
+# Node modules
+node_modules/
