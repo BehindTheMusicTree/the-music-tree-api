@@ -13,3 +13,6 @@ bodzify_api/fixtures/genres/complete_genre_tree.json
 
 # PR descriptions (draft files, not version controlled)
 .github/pr-descriptions/
+
+# Node modules
+node_modules/
