@@ -60,13 +60,20 @@ main() {
     fi
     log_with_script_prefixe "Images pulled successfully."
 
-    CONTAINER_IDS=$(docker ps -a -q)
-    if [ -n "$CONTAINER_IDS" ]; then
-        log_with_script_prefixe "Removing existing containers..."
-        docker rm -f $CONTAINER_IDS
-        log_with_script_prefixe "Containers removed successfully."
+    if docker ps -a --format '{{.Names}}' | grep -q "^${DB_CONTAINER_NAME}$"; then
+        log_with_script_prefixe "Removing existing database container: $DB_CONTAINER_NAME"
+        docker rm -f $DB_CONTAINER_NAME
+        log_with_script_prefixe "Database container removed successfully."
     else
-        log_with_script_prefixe "No container to remove."
+        log_with_script_prefixe "No existing database container to remove."
+    fi
+
+    if docker ps -a --format '{{.Names}}' | grep -q "^${AFP_CONTAINER_NAME}$"; then
+        log_with_script_prefixe "Removing existing AFP container: $AFP_CONTAINER_NAME"
+        docker rm -f $AFP_CONTAINER_NAME
+        log_with_script_prefixe "AFP container removed successfully."
+    else
+        log_with_script_prefixe "No existing AFP container to remove."
     fi
 
     log_with_script_prefixe "Running the database container..."
