@@ -114,7 +114,9 @@ class AppTestCase(TestCase, Generic[T]):
 
         self.bad_request_result = response.json()
         bad_request_result_details = self.bad_request_result.get(ErrorResponseFields.DETAILS, {})
-        self.bad_request_result_field_errors_json = bad_request_result_details.get(ErrorResponseFields.FIELD_ERRORS) if isinstance(bad_request_result_details, dict) else None
+        self.bad_request_result_field_errors_json = bad_request_result_details.get(
+            ErrorResponseFields.FIELD_ERRORS) if isinstance(
+            bad_request_result_details, dict) else None
         if self.bad_request_result_field_errors_json:
             # Convert field errors to a list format for easier testing
             self.bad_request_result_field_errors = []
