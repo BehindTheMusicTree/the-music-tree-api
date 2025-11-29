@@ -159,7 +159,7 @@ class AppTestCase(TestCase, Generic[T]):
         if self.is_from_uploaded_track_test_case:
             return self.api_client.put(
                 path=reverse('uploaded-track-detail', kwargs={'pk': uuid}),
-                data=kwargs, handle_response=self._set_results)
+                data=kwargs, format='multipart', handle_response=self._set_results)
         else:
             return self.api_client.put(
                 path=reverse('uploaded-track-detail', kwargs={'pk': uuid}), data=kwargs)
