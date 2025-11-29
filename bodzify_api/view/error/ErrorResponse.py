@@ -131,23 +131,32 @@ class ErrorResponse:
 
     @staticmethod
     def _from_content_type_exception(exception: ParseError) -> JsonResponse:
+        # Try to get message from default_detail first (works for ParseError created with string)
         try:
-            detail = exception.detail
-            if isinstance(detail, str):
-                message = detail
-                code = getattr(exception, 'default_code', 'parse_error')
-            elif isinstance(detail, dict):
-                message = detail.get('detail', exception.default_detail)
-                code = detail.get('code', exception.default_code)
-            else:
-                message = exception.default_detail
-                code = exception.default_code
-        except (AttributeError, TypeError):
-            try:
-                message = str(exception)
-            except Exception:
-                message = getattr(exception, 'default_detail', 'Invalid input')
+            message = exception.default_detail
             code = getattr(exception, 'default_code', 'parse_error')
+        except (AttributeError, TypeError):
+            # Fallback: try to access detail, but handle Python 3.14 compatibility issues
+            try:
+                detail = exception.detail
+                if isinstance(detail, str):
+                    message = detail
+                    code = getattr(exception, 'default_code', 'parse_error')
+                elif isinstance(detail, dict):
+                    message = detail.get('detail', 'Invalid input')
+                    code = detail.get('code', 'parse_error')
+                else:
+                    message = 'Invalid input'
+                    code = 'parse_error'
+            except (AttributeError, TypeError):
+                # Last resort: try stringification, but handle failures
+                try:
+                    message = str(exception)
+                    if not message or message == f"<{type(exception).__name__} instance>":
+                        message = 'Invalid input'
+                except Exception:
+                    message = 'Invalid input'
+                code = getattr(exception, 'default_code', 'parse_error')
         return ErrorResponse.create_error_response(
             error_detail={'message': message, 'code': code},
             api_error_code=ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT)
