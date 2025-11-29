@@ -143,8 +143,9 @@ class ModelFixtureFactory:
         if not os.path.exists(user.lib_abs_path):
             os.makedirs(user.lib_abs_path)
 
-        file_path = self.test_uploaded_track_dir / str(test_uploaded_track_filename)
-        track_file_path_in_lib = user.lib_abs_path / str(test_uploaded_track_filename)
+        filename_str = test_uploaded_track_filename.value if test_uploaded_track_filename else None
+        file_path = self.test_uploaded_track_dir / filename_str
+        track_file_path_in_lib = user.lib_abs_path / filename_str
         try:
             shutil.copy(file_path, track_file_path_in_lib)
         except OSError as e:

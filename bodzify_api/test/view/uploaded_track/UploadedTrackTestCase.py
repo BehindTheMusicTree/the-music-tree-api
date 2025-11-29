@@ -25,7 +25,7 @@ class UploadedTrackTestCase(AppTestCase[UploadedTrack]):
             path=reverse('uploaded-track-list'), data=kwargs, handle_response=self._set_results)
 
     def _post_uploaded_track(self, test_uploaded_track_filename: UploadedTrackTestFilename, **kwargs):
-        file_abs_path = self.TEST_FILES_BASE_DIR / test_uploaded_track_filename
+        file_abs_path = self.TEST_FILES_BASE_DIR / test_uploaded_track_filename.value
 
         with open(file_abs_path, "rb") as sample_file:
             file_field_dict = {Fields.TRACK_FILE_PUBLIC: sample_file}
