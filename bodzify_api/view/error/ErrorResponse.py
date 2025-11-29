@@ -131,32 +131,49 @@ class ErrorResponse:
 
     @staticmethod
     def _from_content_type_exception(exception: ParseError) -> JsonResponse:
-        # Try to get message from default_detail first (works for ParseError created with string)
+        # Try to access detail first (where the actual message is stored for ParseError created with string)
+        # But handle Python 3.14 compatibility issues
+        message = None
+        code = getattr(exception, 'default_code', 'parse_error')
+        
         try:
-            message = exception.default_detail
-            code = getattr(exception, 'default_code', 'parse_error')
+            detail = exception.detail
+            if isinstance(detail, str):
+                message = detail
+            elif isinstance(detail, dict):
+                message = detail.get('detail', None)
+                code = detail.get('code', code)
         except (AttributeError, TypeError):
-            # Fallback: try to access detail, but handle Python 3.14 compatibility issues
+            # Python 3.14 compatibility: detail access failed, try alternatives
+            pass
+        
+        # If we couldn't get message from detail, try other methods
+        if not message:
+            # Check if default_detail is different from the default DRF ParseError message
             try:
-                detail = exception.detail
-                if isinstance(detail, str):
-                    message = detail
-                    code = getattr(exception, 'default_code', 'parse_error')
-                elif isinstance(detail, dict):
-                    message = detail.get('detail', 'Invalid input')
-                    code = detail.get('code', 'parse_error')
+                default_detail = exception.default_detail
+                if default_detail and default_detail != "Malformed request.":
+                    message = default_detail
                 else:
-                    message = 'Invalid input'
-                    code = 'parse_error'
+                    # Try to get from exception args (ParseError("message") stores it there)
+                    if hasattr(exception, 'args') and exception.args:
+                        message = str(exception.args[0]) if exception.args[0] else None
             except (AttributeError, TypeError):
-                # Last resort: try stringification, but handle failures
-                try:
-                    message = str(exception)
-                    if not message or message == f"<{type(exception).__name__} instance>":
-                        message = 'Invalid input'
-                except Exception:
-                    message = 'Invalid input'
-                code = getattr(exception, 'default_code', 'parse_error')
+                pass
+        
+        # Last resort: try stringification
+        if not message:
+            try:
+                exc_str = str(exception)
+                if exc_str and exc_str != f"<{type(exception).__name__} instance>":
+                    message = exc_str
+            except Exception:
+                pass
+        
+        # Final fallback
+        if not message:
+            message = 'Invalid input'
+        
         return ErrorResponse.create_error_response(
             error_detail={'message': message, 'code': code},
             api_error_code=ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT)
