@@ -78,6 +78,7 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 - **CI Workflow**: Split monolithic CI workflow into focused, reusable workflows
   - Updated `test.yml` workflow to run tests on pushes and pull requests (removed redundant `ci.yml` wrapper)
+  - Added fail-fast flag (`-x`) to pytest for faster CI feedback on test failures
   - Created `static-files.yml` workflow for collecting and pushing static files
   - Created `build.yml` workflow for Docker image building and pushing
   - Created `deploy.yml` workflow for server deployment tasks

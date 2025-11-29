@@ -372,6 +372,12 @@ pytest bodzify_api/test/view/track/test_specific.py
 - Use `assert` instead of `assertEqual`
 - Each test should focus on a single scenario
 
+**CI Testing:**
+
+- CI runs tests with fail-fast flag (`-x`) - stops on first failure for faster feedback
+- Test results are published to GitHub Actions UI
+- Tests run automatically on pushes to `main`, `develop`, `release/*`, `hotfix/*` branches and pull requests
+
 ### 5. Committing
 
 We follow a structured commit format inspired by [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
