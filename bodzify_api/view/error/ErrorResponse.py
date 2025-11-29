@@ -135,7 +135,7 @@ class ErrorResponse:
         # But handle Python 3.14 compatibility issues
         message = None
         code = getattr(exception, 'default_code', 'parse_error')
-        
+
         try:
             detail = exception.detail
             if isinstance(detail, str):
@@ -146,7 +146,7 @@ class ErrorResponse:
         except (AttributeError, TypeError):
             # Python 3.14 compatibility: detail access failed, try alternatives
             pass
-        
+
         # If we couldn't get message from detail, try other methods
         if not message:
             # Check if default_detail is different from the default DRF ParseError message
@@ -160,7 +160,7 @@ class ErrorResponse:
                         message = str(exception.args[0]) if exception.args[0] else None
             except (AttributeError, TypeError):
                 pass
-        
+
         # Last resort: try stringification
         if not message:
             try:
@@ -169,11 +169,11 @@ class ErrorResponse:
                     message = exc_str
             except Exception:
                 pass
-        
+
         # Final fallback
         if not message:
             message = 'Invalid input'
-        
+
         return ErrorResponse.create_error_response(
             error_detail={'message': message, 'code': code},
             api_error_code=ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT)
