@@ -65,6 +65,10 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### Changed
 
+- **Dependencies**: Updated `django-filter` from 22.1 to 24.3 for Python 3.14 compatibility
+  - Fixes `AttributeError: module 'pkgutil' has no attribute 'find_loader'` error
+  - Version 24.3 removes deprecated `pkgutil.find_loader` usage
+
 - **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.3.1
 
 - **Dependencies**: 
