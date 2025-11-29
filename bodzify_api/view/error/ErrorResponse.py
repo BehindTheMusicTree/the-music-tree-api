@@ -95,9 +95,13 @@ class ErrorResponse:
 
     @staticmethod
     def _from_invalid_jwt_token(exception: InvalidToken | NotAuthenticated | AuthenticationFailed) -> JsonResponse:
-        detail = exception.detail
-        message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
-        code = detail['code'] if isinstance(detail, dict) and 'code' in detail else exception.default_code
+        try:
+            detail = exception.detail
+            message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+            code = detail['code'] if isinstance(detail, dict) and 'code' in detail else exception.default_code
+        except (AttributeError, TypeError):
+            message = getattr(exception, 'default_detail', str(exception))
+            code = getattr(exception, 'default_code', 'authentication_failed')
         return ErrorResponse.create_error_response(
             error_detail={'message': message, 'code': code},
             api_error_code=ApiErrorCodeNumeric.AUTH_INVALID_CREDENTIALS)
@@ -113,8 +117,11 @@ class ErrorResponse:
 
     @staticmethod
     def _from_unsupported_media_type_exception(exception: UnsupportedMediaType) -> JsonResponse:
-        detail = exception.detail
-        message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+        try:
+            detail = exception.detail
+            message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+        except (AttributeError, TypeError):
+            message = getattr(exception, 'default_detail', str(exception))
         return ErrorResponse.create_error_response(
             error_detail={
                 'message': message,
@@ -124,9 +131,23 @@ class ErrorResponse:
 
     @staticmethod
     def _from_content_type_exception(exception: ParseError) -> JsonResponse:
-        detail = exception.detail
-        message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
-        code = detail['code'] if isinstance(detail, dict) and 'code' in detail else exception.default_code
+        try:
+            detail = exception.detail
+            if isinstance(detail, str):
+                message = detail
+                code = getattr(exception, 'default_code', 'parse_error')
+            elif isinstance(detail, dict):
+                message = detail.get('detail', exception.default_detail)
+                code = detail.get('code', exception.default_code)
+            else:
+                message = exception.default_detail
+                code = exception.default_code
+        except (AttributeError, TypeError):
+            try:
+                message = str(exception)
+            except Exception:
+                message = getattr(exception, 'default_detail', 'Invalid input')
+            code = getattr(exception, 'default_code', 'parse_error')
         return ErrorResponse.create_error_response(
             error_detail={'message': message, 'code': code},
             api_error_code=ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT)
@@ -235,7 +256,12 @@ class ErrorResponse:
                 api_error_code=ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT
             )
         elif isinstance(exception, DrfValidationError):
-            error_detail = DrfValidationErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
+            try:
+                error_detail = DrfValidationErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
+            except (AttributeError, TypeError):
+                error_detail = {
+                    'message': getattr(exception, 'default_detail', str(exception)),
+                    'code': 'validation_error'}
 
             # If it's already a dict with a message, use it directly
             if isinstance(error_detail, dict) and 'message' in error_detail:
@@ -299,16 +325,22 @@ class ErrorResponse:
 
     @staticmethod
     def _from_method_not_allowed_exception(exception: MethodNotAllowed) -> JsonResponse:
-        detail = exception.detail
-        message = str(detail) if isinstance(
-            detail, DRFErrorDetail) else detail['detail'] if isinstance(
-            detail, dict) and 'detail' in detail else exception.default_detail
+        try:
+            detail = exception.detail
+            message = str(detail) if isinstance(
+                detail, DRFErrorDetail) else detail['detail'] if isinstance(
+                detail, dict) and 'detail' in detail else exception.default_detail
+        except (AttributeError, TypeError):
+            message = getattr(exception, 'default_detail', str(exception))
         return ErrorResponse.create_error_response(error_detail={'message': message, 'code': 'method_not_allowed'},
                                                    api_error_code=ApiErrorCodeNumeric.VALIDATION_METHOD_NOT_ALLOWED)
 
     @staticmethod
     def _from_http_404_exception(exception: Http404) -> JsonResponse:
-        message = str(exception) if str(exception) else 'Resource not found'
+        try:
+            message = str(exception) or 'Resource not found'
+        except Exception:
+            message = 'Resource not found'
         return ErrorResponse.create_error_response(
             error_detail={'message': message, 'code': 'not_found'},
             api_error_code=ApiErrorCodeNumeric.RESOURCE_NOT_FOUND
@@ -316,8 +348,19 @@ class ErrorResponse:
 
     @staticmethod
     def _from_permission_denied_exception(exception: PermissionDenied) -> JsonResponse:
-        detail = exception.detail
-        message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+        try:
+            detail = exception.detail
+            message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+        except (AttributeError, TypeError):
+            try:
+                message = getattr(exception, 'default_detail', None)
+                if message is None:
+                    try:
+                        message = str(exception)
+                    except Exception:
+                        message = 'Permission denied'
+            except Exception:
+                message = 'Permission denied'
         return ErrorResponse.create_error_response(
             error_detail={'message': message, 'code': 'permission_denied'},
             api_error_code=ApiErrorCodeNumeric.AUTH_INSUFFICIENT_PERMISSIONS
@@ -335,8 +378,12 @@ class ErrorResponse:
 
     @staticmethod
     def _from_spotify_authentication_exception(exception: SpotifyAuthenticationException) -> JsonResponse:
+        try:
+            message = str(exception)
+        except Exception:
+            message = f"{type(exception).__name__}: <unable to stringify exception>"
         return ErrorResponse.create_error_response(
-            error_detail={'message': str(exception), 'code': 'spotify_authentication_error'},
+            error_detail={'message': message, 'code': 'spotify_authentication_error'},
             api_error_code=ApiErrorCodeNumeric.AUTH_INVALID_CREDENTIALS)
 
     @staticmethod

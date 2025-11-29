@@ -62,8 +62,16 @@ def _get_musicbrainz_best_recording_dict_from_fingerprint_and_duration(fingerpri
         if isinstance(exception, musicbrainz_exception.MusicbrainzRecordingLookupException):
             raise exception
         if isinstance(exception, WebServiceError):
-            raise musicbrainz_exception.DNSResolutionErrorMusicbrainzRecordingLookupException(str(exception))
-        raise musicbrainz_exception.UnknownErrorCodeMusicbrainzRecordingLookupException(str(exception))
+            try:
+                exc_str = str(exception)
+            except Exception:
+                exc_str = f"{type(exception).__name__}: <unable to stringify exception>"
+            raise musicbrainz_exception.DNSResolutionErrorMusicbrainzRecordingLookupException(exc_str)
+        try:
+            exc_str = str(exception)
+        except Exception:
+            exc_str = f"{type(exception).__name__}: <unable to stringify exception>"
+        raise musicbrainz_exception.UnknownErrorCodeMusicbrainzRecordingLookupException(exc_str)
 
 
 def get_musicbrainz_recording_lookup_result(user: User,

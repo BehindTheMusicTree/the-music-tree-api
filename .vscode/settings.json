@@ -29,7 +29,7 @@
 	},
 	"files.autoSave": "onFocusChange",
 	"python.testing.unittestEnabled": false,
-	"python.pythonPath": "/Users/mignot/git/bodzify-api-django/.venv/bin/python",
+	"python.pythonPath": "/Users/mignot/git/bodzify-api-django-split-ci/.venv/bin/python",
 	"cursorpyright.analysis.autoImportCompletions": true,
 	"cursorpyright.analysis.typeCheckingMode": "basic",
 }

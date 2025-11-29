@@ -141,26 +141,50 @@ class AppSerializer(serializers.Serializer, Generic[T]):
         except AppValidationException as exc:
             raise exc
         except ValidationError as exc:
-            exc_first_detail = str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail)
+            try:
+                detail = exc.detail
+                exc_first_detail = str(detail[0] if isinstance(detail, list) else detail)
+            except (AttributeError, TypeError):
+                try:
+                    exc_first_detail = str(exc)
+                except Exception:
+                    exc_first_detail = 'Invalid input.'
             error_code = (FieldValidationErrorCode.REQUIRED
                           if exc_first_detail == "This field is required."
                           else FieldValidationErrorCode.DEFAULT)
             error = AppValidationException(field_name=field.field_name,
                                            message=exc_first_detail or 'Invalid input.',
                                            field_validation_error_code=error_code)
-            self._errors = error.detail
+            try:
+                self._errors = error.detail
+            except (AttributeError, TypeError):
+                self._errors = error.errors
             raise error
 
     def _validate_object(self, validated_data: dict) -> dict:
         try:
             return self.validate(validated_data)
         except AppValidationException as exc:
-            self._errors = exc.detail
+            try:
+                self._errors = exc.detail
+            except (AttributeError, TypeError):
+                self._errors = exc.errors
             raise
         except ValidationError as exc:
-            error = AppValidationException(message=str(exc.detail[0] if isinstance(exc.detail, list) else exc.detail),
+            try:
+                detail = exc.detail
+                detail_str = str(detail[0] if isinstance(detail, list) else detail)
+            except (AttributeError, TypeError):
+                try:
+                    detail_str = str(exc)
+                except Exception:
+                    detail_str = 'Invalid input.'
+            error = AppValidationException(message=detail_str,
                                            field_validation_error_code=FieldValidationErrorCode.DEFAULT)
-            self._errors = error.detail
+            try:
+                self._errors = error.detail
+            except (AttributeError, TypeError):
+                self._errors = error.errors
             raise error
 
     def _initialize_validation_state(self):

@@ -67,7 +67,11 @@ class AppValidationException(DrfValidationError):
         if not isinstance(exc, DrfValidationError) or not hasattr(exc, 'detail'):
             return None
 
-        detail = exc.detail
+        try:
+            detail = exc.detail
+        except (AttributeError, TypeError):
+            return None
+
         # Convert list to dict if necessary
         if isinstance(detail, list):
             detail = {'error': detail[0] if detail else 'Unknown error'}

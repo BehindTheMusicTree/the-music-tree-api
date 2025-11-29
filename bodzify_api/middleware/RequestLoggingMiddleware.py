@@ -91,7 +91,8 @@ class RequestLoggingMiddleware:
                 self.requestLogger.error(error_message)
                 self.requestDebugLogger.error(error_message)
             except Exception as log_error:
-                self.requestDebugLogger.error(f"[{request_id}] Error logging exception: {type(log_error).__name__}: {str(log_error)}")
+                self.requestDebugLogger.error(
+                    f"[{request_id}] Error logging exception: {type(log_error).__name__}: {str(log_error)}")
 
             # Special logging for PUT requests to genres
             if request.method == 'PUT' and '/genres/' in request.path:
@@ -103,9 +104,11 @@ class RequestLoggingMiddleware:
                     self.requestDebugLogger.error(
                         f"[{request_id}] DEBUG: PUT request to genres failed with exception: {type(e).__name__}: {exc_str}")
                     import traceback
-                    self.requestDebugLogger.error(f"[{request_id}] DEBUG: Exception traceback: {traceback.format_exc()}")
+                    self.requestDebugLogger.error(
+                        f"[{request_id}] DEBUG: Exception traceback: {traceback.format_exc()}")
                 except Exception as log_error:
-                    self.requestDebugLogger.error(f"[{request_id}] Error in detailed logging: {type(log_error).__name__}: {str(log_error)}")
+                    self.requestDebugLogger.error(
+                        f"[{request_id}] Error in detailed logging: {type(log_error).__name__}: {str(log_error)}")
 
             raise
 
@@ -120,7 +123,8 @@ class RequestLoggingMiddleware:
             self.requestLogger.error('\n'.join(traceback.format_exception(
                 type(exception), exception, exception.__traceback__)))
         except Exception as log_error:
-            self.requestDebugLogger.error(f"[{request_id}] Error logging exception details: {type(log_error).__name__}: {str(log_error)}")
+            self.requestDebugLogger.error(
+                f"[{request_id}] Error logging exception details: {type(log_error).__name__}: {str(log_error)}")
 
         try:
             response = ErrorResponse.handle_exception(exception)
@@ -131,9 +135,11 @@ class RequestLoggingMiddleware:
             except Exception:
                 e_str = f"{type(e).__name__}: <unable to stringify exception>"
             try:
-                self.requestLogger.error(f"[{request_id}] Error in ErrorResponse Handling: {type(e).__name__} - {e_str}")
+                self.requestLogger.error(
+                    f"[{request_id}] Error in ErrorResponse Handling: {type(e).__name__} - {e_str}")
                 self.requestLogger.error('\n'.join(traceback.format_exception(type(e), e, e.__traceback__)))
             except Exception as log_error:
-                self.requestDebugLogger.error(f"[{request_id}] Error logging ErrorResponse handling error: {type(log_error).__name__}: {str(log_error)}")
+                self.requestDebugLogger.error(
+                    f"[{request_id}] Error logging ErrorResponse handling error: {type(log_error).__name__}: {str(log_error)}")
 
         return None

@@ -69,6 +69,15 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
   - Fixes `AttributeError: module 'pkgutil' has no attribute 'find_loader'` error
   - Version 24.3 removes deprecated `pkgutil.find_loader` usage
 
+### Fixed
+
+- **Error Handling**: Fixed Python 3.14 compatibility issues with exception attribute access
+  - Wrapped all `exception.detail` accesses in try-except blocks to handle `AttributeError` and `TypeError`
+  - Added safe stringification fallbacks for all `str(exception)` calls
+  - Fixed `TypeError: 'super' object has no attribute 'dicts'` error in exception logging middleware
+  - Updated `ErrorResponse`, `AppValidationException`, `AppSerializer`, `ExceptionLoggingMiddleware`, and `RequestLoggingMiddleware` to safely handle DRF exceptions in Python 3.14
+  - Prevents middleware crashes when exception stringification fails
+
 - **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.3.1
 
 - **Dependencies**: 
