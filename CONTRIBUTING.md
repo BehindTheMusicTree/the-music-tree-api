@@ -286,6 +286,24 @@ We follow **strict Git Flow** with the following branch structure:
 
 - Merge into `develop` via Pull Request when complete and tested
 
+#### Chore Branches (`chore/<name>`)
+
+- For maintenance, infrastructure, and configuration work
+- Branch from `develop`
+- Include issue numbers when applicable: `chore/234-update-dependencies`
+- Examples: repository setup, CI/CD changes, dependency updates, documentation infrastructure
+- Examples:
+
+  ```bash
+  git checkout develop
+  git pull origin develop
+  git checkout -b chore/github-setup
+  git checkout -b chore/update-dependencies
+  git checkout -b chore/234-update-dependencies        # With issue number
+  ```
+
+- Merge into `develop` via Pull Request when complete
+
 #### Release Branches (`release/<version>`) _(For Maintainers)_
 
 - Created from `develop` when preparing a new release
@@ -319,24 +337,6 @@ We follow **strict Git Flow** with the following branch structure:
 
 - Contributors can submit fixes via feature branches that maintainers may promote to hotfixes if needed
 - When complete, merge into both `main` (for immediate production fix) and `develop` (to keep develop up to date)
-
-#### Chore Branches (`chore/<name>`)
-
-- For maintenance, infrastructure, and configuration work
-- Branch from `develop`
-- Include issue numbers when applicable: `chore/234-update-dependencies`
-- Examples: repository setup, CI/CD changes, dependency updates, documentation infrastructure
-- Examples:
-
-  ```bash
-  git checkout develop
-  git pull origin develop
-  git checkout -b chore/github-setup
-  git checkout -b chore/update-dependencies
-  git checkout -b chore/234-update-dependencies        # With issue number
-  ```
-
-- Merge into `develop` via Pull Request when complete
 
 ### 3. Developing
 
@@ -597,6 +597,38 @@ These automations help streamline the review process and ensure consistency acro
 
 **Note:** If you add a new feature or component, you can suggest updates to `.github/labeler.yml` via a PR to ensure future changes to that component are automatically labeled correctly.
 
+##### GitHub Actions Workflows
+
+The project uses focused, reusable GitHub Actions workflows for CI/CD:
+
+**Test Workflow** (`.github/workflows/test.yml`):
+- Runs automatically on pushes to `main` and `develop` branches
+- Runs automatically on pull requests targeting `main` or `develop`
+- Can be triggered manually via `workflow_dispatch`
+- Executes the full test suite with pytest
+- Publishes test results to GitHub Actions UI
+
+**Publish Workflow** (`.github/workflows/publish.yml`):
+- Runs automatically when version tags are pushed (e.g., `v0.2.1`)
+- Can be triggered manually via `workflow_dispatch`
+- Orchestrates the release process:
+  1. Collects and commits static files
+  2. Builds and pushes Docker image to Docker Hub
+  3. Deploys to the test server
+
+**Other Workflows**:
+- `build.yml` - Builds and pushes Docker images (reusable)
+- `deploy.yml` - Handles server deployment (reusable)
+- `static-files.yml` - Collects and commits static files (reusable)
+- `branch-protection.yml` - Enforces Git Flow branching rules
+- `labeler.yml` - Automatically labels PRs based on changed files
+
+**Workflow Philosophy**:
+- **Separation of concerns**: Tests run on every change, publishing only on releases
+- **Reusability**: Individual workflows can be called independently or as part of a pipeline
+- **Maintainability**: Each workflow has a single, focused responsibility
+- **Flexibility**: All workflows support manual triggering for debugging and testing
+
 ### 7. Releasing _(For Maintainers)_
 
 Releases are created from the `main` branch using **strict Git Flow**.
@@ -664,9 +696,12 @@ Quick release process:
 
 8. **CI/CD will automatically:**
 
-   - Build Docker images
-   - Run tests
-   - Deploy if configured
+   When you push the version tag (step 5), the `publish.yml` workflow will automatically:
+   - Collect and commit static files
+   - Build and push Docker image to Docker Hub
+   - Deploy to the test server
+   
+   See the [GitHub Actions Workflows](#github-actions-workflows) section above for details on the workflow structure.
 
 **Hotfix Release Process:**
 

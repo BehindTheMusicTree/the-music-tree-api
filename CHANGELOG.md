@@ -67,7 +67,21 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 - **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.3.1
 
+- **Dependencies**: 
+  - Updated `psycopg2-binary` from 2.9.5 to 2.9.11 for Python 3.14 compatibility
+
 ### CI
+
+- **CI Workflow**: Split monolithic CI workflow into focused, reusable workflows
+  - Updated `test.yml` workflow to run tests on pushes and pull requests (removed redundant `ci.yml` wrapper)
+  - Created `static-files.yml` workflow for collecting and pushing static files
+  - Created `build.yml` workflow for Docker image building and pushing
+  - Created `deploy.yml` workflow for server deployment tasks
+  - Created `publish.yml` workflow for releases (triggers on version tags `v*`)
+  - Publishing workflow handles static files collection, Docker build, and deployment
+  - Improved workflow maintainability and reusability
+  - Each workflow can now be triggered independently via workflow_dispatch
+  - Separation of concerns: tests run on every change, publishing only on releases
 
 - **GitHub Automation**:
   - Auto-labeler workflow (`.github/workflows/labeler.yml`) for automatic PR labeling based on file paths
@@ -78,10 +92,9 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
   - Pull request template with comprehensive checklist
   - GitHub Discussions setup with category templates
 
-### Changed
-
-- **Dependencies**: 
-  - Updated `psycopg2-binary` from 2.9.5 to 2.9.11 for Python 3.14 compatibility
+- **CI/CD**: Updated GitHub Actions workflow to use `develop` branch instead of `dev`
+  - Updated Python version to 3.14 in CI workflows
+  - Added branch protection checks for Git Flow enforcement
 
 ### Removed
 
@@ -130,17 +143,6 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 - **License**: Added Apache License 2.0
 
 - **Code of Conduct**: Added Contributor Covenant 2.1
-
-### CI
-
-- **Branch Protection**: Added automated enforcement of Git Flow branching rules
-  - PRs to `main` must come from `hotfix/*` or `release/*` branches only
-  - PRs to `develop` must come from `feature/*`, `chore/*`, `hotfix/*`, or `release/*` branches only
-  - Provides clear error messages when branch rules are violated
-
-- **CI/CD**: Updated GitHub Actions workflow to use `develop` branch instead of `dev`
-  - Updated Python version to 3.14 in CI workflows
-  - Added branch protection checks for Git Flow enforcement
 
 ## [v0.2.0] - 2025-04-03
 

@@ -1,0 +1,130 @@
+name: Test
+
+on:
+  workflow_call:
+    inputs:
+      test_path:
+        description: 'Specific test path to run (optional)'
+        required: false
+        type: string
+  workflow_dispatch:
+    inputs:
+      test_path:
+        description: 'Specific test path to run (optional)'
+        required: false
+        type: string
+  push:
+    branches: [main, develop, 'release/*', 'hotfix/*']
+  pull_request:
+    branches: [main, develop]
+
+env:
+  CONTAINER_ROOT_DIR: /home/app/
+  DB_CONNECTION_TEST_MAX_ATTEMPTS: 10
+  DB_CONNECTION_TEST_SLEEP_INTERVAL: 5
+
+jobs:
+  pytest:
+    name: Pytest
+    runs-on: ubuntu-latest
+    environment:
+      name: CI_TEST
+    env:
+      ENV: ${{ vars.ENV }}
+      APP_NAME: ${{ vars.APP_NAME }}
+      APP_VERSION: ${{ vars.APP_VERSION }}
+      DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+      DEBUG: true
+      DB_IS_NEEDED: true
+      APP_IS_EXPOSED: false
+      TMP_UPLOADED_FILES_EXTERNAL: ${{ vars.TMP_UPLOADED_FILES_EXTERNAL }}
+      ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
+      MEDIA_DIR_INTERNAL: ${{ vars.MEDIA_DIR_INTERNAL }}
+      LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
+      DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
+      DB_VERSION: ${{ vars.DB_VERSION }}
+      DB_CONTAINER_NAME: ${{ vars.DB_CONTAINER_NAME }}
+      DB_DATA_DIR: ${{ vars.DB_DATA_DIR }}
+      DB_SUPERUSER_NAME: ${{ vars.DB_SUPERUSER_NAME }}
+      DB_SUPERUSER_PASSWORD: ${{ secrets.DB_SUPERUSER_PASSWORD }}
+      DB_BODZIFY_API_DB_NAME: ${{ secrets.DB_BODZIFY_API_DB_NAME }}
+      DB_BODZIFY_API_USERNAME: ${{ secrets.DB_BODZIFY_API_USERNAME }}
+      DB_BODZIFY_API_USER_PASSWORD: ${{ secrets.DB_BODZIFY_API_USER_PASSWORD }}
+      DB_URL: ${{ vars.DB_URL }}
+      DB_PORT: ${{ vars.DB_PORT }}
+      AFP_URL: ${{ vars.AFP_URL }}
+      AFP_CONTAINER_NAME: ${{ vars.AFP_CONTAINER_NAME }}
+      AFP_IMAGE_REPO: ${{ vars.AFP_IMAGE_REPO }}
+      AFP_VERSION: ${{ vars.AFP_VERSION }}
+      AFP_PORT: ${{ vars.AFP_PORT }}
+      AFP_POOL_DIR_EXTERNAL: ${{ vars.AFP_POOL_DIR_EXTERNAL }}
+      AFP_POST_ENDPOINT: ${{ vars.AFP_POST_ENDPOINT }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.14
+
+      - name: Cache apt packages
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt
+          key: ${{ runner.os }}-apt-${{ hashFiles('scripts/install-dependencies.sh') }}
+          restore-keys: |
+            ${{ runner.os }}-apt-
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: sudo -E bash scripts/install-dependencies.sh
+
+      - name: Add fpcalc to PATH
+        run: echo "bin/fpcalc" >> $GITHUB_PATH
+
+      - name: Install requirements
+        run: PIP_NO_CACHE_DIR=off pip install -r requirements.txt
+
+      - name: Set up filesystem
+        run: bash scripts/setup-filesystem.sh
+
+      - name: Run database and Audio Fingerprint containers
+        env:
+          DB_DATA_MUST_PERSIST: false
+        run: bash scripts/run-db-and-afp-containers.sh
+
+      - name: Wait for database service to start
+        run: bash scripts/wait-for-postgres-db.sh ${{ env.DB_URL }} ${{ env.DB_PORT }} ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }} ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
+
+      - name: Set up fixtures files
+        env:
+          FIXTURES_DIR: ${{ vars.APP_NAME }}/fixtures/
+        run: |
+          cp ${{ env.FIXTURES_DIR }}app/*.json ${{ env.FIXTURES_DIR }}
+
+      - name: Init django data
+        run: bash scripts/init-django-data.sh
+
+      - name: Run pytest
+        run: |
+          if [ -n "${{ inputs.test_path || '' }}" ]; then
+            pytest -v --tb=short -W always --junitxml=test-results.xml "${{ inputs.test_path }}"
+          else
+            pytest -v --tb=short -W always --junitxml=test-results.xml bodzify_api/test/
+          fi
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: test-results.xml
+

@@ -1,0 +1,63 @@
+name: Static Files
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+env:
+  CONTAINER_ROOT_DIR: /home/app/
+
+jobs:
+  collect-and-push-static-files:
+    name: Collect and push static files
+    runs-on: ubuntu-latest
+    environment:
+      name: COLLECT_STATIC
+    env:
+      ENV: ${{ vars.ENV }}
+      APP_NAME: ${{ vars.APP_NAME }}
+      DEBUG: false
+      DB_IS_NEEDED: false
+      APP_IS_EXPOSED: false
+      STATIC_FILES_INTERNAL: ${{ vars.STATIC_FILES_INTERNAL }}
+    outputs:
+      collect_static_files_commit_hash: ${{ steps.commit-and-push-static-files.outputs.collect_static_files_commit_hash }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.14
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Set up filesystem
+        run: bash scripts/setup-filesystem.sh
+
+      - name: Collect static files
+        env:
+          APP_VERSION: ${{ vars.APP_VERSION }}
+          STATIC_FILES_URL: ${{ vars.API_STATIC_FILES_URL }}
+        run: python manage.py collectstatic --noinput
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+
+      - name: Commit and push static files
+        id: commit-and-push-static-files
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add -A
+          git diff --staged --exit-code || git commit -am "chore: add collected static files"
+          git push
+
+          echo "collect_static_files_commit_hash=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
