@@ -39,6 +39,8 @@ jobs:
       APP_IS_EXPOSED: false
       TMP_UPLOADED_FILES_EXTERNAL: ${{ vars.TMP_UPLOADED_FILES_EXTERNAL }}
       ACOUSTID_API_KEY: ${{ secrets.ACOUSTID_API_KEY }}
+      SPOTIFY_CLIENT_ID: test_client_id
+      SPOTIFY_CLIENT_SECRET: test_client_secret
       MEDIA_DIR_INTERNAL: ${{ vars.MEDIA_DIR_INTERNAL }}
       LIBRARIES_DIR_NAME: ${{ vars.LIBRARIES_DIR_NAME }}
       DB_IMAGE_REPO: ${{ vars.DB_IMAGE_REPO }}
