@@ -2,6 +2,7 @@ import time
 import pytest
 from rest_framework import status
 
+from bodzify_api.model.uploaded_track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import FingerprintMissingCauseCode
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
@@ -31,7 +32,10 @@ class TestCase(UploadedTrackTestCase):
                         print(f"Retrying in {retry_delay} seconds...")
                         time.sleep(retry_delay)
                         continue
-                    assert False
+                    error_message = f"Audio Fingerprinter service connection failed: {track_file.fingerprint_missing_cause}"
+                    if track_file.fingerprint_missing_cause.code.code == FingerprintMissingCauseCode.Codes.SERVICE_NOT_FOUND:
+                        error_message += " The Audio Fingerprinter service is not available. Please ensure the service is running."
+                    assert False, error_message
 
                 if track_file.musicbrainz_recording_missing_cause:
                     print(track_file.musicbrainz_recording_missing_cause)
@@ -39,7 +43,7 @@ class TestCase(UploadedTrackTestCase):
                         print(f"Retrying in {retry_delay} seconds...")
                         time.sleep(retry_delay)
                         continue
-                    assert False
+                    assert False, f"MusicBrainz recording lookup failed: {track_file.musicbrainz_recording_missing_cause}"
                 else:
                     print("No musicbrainz_recording_missing_cause")
 
