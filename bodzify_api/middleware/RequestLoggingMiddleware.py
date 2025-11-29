@@ -85,14 +85,27 @@ class RequestLoggingMiddleware:
             try:
                 error_str = str(e)
             except Exception:
-                error_str = f"{type(e).__name__}: <unable to stringify exception>"
+                try:
+                    error_str = repr(e)
+                except Exception:
+                    error_str = f"{type(e).__name__}: <unable to stringify exception>"
             error_message = f"[{request_id}] Error: {error_str} (took {duration:.3f}s)"
             try:
                 self.requestLogger.error(error_message)
                 self.requestDebugLogger.error(error_message)
             except Exception as log_error:
-                self.requestDebugLogger.error(
-                    f"[{request_id}] Error logging exception: {type(log_error).__name__}: {str(log_error)}")
+                try:
+                    log_error_str = str(log_error)
+                except Exception:
+                    try:
+                        log_error_str = repr(log_error)
+                    except Exception:
+                        log_error_str = f"{type(log_error).__name__}: <unable to stringify>"
+                try:
+                    self.requestDebugLogger.error(
+                        f"[{request_id}] Error logging exception: {type(log_error).__name__}: {log_error_str}")
+                except Exception:
+                    pass
 
             # Special logging for PUT requests to genres
             if request.method == 'PUT' and '/genres/' in request.path:
@@ -120,11 +133,20 @@ class RequestLoggingMiddleware:
             exc_str = f"{type(exception).__name__}: <unable to stringify exception>"
         try:
             self.requestLogger.error(f"[{request_id}] Exception: {type(exception).__name__} - {exc_str}")
-            self.requestLogger.error('\n'.join(traceback.format_exception(
-                type(exception), exception, exception.__traceback__)))
+            try:
+                tb_str = '\n'.join(traceback.format_exception(
+                    type(exception), exception, exception.__traceback__))
+                self.requestLogger.error(tb_str)
+            except Exception:
+                self.requestDebugLogger.error(
+                    f"[{request_id}] Error formatting traceback for {type(exception).__name__}")
         except Exception as log_error:
+            try:
+                log_error_str = str(log_error)
+            except Exception:
+                log_error_str = f"{type(log_error).__name__}: <unable to stringify>"
             self.requestDebugLogger.error(
-                f"[{request_id}] Error logging exception details: {type(log_error).__name__}: {str(log_error)}")
+                f"[{request_id}] Error logging exception details: {type(log_error).__name__}: {log_error_str}")
 
         try:
             response = ErrorResponse.handle_exception(exception)
@@ -137,9 +159,18 @@ class RequestLoggingMiddleware:
             try:
                 self.requestLogger.error(
                     f"[{request_id}] Error in ErrorResponse Handling: {type(e).__name__} - {e_str}")
-                self.requestLogger.error('\n'.join(traceback.format_exception(type(e), e, e.__traceback__)))
+                try:
+                    tb_str = '\n'.join(traceback.format_exception(type(e), e, e.__traceback__))
+                    self.requestLogger.error(tb_str)
+                except Exception:
+                    self.requestDebugLogger.error(
+                        f"[{request_id}] Error formatting traceback for ErrorResponse handling error")
             except Exception as log_error:
+                try:
+                    log_error_str = str(log_error)
+                except Exception:
+                    log_error_str = f"{type(log_error).__name__}: <unable to stringify>"
                 self.requestDebugLogger.error(
-                    f"[{request_id}] Error logging ErrorResponse handling error: {type(log_error).__name__}: {str(log_error)}")
+                    f"[{request_id}] Error logging ErrorResponse handling error: {type(log_error).__name__}: {log_error_str}")
 
         return None

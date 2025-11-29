@@ -31,11 +31,16 @@ class ExceptionLoggingMiddleware:
             exc_str = f"{type(exception).__name__}: <unable to stringify exception>"
         self.logger.error(f"[{request_id}] Exception: {type(exception).__name__} - {exc_str}")
         try:
-            self.logger.error('\n'.join(traceback.format_exception(
-                type(exception), exception, exception.__traceback__)))
+            tb_str = '\n'.join(traceback.format_exception(
+                type(exception), exception, exception.__traceback__))
+            self.logger.error(tb_str)
         except Exception as traceback_error:
+            try:
+                traceback_error_str = str(traceback_error)
+            except Exception:
+                traceback_error_str = f"{type(traceback_error).__name__}: <unable to stringify>"
             self.logger.error(
-                f"[{request_id}] Error formatting traceback: {type(traceback_error).__name__} - {str(traceback_error)}")
+                f"[{request_id}] Error formatting traceback: {type(traceback_error).__name__} - {traceback_error_str}")
 
         try:
             response = ErrorResponse.handle_exception(exception)
@@ -47,9 +52,14 @@ class ExceptionLoggingMiddleware:
                 e_str = f"{type(e).__name__}: <unable to stringify exception>"
             self.logger.error(f"[{request_id}] Error in ErrorResponse Handling: {type(e).__name__} - {e_str}")
             try:
-                self.logger.error('\n'.join(traceback.format_exception(type(e), e, e.__traceback__)))
+                tb_str = '\n'.join(traceback.format_exception(type(e), e, e.__traceback__))
+                self.logger.error(tb_str)
             except Exception as traceback_error:
+                try:
+                    traceback_error_str = str(traceback_error)
+                except Exception:
+                    traceback_error_str = f"{type(traceback_error).__name__}: <unable to stringify>"
                 self.logger.error(
-                    f"[{request_id}] Error formatting traceback: {type(traceback_error).__name__} - {str(traceback_error)}")
+                    f"[{request_id}] Error formatting traceback: {type(traceback_error).__name__} - {traceback_error_str}")
 
         return None
