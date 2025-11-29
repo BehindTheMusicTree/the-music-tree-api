@@ -116,7 +116,6 @@ class RequestLoggingMiddleware:
                 try:
                     self.requestDebugLogger.error(
                         f"[{request_id}] DEBUG: PUT request to genres failed with exception: {type(e).__name__}: {exc_str}")
-                    import traceback
                     self.requestDebugLogger.error(
                         f"[{request_id}] DEBUG: Exception traceback: {traceback.format_exc()}")
                 except Exception as log_error:
