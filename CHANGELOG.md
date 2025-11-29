@@ -78,7 +78,7 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
   - Updated `ErrorResponse`, `AppValidationException`, `AppSerializer`, `ExceptionLoggingMiddleware`, and `RequestLoggingMiddleware` to safely handle DRF exceptions in Python 3.14
   - Prevents middleware crashes when exception stringification fails
 
-- **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.3.1
+- **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.4.1
 
 - **Dependencies**: 
   - Updated `psycopg2-binary` from 2.9.5 to 2.9.11 for Python 3.14 compatibility
