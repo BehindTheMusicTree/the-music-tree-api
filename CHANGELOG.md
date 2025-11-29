@@ -60,7 +60,7 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### Added
 
-- **Git Worktree Scripts**: Added npm `git-worktree-scripts` package (v1.2.7) for managing git worktrees
+- **Git Worktree Scripts**: Added npm `git-worktree-scripts` package (v1.3.0) for managing git worktrees
   - Includes `setup-worktree.sh` script for automated worktree setup with virtual environment and dependencies
 
 ### Changed
