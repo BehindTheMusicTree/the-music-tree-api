@@ -60,12 +60,12 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### Added
 
-- **Git Worktree Scripts**: Added npm `git-worktree-scripts` package (v1.2.7) for managing git worktrees
+- **Git Worktree Scripts**: Added npm `git-worktree-scripts` package (v1.4.0) for managing git worktrees
   - Includes `setup-worktree.sh` script for automated worktree setup with virtual environment and dependencies
-
-### Changed
-
-- **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.3.1
+  - Added `.git-worktree-copy` configuration for copying gitignored files to new worktrees
+    - Copies `env/.venv` Python virtual environment
+    - Copies fixture files from `bodzify_api/fixtures/*.json`
+  - Integrated filesystem setup into `setup-worktree.sh` for automatic directory and log file creation
 
 ### CI
 
@@ -78,7 +78,18 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
   - Pull request template with comprehensive checklist
   - GitHub Discussions setup with category templates
 
+- **Branch Protection**: Added automated enforcement of Git Flow branching rules
+  - PRs to `main` must come from `hotfix/*` or `release/*` branches only
+  - PRs to `develop` must come from `feature/*`, `chore/*`, `hotfix/*`, or `release/*` branches only
+  - Provides clear error messages when branch rules are violated
+
+- **CI/CD**: Updated GitHub Actions workflow to use `develop` branch instead of `dev`
+  - Updated Python version to 3.14 in CI workflows
+  - Added branch protection checks for Git Flow enforcement
+
 ### Changed
+
+- **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.3.1
 
 - **Dependencies**: 
   - Updated `psycopg2-binary` from 2.9.5 to 2.9.11 for Python 3.14 compatibility
@@ -132,15 +143,6 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 - **Code of Conduct**: Added Contributor Covenant 2.1
 
 ### CI
-
-- **Branch Protection**: Added automated enforcement of Git Flow branching rules
-  - PRs to `main` must come from `hotfix/*` or `release/*` branches only
-  - PRs to `develop` must come from `feature/*`, `chore/*`, `hotfix/*`, or `release/*` branches only
-  - Provides clear error messages when branch rules are violated
-
-- **CI/CD**: Updated GitHub Actions workflow to use `develop` branch instead of `dev`
-  - Updated Python version to 3.14 in CI workflows
-  - Added branch protection checks for Git Flow enforcement
 
 ## [v0.2.0] - 2025-04-03
 

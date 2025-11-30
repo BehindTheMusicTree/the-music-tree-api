@@ -1,0 +1,9 @@
+# Gitignored files/directories to copy to new worktrees
+# See git-worktree-scripts documentation for format details
+
+# Copy Python virtual environment from env directory
+env/.venv
+
+# Copy fixture files directly in bodzify_api/fixtures
+bodzify_api/fixtures/*.json
+
