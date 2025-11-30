@@ -47,3 +47,12 @@ class ConsistentParametersFilterBackend(DjangoFilterBackend):
                             message=f"Filter is not valid")
 
         return kwargs
+
+    def get_schema_operation_parameters(self, view):
+        """
+        Return parameters for OpenAPI schema generation.
+        Delegates to parent class implementation for drf-spectacular compatibility.
+        """
+        if hasattr(super(), 'get_schema_operation_parameters'):
+            return super().get_schema_operation_parameters(view)
+        return []

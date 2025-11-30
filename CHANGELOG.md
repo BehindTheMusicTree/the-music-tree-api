@@ -81,6 +81,19 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 ### Changed
 
 - **Dependencies**: 
+  - Updated `Django` from 5.0.3 to 5.2.8
+  - Updated `asgiref` from 3.7.2 to 3.8.1 for Django 5.2.8 compatibility
+  - Updated `django-stubs` from 5.1.1 to 5.2.1 for Django 5.2.8 compatibility
+  - Updated `django-filter` from 22.1 to 25.2 for Python 3.14 compatibility (fixes `pkgutil.find_loader` removal)
+
+### Fixed
+
+- **Filesystem Setup**: Fixed `setup-filesystem.sh` to check for `DJANGO_LOG_DIR` instead of `DJANGO_LOGS_DIR` to properly create log directories
+- **Filter Backend**: Added `get_schema_operation_parameters` method to `ConsistentParametersFilterBackend` for drf-spectacular compatibility with django-filter 25.2
+
+### Changed
+
+- **Dependencies**: 
   - Updated `psycopg2-binary` from 2.9.5 to 2.9.11 for Python 3.14 compatibility
 
 ### Removed
