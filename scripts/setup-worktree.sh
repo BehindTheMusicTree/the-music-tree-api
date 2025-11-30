@@ -49,7 +49,14 @@ if [ -f "package.json" ]; then
     echo "✓ npm dependencies installed"
 fi
 
+SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
 
-
-
-
+if [ -f "${SCRIPTS_DIR}setup-filesystem.sh" ]; then
+    echo "Setting up filesystem..."
+    if bash "${SCRIPTS_DIR}setup-filesystem.sh"; then
+        echo "✓ Filesystem setup completed"
+    else
+        echo "⚠ Filesystem setup failed (environment variables may not be configured)"
+        echo "  You can run '${SCRIPTS_DIR}setup-filesystem.sh' manually after configuring environment variables"
+    fi
+fi
