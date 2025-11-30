@@ -48,8 +48,3 @@ if [ -f "package.json" ]; then
     npm install
     echo "✓ npm dependencies installed"
 fi
-
-
-
-
-
