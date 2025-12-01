@@ -145,19 +145,28 @@ def delete_metadata(file: FILE_TYPE, tag_format: MetadataFormat | None = None) -
 def get_bitrate(file: FILE_TYPE) -> int:
     """Get bitrate in kbps."""
     file_path = _get_file_path(file)
-    return audiometa.get_bitrate(file=file_path) // 1000
+    try:
+        return audiometa.get_bitrate(file=file_path) // 1000
+    except AudiometaFileCorruptedError as e:
+        raise FileCorruptedError(str(e)) from e
 
 
 def get_duration_in_sec(file: FILE_TYPE) -> float:
     """Get duration in seconds."""
     file_path = _get_file_path(file)
-    return audiometa.get_duration_in_sec(file=file_path)
+    try:
+        return audiometa.get_duration_in_sec(file=file_path)
+    except AudiometaFileCorruptedError as e:
+        raise FileCorruptedError(str(e)) from e
 
 
 def is_flac_md5_valid(file: FILE_TYPE) -> bool:
     """Check if FLAC file MD5 is valid."""
     file_path = _get_file_path(file)
-    return audiometa.is_flac_md5_valid(file=file_path)
+    try:
+        return audiometa.is_flac_md5_valid(file=file_path)
+    except AudiometaFileCorruptedError as e:
+        raise FileCorruptedError(str(e)) from e
 
 
 def fix_md5_checking(file: FILE_TYPE) -> TemporaryUploadedFile:
