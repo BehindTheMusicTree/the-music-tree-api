@@ -8,11 +8,13 @@ from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedT
 class TestCase(UploadedTrackTestCase):
 
     def test_long_then_renamed(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.FILENAME_151_MP3)
+        response = self._post_uploaded_track(
+            UploadedTrackTestFilename.
+            KWPD6ZD3Y5HQXBYFBNQ895XZYFF7YCVJJ0NF4VK5CFX5VT53FB8670J63MX2RUMGVZ46B78IQU6VQPJ7HYTZZLBBV5Q1L6TIP6MFZAFRNIDA8RREKPNCXBNRUKQTDZBUB7TW5ZN0MUKQX5GZGD51_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.filename == \
-            UploadedTrackTestFilename.FILENAME_151_MP3[-settings.UPLOADED_TRACK_FILENAME_LEN_MAX:]
+            UploadedTrackTestFilename.KWPD6ZD3Y5HQXBYFBNQ895XZYFF7YCVJJ0NF4VK5CFX5VT53FB8670J63MX2RUMGVZ46B78IQU6VQPJ7HYTZZLBBV5Q1L6TIP6MFZAFRNIDA8RREKPNCXBNRUKQTDZBUB7TW5ZN0MUKQX5GZGD51_MP3[-settings.UPLOADED_TRACK_FILENAME_LEN_MAX:]
 
     def test_same_filename_so_suffixe_added(self):
         self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_MP3)
