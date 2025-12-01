@@ -3,6 +3,7 @@ import datetime
 import os
 from typing import TYPE_CHECKING, cast
 
+from django.core.files import File as DjangoFile
 from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.db import models
 from django.db.models.fields.files import FieldFile
@@ -181,9 +182,14 @@ class TrackFile(PrivateStandardResource):
                             message='The FLAC file appears to be corrupted and cannot be processed.',
                             field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_CORRUPTED)
         try:
-            duration = audio_metadata.get_duration_in_sec(self.file)
+            file_for_metadata = self.file
+            if isinstance(file_for_metadata, DjangoFile) and hasattr(file_for_metadata, 'name') and not os.path.isabs(file_for_metadata.name):
+                expected_path = self.user.lib_abs_path / file_for_metadata.name
+                if expected_path.exists():
+                    file_for_metadata = str(expected_path)
+            duration = audio_metadata.get_duration_in_sec(file_for_metadata)
             self.duration_in_sec = duration if duration > 1 else 1
-            self.bitrate_in_kbps = audio_metadata.get_bitrate(self.file)
+            self.bitrate_in_kbps = audio_metadata.get_bitrate(file_for_metadata)
             self.size_in_bytes = self.file.size
             fingerprinting_result = self._manage_fingerprint()
             self._manage_musicbrainz_recording(fingerprinting_result)
