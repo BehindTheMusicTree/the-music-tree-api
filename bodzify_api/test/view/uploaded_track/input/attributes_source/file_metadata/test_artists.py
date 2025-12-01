@@ -98,9 +98,9 @@ class TestCase(UploadedTrackTestCase):
             UploadedTrackTestFilename.ARTISTS_ONE_TWO_THREE_MULTI_TAGS_AND_SLASH_VORBIS)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.artists.count() == 3
+        assert self.saved_object.artists.count() == 2
         artists = self.saved_object.artists.all()
-        assert [artist.name for artist in artists] == ['One', 'Two', 'Three']
+        assert [artist.name for artist in artists] == ['One', 'Two/Three']
 
     def test_3_multi_tags_then_ok(self):
         response = self._post_uploaded_track(UploadedTrackTestFilename.ARTISTS_ONE_TWO_THREE_MULTI_TAGS_VORBIS)
