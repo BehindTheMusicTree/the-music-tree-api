@@ -17,7 +17,7 @@ class TestCase(UploadedTrackTestCase):
     def test_album_provided_but_album_artists_not_then_201_created(self):
         data = {PostFields.ALBUM_NAME: "Koko"}
         response = self._post_uploaded_track(
-            title="Time", test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01_MO_MP3, **data)
+            title="Time", test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album.name == "Koko"
@@ -26,7 +26,7 @@ class TestCase(UploadedTrackTestCase):
     def test_album_artists_provided_but_album_not_then_400_bad_request(self):
         data = {PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["Koko"]}
         response = self._post_uploaded_track(
-            title="time", test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01_MO_MP3, **data)
+            title="time", test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         error = self.bad_request_result_field_errors[0]
@@ -36,7 +36,7 @@ class TestCase(UploadedTrackTestCase):
     def test_album_artists_provided_but_album_empty_then_400_bad_request(self):
         data = {PostFields.ALBUM_NAME: "", PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["Koko"]}
         response = self._post_uploaded_track(
-            test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01_MO_MP3, **data)
+            test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         error = self.bad_request_result_field_errors[0]
@@ -50,7 +50,7 @@ class TestCase(UploadedTrackTestCase):
 
         data = {PostFields.ALBUM_NAME: album.name, PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: [album_artist1.name]}
         response = self._post_uploaded_track(
-            test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01_MO_MP3, **data)
+            test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album == album
@@ -64,7 +64,7 @@ class TestCase(UploadedTrackTestCase):
 
         data = {PostFields.ALBUM_NAME: album.name, PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: []}
         response = self._post_uploaded_track(
-            test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01_MO_MP3, **data)
+            test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album == album
@@ -75,7 +75,7 @@ class TestCase(UploadedTrackTestCase):
 
         data = {PostFields.ALBUM_NAME: "koko", PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: [album_artist_new.name]}
         response = self._post_uploaded_track(
-            test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01_MO_MP3, **data)
+            test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert Album.objects.filter(user=self.test_user1, name="koko").exists()
@@ -89,7 +89,7 @@ class TestCase(UploadedTrackTestCase):
 
         data = {PostFields.ALBUM_NAME: album.name, PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: [album_artist.name]}
         response = self._post_uploaded_track(
-            test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01_MO_MP3, **data)
+            test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album == album
@@ -103,7 +103,7 @@ class TestCase(UploadedTrackTestCase):
 
         data = {PostFields.ALBUM_NAME: album_new.name, PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["James"]}
         response = self._post_uploaded_track(
-            test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01_MO_MP3, **data)
+            test_uploaded_track_filename=UploadedTrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert Artist.objects.filter(user=self.test_user1, name="James").exists()
