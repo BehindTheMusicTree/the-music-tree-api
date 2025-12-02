@@ -108,12 +108,12 @@ class UploadedTrack(TrackablePlayCount):
                     artists_names_tag = artists_names_tag + METADATA_ARTISTS_SEPARATORS[0]
                 artists_names_tag = artists_names_tag + artist.name
         else:
-            artists_names_tag = ""
+            artists_names_tag = None
         normalized_metadata[AppMetadataKey.ARTISTS_NAMES] = artists_names_tag
 
-        album_artists_tag = ""
         if self.album:
             album_name_tag = self.album.name
+            album_artists_tag = ""
             album_artists_name_index = 0
             album_artists_list = self.album.album_artists.all()
             for album_artist in album_artists_list:
@@ -121,14 +121,18 @@ class UploadedTrack(TrackablePlayCount):
                     album_artists_tag = album_artists_tag + METADATA_ARTISTS_SEPARATORS[0]
                 album_artists_tag = album_artists_tag + album_artist.name
                 album_artists_name_index = album_artists_name_index + 1
+            # Convert empty string to None if no album artists
+            if not album_artists_tag:
+                album_artists_tag = None
         else:
-            album_name_tag = ""
+            album_name_tag = None
+            album_artists_tag = None
 
         normalized_metadata[AppMetadataKey.ALBUM_NAME] = album_name_tag
         normalized_metadata[AppMetadataKey.ALBUM_ARTISTS_NAMES] = album_artists_tag
-        normalized_metadata[AppMetadataKey.GENRE_NAME] = self.genre.name if self.genre else ""
+        normalized_metadata[AppMetadataKey.GENRE_NAME] = self.genre.name if self.genre else None
         normalized_metadata[AppMetadataKey.RATING] = self.rating
-        normalized_metadata[AppMetadataKey.LANGUAGE] = self.language if self.language else ""
+        normalized_metadata[AppMetadataKey.LANGUAGE] = self.language if self.language else None
 
         self.track_file.update_file_metadata(app_metadata=normalized_metadata)
 
