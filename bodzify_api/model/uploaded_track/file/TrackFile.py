@@ -183,7 +183,10 @@ class TrackFile(PrivateStandardResource):
                             field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_CORRUPTED)
         try:
             file_for_metadata = self.file
-            if isinstance(file_for_metadata, DjangoFile) and hasattr(file_for_metadata, 'name') and not os.path.isabs(file_for_metadata.name):
+            if isinstance(
+                    file_for_metadata, DjangoFile) and hasattr(
+                    file_for_metadata, 'name') and not os.path.isabs(
+                    file_for_metadata.name):
                 expected_path = self.user.lib_abs_path / file_for_metadata.name
                 if expected_path.exists():
                     file_for_metadata = str(expected_path)
@@ -202,7 +205,9 @@ class TrackFile(PrivateStandardResource):
             raise
 
     def update_file_metadata(self, app_metadata: AppMetadata):
-        audio_metadata.update_file_metadata(file=self.file,
+        # Ensure we use the actual file path, not the FieldFile object
+        file_path = self.file.path if hasattr(self.file, 'path') else self.file
+        audio_metadata.update_file_metadata(file=file_path,
                                             app_metadata=app_metadata,
                                             normalized_rating_max_value=settings.UPLOADED_TRACK_RATING_VALUE_MAX)
 
