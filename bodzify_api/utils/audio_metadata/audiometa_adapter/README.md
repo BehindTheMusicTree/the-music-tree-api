@@ -89,9 +89,9 @@ The adapter uses a **merge strategy** for reading metadata (as per the library's
 This ensures maximum compatibility and data preservation, as metadata may exist in multiple formats within a single file.
 
 **Format Priority Order:**
-- MP3 files: ID3v2 → ID3v1
-- FLAC files: Vorbis
-- WAV files: RIFF
+- ".mp3" files: ID3v2 → ID3v1
+- ".flac" files: Vorbis
+- ".wav" files: RIFF
 
 The library also supports reading from a specific format only (not exposed through the adapter).
 
