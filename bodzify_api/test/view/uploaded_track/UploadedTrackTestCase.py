@@ -24,7 +24,9 @@ class UploadedTrackTestCase(AppTestCase[UploadedTrack]):
         return self.api_client.post(
             path=reverse('uploaded-track-list'), data=kwargs, handle_response=self._set_results)
 
-    def _post_uploaded_track(self, test_uploaded_track_filename: UploadedTrackTestFilename = UploadedTrackTestFilename.METADATA_NONE_MP3, **kwargs):
+    def _post_uploaded_track(
+            self, test_uploaded_track_filename: UploadedTrackTestFilename = UploadedTrackTestFilename.METADATA_NONE_MP3,
+            **kwargs):
         file_abs_path = self.TEST_FILES_BASE_DIR / test_uploaded_track_filename
 
         with open(file_abs_path, "rb") as sample_file:

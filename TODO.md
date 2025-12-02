@@ -32,6 +32,18 @@ This file tracks future work, improvements, and testing tasks for Bodzify API.
 
 ### High Priority
 
+- [ ] **Modernize Models with Django 5.2 Features**
+  - **Context**: Django 5.2 deprecated `CheckConstraint.check` in favor of `CheckConstraint.condition` (removed in Django 6.0)
+  - **Impact**: Currently have 14 deprecation warnings across 6 model files and migration file
+  - **Required changes**:
+    - Update 6 model files: `CriteriaType.py`, `Criteria.py`, `Artist.py`, `Album.py`, `FingerprintMissingCauseCode.py`, `ManualPlaylist.py`
+    - Update `0001_initial.py` migration file (6 constraint definitions)
+    - Run `python manage.py makemigrations` to create constraint update migration
+    - Test all 995 tests to ensure constraints still enforce empty string validation
+    - Verify constraint violations still raise `IntegrityError`
+  - **Outcome**: All 14 deprecation warnings eliminated, Django 6.0 ready, zero functional changes
+  - **Estimated effort**: 2-4 hours (30min updates + 30min migration + 1-2h testing + 1h review/deploy)
+
 - [ ] **Complete API documentation**
   - Document all API endpoints in README.md
   - Add usage examples for common operations

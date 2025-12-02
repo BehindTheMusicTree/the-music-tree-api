@@ -23,6 +23,13 @@ Always pin exact versions for all dependencies. Never use "latest", "*", or vers
 - Makes dependency updates explicit and reviewable
 - Improves security by controlling when updates are applied
 
+# Draft Documents Location
+
+All draft planning documents (PR descriptions, feature descriptions, issue descriptions) should be stored in:
+- `.github/descriptions/`
+
+This directory is gitignored to keep internal planning documents out of version control.
+
 
 
 
