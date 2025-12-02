@@ -18,7 +18,7 @@ from bodzify_api.utils.audiometa_adapter import (
 )
 from bodzify_api.utils.audiometa_adapter.exceptions import FileCorruptedError
 from bodzify_api.utils.audiometa_adapter.utils.AppMetadataKey import AppMetadataKey
-from bodzify_api.utils.audiometa_adapter.utils.TagFormat import MetadataFormat
+from bodzify_api.utils.audiometa_adapter import MetadataFormat
 
 
 class TestGetMergedAppMetadata:
