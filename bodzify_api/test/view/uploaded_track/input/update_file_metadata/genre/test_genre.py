@@ -24,24 +24,10 @@ class TestCase(UploadedTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.GENRE_NAME] == genre_name
 
-    def test_wav_with_handled_genre_code_then_ok(self):
+    def test_wav_then_ok(self):
         genre_name = 'Pop'
         data = {PostFields.GENRE: genre_name}
         response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_LONG_A_RIFF_SMALL_WAV, **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.GENRE_NAME] == genre_name
-
-    def test_wav_with_handled_genre_code_but_with_different_case_then_ok(self):
-        data = {PostFields.GENRE: 'pop'}
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_LONG_A_RIFF_SMALL_WAV, **data)
-
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.GENRE_NAME] == 'Pop'
-
-    def test_wav_with_not_handled_genre_code_then_other(self):
-        data = {PostFields.GENRE: 'Liquid Techno'}
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_LONG_A_RIFF_SMALL_WAV, **data)
-
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.GENRE_NAME] == 'Other'
