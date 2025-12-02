@@ -66,12 +66,21 @@ def _convert_app_to_unified_metadata(app_metadata: AppMetadata) -> dict:
         if app_key in _APP_TO_UNIFIED_KEY_MAP:
             unified_key = _APP_TO_UNIFIED_KEY_MAP[app_key]
             if app_key in (AppMetadataKey.GENRE_NAME, AppMetadataKey.ARTISTS_NAMES, AppMetadataKey.ALBUM_ARTISTS_NAMES):
-                if isinstance(value, str):
-                    unified_metadata[unified_key] = [value]
+                if value is None:
+                    # Explicitly set to None to delete the metadata field
+                    unified_metadata[unified_key] = None
+                elif isinstance(value, str):
+                    # Skip empty strings - they should delete the metadata field
+                    if value:
+                        unified_metadata[unified_key] = [value]
+                    else:
+                        unified_metadata[unified_key] = None
                 elif isinstance(value, list):
                     unified_metadata[unified_key] = value
             else:
-                unified_metadata[unified_key] = value
+                # Convert empty strings to None for non-list fields
+                unified_metadata[unified_key] = value if value != "" else None
+
     return unified_metadata
 
 
@@ -130,8 +139,11 @@ def update_file_metadata(
     """Update metadata in a file."""
     file_path = _get_file_path(file)
     unified_metadata = _convert_app_to_unified_metadata(app_metadata)
+
     audiometa.update_metadata(
-        file=file_path, unified_metadata=unified_metadata, normalized_rating_max_value=normalized_rating_max_value
+        file=file_path,
+        unified_metadata=unified_metadata,
+        normalized_rating_max_value=normalized_rating_max_value
     )
 
 
