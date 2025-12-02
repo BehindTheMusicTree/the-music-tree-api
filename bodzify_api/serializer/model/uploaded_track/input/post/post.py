@@ -101,6 +101,7 @@ class UploadedTrackPostSerializer(UploadedTrackInputSerializer):
         user = self.context['request'].user
         file = cast(DjangoFile, data.get(PostFields.TRACK_FILE_PUBLIC))  # Required so not None
         input_data = self._get_input_data_from_file(file=file, user=user)
+
         keys = [PostFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
                 PostFields.TITLE,
                 PostFields.ARTISTS_NAMES,
@@ -111,6 +112,7 @@ class UploadedTrackPostSerializer(UploadedTrackInputSerializer):
                 PostFields.RATING,
                 PostFields.LANGUAGE]
         data_transformer.override_dict1_with_dict2_values_for_each_key_in_dict2(dict1=input_data, dict2=data, keys=keys)
+
         input_data[Fields.TRACK_FILE_INTERNAL] = data[PostFields.TRACK_FILE_PUBLIC]
 
         # If title is not provided, generate it from the file
