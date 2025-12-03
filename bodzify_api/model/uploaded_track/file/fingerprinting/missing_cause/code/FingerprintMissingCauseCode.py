@@ -27,6 +27,6 @@ class FingerprintMissingCauseCode(BaseModel):
 
     class Meta:
         constraints = [
-            models.CheckConstraint(check=~models.Q(label=""), name="fingerprint_missing_cause_non_empty_label")]
+            models.CheckConstraint(condition=~models.Q(label=""), name="fingerprint_missing_cause_non_empty_label")]
         verbose_name = 'Fingerprinting Error Code'
         verbose_name_plural = 'Fingerprinting Error Codes'

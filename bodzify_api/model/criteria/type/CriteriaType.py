@@ -12,6 +12,6 @@ class CriteriaType(BaseModel):
         return f"{self.pk} | {self.label}"
 
     class Meta:
-        constraints = [models.CheckConstraint(check=~models.Q(label=""), name="criteria_non_empty_label")]
+        constraints = [models.CheckConstraint(condition=~models.Q(label=""), name="criteria_non_empty_label")]
         verbose_name = 'Criteria Type'
         verbose_name_plural = 'Criteria Types'

@@ -32,7 +32,7 @@ class Artist(UploadedTrackMixin):
         return getattr(self, Fields.UPLOADED_TRACKS_RELATED_NAME)
 
     class Meta:
-        constraints = [models.CheckConstraint(check=~models.Q(_name=""), name="artist_non_empty_name")]
+        constraints = [models.CheckConstraint(condition=~models.Q(_name=""), name="artist_non_empty_name")]
 
     def __str__(self) -> str:
         return f"{self.uuid} | {self._name}"

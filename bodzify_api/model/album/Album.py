@@ -43,7 +43,7 @@ class Album(UploadedTrackMixin):
             'null_position', UploadedTrackFields.TRACK_NUMBER, UploadedTrackFields.TITLE)
 
     class Meta:
-        constraints = [models.CheckConstraint(check=~models.Q(_name=""), name="album_non_empty_name")]
+        constraints = [models.CheckConstraint(condition=~models.Q(_name=""), name="album_non_empty_name")]
 
     def __str__(self) -> str:
         string = f"{self.uuid} | {self._name}"

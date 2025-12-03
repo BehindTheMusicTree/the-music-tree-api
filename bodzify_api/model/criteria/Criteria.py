@@ -78,7 +78,7 @@ class Criteria(UploadedTrackMixin):
         verbose_name = 'Criteria'
         verbose_name_plural = 'Criterias'
         constraints = [
-            models.CheckConstraint(check=~models.Q(_name=""), name='%(class)s_non_empty_name'),
+            models.CheckConstraint(condition=~models.Q(_name=""), name='%(class)s_non_empty_name'),
             models.UniqueConstraint(fields=[Fields.USER, Fields.NAME_INTERNAL], name='unique_name_per_user')
         ]
         indexes = [
