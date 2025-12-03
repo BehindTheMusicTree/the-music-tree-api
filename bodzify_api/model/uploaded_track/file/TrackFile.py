@@ -201,26 +201,6 @@ class TrackFile(PrivateStandardResource):
         if verify_result.returncode != 0:
             logger.error(f"Corrected file fails FLAC tool validation: {verify_result.stderr[:200]}")
 
-    def _assign_corrected_file(self, corrected_file: TemporaryUploadedFile, original_file_path: str | None) -> None:
-        """Assign corrected file to self.file and verify it will be used by Django."""
-        logger = logging.getLogger(__name__)
-        logger.info(f"Before assignment: self.file type={type(self.file)}, corrected_file type={type(corrected_file)}")
-
-        self.file = corrected_file
-        self.md5_has_been_corrected = True
-        logger.info(f"MD5 correction in _prepare_save completed, md5_has_been_corrected=True")
-
-        corrected_file_path = None
-        if isinstance(corrected_file, TemporaryUploadedFile):
-            try:
-                corrected_file_path = corrected_file.temporary_file_path()
-                logger.info(f"Corrected file path (will be saved by Django): {corrected_file_path}")
-                if original_file_path and original_file_path != corrected_file_path:
-                    logger.info(
-                        f"CONFIRMED: Django will save CORRECTED file ({corrected_file_path}), not original ({original_file_path})")
-            except Exception:
-                pass
-
     def _fix_flac_md5_if_needed(self, ctx) -> None:
         """Fix FLAC MD5 if invalid."""
         if audiometa_adapter.is_flac_md5_valid(self.file):
