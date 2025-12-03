@@ -166,7 +166,6 @@ class TrackFile(PrivateStandardResource):
 
     def _prepare_save(self, ctx) -> dict:
         logger = logging.getLogger(__name__)
-        logger.debug(f"_prepare_save called: extension={self.extension}, file type={type(self.file)}")
 
         if self.extension.lower() == '.flac':
             initial_file_path = None
@@ -182,14 +181,11 @@ class TrackFile(PrivateStandardResource):
                     pass
             elif hasattr(self.file, 'path'):
                 initial_file_path = self.file.path
-            logger.debug(f"Initial file path: {initial_file_path}")
 
             is_valid_before = audiometa_adapter.is_flac_md5_valid(self.file)
-            logger.debug(f"MD5 validation before fix: {is_valid_before}")
 
             if is_valid_before:
                 self.md5_has_been_corrected = False
-                logger.debug("MD5 is already valid, no correction needed")
             else:
                 try:
                     logger.info(f"MD5 is invalid, starting correction process: {initial_file_path}")
@@ -235,7 +231,6 @@ class TrackFile(PrivateStandardResource):
                             corrected_file_path = corrected_file.temporary_file_path()
                         except Exception:
                             pass
-                    logger.debug(f"Corrected file path: {corrected_file_path}")
 
                     # Verify the corrected file has valid MD5
                     if corrected_file_path:
@@ -263,7 +258,6 @@ class TrackFile(PrivateStandardResource):
                     self.file = corrected_file
                     self.md5_has_been_corrected = True
                     logger.info(f"MD5 correction in _prepare_save completed, md5_has_been_corrected=True")
-                    logger.debug(f"After assignment: self.file type={type(self.file)}, id={id(self.file)}")
 
                     # Verify Django will use the corrected file (not the original)
                     corrected_file_path = None
@@ -313,7 +307,7 @@ class TrackFile(PrivateStandardResource):
                                 logger.error(
                                     f"WARNING: File has invalid MD5 before Django save! {final_check.stderr[:200]}")
                         except Exception as e:
-                            logger.debug(f"Could not verify file before save: {e}")
+                            pass
                 except FileCorruptedError as e:
                     logger.error(f"FileCorruptedError during MD5 fix: {e}")
                     raise AppValidationException(
@@ -352,9 +346,7 @@ class TrackFile(PrivateStandardResource):
 
     def _post_save(self, adding: bool) -> None:
         logger = logging.getLogger(__name__)
-        logger.debug(f"_post_save method called: adding={adding}, md5_has_been_corrected={self.md5_has_been_corrected}")
         if adding and self.md5_has_been_corrected:
-            logger.debug(f"_post_save: checking what file Django saved, self.file type={type(self.file)}")
             if hasattr(self.file, 'path'):
                 saved_path = self.file.path
                 logger.info(f"_post_save: Django saved file to: {saved_path}")
@@ -388,8 +380,6 @@ def handle_post_save(sender, instance: TrackFile, created, **kwargs):
     The file is fixed here, but something may corrupt it again before the test checks it.
     """
     logger = logging.getLogger(__name__)
-    logger.debug(
-        f"handle_post_save SIGNAL called: created={created}, md5_has_been_corrected={instance.md5_has_been_corrected}")
 
     if created and instance.md5_has_been_corrected:
         # Calculate MD5 of saved file BEFORE fixing to compare with original/corrected
@@ -403,15 +393,10 @@ def handle_post_save(sender, instance: TrackFile, created, **kwargs):
                     logger.info(f"post_save SIGNAL: Saved file MD5 BEFORE fix: {saved_md5_before_fix}")
                 except Exception as e:
                     logger.debug(f"Could not calculate saved file MD5 before fix: {e}")
-        logger.debug("Post-save MD5 correction: instance created and md5_has_been_corrected is True")
         instance.refresh_from_db()
-        logger.debug(f"After refresh: hasattr(instance.file, 'path')={hasattr(instance.file, 'path')}")
 
         if hasattr(instance.file, 'path'):
             file_path = instance.file.path
-            logger.debug(f"Got file path from instance.file.path: {file_path}")
-            logger.debug(
-                f"File path: {file_path}, exists: {os.path.exists(file_path) if file_path else False}, is_flac: {file_path.lower().endswith('.flac') if file_path else False}")
 
             if file_path and os.path.exists(file_path) and file_path.lower().endswith('.flac'):
                 import subprocess
@@ -420,7 +405,6 @@ def handle_post_save(sender, instance: TrackFile, created, **kwargs):
 
                 logger.info(f"Re-fixing MD5 in post_save (md5_has_been_corrected=True): {file_path}")
                 fixed_path = audiometa.fix_md5_checking(file=file_path)
-                logger.debug(f"Fixed file path: {fixed_path}")
 
                 verify_result = subprocess.run(['flac', '-t', fixed_path], capture_output=True, text=True)
                 if verify_result.returncode == 0:
@@ -467,13 +451,11 @@ def handle_post_save(sender, instance: TrackFile, created, **kwargs):
                     logger.error(f"FLAC tool stderr: {verify_result.stderr}")
                     os.unlink(fixed_path)
             else:
-                logger.debug(
-                    f"Skipping MD5 correction: file_path={file_path}, exists={os.path.exists(file_path) if file_path else False}, is_flac={file_path.lower().endswith('.flac') if file_path else False}")
+                pass
         else:
-            logger.debug("Skipping MD5 correction: instance.file has no 'path' attribute")
+            pass
     else:
-        logger.debug(
-            f"Skipping MD5 correction: created={created}, md5_has_been_corrected={instance.md5_has_been_corrected}")
+        pass
 
 
 @receiver(pre_delete, sender=TrackFile)
