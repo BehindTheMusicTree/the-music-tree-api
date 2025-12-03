@@ -113,7 +113,8 @@ def update_file_metadata(
     audiometa.update_metadata(
         file=file_path,
         unified_metadata=unified_metadata,
-        normalized_rating_max_value=normalized_rating_max_value
+        normalized_rating_max_value=normalized_rating_max_value,
+        warn_on_unsupported_field=False,
     )
 
 
