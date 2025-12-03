@@ -25,7 +25,6 @@ def __getattr__(name):
 __all__ = [
     "METADATA_ARTISTS_SEPARATORS",
     "delete_metadata",
-    "delete_potential_id3_metadata_with_header",
     "fix_md5_checking",
     "get_bitrate",
     "get_duration_in_sec",
