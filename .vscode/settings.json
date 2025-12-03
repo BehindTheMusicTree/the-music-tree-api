@@ -9,7 +9,7 @@
         "activityBar.background": "#1d5737",
         "statusBar.background": "#1d5737"
     },
-    "python.languageServer": "None",
+    "python.languageServer": "Pylance",
 	"python.analysis.typeCheckingMode": "basic",
 	"editor.rulers": [
 		120
