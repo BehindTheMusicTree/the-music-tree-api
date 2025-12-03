@@ -35,6 +35,7 @@ from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackField
 from bodzify_api.model.utils import utils as model_utils
 from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
 from bodzify_api.utils import audio_fingerprinter, musicbrainz
+from bodzify_api.utils.audio_metadata import AppMetadata
 from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError, FlacMd5CheckFailedError
 import bodzify_api.utils.audio_metadata.audiometa_adapter as audiometa_adapter
 from bodzify_api.validator.TrackFileValidator import TrackFileValidator
