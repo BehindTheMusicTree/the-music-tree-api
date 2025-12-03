@@ -163,7 +163,8 @@ def fix_md5_checking(file: FILE_TYPE) -> TemporaryUploadedFile:
     from audiometa.utils.flac_md5_validation_result import FlacMd5ValidationResult
     if md5_validation_result != FlacMd5ValidationResult.VALID:
         os.unlink(fixed_path)
-        raise FileCorruptedError("MD5 correction failed - the corrected file does not have a valid MD5")
+        error_message = f"MD5 correction failed - the corrected file has MD5 validation result: {md5_validation_result} (expected {FlacMd5ValidationResult.VALID})"
+        raise FileCorruptedError(error_message)
     temp_uploaded = TemporaryUploadedFile(
         name=os.path.basename(fixed_path),
         content_type="audio/flac",
