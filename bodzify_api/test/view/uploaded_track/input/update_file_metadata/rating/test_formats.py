@@ -1,7 +1,7 @@
 
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
-from bodzify_api.utils.audio_metadata.audiometa_adapter.utils.AppMetadataKey import AppMetadataKey
+from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as PostFields
 
 

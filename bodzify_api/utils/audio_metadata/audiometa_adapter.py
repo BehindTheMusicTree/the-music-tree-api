@@ -177,12 +177,3 @@ def fix_md5_checking(file: FILE_TYPE) -> TemporaryUploadedFile:
         f.read(1)
         f.seek(0)
     return temp_uploaded
-
-
-def delete_potential_id3_metadata_with_header(file: FILE_TYPE) -> None:
-    """Delete ID3 metadata header if present."""
-    file_path = _get_file_path_util(file)
-    try:
-        audiometa.delete_all_metadata(file=file_path, metadata_format=AudiometaMetadataFormat.ID3V2)
-    except Exception:
-        pass

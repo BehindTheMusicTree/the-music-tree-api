@@ -3,8 +3,7 @@ from rest_framework import status
 
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
-from bodzify_api.utils.audio_metadata.audiometa_adapter.utils.AppMetadataKey import AppMetadataKey
-import bodzify_api.utils.audio_metadata
+from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
 
 
 class TestCase(GenreTestCase):

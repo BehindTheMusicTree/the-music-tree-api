@@ -1,5 +1,4 @@
 import logging
-import os
 import subprocess
 
 from rest_framework import status
@@ -8,7 +7,7 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as UploadedTrackPostFields
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
-from bodzify_api.utils.audio_metadata.audiometa_adapter import is_flac_md5_valid
+from bodzify_api.utils.audio_metadata import is_flac_md5_valid
 
 
 class TestCase(UploadedTrackTestCase):

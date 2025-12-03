@@ -34,9 +34,9 @@ from bodzify_api.model.private_standard_resource.PrivateStandardResource import 
 from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackFields
 from bodzify_api.model.utils import utils as model_utils
 from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
-from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
-from bodzify_api.utils.audio_metadata.audiometa_adapter.exceptions import FileCorruptedError, FlacMd5CheckFailedError
-from bodzify_api.utils.audio_metadata.audiometa_adapter.utils.types import AppMetadata
+from bodzify_api.utils import audio_fingerprinter, musicbrainz
+from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError, FlacMd5CheckFailedError
+import bodzify_api.utils.audio_metadata.audiometa_adapter as audiometa_adapter
 from bodzify_api.validator.TrackFileValidator import TrackFileValidator
 
 from .Fields import Fields
@@ -183,7 +183,7 @@ class TrackFile(PrivateStandardResource):
                 initial_file_path = self.file.path
             logger.debug(f"Initial file path: {initial_file_path}")
 
-            is_valid_before = audio_metadata.is_flac_md5_valid(self.file)
+            is_valid_before = audiometa_adapter.is_flac_md5_valid(self.file)
             logger.debug(f"MD5 validation before fix: {is_valid_before}")
 
             if is_valid_before:
@@ -203,15 +203,9 @@ class TrackFile(PrivateStandardResource):
                         if not hasattr(ctx, 'original_md5'):
                             ctx.original_md5 = original_md5
 
-                    # ID3v2 metadata can be present in FLAC files, causing a mismatch in the MD5 checksum.
-                    # They are therefore removed which won't affect the file's metadata integrity as all the metadata
-                    # is stored in the Vorbis comment block.
-                    logger.debug("Deleting potential ID3 metadata")
-                    audio_metadata.delete_potential_id3_metadata_with_header(self.file)
-
                     # Fix MD5 and preserve file path
                     logger.info("Calling fix_md5_checking to correct MD5")
-                    corrected_file = audio_metadata.fix_md5_checking(self.file)
+                    corrected_file = audiometa_adapter.fix_md5_checking(self.file)
 
                     # Calculate MD5 of corrected file for comparison
                     corrected_md5 = None
@@ -335,9 +329,9 @@ class TrackFile(PrivateStandardResource):
                 expected_path = self.user.lib_abs_path / file_for_metadata.name
                 if expected_path.exists():
                     file_for_metadata = str(expected_path)
-            duration = audio_metadata.get_duration_in_sec(file_for_metadata)
+            duration = audiometa_adapter.get_duration_in_sec(file_for_metadata)
             self.duration_in_sec = duration if duration > 1 else 1
-            self.bitrate_in_kbps = audio_metadata.get_bitrate(file_for_metadata)
+            self.bitrate_in_kbps = audiometa_adapter.get_bitrate(file_for_metadata)
             self.size_in_bytes = self.file.size
             fingerprinting_result = self._manage_fingerprint()
             self._manage_musicbrainz_recording(fingerprinting_result)
@@ -352,9 +346,9 @@ class TrackFile(PrivateStandardResource):
     def update_file_metadata(self, app_metadata: AppMetadata):
         # Ensure we use the actual file path, not the FieldFile object
         file_path = self.file.path if hasattr(self.file, 'path') else self.file
-        audio_metadata.update_file_metadata(file=file_path,
-                                            app_metadata=app_metadata,
-                                            normalized_rating_max_value=settings.UPLOADED_TRACK_RATING_VALUE_MAX)
+        audiometa_adapter.update_file_metadata(file=file_path,
+                                               app_metadata=app_metadata,
+                                               normalized_rating_max_value=settings.UPLOADED_TRACK_RATING_VALUE_MAX)
 
     def _post_save(self, adding: bool) -> None:
         logger = logging.getLogger(__name__)
