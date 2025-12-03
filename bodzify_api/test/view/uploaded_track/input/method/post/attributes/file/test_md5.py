@@ -1,4 +1,3 @@
-import logging
 import subprocess
 
 from rest_framework import status
@@ -31,16 +30,10 @@ class TestCase(UploadedTrackTestCase):
         file_path = self.saved_object.track_file.file.path if hasattr(
             self.saved_object.track_file.file, 'path') else None
 
-        logger = logging.getLogger(__name__)
-        logger.info(f"Test checking file: {file_path}")
-
         if file_path and file_path.endswith('.flac'):
             result = subprocess.run(['flac', '-t', file_path], capture_output=True, text=True)
-            logger.info(
-                f"FLAC tool result: returncode={result.returncode}, stderr={result.stderr[:200] if result.stderr else None}")
             assert result.returncode == 0, f"FLAC tool validation failed: {result.stderr}"
 
-        logger.info(f"Checking with is_flac_md5_valid: {is_flac_md5_valid(self.saved_object.track_file.file)}")
         assert is_flac_md5_valid(self.saved_object.track_file.file)
 
     def test_flac_md5_not_valid_because_of_id3v1_metadata_then_corrected(self):
