@@ -358,104 +358,11 @@ class TrackFile(PrivateStandardResource):
                         logger.error(
                             f"_post_save: WARNING - Django saved file has invalid MD5! This confirms Django corrupted it during save.")
                     else:
-                        logger.info(f"_post_save: File is valid after Django save - post_save signal will verify/fix if needed")
+                        logger.info(f"_post_save: File is valid after Django save")
         super()._post_save(adding)
 
     def handle_flac_md5(self) -> bool:
         return False
-
-
-@receiver(post_save, sender=TrackFile)
-def handle_post_save(sender, instance: TrackFile, created, **kwargs):
-    """
-    Post-save signal to re-fix FLAC MD5 after Django saves the file.
-
-    Why this is needed:
-    - In _prepare_save, we fix the MD5 and assign a corrected TemporaryUploadedFile to self.file
-    - Django's FileField.save() then reads from this TemporaryUploadedFile and writes to the final location
-    - During Django's file copy process, the MD5 checksum gets corrupted again
-    - Therefore, we must re-fix the MD5 after Django has finished saving the file to its final location
-
-    Note: This signal runs AFTER super().save() but BEFORE _post_save() method.
-    The file is fixed here, but something may corrupt it again before the test checks it.
-    """
-    logger = logging.getLogger(__name__)
-
-    if created and instance.md5_has_been_corrected:
-        # Calculate MD5 of saved file BEFORE fixing to compare with original/corrected
-        saved_md5_before_fix = None
-        if hasattr(instance.file, 'path'):
-            file_path = instance.file.path
-            if file_path and os.path.exists(file_path) and file_path.lower().endswith('.flac'):
-                try:
-                    with open(file_path, 'rb') as f:
-                        saved_md5_before_fix = hashlib.md5(f.read()).hexdigest()
-                    logger.info(f"post_save SIGNAL: Saved file MD5 BEFORE fix: {saved_md5_before_fix}")
-                except Exception as e:
-                    logger.debug(f"Could not calculate saved file MD5 before fix: {e}")
-        instance.refresh_from_db()
-
-        if hasattr(instance.file, 'path'):
-            file_path = instance.file.path
-
-            if file_path and os.path.exists(file_path) and file_path.lower().endswith('.flac'):
-                import subprocess
-                import shutil
-                import audiometa
-
-                logger.info(f"Re-fixing MD5 in post_save (md5_has_been_corrected=True): {file_path}")
-                fixed_path = audiometa.fix_md5_checking(file=file_path)
-
-                verify_result = subprocess.run(['flac', '-t', fixed_path], capture_output=True, text=True)
-                if verify_result.returncode == 0:
-                    logger.info(f"Fixed file passes FLAC tool validation, replacing original: {file_path}")
-                    # Use os.replace for atomic file replacement (Python 3.3+)
-                    # This ensures the file is replaced atomically, preventing corruption
-                    try:
-                        os.replace(fixed_path, file_path)
-                    except AttributeError:
-                        # Fallback for older Python versions
-                        shutil.copy2(fixed_path, file_path)
-                        os.unlink(fixed_path)
-
-                    # Force file system sync to ensure changes are written
-                    import sys
-                    if hasattr(os, 'sync'):
-                        os.sync()
-
-                    # Verify the file is still valid after replacement
-                    final_verify = subprocess.run(['flac', '-t', file_path], capture_output=True, text=True)
-                    if final_verify.returncode == 0:
-                        logger.info(f"MD5 correction completed successfully, FLAC tool confirms: {file_path}")
-
-                        # Calculate MD5 of saved file after post_save fix and compare
-                        try:
-                            with open(file_path, 'rb') as f:
-                                saved_md5_after_fix = hashlib.md5(f.read()).hexdigest()
-                            logger.info(f"post_save SIGNAL: Saved file MD5 AFTER fix: {saved_md5_after_fix}")
-
-                            if saved_md5_before_fix:
-                                if saved_md5_before_fix == saved_md5_after_fix:
-                                    logger.warning(
-                                        f"post_save SIGNAL: WARNING - MD5 unchanged after fix! This should not happen.")
-                                else:
-                                    logger.info(
-                                        f"post_save SIGNAL: MD5 changed by fix: {saved_md5_before_fix[:16]}... -> {saved_md5_after_fix[:16]}...")
-                        except Exception as e:
-                            logger.debug(f"Could not calculate saved file MD5: {e}")
-                    else:
-                        logger.error(f"File fails FLAC tool validation after replacement: {file_path}")
-                        logger.error(f"FLAC tool stderr: {final_verify.stderr}")
-                else:
-                    logger.error(f"Fixed file still fails FLAC tool validation, removing: {fixed_path}")
-                    logger.error(f"FLAC tool stderr: {verify_result.stderr}")
-                    os.unlink(fixed_path)
-            else:
-                pass
-        else:
-            pass
-    else:
-        pass
 
 
 @receiver(pre_delete, sender=TrackFile)
