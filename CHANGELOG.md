@@ -98,9 +98,9 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 ### Changed
 
 - **Dependencies**: 
-  - Updated `psycopg2-binary` from 2.9.5 to 2.9.11 for Python 3.14 compatibility
+  - Updated `django-polymorphic` from 3.1.0 to 4.1.0 to resolve pkg_resources deprecation warning and ensure Django 5.2 compatibility
 
-### Removed
+### Changed
 
 - **Dependencies**: Removed `mutagen` from direct dependencies
   - No longer needed as direct dependency since all audio operations now use `audiometa-python`
