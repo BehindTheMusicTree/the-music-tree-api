@@ -1,6 +1,5 @@
 import binascii
 import datetime
-import hashlib
 import logging
 import os
 from typing import TYPE_CHECKING, cast
@@ -163,43 +162,6 @@ class TrackFile(PrivateStandardResource):
                 self.musicbrainz_recording_missing_cause = musicbrainz_recording_lookup_result.missing_cause
 
         return musicbrainz_recording_lookup_result
-
-    def _get_initial_file_path(self) -> str | None:
-        """Get the initial file path from various file types."""
-        if isinstance(self.file, TemporaryUploadedFile):
-            try:
-                return self.file.temporary_file_path()
-            except Exception:
-                return None
-        elif isinstance(self.file, FieldFile) and hasattr(self.file, 'file') and isinstance(self.file.file, TemporaryUploadedFile):
-            try:
-                return self.file.file.temporary_file_path()
-            except Exception:
-                return None
-        elif hasattr(self.file, 'path'):
-            return self.file.path
-        return None
-
-    def _calculate_file_md5(self, file_path: str) -> str | None:
-        """Calculate MD5 checksum of a file."""
-        if not file_path or not os.path.exists(file_path):
-            return None
-        try:
-            with open(file_path, 'rb') as f:
-                return hashlib.md5(f.read()).hexdigest()
-        except Exception:
-            return None
-
-    def _verify_corrected_file_with_flac_tool(self, file_path: str | None) -> None:
-        """Verify corrected file using FLAC tool."""
-        if not file_path:
-            return
-        import subprocess
-        verify_result = subprocess.run(['flac', '-t', file_path], capture_output=True, text=True)
-        logger = logging.getLogger(__name__)
-        logger.info(f"FLAC tool validation of corrected file: returncode={verify_result.returncode}")
-        if verify_result.returncode != 0:
-            logger.error(f"Corrected file fails FLAC tool validation: {verify_result.stderr[:200]}")
 
     def _fix_flac_md5_if_needed(self, ctx) -> None:
         """Fix FLAC MD5 if invalid."""
