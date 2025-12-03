@@ -32,25 +32,6 @@ This file tracks future work, improvements, and testing tasks for Bodzify API.
 
 ### High Priority
 
-- [ ] **Modernize Models with Django 5.2 Features**
-  - **CRITICAL**: Replace `CheckConstraint.check` with `.condition` (14 warnings, blocks Django 6.0)
-  - **Affected**: 6 models + migration file (see `FEATURE_MODERNIZE_DJANGO_5_2.md` for details)
-  - **Effort**: 2-4 hours
-  - **Optional Django 5.2 Features**:
-    - **Composite Primary Keys**: Evaluate if any models could benefit from `CompositePrimaryKey` (e.g., relationship tables)
-    - **AlterConstraint Migration**: Use new `AlterConstraint` operation instead of drop/recreate for constraint changes
-    - **JSONArray Function**: Consider using new `JSONArray` database function for JSON operations
-    - **Async Auth Methods**: Leverage new async authentication methods if using async views (`aauthenticate`, `alogin`, etc.)
-    - **Query/Fragment in reverse()**: Use new `query` and `fragment` arguments in `reverse()` for cleaner URL generation
-    - **HttpResponse.text**: Use new `.text` property instead of decoding `.content` manually
-    - **Simple Block Tags**: Consider `simple_block_tag()` decorator for custom template tags
-    - **Automatic Shell Imports**: Models auto-import in Django shell (already working, no action needed)
-  - **Priority 3 - Review for Compatibility (CHECK)**:
-    - **MySQL utf8mb4**: Connection now defaults to `utf8mb4` instead of `utf8` (verify no issues)
-    - **VALUES() ordering**: `values()` and `values_list()` now preserve order (verify queries using union/intersection)
-    - **Built-in aggregate validation**: Single-argument aggregates now raise TypeError if called incorrectly (good for catching bugs)
-  - **Documentation**: Main focus should be Priority 1 (CheckConstraint deprecation fix). Other features are nice-to-have improvements.
-
 - [ ] **Complete API documentation**
   - Document all API endpoints in README.md
   - Add usage examples for common operations
