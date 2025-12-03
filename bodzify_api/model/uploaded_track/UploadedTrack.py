@@ -18,7 +18,7 @@ from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from bodzify_api.utils.audio_metadata import METADATA_ARTISTS_SEPARATORS
-from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
+from bodzify_api.utils.audio_metadata.AppMetadataKey import AppMetadataKey
 
 from .file.TrackFile import TrackFile
 from .Fields import Fields
@@ -100,30 +100,17 @@ class UploadedTrack(TrackablePlayCount):
         normalized_metadata = dict()
         normalized_metadata[AppMetadataKey.TITLE] = self.title
 
-        if self.artists.count() > 0:
-            artists_names_tag = ""
-            artists_list: list[Artist] = list(self.artists.all())
-            for artist in artists_list:
-                if artists_names_tag != "":
-                    artists_names_tag = artists_names_tag + METADATA_ARTISTS_SEPARATORS[0]
-                artists_names_tag = artists_names_tag + artist.name
+        if self.artists.exists():
+            artists_names_tag = [artist.name for artist in self.artists.all()]
         else:
             artists_names_tag = None
         normalized_metadata[AppMetadataKey.ARTISTS_NAMES] = artists_names_tag
 
         if self.album:
             album_name_tag = self.album.name
-            album_artists_tag = ""
-            album_artists_name_index = 0
             album_artists_list = self.album.album_artists.all()
-            for album_artist in album_artists_list:
-                if album_artists_name_index != 0:
-                    album_artists_tag = album_artists_tag + METADATA_ARTISTS_SEPARATORS[0]
-                album_artists_tag = album_artists_tag + album_artist.name
-                album_artists_name_index = album_artists_name_index + 1
-            # Convert empty string to None if no album artists
-            if not album_artists_tag:
-                album_artists_tag = None
+            album_artists_tag = [
+                album_artist.name for album_artist in album_artists_list] if album_artists_list.exists() else None
         else:
             album_name_tag = None
             album_artists_tag = None
