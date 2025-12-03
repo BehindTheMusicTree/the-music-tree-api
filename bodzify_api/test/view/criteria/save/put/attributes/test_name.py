@@ -6,7 +6,7 @@ from bodzify_api.serializer.model.criteria.input.put import Fields as PutFields
 from bodzify_api.test.utils.field.body_data.method.PutBodyDataTestCase import PutBodyDataTestCase
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.utils import audio_metadata
-from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
+from bodzify_api.utils.audio_metadata.AppMetadataKey import AppMetadataKey
 
 
 class TestCase(GenreTestCase, PutBodyDataTestCase):

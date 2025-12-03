@@ -11,8 +11,8 @@ from bodzify_api.serializer.field.TrackFileField import TrackFileField
 from bodzify_api.serializer.model.uploaded_track.input.Fields import Fields
 from bodzify_api.serializer.model.uploaded_track.input.input import UploadedTrackInputSerializer
 from bodzify_api.utils import audio_metadata, data_transformer, utils
-from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
-from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
+from bodzify_api.utils.audio_metadata.audiometa_adapter.exceptions import FileCorruptedError
+from bodzify_api.utils.audio_metadata.AppMetadataKey import AppMetadataKey
 from .Fields import Fields as PostFields
 
 

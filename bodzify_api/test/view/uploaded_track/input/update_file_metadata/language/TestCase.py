@@ -3,7 +3,7 @@ from bodzify_api.serializer.model.uploaded_track.input.Fields import Fields as F
 from bodzify_api.test.view.uploaded_track.input.update_file_metadata.UploadedTrackFileMetadataUpdateStrTestCase import (
     UploadedTrackFileMetadataUpdateStrTestCase
 )
-from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
+from bodzify_api.utils.audio_metadata.AppMetadataKey import AppMetadataKey
 
 
 class TestCase(UploadedTrackFileMetadataUpdateStrTestCase):

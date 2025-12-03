@@ -16,8 +16,8 @@ from bodzify_api.utils.audiometa_adapter import (
     is_flac_md5_valid,
     update_file_metadata,
 )
-from bodzify_api.utils.audiometa_adapter.exceptions import FileCorruptedError
-from bodzify_api.utils.audiometa_adapter.utils.AppMetadataKey import AppMetadataKey
+from bodzify_api.utils.audio_metadata.audiometa_adapter.exceptions import FileCorruptedError
+from bodzify_api.utils.audio_metadata.audiometa_adapter.utils.AppMetadataKey import AppMetadataKey
 from bodzify_api.utils.audiometa_adapter import MetadataFormat
 
 
