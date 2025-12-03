@@ -6,7 +6,7 @@ This module provides a backward-compatible wrapper around audiometa-python 0.2.4
 import os
 
 import audiometa
-from audiometa import UnifiedMetadataKey
+from audiometa import UnifiedMetadata, UnifiedMetadataKey
 from audiometa.exceptions import FileCorruptedError as AudiometaFileCorruptedError
 from audiometa.utils.metadata_format import MetadataFormat as AudiometaMetadataFormat
 from django.core.files import File as DjangoFile
@@ -42,7 +42,7 @@ def _get_file_path(file: FILE_TYPE) -> str:
     return _get_file_path_util(file)
 
 
-def _convert_unified_to_app_metadata(unified_metadata: dict) -> AppMetadata:
+def _convert_unified_to_app_metadata(unified_metadata: UnifiedMetadata) -> AppMetadata:
     """Convert UnifiedMetadata to AppMetadata."""
     app_metadata: AppMetadata = {}
     for unified_key, value in unified_metadata.items():
@@ -81,19 +81,6 @@ def _convert_app_to_unified_metadata(app_metadata: AppMetadata) -> dict:
                 unified_metadata[unified_key] = value if value != "" else None
 
     return unified_metadata
-
-
-def get_single_format_app_metadata(
-    file: FILE_TYPE, tag_format: MetadataFormat, normalized_rating_max_value: int | None = None
-) -> AppMetadata:
-    """Get metadata from a single format."""
-    file_path = _get_file_path(file)
-    unified_metadata = audiometa.get_unified_metadata(
-        file=file_path,
-        normalized_rating_max_value=normalized_rating_max_value,
-        metadata_format=tag_format,
-    )
-    return _convert_unified_to_app_metadata(unified_metadata)
 
 
 def get_merged_app_metadata(file: FILE_TYPE, normalized_rating_max_value: int | None = None) -> AppMetadata:
