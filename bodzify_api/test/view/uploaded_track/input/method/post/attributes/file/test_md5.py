@@ -1,4 +1,4 @@
-import subprocess
+import os
 
 from rest_framework import status
 
@@ -26,15 +26,13 @@ class TestCase(UploadedTrackTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.md5_has_been_corrected
+
+        self.saved_object.refresh_from_db()
         self.saved_object.track_file.refresh_from_db()
-        file_path = self.saved_object.track_file.file.path if hasattr(
-            self.saved_object.track_file.file, 'path') else None
+        file_path = getattr(self.saved_object.track_file.file, 'path', None)
 
-        if file_path and file_path.endswith('.flac'):
-            result = subprocess.run(['flac', '-t', file_path], capture_output=True, text=True)
-            assert result.returncode == 0, f"FLAC tool validation failed: {result.stderr}"
-
-        assert is_flac_md5_valid(self.saved_object.track_file.file)
+        assert file_path and file_path.endswith('.flac'), "File path should be a FLAC file"
+        assert is_flac_md5_valid(file_path), f"FLAC MD5 should be valid after correction for file: {file_path}"
 
     def test_flac_md5_not_valid_because_of_id3v1_metadata_then_corrected(self):
         response = self._post_uploaded_track(

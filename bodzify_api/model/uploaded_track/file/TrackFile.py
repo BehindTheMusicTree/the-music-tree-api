@@ -164,169 +164,130 @@ class TrackFile(PrivateStandardResource):
 
         return musicbrainz_recording_lookup_result
 
-    def _prepare_save(self, ctx) -> dict:
-        logger = logging.getLogger(__name__)
+    def _get_initial_file_path(self) -> str | None:
+        """Get the initial file path from various file types."""
+        if isinstance(self.file, TemporaryUploadedFile):
+            try:
+                return self.file.temporary_file_path()
+            except Exception:
+                return None
+        elif isinstance(self.file, FieldFile) and hasattr(self.file, 'file') and isinstance(self.file.file, TemporaryUploadedFile):
+            try:
+                return self.file.file.temporary_file_path()
+            except Exception:
+                return None
+        elif hasattr(self.file, 'path'):
+            return self.file.path
+        return None
 
-        if self.extension.lower() == '.flac':
-            initial_file_path = None
-            if isinstance(self.file, TemporaryUploadedFile):
-                try:
-                    initial_file_path = self.file.temporary_file_path()
-                except Exception:
-                    pass
-            elif isinstance(self.file, FieldFile) and hasattr(self.file, 'file') and isinstance(self.file.file, TemporaryUploadedFile):
-                try:
-                    initial_file_path = self.file.file.temporary_file_path()
-                except Exception:
-                    pass
-            elif hasattr(self.file, 'path'):
-                initial_file_path = self.file.path
-
-            is_valid_before = audiometa_adapter.is_flac_md5_valid(self.file)
-
-            if is_valid_before:
-                self.md5_has_been_corrected = False
-            else:
-                try:
-                    logger.info(f"MD5 is invalid, starting correction process: {initial_file_path}")
-
-                    # Calculate MD5 of original file for comparison
-                    original_md5 = None
-                    if initial_file_path and os.path.exists(initial_file_path):
-                        with open(initial_file_path, 'rb') as f:
-                            original_md5 = hashlib.md5(f.read()).hexdigest()
-                        logger.info(f"Original file MD5 checksum: {original_md5}")
-                        # Store in context for later comparison
-                        if not hasattr(ctx, 'original_md5'):
-                            ctx.original_md5 = original_md5
-
-                    # Fix MD5 and preserve file path
-                    logger.info("Calling fix_md5_checking to correct MD5")
-                    corrected_file = audiometa_adapter.fix_md5_checking(self.file)
-
-                    # Calculate MD5 of corrected file for comparison
-                    corrected_md5 = None
-                    if isinstance(corrected_file, TemporaryUploadedFile):
-                        try:
-                            corrected_path = corrected_file.temporary_file_path()
-                            with open(corrected_path, 'rb') as f:
-                                corrected_md5 = hashlib.md5(f.read()).hexdigest()
-                            logger.info(f"Corrected file MD5 checksum: {corrected_md5}")
-                            # Store in context for later comparison
-                            if not hasattr(ctx, 'corrected_md5'):
-                                ctx.corrected_md5 = corrected_md5
-                            if original_md5:
-                                if original_md5 == corrected_md5:
-                                    logger.warning(
-                                        f"WARNING: Original and corrected MD5 are the same! This should not happen.")
-                                else:
-                                    logger.info(
-                                        f"MD5 changed: original={original_md5[:16]}... -> corrected={corrected_md5[:16]}...")
-                        except Exception as e:
-                            logger.debug(f"Could not calculate corrected file MD5: {e}")
-
-                    corrected_file_path = None
-                    if isinstance(corrected_file, TemporaryUploadedFile):
-                        try:
-                            corrected_file_path = corrected_file.temporary_file_path()
-                        except Exception:
-                            pass
-
-                    # Verify the corrected file has valid MD5
-                    if corrected_file_path:
-                        import subprocess
-                        verify_result = subprocess.run(
-                            ['flac', '-t', corrected_file_path],
-                            capture_output=True, text=True)
-                        logger.info(f"FLAC tool validation of corrected file: returncode={verify_result.returncode}")
-                        if verify_result.returncode != 0:
-                            logger.error(f"Corrected file fails FLAC tool validation: {verify_result.stderr[:200]}")
-
-                    logger.info(
-                        f"Before assignment: self.file type={type(self.file)}, corrected_file type={type(corrected_file)}")
-                    original_file_path = None
-                    if isinstance(
-                            self.file, FieldFile) and hasattr(
-                            self.file, 'file') and isinstance(
-                            self.file.file, TemporaryUploadedFile):
-                        original_file_path = self.file.file.temporary_file_path()
-                        logger.info(f"Original file path (before correction): {original_file_path}")
-
-                    # CRITICAL: Assign the corrected file to self.file
-                    # Django's FileField.save() will read from this TemporaryUploadedFile and write to storage
-                    # This ensures Django saves the CORRECTED version, not the original
-                    self.file = corrected_file
-                    self.md5_has_been_corrected = True
-                    logger.info(f"MD5 correction in _prepare_save completed, md5_has_been_corrected=True")
-
-                    # Verify Django will use the corrected file (not the original)
-                    corrected_file_path = None
-                    if isinstance(corrected_file, TemporaryUploadedFile):
-                        corrected_file_path = corrected_file.temporary_file_path()
-                        logger.info(f"Corrected file path (will be saved by Django): {corrected_file_path}")
-                        if original_file_path and original_file_path != corrected_file_path:
-                            logger.info(
-                                f"CONFIRMED: Django will save CORRECTED file ({corrected_file_path}), not original ({original_file_path})")
-
-                    # Verify the file we're about to save has valid MD5
-                    if isinstance(corrected_file, TemporaryUploadedFile):
-                        try:
-                            tmp_path = corrected_file.temporary_file_path()
-                            final_check = subprocess.run(['flac', '-t', tmp_path], capture_output=True, text=True)
-                            logger.info(
-                                f"Final FLAC tool check of TemporaryUploadedFile before Django save: returncode={final_check.returncode}")
-                            if final_check.returncode != 0:
-                                logger.error(
-                                    f"WARNING: TemporaryUploadedFile has invalid MD5 before Django save! {final_check.stderr[:200]}")
-                            else:
-                                logger.info(
-                                    f"TemporaryUploadedFile is valid before Django save - verifying Django will use this file")
-
-                            # Check if self.file still points to the corrected file
-                            if hasattr(self.file, 'temporary_file_path'):
-                                current_path = self.file.temporary_file_path()
-                                logger.info(
-                                    f"self.file.temporary_file_path() = {current_path}, matches corrected: {current_path == tmp_path}")
-                            elif isinstance(self.file, FieldFile) and hasattr(self.file, 'file'):
-                                logger.info(f"self.file is FieldFile, checking file attribute: {type(self.file.file)}")
-                                if isinstance(self.file.file, TemporaryUploadedFile):
-                                    field_file_path = self.file.file.temporary_file_path()
-                                    logger.info(
-                                        f"FieldFile.file.temporary_file_path() = {field_file_path}, matches corrected: {field_file_path == tmp_path}")
-                        except Exception as e:
-                            logger.debug(f"Could not verify TemporaryUploadedFile before save: {e}")
-
-                    # Verify the file we're about to save has valid MD5
-                    if isinstance(self.file, TemporaryUploadedFile):
-                        try:
-                            tmp_path = self.file.temporary_file_path()
-                            final_check = subprocess.run(['flac', '-t', tmp_path], capture_output=True, text=True)
-                            logger.info(
-                                f"Final FLAC tool check before Django save: returncode={final_check.returncode}")
-                            if final_check.returncode != 0:
-                                logger.error(
-                                    f"WARNING: File has invalid MD5 before Django save! {final_check.stderr[:200]}")
-                        except Exception as e:
-                            pass
-                except FileCorruptedError as e:
-                    logger.error(f"FileCorruptedError during MD5 fix: {e}")
-                    raise AppValidationException(
-                        field_name=Fields.FILE,
-                        message='The FLAC file appears to be corrupted and cannot be processed.',
-                        field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_CORRUPTED)
+    def _calculate_file_md5(self, file_path: str) -> str | None:
+        """Calculate MD5 checksum of a file."""
+        if not file_path or not os.path.exists(file_path):
+            return None
         try:
-            file_for_metadata = self.file
-            if isinstance(
-                    file_for_metadata, DjangoFile) and hasattr(
-                    file_for_metadata, 'name') and not os.path.isabs(
-                    file_for_metadata.name):
-                expected_path = self.user.lib_abs_path / file_for_metadata.name
-                if expected_path.exists():
-                    file_for_metadata = str(expected_path)
-            duration = audiometa_adapter.get_duration_in_sec(file_for_metadata)
-            self.duration_in_sec = duration if duration > 1 else 1
-            self.bitrate_in_kbps = audiometa_adapter.get_bitrate(file_for_metadata)
-            self.size_in_bytes = self.file.size
+            with open(file_path, 'rb') as f:
+                return hashlib.md5(f.read()).hexdigest()
+        except Exception:
+            return None
+
+    def _verify_corrected_file_with_flac_tool(self, file_path: str | None) -> None:
+        """Verify corrected file using FLAC tool."""
+        if not file_path:
+            return
+        import subprocess
+        verify_result = subprocess.run(['flac', '-t', file_path], capture_output=True, text=True)
+        logger = logging.getLogger(__name__)
+        logger.info(f"FLAC tool validation of corrected file: returncode={verify_result.returncode}")
+        if verify_result.returncode != 0:
+            logger.error(f"Corrected file fails FLAC tool validation: {verify_result.stderr[:200]}")
+
+    def _assign_corrected_file(self, corrected_file: TemporaryUploadedFile, original_file_path: str | None) -> None:
+        """Assign corrected file to self.file and verify it will be used by Django."""
+        logger = logging.getLogger(__name__)
+        logger.info(f"Before assignment: self.file type={type(self.file)}, corrected_file type={type(corrected_file)}")
+
+        self.file = corrected_file
+        self.md5_has_been_corrected = True
+        logger.info(f"MD5 correction in _prepare_save completed, md5_has_been_corrected=True")
+
+        corrected_file_path = None
+        if isinstance(corrected_file, TemporaryUploadedFile):
+            try:
+                corrected_file_path = corrected_file.temporary_file_path()
+                logger.info(f"Corrected file path (will be saved by Django): {corrected_file_path}")
+                if original_file_path and original_file_path != corrected_file_path:
+                    logger.info(
+                        f"CONFIRMED: Django will save CORRECTED file ({corrected_file_path}), not original ({original_file_path})")
+            except Exception:
+                pass
+
+    def _verify_file_before_save(self, file: TemporaryUploadedFile) -> None:
+        """Verify the file has valid MD5 before Django saves it."""
+        logger = logging.getLogger(__name__)
+        try:
+            tmp_path = file.temporary_file_path()
+            import subprocess
+            final_check = subprocess.run(['flac', '-t', tmp_path], capture_output=True, text=True)
+            logger.info(
+                f"Final FLAC tool check of TemporaryUploadedFile before Django save: returncode={final_check.returncode}")
+            if final_check.returncode != 0:
+                logger.error(
+                    f"WARNING: TemporaryUploadedFile has invalid MD5 before Django save! {final_check.stderr[:200]}")
+            else:
+                logger.info(f"TemporaryUploadedFile is valid before Django save - verifying Django will use this file")
+
+            if isinstance(self.file, TemporaryUploadedFile):
+                current_path = self.file.temporary_file_path()
+                logger.info(
+                    f"self.file.temporary_file_path() = {current_path}, matches corrected: {current_path == tmp_path}")
+            elif isinstance(self.file, FieldFile) and hasattr(self.file, 'file'):
+                logger.info(f"self.file is FieldFile, checking file attribute: {type(self.file.file)}")
+                if isinstance(self.file.file, TemporaryUploadedFile):
+                    field_file_path = self.file.file.temporary_file_path()
+                    logger.info(
+                        f"FieldFile.file.temporary_file_path() = {field_file_path}, matches corrected: {field_file_path == tmp_path}")
+        except Exception as e:
+            logger.debug(f"Could not verify TemporaryUploadedFile before save: {e}")
+
+    def _fix_flac_md5_if_needed(self, ctx) -> None:
+        """Fix FLAC MD5 if invalid."""
+        if audiometa_adapter.is_flac_md5_valid(self.file):
+            self.md5_has_been_corrected = False
+            return
+
+        try:
+            corrected_file = audiometa_adapter.fix_md5_checking(self.file)
+            self.file = corrected_file
+            self.md5_has_been_corrected = True
+        except FileCorruptedError as e:
+            logger = logging.getLogger(__name__)
+            logger.error(f"FileCorruptedError during MD5 fix: {e}")
+            raise AppValidationException(
+                field_name=Fields.FILE,
+                message='The FLAC file appears to be corrupted and cannot be processed.',
+                field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_CORRUPTED)
+
+    def _extract_file_metadata(self) -> None:
+        """Extract file metadata (duration, bitrate, size)."""
+        file_for_metadata = self.file
+        if isinstance(
+                file_for_metadata, DjangoFile) and hasattr(
+                file_for_metadata, 'name') and not os.path.isabs(
+                file_for_metadata.name):
+            expected_path = self.user.lib_abs_path / file_for_metadata.name
+            if expected_path.exists():
+                file_for_metadata = str(expected_path)
+        duration = audiometa_adapter.get_duration_in_sec(file_for_metadata)
+        self.duration_in_sec = duration if duration > 1 else 1
+        self.bitrate_in_kbps = audiometa_adapter.get_bitrate(file_for_metadata)
+        self.size_in_bytes = self.file.size
+
+    def _prepare_save(self, ctx) -> dict:
+        if self.extension.lower() == '.flac':
+            self._fix_flac_md5_if_needed(ctx)
+
+        try:
+            self._extract_file_metadata()
             fingerprinting_result = self._manage_fingerprint()
             self._manage_musicbrainz_recording(fingerprinting_result)
             return ctx.kwargs
