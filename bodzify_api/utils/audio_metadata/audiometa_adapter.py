@@ -9,6 +9,7 @@ import audiometa
 from audiometa import UnifiedMetadata, UnifiedMetadataKey
 from audiometa.exceptions import FileCorruptedError as AudiometaFileCorruptedError
 from audiometa.utils.metadata_format import MetadataFormat as AudiometaMetadataFormat
+from audiometa.utils.flac_md5_state import FlacMd5State
 from django.core.files import File as DjangoFile
 from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.db.models.fields.files import FieldFile
@@ -144,10 +145,9 @@ def is_flac_md5_valid(file: FILE_TYPE) -> bool:
     """Check if FLAC file MD5 is valid."""
     file_path = _get_file_path_util(file)
     try:
-        from audiometa.utils.flac_md5_validation_result import FlacMd5ValidationResult
         md5_validation_result = audiometa.is_flac_md5_valid(file=file_path)
         # audiometa.is_flac_md5_valid returns an enum, convert to bool
-        return md5_validation_result == FlacMd5ValidationResult.VALID
+        return md5_validation_result == FlacMd5State.VALID
     except AudiometaFileCorruptedError as e:
         raise FileCorruptedError(str(e)) from e
 
@@ -160,10 +160,9 @@ def fix_md5_checking(file: FILE_TYPE) -> TemporaryUploadedFile:
     md5_validation_result = audiometa.is_flac_md5_valid(file=fixed_path)
     # audiometa.is_flac_md5_valid returns an enum, not a bool
     # Compare against the enum value that represents valid
-    from audiometa.utils.flac_md5_validation_result import FlacMd5ValidationResult
-    if md5_validation_result != FlacMd5ValidationResult.VALID:
+    if md5_validation_result != FlacMd5State.VALID:
         os.unlink(fixed_path)
-        error_message = f"MD5 correction failed - the corrected file has MD5 validation result: {md5_validation_result} (expected {FlacMd5ValidationResult.VALID})"
+        error_message = f"MD5 correction failed - the corrected file has MD5 validation result: {md5_validation_result} (expected {FlacMd5State.VALID})"
         raise FileCorruptedError(error_message)
     temp_uploaded = TemporaryUploadedFile(
         name=os.path.basename(fixed_path),

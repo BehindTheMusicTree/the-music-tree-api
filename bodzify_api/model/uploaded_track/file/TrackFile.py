@@ -36,7 +36,7 @@ from bodzify_api.model.utils import utils as model_utils
 from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
 from bodzify_api.utils import audio_fingerprinter, musicbrainz
 from bodzify_api.utils.audio_metadata import AppMetadata
-from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError, FlacMd5CheckFailedError
+from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
 import bodzify_api.utils.audio_metadata.audiometa_adapter as audiometa_adapter
 from bodzify_api.validator.TrackFileValidator import TrackFileValidator
 
@@ -316,11 +316,10 @@ class TrackFile(PrivateStandardResource):
                             logger.debug(f"Could not verify file before save: {e}")
                 except FileCorruptedError as e:
                     logger.error(f"FileCorruptedError during MD5 fix: {e}")
-                    if not isinstance(e, FlacMd5CheckFailedError):
-                        raise AppValidationException(
-                            field_name=Fields.FILE,
-                            message='The FLAC file appears to be corrupted and cannot be processed.',
-                            field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_CORRUPTED)
+                    raise AppValidationException(
+                        field_name=Fields.FILE,
+                        message='The FLAC file appears to be corrupted and cannot be processed.',
+                        field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_CORRUPTED)
         try:
             file_for_metadata = self.file
             if isinstance(
