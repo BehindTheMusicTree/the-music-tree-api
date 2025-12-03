@@ -10,7 +10,7 @@ METADATA_ARTISTS_SEPARATORS = ["; ", ";", ", ", ","]
 
 def _lazy_import():
     """Lazy import of audiometa_adapter to avoid import errors if audiometa is not installed."""
-    from bodzify_api.utils import audiometa_adapter
+    from bodzify_api.utils.audio_metadata import audiometa_adapter
     return audiometa_adapter
 
 

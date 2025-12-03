@@ -9,13 +9,11 @@ import audiometa
 from audiometa import UnifiedMetadataKey
 from audiometa.exceptions import FileCorruptedError as AudiometaFileCorruptedError
 from audiometa.utils.metadata_format import MetadataFormat as AudiometaMetadataFormat
-from django.core.exceptions import ImproperlyConfigured
 from django.core.files import File as DjangoFile
-from django.core.files.base import File as DjangoBaseFile
 from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.db.models.fields.files import FieldFile
 
-from ..file_path_utils import get_file_path as _get_file_path_util
+from bodzify_api.utils.file_path_utils import get_file_path as _get_file_path_util
 from .utils.types import AppMetadata, AppMetadataValue
 from .utils.AppMetadataKey import AppMetadataKey
 from .exceptions import FileCorruptedError
@@ -174,13 +172,20 @@ def fix_md5_checking(file: FILE_TYPE) -> TemporaryUploadedFile:
     file_path = _get_file_path(file)
     fixed_path = audiometa.fix_md5_checking(file=file_path)
     file_size = os.path.getsize(fixed_path)
+    if not audiometa.is_flac_md5_valid(file=fixed_path):
+        os.unlink(fixed_path)
+        raise FileCorruptedError("MD5 correction failed - the corrected file does not have a valid MD5")
     temp_uploaded = TemporaryUploadedFile(
         name=os.path.basename(fixed_path),
         content_type="audio/flac",
         size=file_size,
         charset=None,
     )
-    os.rename(fixed_path, temp_uploaded.temporary_file_path())
+    temp_file_path = temp_uploaded.temporary_file_path()
+    os.rename(fixed_path, temp_file_path)
+    with open(temp_file_path, 'rb') as f:
+        f.read(1)
+        f.seek(0)
     return temp_uploaded
 
 
