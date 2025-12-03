@@ -144,7 +144,10 @@ def is_flac_md5_valid(file: FILE_TYPE) -> bool:
     """Check if FLAC file MD5 is valid."""
     file_path = _get_file_path_util(file)
     try:
-        return audiometa.is_flac_md5_valid(file=file_path)
+        from audiometa.utils.flac_md5_validation_result import FlacMd5ValidationResult
+        md5_validation_result = audiometa.is_flac_md5_valid(file=file_path)
+        # audiometa.is_flac_md5_valid returns an enum, convert to bool
+        return md5_validation_result == FlacMd5ValidationResult.VALID
     except AudiometaFileCorruptedError as e:
         raise FileCorruptedError(str(e)) from e
 
@@ -154,7 +157,11 @@ def fix_md5_checking(file: FILE_TYPE) -> TemporaryUploadedFile:
     file_path = _get_file_path_util(file)
     fixed_path = audiometa.fix_md5_checking(file=file_path)
     file_size = os.path.getsize(fixed_path)
-    if not audiometa.is_flac_md5_valid(file=fixed_path):
+    md5_validation_result = audiometa.is_flac_md5_valid(file=fixed_path)
+    # audiometa.is_flac_md5_valid returns an enum, not a bool
+    # Compare against the enum value that represents valid
+    from audiometa.utils.flac_md5_validation_result import FlacMd5ValidationResult
+    if md5_validation_result != FlacMd5ValidationResult.VALID:
         os.unlink(fixed_path)
         raise FileCorruptedError("MD5 correction failed - the corrected file does not have a valid MD5")
     temp_uploaded = TemporaryUploadedFile(
