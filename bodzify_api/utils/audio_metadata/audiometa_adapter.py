@@ -14,8 +14,8 @@ from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.db.models.fields.files import FieldFile
 
 from bodzify_api.utils.file_path_utils import get_file_path as _get_file_path_util
-from .utils.types import AppMetadata, AppMetadataValue
-from .utils.AppMetadataKey import AppMetadataKey
+from .types import AppMetadata, AppMetadataValue
+from .AppMetadataKey import AppMetadataKey
 from .exceptions import FileCorruptedError
 
 MetadataFormat = AudiometaMetadataFormat
