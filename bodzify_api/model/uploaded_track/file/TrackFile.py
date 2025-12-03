@@ -221,34 +221,6 @@ class TrackFile(PrivateStandardResource):
             except Exception:
                 pass
 
-    def _verify_file_before_save(self, file: TemporaryUploadedFile) -> None:
-        """Verify the file has valid MD5 before Django saves it."""
-        logger = logging.getLogger(__name__)
-        try:
-            tmp_path = file.temporary_file_path()
-            import subprocess
-            final_check = subprocess.run(['flac', '-t', tmp_path], capture_output=True, text=True)
-            logger.info(
-                f"Final FLAC tool check of TemporaryUploadedFile before Django save: returncode={final_check.returncode}")
-            if final_check.returncode != 0:
-                logger.error(
-                    f"WARNING: TemporaryUploadedFile has invalid MD5 before Django save! {final_check.stderr[:200]}")
-            else:
-                logger.info(f"TemporaryUploadedFile is valid before Django save - verifying Django will use this file")
-
-            if isinstance(self.file, TemporaryUploadedFile):
-                current_path = self.file.temporary_file_path()
-                logger.info(
-                    f"self.file.temporary_file_path() = {current_path}, matches corrected: {current_path == tmp_path}")
-            elif isinstance(self.file, FieldFile) and hasattr(self.file, 'file'):
-                logger.info(f"self.file is FieldFile, checking file attribute: {type(self.file.file)}")
-                if isinstance(self.file.file, TemporaryUploadedFile):
-                    field_file_path = self.file.file.temporary_file_path()
-                    logger.info(
-                        f"FieldFile.file.temporary_file_path() = {field_file_path}, matches corrected: {field_file_path == tmp_path}")
-        except Exception as e:
-            logger.debug(f"Could not verify TemporaryUploadedFile before save: {e}")
-
     def _fix_flac_md5_if_needed(self, ctx) -> None:
         """Fix FLAC MD5 if invalid."""
         if audiometa_adapter.is_flac_md5_valid(self.file):
