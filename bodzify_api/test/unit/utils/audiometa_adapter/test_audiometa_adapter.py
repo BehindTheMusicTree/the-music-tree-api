@@ -6,7 +6,7 @@ from audiometa.exceptions import FileCorruptedError as AudiometaFileCorruptedErr
 from audiometa.utils.metadata_format import MetadataFormat as AudiometaMetadataFormat
 from django.core.files.uploadedfile import TemporaryUploadedFile
 
-from bodzify_api.utils.audiometa_adapter import (
+from bodzify_api.utils.audio_metadata.audiometa_adapter import (
     delete_metadata,
     delete_potential_id3_metadata_with_header,
     get_bitrate,
@@ -18,7 +18,7 @@ from bodzify_api.utils.audiometa_adapter import (
 )
 from bodzify_api.utils.audio_metadata.audiometa_adapter.exceptions import FileCorruptedError
 from bodzify_api.utils.audio_metadata.audiometa_adapter.utils.AppMetadataKey import AppMetadataKey
-from bodzify_api.utils.audiometa_adapter import MetadataFormat
+from bodzify_api.utils.audio_metadata.audiometa_adapter import MetadataFormat
 
 
 class TestGetMergedAppMetadata:
