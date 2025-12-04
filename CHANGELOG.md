@@ -78,6 +78,17 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### CI
 
+- **GitHub Automation**:
+  - Auto-labeler workflow (`.github/workflows/labeler.yml`) for automatic PR labeling based on file paths
+  - Issue templates for bug reports and feature requests
+  - Pull request template with comprehensive checklist
+  - GitHub Discussions setup with category templates
+
+- **Branch Protection**: Added automated enforcement of Git Flow branching rules
+  - PRs to `main` must come from `hotfix/*` or `release/*` branches only
+  - PRs to `develop` must come from `feature/*`, `chore/*`, or `dependabot/*` branches only
+  - Provides clear error messages when branch rules are violated
+
 - **CI Workflow**: Split monolithic CI workflow into focused, reusable workflows
   - Updated `test.yml` workflow to run tests on pushes and pull requests (removed redundant `ci.yml` wrapper)
   - Added fail-fast flag (`-x`) to pytest for faster CI feedback on test failures
@@ -89,20 +100,6 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
   - Improved workflow maintainability and reusability
   - Each workflow can now be triggered independently via workflow_dispatch
   - Separation of concerns: tests run on every change, publishing only on releases
-
-- **GitHub Automation**:
-  - Auto-labeler workflow (`.github/workflows/labeler.yml`) for automatic PR labeling based on file paths
-  - Branch protection workflow (`.github/workflows/branch-protection.yml`) to enforce Git Flow rules
-    - Blocks PRs to `main` from non-hotfix/release branches
-    - Blocks PRs to `develop` from invalid branch types
-  - Issue templates for bug reports and feature requests
-  - Pull request template with comprehensive checklist
-  - GitHub Discussions setup with category templates
-
-- **Branch Protection**: Added automated enforcement of Git Flow branching rules
-  - PRs to `main` must come from `hotfix/*` or `release/*` branches only
-  - PRs to `develop` must come from `feature/*`, `chore/*`, `hotfix/*`, or `release/*` branches only
-  - Provides clear error messages when branch rules are violated
 
 - **CI/CD**: Updated GitHub Actions workflow to use `develop` branch instead of `dev`
   - Updated Python version to 3.14 in CI workflows
@@ -170,26 +167,6 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 - **License**: Added Apache License 2.0
 
 - **Code of Conduct**: Added Contributor Covenant 2.1
-
-### CI
-
-- **Branch Protection**: Added automated enforcement of Git Flow branching rules
-  - PRs to `main` must come from `hotfix/*` or `release/*` branches only
-  - PRs to `develop` must come from `feature/*`, `chore/*`, or `dependabot/*` branches only
-  - Provides clear error messages when branch rules are violated
-
-- **CI/CD**: Updated GitHub Actions workflow to use `develop` branch instead of `dev`
-  - Updated Python version to 3.14 in CI workflows
-  - Added branch protection checks for Git Flow enforcement
-
-- **GitHub Automation**:
-  - Auto-labeler workflow (`.github/workflows/labeler.yml`) for automatic PR labeling based on file paths
-  - Branch protection workflow (`.github/workflows/branch-protection.yml`) to enforce Git Flow rules
-    - Blocks PRs to `main` from non-hotfix/release branches
-    - Blocks PRs to `develop` from invalid branch types
-  - Issue templates for bug reports and feature requests
-  - Pull request template with comprehensive checklist
-  - GitHub Discussions setup with category templates
 
 ## [v0.2.0] - 2025-04-03
 

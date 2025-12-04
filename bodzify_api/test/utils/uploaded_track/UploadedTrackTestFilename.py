@@ -246,3 +246,28 @@ class UploadedTrackTestFilename(str, Enum):
     RECORDING_DANS_LA_LEGENDE_FLAC = "recording=Dans la legende.flac"
     RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3 = "recording=juan hansen oostil - drown (massano remix) - 7m21.mp3"
     RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M20_FLAC = "recording=juan hansen oostil - drown (massano remix) - 7m20.flac"
+    RECORDING_KEMAR_FRANCE_MP3 = "recording=Kemar - France.mp3"
+    RECORDING_LORIE_2_MATCHES_BUT_ONE_WITH_CLOSEST_DURATION_MP3 = "recording=lorie_2_matches_but_one_with_closest_duration.mp3"
+    RECORDING_QUEEN_25_MATCHES_BUT_ONE_WITH_BEST_DURATION_AND_MOST_FIELDS_AND_MOST_RELEASE_GROUPS_MP3 = "recording=queen_25_matches_but_one_with_best_duration_and_most_fields_and_most_release_groups.mp3"
+    RECORDING_QUEEN_DURATION_181_MP3 = "recording=queen_duration_181.mp3"
+    RECORDING_QUEEN_MULTIPLE_RELEASE_DATES_MP3 = "recording=queen_multiple_release_dates.mp3"
+    RECORDING_QUEEN_WEARETHECHAMPIONS_MP3 = "recording=queen_wearethechampions.mp3"
+    RECORDING_SHOWMUSTGOON_MP3 = "recording=showmustgoon.mp3"
+    RECORDING_TOKYO_DRIFT_NO_MB_RECORDING_MP3 = "recording=Tokyo Drift_no mb recording.mp3"
+    RECORDING_TOTAL_ECLIPSE_3_SCORES_FLAC = "recording=total eclipse_3 scores.flac"
+    RECORDING_TOTAL_ECLIPSE_5M35_FLAC = "recording=total eclipse_5m35.flac"
+    RECORDING_TOTAL_ECLIPSE_9_MATCHES_BUT_ONE_WITH_DURATION_FLAC = "recording=total eclipse_9 matches one with duration.flac"
+    RECORDING_Y_DO_I_CARMINA_BURANA_REMIX_7M52_MP3 = "recording=Y do i - Carmina Burana Remix - 7m52.mp3"
+    RECORDING_CARMINA_BURANA_REMIX_7M52_MP3 = "recording=Y do i - Carmina Burana Remix - 7m52.mp3"
+    RECORDING_Y_DO_I_CARMINA_BURANA_REMIX_7M52_WAV = "recording=Y do i - Carmina Burana Remix - 7m52.wav"
+    RECORDING_CARMINA_BURANA_REMIX_7M52_WAV = "recording=Y do i - Carmina Burana Remix - 7m52.wav"
+
+    # ============================================================================
+    # SIZE - File size handling tests
+    # ============================================================================
+    SIZE_BIG_26_6MO_FLAC = "size_big=26.6mo.flac"
+    SIZE_BIG_79_55MO_WAV = "size_big=79.55mo.wav"
+    SIZE_BIG_9_98MO_MP3 = "size_big=9.98mo.mp3"
+    SIZE_SMALL_0_01MO_MP3 = "size_small=0.01mo.mp3"
+    SIZE_SMALL_0_05MO_FLAC = "size_small=0.05mo.flac"
+    SIZE_SMALL_0_08MO_WAV = "size_small=0.08mo.wav"
