@@ -4,7 +4,7 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as UploadedTrackPostFields
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
-from bodzify_api.utils import audio_metadata
+from bodzify_api.utils import audio_file_metadata
 
 
 class TestCase(UploadedTrackTestCase):
@@ -18,17 +18,17 @@ class TestCase(UploadedTrackTestCase):
         assert error['field'] == UploadedTrackPostFields.TRACK_FILE_PUBLIC
         assert error['code'] == FieldValidationErrorCode.TRACK_FILE_TYPE_INVALID
 
-    def test_flac_md5_not_valid_not_because_of_id3v2_metadata_then_corrected(self):
+    def test_flac_md5_not_valid_not_because_of_id3v1_metadata_then_corrected(self):
         response = self._post_uploaded_track(
-            UploadedTrackTestFilename.FORMAT_MD5_NOT_VALID_NOT_BECAUSE_OF_ID3V2_METADATA_FLAC)
+            UploadedTrackTestFilename.FORMAT_MD5_NOT_VALID_NOT_BECAUSE_OF_ID3V1_METADATA_FLAC)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.md5_has_been_corrected
-        assert audio_metadata.is_flac_md5_valid(self.saved_object.track_file.file)
+        assert audio_file_metadata.is_flac_md5_valid(self.saved_object.track_file.file)
 
-    def test_flac_md5_not_valid_because_of_id3v2_metadata_then_corrected(self):
+    def test_flac_md5_not_valid_because_of_id3v1_metadata_then_corrected(self):
         response = self._post_uploaded_track(
-            UploadedTrackTestFilename.FORMAT_MD5_NOT_VALID_BECAUSE_OF_ID3V2_METADATA_FLAC)
+            UploadedTrackTestFilename.FORMAT_MD5_NOT_VALID_BECAUSE_OF_ID3V1_METADATA_FLAC)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.md5_has_been_corrected

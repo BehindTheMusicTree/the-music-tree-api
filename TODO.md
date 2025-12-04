@@ -119,6 +119,12 @@ This file tracks future work, improvements, and testing tasks for Bodzify API.
 
 ### Medium Priority
 
+- [ ] **File metadata consistency handling**
+  - Implement proper error handling for file metadata write failures
+  - Add retry mechanism or status tracking for failed metadata updates
+  - Consider two-phase commit pattern or eventual consistency approach
+  - Prevent DB/file metadata mismatch in UploadedTrackManager (currently file updates happen outside transaction)
+
 - [ ] **Performance testing**
   - Load testing for high-traffic endpoints
   - Database query optimization analysis

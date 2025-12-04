@@ -26,8 +26,7 @@
 ## Target Branch
 
 <!-- Mark the target branch with an "x" -->
-
-- [ ] `develop` (for features, bug fixes, chores)
+- [ ] `develop` (for features, bug fixes, chores, dependency updates from Dependabot)
 - [ ] `main` (for hotfixes only)
 
 ## Changes Made
@@ -76,7 +75,7 @@ pytest
 ### Git Hygiene
 - [ ] Commit messages follow convention: `<type>(<scope>): <summary>`
 - [ ] Branch is up to date with target branch
-- [ ] Branch follows naming convention (`feature/`, `chore/`, `hotfix/`, `release/`)
+- [ ] Branch follows naming convention (`feature/`, `chore/`, `dependabot/`, `hotfix/`, `release/`)
 - [ ] No accidental commits (large files, secrets, personal configs)
 
 ## Breaking Changes

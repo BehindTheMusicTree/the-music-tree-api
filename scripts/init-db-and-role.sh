@@ -78,6 +78,14 @@ create_role_and_grant_permissions_if_not_exists(){
 		log_with_script_prefixe "ERROR: Failed to grant privileges to the role: $output" >&2
 		exit 1
 	fi
+
+	log_with_script_prefixe "Granting connect privilege on postgres database to role $DB_BODZIFY_API_USERNAME"
+	output=$(psql -h $DB_HOST -p $DB_PORT -U $DB_SUPERUSER_NAME -d postgres -tAc \
+		"GRANT CONNECT ON DATABASE postgres TO $DB_BODZIFY_API_USERNAME;" 2>&1)
+	if [ $? -ne 0 ] || echo "$output" | grep -i "error" > /dev/null; then
+		log_with_script_prefixe "ERROR: Failed to grant connect on postgres database: $output" >&2
+		exit 1
+	fi
 }
 
 main (){

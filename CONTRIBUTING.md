@@ -261,12 +261,19 @@ We follow **strict Git Flow** with the following branch structure:
 
 #### Develop Branch (`develop`)
 
-- The integration branch for ongoing development
-- All feature branches merge into `develop`
+-- The integration branch for ongoing development
+-- All feature and chore branches merge into `develop`
 - `develop` is merged into `main` via release branches
 - **No direct commits allowed** - All changes must go through Pull Requests
-- Only receives merges from `feature/*`, `chore/*`, `release/*`, and `hotfix/*` branches
-- **Branch protection enforced** - GitHub Actions automatically blocks PRs to `develop` that don't come from allowed branch types (see `.github/workflows/branch-protection.yml`)
+-- Only receives merges from `feature/*`, `chore/*`, and `dependabot/*` branches
+- **Branch protection enforced** - GitHub Actions automatically blocks PRs to `develop` that don't come from `feature/*`, `chore/*`, or `dependabot/*` branches (see `.github/workflows/branch-protection.yml`)
+
+#### 🛡️ Branch Protection
+
+- **PRs to `main`** must come from `hotfix/*` or `release/*` branches only. This ensures production fixes are traceable and carefully released.
+- **PRs to `develop`** must come from `feature/*`, `chore/*`, or `dependabot/*` branches only. PRs from other branch types (e.g., `fix/*`, `refactor/*`, etc.) will be blocked by the branch protection workflow.
+- Branch protection is enforced by the `branch-protection.yml` GitHub Actions workflow located at `.github/workflows/branch-protection.yml`.
+
 
 #### Feature Branches (`feature/<name>`)
 
@@ -337,6 +344,33 @@ We follow **strict Git Flow** with the following branch structure:
 
 - Contributors can submit fixes via feature branches that maintainers may promote to hotfixes if needed
 - When complete, merge into both `main` (for immediate production fix) and `develop` (to keep develop up to date)
+
+#### Chore Branches (`chore/<name>`)
+
+- For maintenance, infrastructure, and configuration work
+- Branch from `develop`
+- Include issue numbers when applicable: `chore/234-update-dependencies`
+- Examples: repository setup, CI/CD changes, dependency updates, documentation infrastructure
+- Examples:
+
+  ```bash
+  git checkout develop
+  git pull origin develop
+  git checkout -b chore/github-setup
+  git checkout -b chore/update-dependencies
+  git checkout -b chore/234-update-dependencies        # With issue number
+  ```
+
+- Merge into `develop` via Pull Request when complete
+
+#### Dependabot Branches (`dependabot/*`)
+
+- For automated dependency updates created by [Dependabot](https://github.com/dependabot)
+- Typically generated/managed by GitHub and follow a naming convention like `dependabot/<ecosystem>/<package>-<version>` (e.g., `dependabot/pip/requests-2.28.0`)
+- Branch from `develop`
+- Dependabot opens Pull Requests that should target `develop` for dependency bumps and security updates
+- Merge into `develop` via Pull Request when complete; treat them like `chore/*` changes or dependency maintenance
+
 
 ### 3. Developing
 

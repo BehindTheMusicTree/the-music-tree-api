@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.14-blue.svg)](https://www.python.org/)
-[![Django](https://img.shields.io/badge/django-5.0-green.svg)](https://www.djangoproject.com/)
+[![Django](https://img.shields.io/badge/django-5.2-green.svg)](https://www.djangoproject.com/)
 
 Bodzify API is an online platform similar to iTunes, designed for managing and interacting with music tracks. It offers a range of features to help you organize, tag, and rate your music, as well as create automatic hierarchical genre playlists.
 
@@ -22,6 +22,38 @@ For detailed setup and installation instructions, please see the [Contributing G
 - Docker and Docker Compose
 - PostgreSQL database
 - See [CONTRIBUTING.md](CONTRIBUTING.md) for full setup instructions
+
+### Developer environment (recommended)
+
+To keep a consistent, reproducible development environment across contributors, we recommend creating a workspace-local virtual environment named `.venv` in the project root and pointing Visual Studio Code to use that interpreter.
+
+1) Create a `.venv` in the project root:
+
+```bash
+python3 -m venv .venv
+```
+
+2) Activate the virtualenv:
+
+- macOS / Linux:
+	```bash
+	source .venv/bin/activate
+	```
+- Windows (PowerShell):
+	```powershell
+	.\.venv\Scripts\Activate.ps1
+	```
+
+3) Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+4) VS Code setup
+- The repository workspace settings now reference `${workspaceFolder}/.venv/bin/python` (instead of a machine-local absolute path) so VS Code will automatically pick the correct interpreter if your `.venv` is in the project root.
+- Alternatively, run the VS Code command `Python: Select Interpreter` and choose `.venv/bin/python`.
+
+If you prefer a different venv name or layout, adjust your local VS Code interpreter selection. The repository stores a workspace-relative default to keep experience consistent for new contributors.
 
 ## Audio Metadata Handling
 The Bodzify API uses [`audiometa-python`](https://github.com/your-username/audiometa-python) for reading and writing audio metadata. The implementation is format-agnostic and handles multiple metadata formats (ID3v1, ID3v2, Vorbis, RIFF) automatically. For more details, see the [Audio Metadata Handling documentation](bodzify_api/utils/audiometa_adapter/README.md).

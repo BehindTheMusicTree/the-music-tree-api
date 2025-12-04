@@ -11,7 +11,7 @@ class TestCase(UploadedTrackTestCase):
 
     def test_no_matching_recording_then_none(self):
         response = self._post_uploaded_track(
-            UploadedTrackTestFilename.RECORDING_TOKYO_DRIFT_NO_MUSICBRAINZ_RECORDING_MP3)
+            UploadedTrackTestFilename.RECORDING_TOKYO_DRIFT_NO_MB_RECORDING_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert not self.saved_object.track_file.musicbrainz_recording

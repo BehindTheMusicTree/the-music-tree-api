@@ -99,8 +99,9 @@ class UploadedTrackManager(StandardResourceManager['UploadedTrack']):
             TrackFile.objects.create(**track_file_model_data)
 
             self._add_to_genre_playlists(instance)
-            instance.update_file_metadata_from_uploaded_track_instance_values()
-            return instance
+
+        instance.update_file_metadata_from_uploaded_track_instance_values()
+        return instance
 
     def create_instance_with_track_file(
             self, track_file_data: dict[str, Any], uploaded_track_data: dict[str, Any]) -> 'UploadedTrack':

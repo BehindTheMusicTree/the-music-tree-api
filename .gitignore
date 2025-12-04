@@ -11,7 +11,8 @@ bodzify_api/fixtures/*
 
 bodzify_api/fixtures/genres/complete_genre_tree.json
 
-# PR descriptions (draft files, not version controlled)
+# Draft documents (internal planning, not version controlled)
+.github/descriptions/
 .github/pr-descriptions/
 
 # Node modules

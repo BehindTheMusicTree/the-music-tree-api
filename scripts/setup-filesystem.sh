@@ -86,8 +86,8 @@ setup_static_files_for_serving() {
     fi
 }
 setup_django_log () {
-    if [ -n "$DJANGO_LOGS_DIR" ]; then
-        log_with_script_prefixe "DJANGO_LOGS_DIR is set. Setting Django logs dirextories and files."
+    if [ -n "$DJANGO_LOG_DIR" ]; then
+        log_with_script_prefixe "DJANGO_LOG_DIR is set. Setting Django logs dirextories and files."
         create_directory_if_not_exists_or_exit "$DJANGO_LOG_DIR"
 
         local LOG_FILENAMES=(
@@ -105,7 +105,7 @@ setup_django_log () {
         done
         set_read_write_permissions_and_owner_or_exit "$DJANGO_LOG_DIR"
     else
-        log_with_script_prefixe "DJANGO_LOGS_DIR is not set. Django logs are not needed."
+        log_with_script_prefixe "DJANGO_LOG_DIR is not set. Django logs are not needed."
     fi
 }
 

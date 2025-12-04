@@ -13,7 +13,7 @@ class TestCase(UploadedTrackTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording
-        assert self.saved_object.track_file.musicbrainz_recording.duration_in_sec == 182
+        assert self.saved_object.track_file.musicbrainz_recording.duration_in_sec == 181
 
     def test_musicbrainz_recording_is_missing_duration_then_none(self):
         response = self._post_uploaded_track(

@@ -24,11 +24,11 @@ class TestCase(UploadedTrackTestCase):
 
     def test_no_matching_recording_then_corresponding_missing_cause(self):
         response = self._post_uploaded_track(
-            UploadedTrackTestFilename.RECORDING_TOKYO_DRIFT_NO_MUSICBRAINZ_RECORDING_MP3)
+            UploadedTrackTestFilename.RECORDING_TOKYO_DRIFT_NO_MB_RECORDING_MP3)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_file.musicbrainz_recording_missing_cause
         assert (self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code ==
-                MbRecordingMissingCauseCode.Codes.LOOKUP_FOUND_NO_MATCHING_RECORDING)
+                MbRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_UNKNOWN_RESPONSE_ERROR_CODE)
 
     def test_duration_below_or_equals_one_second_then_corresponding_missing_cause(self):
         response = self._post_uploaded_track(UploadedTrackTestFilename.DURATION_LESS_THAN_1_SEC_MP3)

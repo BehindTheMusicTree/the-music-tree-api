@@ -60,14 +60,12 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### Added
 
-- **Git Worktree Scripts**: Added npm `git-worktree-scripts` package (v1.3.0) for managing git worktrees
+- **Git Worktree Scripts**: Added npm `git-worktree-scripts` package (v1.4.0) for managing git worktrees
   - Includes `setup-worktree.sh` script for automated worktree setup with virtual environment and dependencies
-
-### Changed
-
-- **Dependencies**: Updated `django-filter` from 22.1 to 24.3 for Python 3.14 compatibility
-  - Fixes `AttributeError: module 'pkgutil' has no attribute 'find_loader'` error
-  - Version 24.3 removes deprecated `pkgutil.find_loader` usage
+  - Added `.git-worktree-copy` configuration for copying gitignored files to new worktrees
+    - Copies `env/.venv` Python virtual environment
+    - Copies fixture files from `bodzify_api/fixtures/*.json`
+  - Integrated filesystem setup into `setup-worktree.sh` for automatic directory and log file creation
 
 ### Fixed
 
@@ -77,11 +75,6 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
   - Fixed `TypeError: 'super' object has no attribute 'dicts'` error in exception logging middleware
   - Updated `ErrorResponse`, `AppValidationException`, `AppSerializer`, `ExceptionLoggingMiddleware`, and `RequestLoggingMiddleware` to safely handle DRF exceptions in Python 3.14
   - Prevents middleware crashes when exception stringification fails
-
-- **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.4.1
-
-- **Dependencies**: 
-  - Updated `psycopg2-binary` from 2.9.5 to 2.9.11 for Python 3.14 compatibility
 
 ### CI
 
@@ -106,15 +99,35 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
   - Pull request template with comprehensive checklist
   - GitHub Discussions setup with category templates
 
+- **Branch Protection**: Added automated enforcement of Git Flow branching rules
+  - PRs to `main` must come from `hotfix/*` or `release/*` branches only
+  - PRs to `develop` must come from `feature/*`, `chore/*`, `hotfix/*`, or `release/*` branches only
+  - Provides clear error messages when branch rules are violated
+
 - **CI/CD**: Updated GitHub Actions workflow to use `develop` branch instead of `dev`
   - Updated Python version to 3.14 in CI workflows
   - Added branch protection checks for Git Flow enforcement
 
-### Removed
+### Changed
 
-- **Dependencies**: Removed `mutagen` from direct dependencies
-  - No longer needed as direct dependency since all audio operations now use `audiometa-python`
-  - `mutagen` is still installed as a transitive dependency via `audiometa-python`
+- **Dependencies**: 
+  - Updated `Django` from 5.0.3 to 5.2.8
+  - Updated `asgiref` from 3.7.2 to 3.8.1 for Django 5.2.8 compatibility
+  - Updated `psycopg2-binary` from 2.9.5 to 2.9.11 for Python 3.14 compatibility
+  - Updated `django-stubs` from 5.1.1 to 5.2.1 for Django 5.2.8 compatibility
+  - Updated `django-filter` from 22.1 to 25.2 for Python 3.14 compatibility (fixes `pkgutil.find_loader` removal)
+  - Updated `django-polymorphic` from 3.1.0 to 4.1.0 to resolve pkg_resources deprecation warning and ensure Django 5.2 compatibility
+  - **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.8.0
+  - Removed `mutagen` from direct dependencies. No longer needed as direct dependency since all audio operations now use `audiometa-python`
+
+### Fixed
+
+- **Filesystem Setup**: Fixed `setup-filesystem.sh` to check for `DJANGO_LOG_DIR` instead of `DJANGO_LOGS_DIR` to properly create log directories
+- **Filter Backend**: Added `get_schema_operation_parameters` method to `ConsistentParametersFilterBackend` for drf-spectacular compatibility with django-filter 25.2
+- **Django 6.0 Compatibility**: Replaced deprecated `CheckConstraint.check` with `condition` parameter in all model constraints
+  - Updated 6 model files: `CriteriaType`, `Criteria`, `Artist`, `Album`, `FingerprintMissingCauseCode`, `ManualPlaylist`
+  - Updated migration file `0001_initial.py` to use new syntax
+  - Resolves Django 6.0 deprecation warnings for `CheckConstraint.check`
 
 ### Documentation
 
@@ -157,6 +170,26 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 - **License**: Added Apache License 2.0
 
 - **Code of Conduct**: Added Contributor Covenant 2.1
+
+### CI
+
+- **Branch Protection**: Added automated enforcement of Git Flow branching rules
+  - PRs to `main` must come from `hotfix/*` or `release/*` branches only
+  - PRs to `develop` must come from `feature/*`, `chore/*`, or `dependabot/*` branches only
+  - Provides clear error messages when branch rules are violated
+
+- **CI/CD**: Updated GitHub Actions workflow to use `develop` branch instead of `dev`
+  - Updated Python version to 3.14 in CI workflows
+  - Added branch protection checks for Git Flow enforcement
+
+- **GitHub Automation**:
+  - Auto-labeler workflow (`.github/workflows/labeler.yml`) for automatic PR labeling based on file paths
+  - Branch protection workflow (`.github/workflows/branch-protection.yml`) to enforce Git Flow rules
+    - Blocks PRs to `main` from non-hotfix/release branches
+    - Blocks PRs to `develop` from invalid branch types
+  - Issue templates for bug reports and feature requests
+  - Pull request template with comprehensive checklist
+  - GitHub Discussions setup with category templates
 
 ## [v0.2.0] - 2025-04-03
 

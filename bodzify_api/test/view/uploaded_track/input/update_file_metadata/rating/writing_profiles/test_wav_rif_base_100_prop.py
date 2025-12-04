@@ -1,7 +1,7 @@
 
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
-from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
+from bodzify_api.utils.audio_file_metadata.AppMetadataKey import AppMetadataKey
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as PostFields
 
 
@@ -12,57 +12,23 @@ class TestCase(UploadedTrackTestCase):
         assert response.status_code == 201
         assert not self.saved_uploaded_track_metadata_with_raw_rating.get(AppMetadataKey.RATING, None)
 
-    def test_0_then_0(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_WAV, **{PostFields.RATING: 0})
-        assert response.status_code == 201
-        assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.RATING] == 0
-
-    def test_1_then_10(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_WAV, **{PostFields.RATING: 1})
-        assert response.status_code == 201
-        assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.RATING] == 10
-
-    def test_2_then_20(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_WAV, **{PostFields.RATING: 2})
-        assert response.status_code == 201
-        assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.RATING] == 20
-
-    def test_3_then_30(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_WAV, **{PostFields.RATING: 3})
-        assert response.status_code == 201
-        assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.RATING] == 30
-
-    def test_4_then_40(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_WAV, **{PostFields.RATING: 4})
-        assert response.status_code == 201
-        assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.RATING] == 40
-
-    def test_5_then_50(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_WAV, **{PostFields.RATING: 5})
-        assert response.status_code == 201
-        assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.RATING] == 50
-
-    def test_6_then_60(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_WAV, **{PostFields.RATING: 6})
-        assert response.status_code == 201
-        assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.RATING] == 60
-
-    def test_7_then_70(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_WAV, **{PostFields.RATING: 7})
-        assert response.status_code == 201
-        assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.RATING] == 70
-
-    def test_8_then_80(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_WAV, **{PostFields.RATING: 8})
-        assert response.status_code == 201
-        assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.RATING] == 80
-
-    def test_9_then_90(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_WAV, **{PostFields.RATING: 9})
-        assert response.status_code == 201
-        assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.RATING] == 90
-
-    def test_10_then_100(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_WAV, **{PostFields.RATING: 10})
-        assert response.status_code == 201
-        assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.RATING] == 100
+    def test_rating_then_expected(self):
+        test_cases = [
+            (0, 0),
+            (1, 13),
+            (2, 1),
+            (3, 54),
+            (4, 64),
+            (5, 118),
+            (6, 128),
+            (7, 186),
+            (8, 196),
+            (9, 242),
+            (10, 255),
+        ]
+        for input_rating, expected in test_cases:
+            with self.subTest(input_rating=input_rating, expected=expected):
+                response = self._post_uploaded_track(
+                    UploadedTrackTestFilename.METADATA_NONE_WAV, **{PostFields.RATING: input_rating})
+                assert response.status_code == 201
+                assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.RATING] == expected
