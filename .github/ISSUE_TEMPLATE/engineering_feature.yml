@@ -1,0 +1,268 @@
+name: Engineering Feature
+description: Detailed technical feature for internal development planning
+title: "[Engineering]: "
+labels: ["enhancement", "engineering", "internal"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Engineering Feature Template
+        This template is for detailed technical features requiring comprehensive planning and implementation.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of the API would this feature affect?
+      options:
+        - Track
+        - Artist
+        - Album
+        - Genre
+        - Tag
+        - Playlist
+        - Play
+        - User
+        - Spotify Integration
+        - MusicBrainz Integration
+        - Audio Fingerprinting
+        - Filtering/Search
+        - Middleware
+        - Serializer
+        - Model
+        - View/API Endpoint
+        - Exception Handling
+        - Database/Migrations
+        - Performance
+        - Security
+        - Infrastructure
+        - Testing
+        - Documentation
+        - Utils
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: How urgent is this feature?
+      options:
+        - Critical (Blocking production/upgrade)
+        - High (Required for upcoming release)
+        - Medium (Planned enhancement)
+        - Low (Nice to have)
+    validations:
+      required: true
+
+  - type: textarea
+    id: overview
+    attributes:
+      label: Overview
+      description: High-level summary of what this feature aims to achieve
+      placeholder: Brief description of the feature and its purpose
+    validations:
+      required: true
+
+  - type: textarea
+    id: background
+    attributes:
+      label: Background & Context
+      description: Why is this feature needed? What problem does it solve?
+      placeholder: |
+        - Current situation
+        - Problem statement
+        - Business/technical drivers
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-state
+    attributes:
+      label: Current State
+      description: Describe the current implementation and any issues
+      placeholder: |
+        - Current behavior
+        - Known limitations
+        - Deprecations or warnings
+        - Related code locations
+    validations:
+      required: false
+
+  - type: textarea
+    id: proposed-changes
+    attributes:
+      label: Proposed Changes
+      description: Detailed description of the technical changes required
+      placeholder: |
+        ### Changes Required
+        - Change 1: Description
+        - Change 2: Description
+        
+        ### Files to Modify
+        - `path/to/file1.py` - What needs to change
+        - `path/to/file2.py` - What needs to change
+        
+        ### API Changes (if applicable)
+        - Endpoint modifications
+        - Request/Response format changes
+        - Breaking changes
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation-plan
+    attributes:
+      label: Implementation Plan
+      description: Step-by-step plan for implementing this feature
+      placeholder: |
+        - [ ] Step 1: Task description
+        - [ ] Step 2: Task description
+        - [ ] Step 3: Task description
+        - [ ] Step 4: Testing and validation
+        - [ ] Step 5: Documentation updates
+    validations:
+      required: true
+
+  - type: textarea
+    id: migration-strategy
+    attributes:
+      label: Migration Strategy (if applicable)
+      description: Database migrations, data migrations, or deployment considerations
+      placeholder: |
+        - Database schema changes
+        - Data migration requirements
+        - Backward compatibility approach
+        - Rollback strategy
+    validations:
+      required: false
+
+  - type: textarea
+    id: testing-strategy
+    attributes:
+      label: Testing Strategy
+      description: How will this feature be tested?
+      placeholder: |
+        - Unit tests to add/modify
+        - Integration tests needed
+        - Manual testing checklist
+        - Performance testing requirements
+        - Expected test coverage
+    validations:
+      required: true
+
+  - type: textarea
+    id: success-criteria
+    attributes:
+      label: Success Criteria / Definition of Done
+      description: Measurable outcomes that define completion
+      placeholder: |
+        - [ ] All unit tests pass
+        - [ ] No deprecation warnings
+        - [ ] Documentation updated
+        - [ ] Code review approved
+        - [ ] Deployed to staging
+    validations:
+      required: true
+
+  - type: textarea
+    id: risks
+    attributes:
+      label: Risks & Mitigation
+      description: Potential risks and how to address them
+      placeholder: |
+        **Risk 1:** Description
+        **Mitigation:** Strategy
+        
+        **Risk 2:** Description
+        **Mitigation:** Strategy
+    validations:
+      required: false
+
+  - type: dropdown
+    id: breaking-changes
+    attributes:
+      label: Breaking Changes
+      description: Does this introduce breaking changes?
+      options:
+        - "No breaking changes"
+        - "Yes - API changes"
+        - "Yes - Database schema changes"
+        - "Yes - Configuration changes"
+        - "Yes - Multiple breaking changes"
+    validations:
+      required: true
+
+  - type: textarea
+    id: timeline
+    attributes:
+      label: Timeline Estimate
+      description: Estimated time to complete this feature
+      placeholder: |
+        - Planning & Design: X hours
+        - Implementation: X hours
+        - Testing: X hours
+        - Code Review & Deployment: X hours
+        - **Total:** X hours / X days
+    validations:
+      required: false
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: Other features, issues, or external dependencies
+      placeholder: |
+        - Depends on #123
+        - Blocked by #456
+        - Related to #789
+        - Requires library upgrade: package==version
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Other approaches that were evaluated
+      placeholder: |
+        **Alternative 1:** Description
+        **Pros:** ...
+        **Cons:** ...
+        **Decision:** Why not chosen
+    validations:
+      required: false
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Links to documentation, RFCs, related discussions
+      placeholder: |
+        - [Django Documentation](https://docs.djangoproject.com/)
+        - [Related RFC](#)
+        - [Stack Overflow Discussion](https://stackoverflow.com/)
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: approval
+    attributes:
+      label: Approval Required
+      description: Which stakeholders need to approve this feature?
+      options:
+        - label: Technical Lead approval
+        - label: QA sign-off on testing plan
+        - label: DevOps review (for infrastructure changes)
+        - label: Product Owner awareness
+        - label: Security review (for security-related changes)
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information, diagrams, or code examples
+      placeholder: Add diagrams, code snippets, screenshots, or other context here...
+    validations:
+      required: false

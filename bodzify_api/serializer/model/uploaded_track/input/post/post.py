@@ -10,9 +10,9 @@ from bodzify_api.model.user.User import User
 from bodzify_api.serializer.field.TrackFileField import TrackFileField
 from bodzify_api.serializer.model.uploaded_track.input.Fields import Fields
 from bodzify_api.serializer.model.uploaded_track.input.input import UploadedTrackInputSerializer
-from bodzify_api.utils import audio_metadata, data_transformer, utils
-from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
-from bodzify_api.utils.audio_metadata.utils.AppMetadataKey import AppMetadataKey
+from bodzify_api.utils import audio_file_metadata, data_transformer, utils
+from bodzify_api.utils.audio_file_metadata.exceptions import FileCorruptedError
+from bodzify_api.utils.audio_file_metadata.AppMetadataKey import AppMetadataKey
 from .Fields import Fields as PostFields
 
 
@@ -35,7 +35,7 @@ class UploadedTrackPostSerializer(UploadedTrackInputSerializer):
 
     def _get_metadata_from_file(self, file) -> dict:
         try:
-            return audio_metadata.get_merged_app_metadata(
+            return audio_file_metadata.get_merged_app_metadata(
                 file=file, normalized_rating_max_value=settings.UPLOADED_TRACK_RATING_VALUE_MAX)
         except FileCorruptedError as exc:
             raise AppValidationException(field_name=PostFields.TRACK_FILE_PUBLIC,
@@ -101,6 +101,7 @@ class UploadedTrackPostSerializer(UploadedTrackInputSerializer):
         user = self.context['request'].user
         file = cast(DjangoFile, data.get(PostFields.TRACK_FILE_PUBLIC))  # Required so not None
         input_data = self._get_input_data_from_file(file=file, user=user)
+
         keys = [PostFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
                 PostFields.TITLE,
                 PostFields.ARTISTS_NAMES,
@@ -111,6 +112,7 @@ class UploadedTrackPostSerializer(UploadedTrackInputSerializer):
                 PostFields.RATING,
                 PostFields.LANGUAGE]
         data_transformer.override_dict1_with_dict2_values_for_each_key_in_dict2(dict1=input_data, dict2=data, keys=keys)
+
         input_data[Fields.TRACK_FILE_INTERNAL] = data[PostFields.TRACK_FILE_PUBLIC]
 
         # If title is not provided, generate it from the file

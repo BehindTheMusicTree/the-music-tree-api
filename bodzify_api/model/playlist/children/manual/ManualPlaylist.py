@@ -29,7 +29,7 @@ class ManualPlaylist(Playlist):
         return self._name
 
     class Meta:
-        constraints = [models.CheckConstraint(check=~models.Q(_name=""), name="manual_playlist_non_empty_name")]
+        constraints = [models.CheckConstraint(condition=~models.Q(_name=""), name="manual_playlist_non_empty_name")]
         verbose_name = 'Manual Playlist'
         verbose_name_plural = 'Manual Playlists'
         indexes = [models.Index(fields=[Fields.NAME_INTERNAL], name='manual_playlist_name_idx')]

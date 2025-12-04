@@ -1,14 +1,11 @@
-from unittest.mock import MagicMock, Mock, patch
+from unittest.mock import patch
 
 import pytest
 from audiometa import UnifiedMetadataKey
 from audiometa.exceptions import FileCorruptedError as AudiometaFileCorruptedError
-from audiometa.utils.metadata_format import MetadataFormat as AudiometaMetadataFormat
-from django.core.files.uploadedfile import TemporaryUploadedFile
 
-from bodzify_api.utils.audiometa_adapter import (
+from bodzify_api.utils.audio_file_metadata import (
     delete_metadata,
-    delete_potential_id3_metadata_with_header,
     get_bitrate,
     get_duration_in_sec,
     get_merged_app_metadata,
@@ -16,9 +13,7 @@ from bodzify_api.utils.audiometa_adapter import (
     is_flac_md5_valid,
     update_file_metadata,
 )
-from bodzify_api.utils.audiometa_adapter.exceptions import FileCorruptedError
-from bodzify_api.utils.audiometa_adapter.utils.AppMetadataKey import AppMetadataKey
-from bodzify_api.utils.audiometa_adapter.utils.TagFormat import MetadataFormat
+from bodzify_api.utils.audio_file_metadata.exceptions import FileCorruptedError
 
 
 class TestGetMergedAppMetadata:
@@ -139,19 +134,6 @@ class TestDeleteMetadata:
 
         assert result is True
         mock_delete.assert_called_once_with(file="/path/to/file.mp3", metadata_format=None)
-
-    @patch("bodzify_api.utils.audiometa_adapter.audiometa.delete_all_metadata")
-    @patch("bodzify_api.utils.audiometa_adapter._get_file_path")
-    def test_delete_specific_format_then_calls_audiometa_with_format(self, mock_get_path, mock_delete):
-        mock_get_path.return_value = "/path/to/file.mp3"
-        mock_delete.return_value = True
-
-        result = delete_metadata("/path/to/file.mp3", MetadataFormat.ID3V2)
-
-        assert result is True
-        mock_delete.assert_called_once_with(
-            file="/path/to/file.mp3", metadata_format=AudiometaMetadataFormat.ID3V2
-        )
 
 
 class TestGetBitrate:

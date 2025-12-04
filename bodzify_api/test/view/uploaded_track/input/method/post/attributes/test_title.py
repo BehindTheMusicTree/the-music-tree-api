@@ -9,7 +9,7 @@ from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedT
 class TestCase(UploadedTrackTestCase):
 
     def test_not_povided_then_set_from_filename_without_dots(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.FILENAME_DOT_NOT_IN_FILENAME_MP3)
+        response = self._post_uploaded_track(UploadedTrackTestFilename.FILENAME_DOTNOTINFILENAME_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.title == "filename=dotnotinfilename"
@@ -21,7 +21,7 @@ class TestCase(UploadedTrackTestCase):
         assert self.saved_object.title == "filename=dot.in.filename"
 
     def test_not_povided_then_set_from_filename_with_spaces_removing_extra_spaces(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.FILENAME_SPACES_TRAILING_MP3)
+        response = self._post_uploaded_track(UploadedTrackTestFilename.FILENAME_WITH_SPACES_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.title == "filename= with spaces"

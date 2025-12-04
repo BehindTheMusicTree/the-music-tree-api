@@ -89,16 +89,24 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### Changed
 
-- **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.3.1
-
+- **Audio Metadata**: Replaced audio metadata management module with `audiometa-python` (bumped to `0.8.1` in `requirements.txt`)
 - **Dependencies**: 
-  - Updated `psycopg2-binary` from 2.9.5 to 2.9.11 for Python 3.14 compatibility
+  - Updated `Django` from 5.0.3 to 5.2.8
+  - Updated `asgiref` from 3.7.2 to 3.8.1 for Django 5.2.8 compatibility
+  - Updated `django-stubs` from 5.1.1 to 5.2.1 for Django 5.2.8 compatibility
+  - Updated `django-filter` from 22.1 to 25.2 for Python 3.14 compatibility (fixes `pkgutil.find_loader` removal)
+  - Updated `django-polymorphic` from 3.1.0 to 4.1.0 to resolve pkg_resources deprecation warning and ensure Django 5.2 compatibility
+  - **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.8.0
+  - Removed `mutagen` from direct dependencies. No longer needed as direct dependency since all audio operations now use `audiometa-python`
 
-### Removed
+### Fixed
 
-- **Dependencies**: Removed `mutagen` from direct dependencies
-  - No longer needed as direct dependency since all audio operations now use `audiometa-python`
-  - `mutagen` is still installed as a transitive dependency via `audiometa-python`
+- **Filesystem Setup**: Fixed `setup-filesystem.sh` to check for `DJANGO_LOG_DIR` instead of `DJANGO_LOGS_DIR` to properly create log directories
+- **Filter Backend**: Added `get_schema_operation_parameters` method to `ConsistentParametersFilterBackend` for drf-spectacular compatibility with django-filter 25.2
+- **Django 6.0 Compatibility**: Replaced deprecated `CheckConstraint.check` with `condition` parameter in all model constraints
+  - Updated 6 model files: `CriteriaType`, `Criteria`, `Artist`, `Album`, `FingerprintMissingCauseCode`, `ManualPlaylist`
+  - Updated migration file `0001_initial.py` to use new syntax
+  - Resolves Django 6.0 deprecation warnings for `CheckConstraint.check`
 
 ### Documentation
 
@@ -144,6 +152,27 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### CI
 
+<<<<<<< HEAD
+- **Branch Protection**: Added automated enforcement of Git Flow branching rules
+  - PRs to `main` must come from `hotfix/*` or `release/*` branches only
+  - PRs to `develop` must come from `feature/*`, `chore/*`, or `dependabot/*` branches only
+  - Provides clear error messages when branch rules are violated
+
+- **CI/CD**: Updated GitHub Actions workflow to use `develop` branch instead of `dev`
+  - Updated Python version to 3.14 in CI workflows
+  - Added branch protection checks for Git Flow enforcement
+
+- **GitHub Automation**:
+  - Auto-labeler workflow (`.github/workflows/labeler.yml`) for automatic PR labeling based on file paths
+  - Branch protection workflow (`.github/workflows/branch-protection.yml`) to enforce Git Flow rules
+    - Blocks PRs to `main` from non-hotfix/release branches
+    - Blocks PRs to `develop` from invalid branch types
+  - Issue templates for bug reports and feature requests
+  - Pull request template with comprehensive checklist
+  - GitHub Discussions setup with category templates
+
+=======
+>>>>>>> origin/develop
 ## [v0.2.0] - 2025-04-03
 
 ### Added

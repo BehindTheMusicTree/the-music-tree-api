@@ -9,7 +9,7 @@ from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedT
 class TextCase(UploadedTrackTestCase):
 
     def test_bad_format_then_400_bad_request(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.FORMAT_BAD_CONTENT_WAV)
+        response = self._post_uploaded_track(UploadedTrackTestFilename.FORMAT_BAD_WAV)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1

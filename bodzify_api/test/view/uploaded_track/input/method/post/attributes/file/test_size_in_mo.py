@@ -9,37 +9,37 @@ from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedT
 class TestCase(UploadedTrackTestCase):
 
     def test_small_wav(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.SIZE_SMALL_0_08_MO_WAV)
+        response = self._post_uploaded_track(UploadedTrackTestFilename.SIZE_SMALL_0_08MO_WAV)
         assert response.status_code == status.HTTP_201_CREATED
         track_file = cast(TrackFile, self.saved_object.track_file)
         assert str(round(track_file.size_in_mo, 2)) == '0.08'
 
     def test_small_mp3(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.SIZE_SMALL_0_01_MO_MP3)
+        response = self._post_uploaded_track(UploadedTrackTestFilename.SIZE_SMALL_0_01MO_MP3)
         assert response.status_code == status.HTTP_201_CREATED
         track_file = cast(TrackFile, self.saved_object.track_file)
         assert str(round(track_file.size_in_mo, 2)) == '0.01'
 
     def test_small_flac(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.SIZE_SMALL_0_05_MO_FLAC)
+        response = self._post_uploaded_track(UploadedTrackTestFilename.SIZE_SMALL_0_05MO_FLAC)
         assert response.status_code == status.HTTP_201_CREATED
         track_file = cast(TrackFile, self.saved_object.track_file)
         assert str(round(track_file.size_in_mo, 2)) == '0.05'
 
     def test_big_wav(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.SIZE_BIG_79_55_MO_WAV)
+        response = self._post_uploaded_track(UploadedTrackTestFilename.SIZE_BIG_79_55MO_WAV)
         assert response.status_code == status.HTTP_201_CREATED
         track_file = cast(TrackFile, self.saved_object.track_file)
         assert str(round(track_file.size_in_mo, 2)) == '79.55'
 
     def test_big_mp3(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.SIZE_BIG_9_98_MO_MP3)
+        response = self._post_uploaded_track(UploadedTrackTestFilename.SIZE_BIG_9_98MO_MP3)
         assert response.status_code == status.HTTP_201_CREATED
         track_file = cast(TrackFile, self.saved_object.track_file)
         assert str(round(track_file.size_in_mo, 2)) == '9.98'
 
     def test_big_flac(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.SIZE_BIG_26_6_MO_FLAC)
+        response = self._post_uploaded_track(UploadedTrackTestFilename.SIZE_BIG_26_6MO_FLAC)
         assert response.status_code == status.HTTP_201_CREATED
         track_file = cast(TrackFile, self.saved_object.track_file)
         assert str(round(track_file.size_in_mo, 2)) == '25.91'

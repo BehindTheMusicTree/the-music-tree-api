@@ -17,7 +17,7 @@ from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields
 from bodzify_api.test.utils.AppApiClient import AppApiClient
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from bodzify_api.test.utils.ModelFixtureFactory import ModelFixtureFactory
-from bodzify_api.utils import audio_metadata, data_transformer
+from bodzify_api.utils import audio_file_metadata, data_transformer
 from bodzify_api.view.error.ErrorResponseFields import ErrorResponseFields
 from bodzify_api.view.pagination.PaginatedResponseFields import PaginatedResponseFields
 
@@ -114,7 +114,9 @@ class AppTestCase(TestCase, Generic[T]):
 
         self.bad_request_result = response.json()
         bad_request_result_details = self.bad_request_result.get(ErrorResponseFields.DETAILS, {})
-        self.bad_request_result_field_errors_json = bad_request_result_details.get(ErrorResponseFields.FIELD_ERRORS) if isinstance(bad_request_result_details, dict) else None
+        self.bad_request_result_field_errors_json = bad_request_result_details.get(
+            ErrorResponseFields.FIELD_ERRORS) if isinstance(
+            bad_request_result_details, dict) else None
         if self.bad_request_result_field_errors_json:
             # Convert field errors to a list format for easier testing
             self.bad_request_result_field_errors = []
@@ -134,7 +136,7 @@ class AppTestCase(TestCase, Generic[T]):
 
     def _set_saved_uploaded_track_metadata(self):
         saved_uploaded_track = cast(UploadedTrack, self.saved_object)
-        self.saved_uploaded_track_metadata_with_raw_rating = audio_metadata.get_merged_app_metadata(
+        self.saved_uploaded_track_metadata_with_raw_rating = audio_file_metadata.get_merged_app_metadata(
             file=saved_uploaded_track.track_file.file)
 
     # Defined here and not in UploadedTrackTestCase because other views needs sometimes to post a track for testing purposes

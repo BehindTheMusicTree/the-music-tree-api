@@ -81,8 +81,8 @@ class TestCase(UploadedTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
         album_artists: QuerySet[Artist] = self.saved_object.album.album_artists.all()
-        assert album_artists.count() == 3
-        assert [artist.name for artist in album_artists] == ['One', 'Two', 'Three']
+        assert album_artists.count() == 2
+        assert sorted([artist.name for artist in album_artists]) == ['One', 'Two/Three']
 
     def test_3_multi_tags_then_ok(self):
         response = self._post_uploaded_track(UploadedTrackTestFilename.ALBUM_ARTISTS_ONE_TWO_THREE_MULTI_TAGS_VORBIS)

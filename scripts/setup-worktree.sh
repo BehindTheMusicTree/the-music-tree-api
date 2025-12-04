@@ -49,7 +49,8 @@ if [ -f "package.json" ]; then
     echo "✓ npm dependencies installed"
 fi
 
-SCRIPTS_DIR=$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}" || echo "${BASH_SOURCE[0]}")")" && pwd)/
+# If the repo provides a setup-filesystem script in the scripts directory (same repo), run it
+SCRIPTS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/
 
 if [ -f "${SCRIPTS_DIR}setup-filesystem.sh" ]; then
     echo "Setting up filesystem..."

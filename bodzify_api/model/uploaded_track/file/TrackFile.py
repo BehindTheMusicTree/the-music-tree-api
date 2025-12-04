@@ -3,6 +3,7 @@ import datetime
 import os
 from typing import TYPE_CHECKING, cast
 
+import audiometa
 from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.db import models
 from django.db.models.fields.files import FieldFile
@@ -31,9 +32,9 @@ from bodzify_api.model.private_standard_resource.PrivateStandardResource import 
 from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackFields
 from bodzify_api.model.utils import utils as model_utils
 from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
-from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
-from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError, FlacMd5CheckFailedError
-from bodzify_api.utils.audio_metadata.utils.types import AppMetadata
+from bodzify_api.utils import audio_fingerprinter, audio_file_metadata, musicbrainz
+from bodzify_api.utils.audio_file_metadata import AppMetadata
+from bodzify_api.utils.audio_file_metadata.exceptions import FileCorruptedError
 from bodzify_api.validator.TrackFileValidator import TrackFileValidator
 
 from .Fields import Fields
@@ -162,28 +163,22 @@ class TrackFile(PrivateStandardResource):
 
     def _prepare_save(self, ctx) -> dict:
         if self.extension.lower() == '.flac':
-            if audio_metadata.is_flac_md5_valid(self.file):
+            if audio_file_metadata.is_flac_md5_valid(self.file):
                 self.md5_has_been_corrected = False
             else:
                 try:
-                    # ID3v2 metadata can be present in FLAC files, causing a mismatch in the MD5 checksum.
-                    # They are therefore removed which won't affect the file's metadata integrity as all the metadata
-                    # is stored in the Vorbis comment block.
-                    audio_metadata.delete_potential_id3_metadata_with_header(self.file)
-
                     # Fix MD5 and preserve file path
-                    self.file = audio_metadata.fix_md5_checking(self.file)
+                    self.file = audio_file_metadata.fix_md5_checking(self.file)
                     self.md5_has_been_corrected = True
                 except FileCorruptedError as e:
-                    if not isinstance(e, FlacMd5CheckFailedError):
-                        raise AppValidationException(
-                            field_name=Fields.FILE,
-                            message='The FLAC file appears to be corrupted and cannot be processed.',
-                            field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_CORRUPTED)
+                    raise AppValidationException(
+                        field_name=Fields.FILE,
+                        message='The FLAC file appears to be corrupted and cannot be processed.',
+                        field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_CORRUPTED)
         try:
-            duration = audio_metadata.get_duration_in_sec(self.file)
+            duration = audio_file_metadata.get_duration_in_sec(self.file)
             self.duration_in_sec = duration if duration > 1 else 1
-            self.bitrate_in_kbps = audio_metadata.get_bitrate(self.file)
+            self.bitrate_in_kbps = audio_file_metadata.get_bitrate(self.file)
             self.size_in_bytes = self.file.size
             fingerprinting_result = self._manage_fingerprint()
             self._manage_musicbrainz_recording(fingerprinting_result)
@@ -196,9 +191,9 @@ class TrackFile(PrivateStandardResource):
             raise
 
     def update_file_metadata(self, app_metadata: AppMetadata):
-        audio_metadata.update_file_metadata(file=self.file,
-                                            app_metadata=app_metadata,
-                                            normalized_rating_max_value=settings.UPLOADED_TRACK_RATING_VALUE_MAX)
+        audio_file_metadata.update_file_metadata(file=self.file,
+                                                 app_metadata=app_metadata,
+                                                 normalized_rating_max_value=settings.UPLOADED_TRACK_RATING_VALUE_MAX)
 
     def handle_flac_md5(self) -> bool:
         return False

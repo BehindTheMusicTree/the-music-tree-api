@@ -159,7 +159,7 @@ class ModelFixtureFactory:
 
         if use_manager_for_genre_playlist_adding:
             with open(track_file_path_in_lib, 'rb') as f:
-                django_file = File(f, name=os.path.basename(track_file_path_in_lib))
+                django_file = File(f, name=str(track_file_path_in_lib))
                 model_fields.update({UploadedTrackFields.TRACK_FILE_INTERNAL: django_file})
                 uploaded_track = UploadedTrack.objects.create(**model_fields)
         else:
