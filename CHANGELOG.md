@@ -107,6 +107,7 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### Changed
 
+- **Audio Metadata**: Replaced audio metadata management module with `audiometa-python` (bumped to `0.8.1` in `requirements.txt`)
 - **Dependencies**: 
   - Updated `Django` from 5.0.3 to 5.2.8
   - Updated `asgiref` from 3.7.2 to 3.8.1 for Django 5.2.8 compatibility
@@ -167,6 +168,26 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 - **License**: Added Apache License 2.0
 
 - **Code of Conduct**: Added Contributor Covenant 2.1
+
+### CI
+
+- **Branch Protection**: Added automated enforcement of Git Flow branching rules
+  - PRs to `main` must come from `hotfix/*` or `release/*` branches only
+  - PRs to `develop` must come from `feature/*`, `chore/*`, or `dependabot/*` branches only
+  - Provides clear error messages when branch rules are violated
+
+- **CI/CD**: Updated GitHub Actions workflow to use `develop` branch instead of `dev`
+  - Updated Python version to 3.14 in CI workflows
+  - Added branch protection checks for Git Flow enforcement
+
+- **GitHub Automation**:
+  - Auto-labeler workflow (`.github/workflows/labeler.yml`) for automatic PR labeling based on file paths
+  - Branch protection workflow (`.github/workflows/branch-protection.yml`) to enforce Git Flow rules
+    - Blocks PRs to `main` from non-hotfix/release branches
+    - Blocks PRs to `develop` from invalid branch types
+  - Issue templates for bug reports and feature requests
+  - Pull request template with comprehensive checklist
+  - GitHub Discussions setup with category templates
 
 ## [v0.2.0] - 2025-04-03
 
