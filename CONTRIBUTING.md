@@ -268,6 +268,13 @@ We follow **strict Git Flow** with the following branch structure:
 -- Only receives merges from `feature/*`, `chore/*`, and `dependabot/*` branches
 - **Branch protection enforced** - GitHub Actions automatically blocks PRs to `develop` that don't come from `feature/*`, `chore/*`, or `dependabot/*` branches (see `.github/workflows/branch-protection.yml`)
 
+#### 🛡️ Branch Protection
+
+- **PRs to `main`** must come from `hotfix/*` or `release/*` branches only. This ensures production fixes are traceable and carefully released.
+- **PRs to `develop`** must come from `feature/*`, `chore/*`, or `dependabot/*` branches only. PRs from other branch types (e.g., `fix/*`, `refactor/*`, etc.) will be blocked by the branch protection workflow.
+- Branch protection is enforced by the `branch-protection.yml` GitHub Actions workflow located at `.github/workflows/branch-protection.yml`.
+
+
 #### Feature Branches (`feature/<name>`)
 
 - Create one for each new feature or bug fix
