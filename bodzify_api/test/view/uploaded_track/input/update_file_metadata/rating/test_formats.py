@@ -62,7 +62,7 @@ class TestCase(UploadedTrackTestCase):
         response = self._post_uploaded_track(
             UploadedTrackTestFilename.METADATA_LONG_A_RIFF_SMALL_WAV, **{PostFields.RATING: 10})
         assert response.status_code == 201
-        assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.RATING] == 100
+        assert self.saved_uploaded_track_metadata_with_raw_rating[AppMetadataKey.RATING] == 255
 
     def test_10_then_10_on_filled_flac(self):
         response = self._post_uploaded_track(
