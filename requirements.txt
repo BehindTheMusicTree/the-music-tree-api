@@ -1,5 +1,5 @@
 asgiref==3.8.1
-audiometa-python==0.8.0
+audiometa-python==0.8.1
 autoflake==2.3.1
 bcrypt==3.1.7
 blinker==1.4
