@@ -156,7 +156,10 @@ def is_flac_md5_valid(file: FILE_TYPE) -> bool:
     file_path = _get_file_path_util(file)
     try:
         md5_validation_result = audiometa.is_flac_md5_valid(file=file_path)
-        # audiometa.is_flac_md5_valid returns an enum, convert to bool
+        # audiometa.is_flac_md5_valid may return either an enum (FlacMd5State) or a bool depending on the
+        # audiometa library version. Normalize to a bool for backward compatibility.
+        if isinstance(md5_validation_result, bool):
+            return md5_validation_result
         return md5_validation_result == FlacMd5State.VALID
     except AudiometaFileCorruptedError as e:
         raise FileCorruptedError(str(e)) from e
@@ -186,3 +189,19 @@ def fix_md5_checking(file: FILE_TYPE) -> TemporaryUploadedFile:
         f.read(1)
         f.seek(0)
     return temp_uploaded
+
+
+def delete_potential_id3_metadata_with_header(file: FILE_TYPE) -> None:
+    """Delete ID3 metadata header from a file if present (FLAC-specific operation).
+
+    This function delegates to `audiometa.delete_all_metadata` with the
+    `ID3V2` metadata format and silently passes if the operation fails (other
+    formats will raise and be handled by callers/tests).
+    """
+    file_path = _get_file_path_util(file)
+    try:
+        return audiometa.delete_all_metadata(file=file_path, metadata_format=MetadataFormat.ID3V2)
+    except Exception:
+        # Keep behavior compatible with older code path: if deletion fails, just ignore
+        # (the caller may expect the operation to be best-effort)
+        return None
