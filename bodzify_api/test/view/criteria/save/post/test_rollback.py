@@ -1,5 +1,7 @@
 from unittest.mock import patch
 
+from rest_framework import status
+
 from bodzify_api.model.criteria.children.genre.Genre import Genre
 from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
 
@@ -12,8 +14,6 @@ class TestCase(GenreTestCase):
             exception_message = "Save failed!"
             mock.side_effect = Exception(exception_message)
 
-            try:
-                self._post_genre(name=genre_name)
-            except Exception as e:
-                assert str(e) == exception_message
-                assert not Genre.objects.filter(user=self.test_user1, name=genre_name).exists()
+            response = self._post_genre(name=genre_name)
+            assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
+            assert not Genre.objects.filter(user=self.test_user1, name=genre_name).exists()
