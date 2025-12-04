@@ -15,6 +15,8 @@ jobs:
         run: |
           SOURCE_BRANCH="${{ github.head_ref }}"
           TARGET_BRANCH="${{ github.base_ref }}"
+          # Allowed prefixes for PRs to develop
+          VALID_PREFIXES=("feature/" "chore/" "dependabot/")
           
           if [[ "$TARGET_BRANCH" == "main" ]]; then
             if [[ "$SOURCE_BRANCH" =~ ^hotfix/.* ]] || [[ "$SOURCE_BRANCH" =~ ^release/.* ]]; then
@@ -29,17 +31,21 @@ jobs:
               exit 1
             fi
           elif [[ "$TARGET_BRANCH" == "develop" ]]; then
+            # Allow feature/*, chore/*, and dependabot/* PRs to develop only
             if [[ "$SOURCE_BRANCH" =~ ^feature/.* ]] || \
                [[ "$SOURCE_BRANCH" =~ ^chore/.* ]] || \
-               [[ "$SOURCE_BRANCH" =~ ^hotfix/.* ]] || \
-               [[ "$SOURCE_BRANCH" =~ ^release/.* ]]; then
+               [[ "$SOURCE_BRANCH" =~ ^dependabot/.* ]]; then
               echo "✅ Valid source branch: $SOURCE_BRANCH"
-              echo "PRs to develop must come from feature/*, chore/*, hotfix/*, or release/* branches (Git Flow)"
+              echo "PRs to develop must come from feature/*, chore/*, or dependabot/* branches (Git Flow)"
             else
               echo "❌ Invalid source branch: $SOURCE_BRANCH"
-              echo "Pull requests to develop must come from feature/*, chore/*, hotfix/*, or release/* branches only."
+              echo "Pull requests to develop must come from feature/*, chore/*, or dependabot/* branches only."
               echo ""
               echo "Direct PRs from main to develop are not allowed."
+              echo "Examples:"
+              echo " - feature/improve-genre-classification"
+              echo " - chore/update-dependencies"
+              echo " - dependabot/pip/requests-2.28.0"
               echo "See CONTRIBUTING.md for Git Flow guidelines."
               exit 1
             fi
