@@ -2,8 +2,9 @@ from enum import Enum
 
 
 class UploadedTrackTestFilename(str, Enum):
-    DEFAULT_MP3 = "rating_id3v2=5 star.mp3"
-    RATING_ID3V2_5_STAR_MP3 = "rating_id3v2=5 star.mp3"
+    DEFAULT_MP3 = "rating_id3v2=4 star.mp3"
+    RATING_ID3V2_5_STAR_MP3 = "rating_id3v2=4 star.mp3"
+    RATING_ID3V2_1_STAR_MP3 = "rating_id3v2=1 star.mp3"
     RATING_ID3V2_0_STAR_MP3 = "rating_id3v2_0_star.mp3"
     RATING_VORBIS_5_STAR_FLAC = "rating_vorbis_5_star.flac"
     RATING_VORBIS_0_STAR_FLAC = "rating_vorbis_0_star.flac"
@@ -21,3 +22,15 @@ class UploadedTrackTestFilename(str, Enum):
     RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M20_FLAC = "recording=juan hansen oostil - drown (massano remix) - 7m20.flac"
     RECORDING_ALLUMERLEFEU_2_MATCHES_ONE_WITH_MORE_RELEASE_GROUPS_MP3 = "recording=Allumerlefeu_2 matches one with more release groups.mp3"
     RECORDING_KEMAR_FRANCE_MP3 = "recording=Kemar - France.mp3"
+    ALBUM_KOKO_ID3V2_MP3 = "album=koko_id3v2.mp3"
+    ALBUM_ARTISTS_MUSE_ID3V2_MP3 = "album artists=muse_id3v2.mp3"
+    ALBUM_ARTISTS_ONE_TWO_THREE_ANTISLASH_ID3V2 = "album artists=One Two Three_antislash_id3v2.mp3"
+    ALBUM_ARTISTS_ONE_TWO_THREE_COMMA_ID3V2 = "album artists=One Two Three_comma_id3v2.mp3"
+    ALBUM_ARTISTS_ONE_TWO_THREE_DOUBLE_ANTISLASH_ID3V2 = "album artists=One Two Three_double antislash_id3v2.mp3"
+    ALBUM_ARTISTS_ONE_TWO_THREE_DOUBLE_SLASH_ID3V2 = "album artists=One Two Three_double slash_id3v2.mp3"
+    ALBUM_ARTISTS_ONE_TWO_THREE_MULTI_TAGS_AND_SLASH_VORBIS = "album artists=One Two Three_muti tags and slash_vorbis.flac"
+    ALBUM_ARTISTS_ONE_TWO_THREE_MULTI_TAGS_VORBIS = "album artists=One Two Three_muti tags_vorbis.flac"
+    ALBUM_ARTISTS_ONE_TWO_THREE_SEMICOLON_ID3V2 = "album artists=One Two Three_semicolon_id3v2.mp3"
+    ALBUM_ARTISTS_ONE_TWO_THREE_SLASH_ID3V2 = "album artists=One Two Three_slash_id3v2.mp3"
+    DURATION_277S_MP3 = "duration=277s.mp3"
+    DURATION_472S_WAV = "duration=472s.wav"
