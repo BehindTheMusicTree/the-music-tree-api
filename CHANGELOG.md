@@ -60,11 +60,36 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### Added
 
-- **Git Worktree Scripts**: Added npm `git-worktree-scripts` package (v1.2.7) for managing git worktrees
+- **Git Worktree Scripts**: Added npm `git-worktree-scripts` package (v1.4.0) for managing git worktrees
   - Includes `setup-worktree.sh` script for automated worktree setup with virtual environment and dependencies
+  - Added `.git-worktree-copy` configuration for copying gitignored files to new worktrees
+    - Copies `env/.venv` Python virtual environment
+    - Copies fixture files from `bodzify_api/fixtures/*.json`
+  - Integrated filesystem setup into `setup-worktree.sh` for automatic directory and log file creation
+
+### CI
+
+- **GitHub Automation**:
+  - Auto-labeler workflow (`.github/workflows/labeler.yml`) for automatic PR labeling based on file paths
+  - Branch protection workflow (`.github/workflows/branch-protection.yml`) to enforce Git Flow rules
+    - Blocks PRs to `main` from non-hotfix/release branches
+    - Blocks PRs to `develop` from invalid branch types
+  - Issue templates for bug reports and feature requests
+  - Pull request template with comprehensive checklist
+  - GitHub Discussions setup with category templates
+
+- **Branch Protection**: Added automated enforcement of Git Flow branching rules
+  - PRs to `main` must come from `hotfix/*` or `release/*` branches only
+  - PRs to `develop` must come from `feature/*`, `chore/*`, `hotfix/*`, or `release/*` branches only
+  - Provides clear error messages when branch rules are violated
+
+- **CI/CD**: Updated GitHub Actions workflow to use `develop` branch instead of `dev`
+  - Updated Python version to 3.14 in CI workflows
+  - Added branch protection checks for Git Flow enforcement
 
 ### Changed
 
+- **Audio Metadata**: Replaced audio metadata management module with `audiometa-python` (bumped to `0.8.1` in `requirements.txt`)
 - **Dependencies**: 
   - Updated `Django` from 5.0.3 to 5.2.8
   - Updated `asgiref` from 3.7.2 to 3.8.1 for Django 5.2.8 compatibility
@@ -127,6 +152,7 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### CI
 
+<<<<<<< HEAD
 - **Branch Protection**: Added automated enforcement of Git Flow branching rules
   - PRs to `main` must come from `hotfix/*` or `release/*` branches only
   - PRs to `develop` must come from `feature/*`, `chore/*`, or `dependabot/*` branches only
@@ -145,6 +171,8 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
   - Pull request template with comprehensive checklist
   - GitHub Discussions setup with category templates
 
+=======
+>>>>>>> origin/develop
 ## [v0.2.0] - 2025-04-03
 
 ### Added

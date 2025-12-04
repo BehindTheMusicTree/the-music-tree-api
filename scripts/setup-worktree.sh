@@ -48,3 +48,16 @@ if [ -f "package.json" ]; then
     npm install
     echo "✓ npm dependencies installed"
 fi
+
+# If the repo provides a setup-filesystem script in the scripts directory (same repo), run it
+SCRIPTS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/
+
+if [ -f "${SCRIPTS_DIR}setup-filesystem.sh" ]; then
+    echo "Setting up filesystem..."
+    if bash "${SCRIPTS_DIR}setup-filesystem.sh"; then
+        echo "✓ Filesystem setup completed"
+    else
+        echo "⚠ Filesystem setup failed (environment variables may not be configured)"
+        echo "  You can run '${SCRIPTS_DIR}setup-filesystem.sh' manually after configuring environment variables"
+    fi
+fi
