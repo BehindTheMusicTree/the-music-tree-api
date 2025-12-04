@@ -14,7 +14,7 @@ class TestCase(UploadedTrackTestCase):
     def test_audio_fingerprinter_connection_ok(self):
         max_retries = 3
         retry_delay = 5
-        
+
         for attempt in range(max_retries):
             try:
                 print(f"test_audio_fingerprinter_connection_ok (attempt {attempt + 1}/{max_retries})")
@@ -32,7 +32,8 @@ class TestCase(UploadedTrackTestCase):
                         print(f"Retrying in {retry_delay} seconds...")
                         time.sleep(retry_delay)
                         continue
-                    error_message = f"Audio Fingerprinter service connection failed: {track_file.fingerprint_missing_cause}"
+                    error_message = f"Audio Fingerprinter service connection failed: {
+                        track_file.fingerprint_missing_cause} "
                     if track_file.fingerprint_missing_cause.code.code == FingerprintMissingCauseCode.Codes.SERVICE_NOT_FOUND:
                         error_message += " The Audio Fingerprinter service is not available. Please ensure the service is running."
                     assert False, error_message
@@ -43,7 +44,8 @@ class TestCase(UploadedTrackTestCase):
                         print(f"Retrying in {retry_delay} seconds...")
                         time.sleep(retry_delay)
                         continue
-                    assert False, f"MusicBrainz recording lookup failed: {track_file.musicbrainz_recording_missing_cause}"
+                    assert False, f"MusicBrainz recording lookup failed: {
+                        track_file.musicbrainz_recording_missing_cause} "
                 else:
                     print("No musicbrainz_recording_missing_cause")
 

@@ -53,17 +53,17 @@ class TestGet(SpotifyLibTrackTestCase):
         spotify_artists = result[to_camel_case(SerializerFields.SPOTIFY_ARTISTS)]
         assert len(spotify_artists) == 2
 
+        # Find artists by ID (order is non-deterministic)
+        artist1_dict = next(a for a in spotify_artists if a[to_camel_case(SerializerFields.SPOTIFY_ID)] == self.spotify_artist1.spotify_id)
+        artist2_dict = next(a for a in spotify_artists if a[to_camel_case(SerializerFields.SPOTIFY_ID)] == self.spotify_artist_2.spotify_id)
+
         # Test first artist
-        artist1 = spotify_artists[0]
-        assert artist1[to_camel_case(SerializerFields.SPOTIFY_ID)] == self.spotify_artist1.spotify_id
-        assert artist1[to_camel_case(SerializerFields.NAME)] == self.spotify_artist1.name
-        assert artist1[to_camel_case(SerializerFields.GENRES)] == self.spotify_artist1.genres
+        assert artist1_dict[to_camel_case(SerializerFields.NAME)] == self.spotify_artist1.name
+        assert artist1_dict[to_camel_case(SerializerFields.GENRES)] == self.spotify_artist1.genres
 
         # Test second artist
-        artist2 = spotify_artists[1]
-        assert artist2[to_camel_case(SerializerFields.SPOTIFY_ID)] == self.spotify_artist_2.spotify_id
-        assert artist2[to_camel_case(SerializerFields.NAME)] == self.spotify_artist_2.name
-        assert artist2[to_camel_case(SerializerFields.GENRES)] == self.spotify_artist_2.genres
+        assert artist2_dict[to_camel_case(SerializerFields.NAME)] == self.spotify_artist_2.name
+        assert artist2_dict[to_camel_case(SerializerFields.GENRES)] == self.spotify_artist_2.genres
 
         assert sorted(result[to_camel_case(SerializerFields.GENRES)]) == sorted(["Rock", "Pop", "Jazz", "Blues"])
 
