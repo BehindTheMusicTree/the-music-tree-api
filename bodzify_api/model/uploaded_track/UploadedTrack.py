@@ -17,7 +17,7 @@ from bodzify_api.model.field.foreign_key.PrivateManyToManyField import PrivateMa
 from bodzify_api.model.playlist.Fields import Fields as PlayListFields
 from bodzify_api.model.playlist.Playlist import Playlist
 from bodzify_api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
-from bodzify_api.utils.audio_metadata.AppMetadataKey import AppMetadataKey
+from bodzify_api.utils.audio_file_metadata.AppMetadataKey import AppMetadataKey
 
 from .file.TrackFile import TrackFile
 from .Fields import Fields
