@@ -39,6 +39,46 @@ N/A
 - `bodzify_api/migrations/0001_initial.py`:
   - Updated timestamp/imports due to local evolution of models and utility code.
 
+## Other Notable Changes
+
+This branch includes multiple additional changes beyond the VS Code / README updates. These are important to review and may warrant splitting into smaller PRs if you prefer a narrow scope:
+
+- GitHub / CI / Workflows:
+  - Added new GitHub Actions workflows: `build.yml`, `deploy.yml`, `publish.yml`, `static-files.yml`, `test.yml`, and updated `branch-protection.yml`.
+  - Added `.github/FUNDING.yml` and an engineering feature issue template.
+  - Removed legacy `ci.yaml`.
+
+- Tools & Scripts:
+  - Added new scripts: `scripts/analyze-shared-code.py`, and `scripts/split-repo.sh`.
+  - Updated existing scripts: `scripts/init-db-and-role.sh`, `scripts/run-db-and-afp-containers.sh`, `scripts/setup-filesystem.sh`, and `scripts/setup-worktree.sh`.
+
+- Utilities / Refactor:
+  - Refactored audio metadata implementation: `audiometa_adapter` / `audio_metadata` modules were reorganized and renamed to `audio_file_metadata`.
+    - Example changes: `audiometa_adapter.py` -> `audio_file_metadata/audiometa_adapter.py`, and `utils` modules were moved/renamed.
+  - Created new `bodzify_api/utils/__init__.py` and added new utils files and exceptions in `audio_file_metadata`.
+
+- Tests:
+  - Many tests updated and refactored, including renames and updated files in `bodzify_api/test/utils/` and `bodzify_api/test/view/`.
+
+- Models / Views / Middleware:
+  - Minor updates and refactors in models/managers: `UploadedTrack`, `UploadedTrackManager`, `Artist`, `Album`, `Criteria`, `CriteriaType`.
+  - Middleware and view errors/exception handling improvements.
+
+- Packaging & Dependencies:
+  - Updated `requirements.txt`, `package.json` and `package-lock.json` to reflect dependency changes.
+
+- Docs & Misc:
+  - Added `DJANGO_UPGRADE_GUIDE.md` and kept README/CONTRIBUTING/CHANGELOG updates.
+  - Updated `.gitignore` and cursor rules (`.cursorrules`).
+
+## Files & Renames Summary
+
+Major file renames and path reorganizations:
+- `bodzify_api/utils/audio_metadata/*` => `bodzify_api/utils/audio_file_metadata/*` (various files moved/renamed and some deleted)
+- Test files were renamed or moved for clarity in `bodzify_api/test/utils/` and `bodzify_api/test/view/`
+
+If these changes are all part of a single intended refactor, it’s fine — but if not, it’s a candidate for split PRs.
+
 ## Testing
 
 - [x] All existing tests pass locally
@@ -112,6 +152,11 @@ N/A
 
 - Please confirm the `.vscode` workspace settings and `README` changes are correct and sufficient to streamline onboarding.
 - Check the migration head to ensure only timestamp/import imports were updated; if any schema changes got included accidentally, flag them for separation into a distinct PR.
+
+- Check CI/Workflows: because new workflows were added, ensure they are configured correctly relative to other repo workflow rules.
+- Verify the refactor of audio metadata code under `bodzify_api/utils/audio_file_metadata/` is complete, that imports and test references were updated correctly and that no references to the old module remain.
+- Confirm scripts added/updated are covered by the repo practices and that executable permissions are correctly set (if required).
+- Confirm `requirements.txt`/`package.json` modifications are intentional and have no version conflicts.
 
 ---
 
