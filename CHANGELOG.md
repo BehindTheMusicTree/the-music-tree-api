@@ -129,7 +129,7 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 - **Branch Protection**: Added automated enforcement of Git Flow branching rules
   - PRs to `main` must come from `hotfix/*` or `release/*` branches only
-  - PRs to `develop` must come from `feature/*`, `chore/*`, `hotfix/*`, or `release/*` branches only
+  - PRs to `develop` must come from `feature/*`, `chore/*`, or `dependabot/*` branches only
   - Provides clear error messages when branch rules are violated
 
 - **CI/CD**: Updated GitHub Actions workflow to use `develop` branch instead of `dev`
