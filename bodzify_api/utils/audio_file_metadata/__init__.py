@@ -1,14 +1,15 @@
 """Audio file metadata handling module."""
 
 from .audiometa_adapter import (
-    delete_metadata,
-    fix_md5_checking,
-    get_bitrate,
-    get_duration_in_sec,
     get_merged_app_metadata,
     get_specific_metadata,
-    is_flac_md5_valid,
+    get_full_metadata,
+    delete_metadata,
     update_file_metadata,
+    get_bitrate,
+    get_duration_in_sec,
+    is_flac_md5_valid,
+    fix_md5_checking,
 )
 from .AppMetadataKey import AppMetadataKey
 from .exceptions import FileCorruptedError
@@ -19,12 +20,13 @@ __all__ = [
     "AppMetadataKey",
     "AppMetadataValue",
     "FileCorruptedError",
-    "is_flac_md5_valid",
-    "fix_md5_checking",
-    "get_bitrate",
-    "get_duration_in_sec",
-    "get_merged_app_metadata",
     "get_specific_metadata",
+    "get_merged_app_metadata",
+    "get_full_metadata",
     "update_file_metadata",
     "delete_metadata",
+    "get_bitrate",
+    "get_duration_in_sec",
+    "is_flac_md5_valid",
+    "fix_md5_checking",
 ]

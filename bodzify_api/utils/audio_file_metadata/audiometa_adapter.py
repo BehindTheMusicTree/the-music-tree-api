@@ -142,6 +142,15 @@ def get_duration_in_sec(file: FILE_TYPE) -> float:
         raise FileCorruptedError(str(e)) from e
 
 
+def get_full_metadata(file: FILE_TYPE) -> dict:
+    """Get full metadata."""
+    file_path = _get_file_path_util(file)
+    try:
+        return audiometa.get_full_metadata(file=file_path)
+    except AudiometaFileCorruptedError as e:
+        raise FileCorruptedError(str(e)) from e
+
+
 def is_flac_md5_valid(file: FILE_TYPE) -> bool:
     """Check if FLAC file MD5 is valid."""
     file_path = _get_file_path_util(file)

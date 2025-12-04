@@ -163,7 +163,7 @@ class TrackFile(PrivateStandardResource):
 
     def _prepare_save(self, ctx) -> dict:
         if self.extension.lower() == '.flac':
-            if audio_file_metadata.is_flac_md5_valid(self.file) == audiometa.FlacMd5State.VALID:
+            if audio_file_metadata.is_flac_md5_valid(self.file):
                 self.md5_has_been_corrected = False
             else:
                 try:
