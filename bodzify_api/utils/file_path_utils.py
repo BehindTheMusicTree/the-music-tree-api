@@ -61,12 +61,6 @@ def get_file_path(file: DiskBasedFile | DjangoFile) -> str:
             name = file.name
             if os.path.isabs(name) and os.path.exists(name):
                 return name
-            if instance and hasattr(instance, 'user'):
-                from bodzify_api.model.user.User import User
-                user: User = instance.user
-                expected_path = user.lib_abs_path / name
-                if expected_path.exists():
-                    return str(expected_path)
             return name
         return str(file)
     return str(file)
