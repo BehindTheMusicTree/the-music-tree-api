@@ -1,15 +1,13 @@
 import binascii
 import datetime
-import logging
 import os
 from typing import TYPE_CHECKING, cast
 
-from django.core.files import File as DjangoFile
 from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.db import models
 from django.db.models.fields.files import FieldFile
 from django.db.models import F
-from django.db.models.signals import post_save, pre_delete
+from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.translation import gettext as _
 
@@ -33,10 +31,9 @@ from bodzify_api.model.private_standard_resource.PrivateStandardResource import 
 from bodzify_api.model.uploaded_track.Fields import Fields as UploadedTrackFields
 from bodzify_api.model.utils import utils as model_utils
 from bodzify_api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
-from bodzify_api.utils import audio_fingerprinter, musicbrainz
-from bodzify_api.utils.audio_metadata import AppMetadata
-from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError
-import bodzify_api.utils.audio_metadata.audiometa_adapter as audiometa_adapter
+from bodzify_api.utils import audio_fingerprinter, audio_metadata, musicbrainz
+from bodzify_api.utils.audio_metadata.exceptions import FileCorruptedError, FlacMd5CheckFailedError
+from bodzify_api.utils.audio_metadata.utils.types import AppMetadata
 from bodzify_api.validator.TrackFileValidator import TrackFileValidator
 
 from .Fields import Fields
@@ -163,45 +160,31 @@ class TrackFile(PrivateStandardResource):
 
         return musicbrainz_recording_lookup_result
 
-    def _fix_flac_md5_if_needed(self, ctx) -> None:
-        """Fix FLAC MD5 if invalid."""
-        if audiometa_adapter.is_flac_md5_valid(self.file):
-            self.md5_has_been_corrected = False
-            return
-
-        try:
-            corrected_file = audiometa_adapter.fix_md5_checking(self.file)
-            self.file = corrected_file
-            self.md5_has_been_corrected = True
-        except FileCorruptedError as e:
-            logger = logging.getLogger(__name__)
-            logger.error(f"FileCorruptedError during MD5 fix: {e}")
-            raise AppValidationException(
-                field_name=Fields.FILE,
-                message='The FLAC file appears to be corrupted and cannot be processed.',
-                field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_CORRUPTED)
-
-    def _extract_file_metadata(self) -> None:
-        """Extract file metadata (duration, bitrate, size)."""
-        file_for_metadata = self.file
-        if isinstance(
-                file_for_metadata, DjangoFile) and hasattr(
-                file_for_metadata, 'name') and not os.path.isabs(
-                file_for_metadata.name):
-            expected_path = self.user.lib_abs_path / file_for_metadata.name
-            if expected_path.exists():
-                file_for_metadata = str(expected_path)
-        duration = audiometa_adapter.get_duration_in_sec(file_for_metadata)
-        self.duration_in_sec = duration if duration > 1 else 1
-        self.bitrate_in_kbps = audiometa_adapter.get_bitrate(file_for_metadata)
-        self.size_in_bytes = self.file.size
-
     def _prepare_save(self, ctx) -> dict:
         if self.extension.lower() == '.flac':
-            self._fix_flac_md5_if_needed(ctx)
+            if audio_metadata.is_flac_md5_valid(self.file):
+                self.md5_has_been_corrected = False
+            else:
+                try:
+                    # ID3v2 metadata can be present in FLAC files, causing a mismatch in the MD5 checksum.
+                    # They are therefore removed which won't affect the file's metadata integrity as all the metadata
+                    # is stored in the Vorbis comment block.
+                    audio_metadata.delete_potential_id3_metadata_with_header(self.file)
 
+                    # Fix MD5 and preserve file path
+                    self.file = audio_metadata.fix_md5_checking(self.file)
+                    self.md5_has_been_corrected = True
+                except FileCorruptedError as e:
+                    if not isinstance(e, FlacMd5CheckFailedError):
+                        raise AppValidationException(
+                            field_name=Fields.FILE,
+                            message='The FLAC file appears to be corrupted and cannot be processed.',
+                            field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_CORRUPTED)
         try:
-            self._extract_file_metadata()
+            duration = audio_metadata.get_duration_in_sec(self.file)
+            self.duration_in_sec = duration if duration > 1 else 1
+            self.bitrate_in_kbps = audio_metadata.get_bitrate(self.file)
+            self.size_in_bytes = self.file.size
             fingerprinting_result = self._manage_fingerprint()
             self._manage_musicbrainz_recording(fingerprinting_result)
             return ctx.kwargs
@@ -213,28 +196,9 @@ class TrackFile(PrivateStandardResource):
             raise
 
     def update_file_metadata(self, app_metadata: AppMetadata):
-        # Ensure we use the actual file path, not the FieldFile object
-        file_path = self.file.path if hasattr(self.file, 'path') else self.file
-        audiometa_adapter.update_file_metadata(file=file_path,
-                                               app_metadata=app_metadata,
-                                               normalized_rating_max_value=settings.UPLOADED_TRACK_RATING_VALUE_MAX)
-
-    def _post_save(self, adding: bool) -> None:
-        logger = logging.getLogger(__name__)
-        if adding and self.md5_has_been_corrected:
-            if hasattr(self.file, 'path'):
-                saved_path = self.file.path
-                logger.info(f"_post_save: Django saved file to: {saved_path}")
-                if saved_path and os.path.exists(saved_path) and saved_path.lower().endswith('.flac'):
-                    import subprocess
-                    check_result = subprocess.run(['flac', '-t', saved_path], capture_output=True, text=True)
-                    logger.info(f"_post_save: FLAC tool check of saved file: returncode={check_result.returncode}")
-                    if check_result.returncode != 0:
-                        logger.error(
-                            f"_post_save: WARNING - Django saved file has invalid MD5! This confirms Django corrupted it during save.")
-                    else:
-                        logger.info(f"_post_save: File is valid after Django save")
-        super()._post_save(adding)
+        audio_metadata.update_file_metadata(file=self.file,
+                                            app_metadata=app_metadata,
+                                            normalized_rating_max_value=settings.UPLOADED_TRACK_RATING_VALUE_MAX)
 
     def handle_flac_md5(self) -> bool:
         return False
