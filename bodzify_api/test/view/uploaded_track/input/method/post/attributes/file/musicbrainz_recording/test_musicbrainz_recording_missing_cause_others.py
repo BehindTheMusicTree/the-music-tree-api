@@ -139,3 +139,18 @@ class TestCase(UploadedTrackTestCase):
             assert (self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code ==
                     MbRecordingMissingCauseCode.Codes.LOOKUP_FAILED_WITH_UNKNOWN_RESPONSE_STATUS_CODE)
             assert self.saved_object.track_file.musicbrainz_recording_missing_cause.message is not None
+
+    def test_musicbrainz_returns_empty_results_then_corresponding_missing_cause(self):
+        with patch('acoustid.lookup') as mock_lookup:
+            mock_lookup.return_value = {
+                'status': 'ok',
+                'results': []
+            }
+
+            response = self._post_uploaded_track(UploadedTrackTestFilename.RECORDING_SHOWMUSTGOON_MP3)
+
+            assert response.status_code == status.HTTP_201_CREATED
+            assert self.saved_object.track_file.musicbrainz_recording_missing_cause
+            assert (self.saved_object.track_file.musicbrainz_recording_missing_cause.code.code ==
+                    MbRecordingMissingCauseCode.Codes.LOOKUP_FOUND_NO_MATCHING_RECORDING)
+            assert self.saved_object.track_file.musicbrainz_recording_missing_cause.message is None

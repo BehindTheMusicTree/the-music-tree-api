@@ -127,7 +127,7 @@
         "pk": 2,
         "fields": {
             "code": 2,
-            "label": "The track's file's fingerprinting failed making it unavailable for lookup."
+            "label": "The track's duration is below or equals 1 second. MusicBrainz won't lookup."
         }
     },
     
@@ -136,7 +136,7 @@
         "pk": 3,
         "fields": {
             "code": 3,
-            "label": "The track's duration is below or equals 1 second. MusicBrainz won't lookup."
+            "label": "The Musicbrainz lookup did not find a matching recording."
         }
     },
     
@@ -145,7 +145,7 @@
         "pk": 4,
         "fields": {
             "code": 4,
-            "label": "The Musicbrainz lookup did not find a matching recording."
+            "label": "The MusicBrainz lookup failed with status code 3 (invalid fingerprint)."
         }
     },
     
@@ -154,7 +154,7 @@
         "pk": 5,
         "fields": {
             "code": 5,
-            "label": "The MusicBrainz lookup failed with status code 3 (invalid fingerprint)."
+            "label": "The MusicBrainz lookup failed with status code 5 (internal error)."
         }
     },
     
@@ -172,7 +172,7 @@
         "pk": 7,
         "fields": {
             "code": 7,
-            "label": "The MusicBrainz lookup failed with an unknown error status code."
+            "label": "The MusicBrainz lookup failed with an unknown status code."
         }
     },
     
@@ -181,15 +181,6 @@
         "pk": 8,
         "fields": {
             "code": 8,
-            "label": "The MusicBrainz lookup failed with an unknown status code."
-        }
-    },
-    
-    {
-        "model": "bodzify_api.mbrecordingmissingcausecode",
-        "pk": 9,
-        "fields": {
-            "code": 9,
             "label": "The MusicBrainz lookup failed resolving MusicBrainz DNS."
         }
     }
