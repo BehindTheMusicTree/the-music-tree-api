@@ -58,6 +58,9 @@ If you prefer a different venv name or layout, adjust your local VS Code interpr
 ## Audio Metadata Handling
 The Bodzify API uses [`audiometa-python`](https://github.com/your-username/audiometa-python) for reading and writing audio metadata. The implementation is format-agnostic and handles multiple metadata formats (ID3v1, ID3v2, Vorbis, RIFF) automatically. For more details, see the [Audio Metadata Handling documentation](bodzify_api/utils/audiometa_adapter/README.md).
 
+## MusicBrainz Integration
+The Bodzify API integrates with MusicBrainz through the AcoustID fingerprinting service to automatically identify audio tracks and retrieve metadata such as title, artist, and release date. Audio files are fingerprinted using Chromaprint and matched against the MusicBrainz database. For more details, see the [MusicBrainz Integration documentation](bodzify_api/utils/musicbrainz/README.md).
+
 ## Usage
 TODO
 

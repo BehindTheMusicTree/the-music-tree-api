@@ -425,6 +425,14 @@ When making changes to the codebase, ensure relevant documentation is updated:
 
 **Note:** Documentation should be updated as part of the same PR that introduces the changes, not as a separate follow-up PR.
 
+### External Service Documentation
+
+For detailed documentation on external service integrations, see:
+
+- **MusicBrainz Integration**: [MusicBrainz Integration documentation](bodzify_api/utils/musicbrainz/README.md) - Audio fingerprinting and MusicBrainz metadata lookup
+- **Spotify Integration**: [Spotify Integration documentation](bodzify_api/utils/spotify_api/README.md) - Spotify Web API integration
+- **Audio Metadata**: [Audio Metadata Handling documentation](bodzify_api/utils/audio_file_metadata/README.md) - Audio file metadata reading and writing
+
 ### Code Style Reference
 
 For quick reference on code style conventions, see [code-style.md](code-style.md). For detailed guidelines, refer to the Cursor rules in `.cursor/rules/`:
