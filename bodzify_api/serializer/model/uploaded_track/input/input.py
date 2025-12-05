@@ -60,10 +60,8 @@ class UploadedTrackInputSerializer(AppInputSerializer):
                                              field_name=Fields.ALBUM_NAME,
                                              field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
-        if Fields.TRACK_NUMBER in data and data.get(
-                Fields.TRACK_NUMBER) is not None and data.get(
-                Fields.ALBUM_NAME) in [
-                None, ""]:
+        track_number = data.get(Fields.TRACK_NUMBER)
+        if track_number and data.get(Fields.ALBUM_NAME) in [None, ""]:
             raise AppValidationException(field_name=Fields.ALBUM_NAME,
                                          message="Album name must be specified if track position is.",
                                          field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
