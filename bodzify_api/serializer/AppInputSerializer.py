@@ -429,16 +429,34 @@ class AppInputSerializer(serializers.Serializer, Generic[T]):
         for non-list fields. List fields are identified by the [] suffix.
 
         Args:
-            data: The parsed request data dictionary
+            data: The parsed request data dictionary (may be a QueryDict)
 
         Returns:
             Normalized dictionary with single values extracted from lists
         """
+        from django.http import QueryDict
+
         normalized = {}
-        for key, value in data.items():
+        # Use lists() for QueryDict to get all values, items() for regular dict
+        if isinstance(data, QueryDict):
+            items = data.lists()
+        else:
+            items = data.items()
+
+        for key, value in items:
             # List fields in multipart use [] suffix - keep them as lists
             if key.endswith('[]'):
-                normalized[key] = value
+                # For QueryDict, value is already a list from lists()
+                # For regular dict, ensure it's a list
+                if isinstance(data, QueryDict):
+                    # Filter out empty strings from list fields (empty list should be [], not [''])
+                    filtered_value = [v for v in value if v != '']
+                    normalized[key] = filtered_value if filtered_value else []
+                else:
+                    list_value = value if isinstance(value, list) else [value]
+                    # Filter out empty strings from list fields
+                    filtered_value = [v for v in list_value if v != '']
+                    normalized[key] = filtered_value if filtered_value else []
             # For non-list fields, extract single value from list if present
             elif isinstance(value, list):
                 if len(value) == 0:
