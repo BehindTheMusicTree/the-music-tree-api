@@ -81,9 +81,6 @@ class DuplicateFieldsMiddleware:
                 # This allows us to detect duplicate fields before normalization
                 data_to_check = None
 
-                logger.debug(
-                    f"[DuplicateFieldsMiddleware] Processing {request.method} request with multipart/form-data")
-
                 # For POST requests, Django populates request.POST, so we can use it directly
                 # For PUT/PATCH requests, Django doesn't populate request.POST, so we must use request.data
                 if request.method == 'POST':
@@ -92,11 +89,8 @@ class DuplicateFieldsMiddleware:
                         # QueryDict has getlist() method (lowercase)
                         if hasattr(post_data, 'getlist') and len(post_data) > 0:
                             data_to_check = post_data
-                            logger.debug(
-                                f"[DuplicateFieldsMiddleware] Using request._request.POST, len={len(post_data)}")
                     elif hasattr(request, 'POST') and len(request.POST) > 0:
                         data_to_check = request.POST
-                        logger.debug(f"[DuplicateFieldsMiddleware] Using request.POST, len={len(request.POST)}")
 
                 # For PUT/PATCH requests, we must parse multipart data manually since request.POST is empty
                 # and request.data is not available in middleware (only available in DRF views)
@@ -108,11 +102,8 @@ class DuplicateFieldsMiddleware:
                         parsed_data, _ = parser.parse()
                         if isinstance(parsed_data, QueryDict) and len(parsed_data) > 0:
                             data_to_check = parsed_data
-                            logger.debug(
-                                f"[DuplicateFieldsMiddleware] Manually parsed multipart data, type={type(data_to_check)}, len={len(data_to_check)}")
-                            logger.debug(f"[DuplicateFieldsMiddleware] Parsed data keys: {list(data_to_check.keys())}")
                     except Exception as e:
-                        logger.debug(f"[DuplicateFieldsMiddleware] Failed to manually parse multipart data: {e}")
+                        logger.info(f"[DuplicateFieldsMiddleware] Failed to manually parse multipart data: {e}")
                         # Fall through to check request.data if it's a Request instance
 
                 # If still no data, try request.data (for DRF Request instances)
@@ -123,36 +114,21 @@ class DuplicateFieldsMiddleware:
                         # Access request.data to trigger DRF parsing
                         # DRF's MultiPartParser returns QueryDict for multipart requests
                         data_to_check = request.data  # type: Any
-                        logger.debug(
-                            f"[DuplicateFieldsMiddleware] Using request.data, type={type(data_to_check)}, len={len(data_to_check) if data_to_check else 0}")
-                        if data_to_check:
-                            logger.debug(f"[DuplicateFieldsMiddleware] request.data keys: {list(data_to_check.keys())}")
-                            logger.debug(
-                                f"[DuplicateFieldsMiddleware] request.data items: {list(data_to_check.items()) if hasattr(data_to_check, 'items') else 'N/A'}")
                     # Fallback to request.POST only if request.data is not available
                     elif hasattr(request, 'POST') and len(request.POST) > 0:
                         data_to_check = request.POST
-                        logger.debug(
-                            f"[DuplicateFieldsMiddleware] Using request.POST (fallback), len={len(request.POST)}")
                     elif hasattr(request, 'POST'):
                         data_to_check = request.POST
-                        logger.debug(
-                            f"[DuplicateFieldsMiddleware] Using request.POST (empty fallback), len={len(data_to_check) if data_to_check else 0}")
 
                 # Only check if we have data to check
                 if data_to_check:
                     seen_fields = {}
                     duplicates = []
 
-                    logger.debug(f"[DuplicateFieldsMiddleware] Checking for duplicates in {len(data_to_check)} fields")
-                    logger.debug(f"[DuplicateFieldsMiddleware] data_to_check type: {type(data_to_check)}")
-                    logger.debug(f"[DuplicateFieldsMiddleware] has getlist: {hasattr(data_to_check, 'getlist')}")
-
                     # Check for duplicates while allowing list fields
                     for field_name in data_to_check.keys():
                         # Skip list fields (fields with [] suffix are allowed to have multiple values)
                         if field_name.endswith('[]'):
-                            logger.debug(f"[DuplicateFieldsMiddleware] Skipping list field: {field_name}")
                             continue
 
                         # Check if field has multiple values (from multipart form data)
@@ -160,37 +136,24 @@ class DuplicateFieldsMiddleware:
                         if hasattr(data_to_check, 'getlist'):  # Handle QueryDict (POST and PUT)
                             values = data_to_check.getlist(field_name)
                             has_multiple_values = len(values) > 1
-                            logger.debug(
-                                f"[DuplicateFieldsMiddleware] Field {field_name}: getlist() returned {len(values)} values: {values}")
                         else:  # Handle regular dict (fallback, though MultiPartParser should return QueryDict)
                             value = data_to_check.get(field_name)
                             # Multiple values in multipart form data appear as lists in request.data
                             # DRF's MultiPartParser converts duplicate fields to lists
                             has_multiple_values = isinstance(value, (list, tuple)) and len(value) > 1
-                            logger.debug(
-                                f"[DuplicateFieldsMiddleware] Field {field_name}: dict.get() returned type={type(value)}, value={value}, has_multiple={has_multiple_values}")
 
                         # Multiple values for non-list field indicates duplicate fields in form
                         if has_multiple_values:
-                            logger.debug(f"[DuplicateFieldsMiddleware] Found duplicate field: {field_name}")
                             duplicates.append(field_name)
                             continue
 
                         if field_name in seen_fields:
-                            logger.debug(
-                                f"[DuplicateFieldsMiddleware] Found duplicate field (seen before): {field_name}")
                             duplicates.append(field_name)
                         else:
                             seen_fields[field_name] = True
 
-                    logger.debug(
-                        f"[DuplicateFieldsMiddleware] Total duplicates found: {len(duplicates)}, duplicates: {duplicates}")
                     if duplicates:
                         # Handle the duplicate field directly instead of raising
-                        logger.debug(
-                            f"[DuplicateFieldsMiddleware] Returning error for duplicate field: {duplicates[0]}")
                         return self.handle_duplicate_field(duplicates[0])
-                else:
-                    logger.debug(f"[DuplicateFieldsMiddleware] No data to check (data_to_check is None or empty)")
 
         return self.get_response(request)
