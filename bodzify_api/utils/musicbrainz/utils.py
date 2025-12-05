@@ -51,8 +51,7 @@ def get_earliest_release_date_from_musicbrainz_recording_dict(musicbrainz_record
     return earliest_release_date
 
 
-def create_musicbrainz_recording_instance_from_dict(musicbrainz_recording_id: str,
-                                                    musicbrainz_recording_dict: dict) -> MusicbrainzRecording:
+def _prepare_musicbrainz_recording_data(musicbrainz_recording_dict: dict) -> tuple[list[MbArtist], dict]:
     musicbrainz_artists_dict = musicbrainz_recording_dict[ApiFields.Names.ARTISTS]
     musicbrainz_artists = []
     for artist_dict in musicbrainz_artists_dict:
@@ -63,13 +62,34 @@ def create_musicbrainz_recording_instance_from_dict(musicbrainz_recording_id: st
 
     earliest_release_date = get_earliest_release_date_from_musicbrainz_recording_dict(musicbrainz_recording_dict)
 
-    defaults = {MusicbrainzRecordingFields.SCORE: musicbrainz_recording_dict[ApiFields.Names.SCORE],
-                MusicbrainzRecordingFields.TITLE: musicbrainz_recording_dict[ApiFields.Names.TITLE],
-                MusicbrainzRecordingFields.DURATION_IN_SEC: musicbrainz_recording_dict.get(
-                    ApiFields.Names.DURATION_IN_SEC),
-                MusicbrainzRecordingFields.RELEASE_DATE: earliest_release_date}
+    fields = {MusicbrainzRecordingFields.SCORE: musicbrainz_recording_dict[ApiFields.Names.SCORE],
+              MusicbrainzRecordingFields.TITLE: musicbrainz_recording_dict[ApiFields.Names.TITLE],
+              MusicbrainzRecordingFields.DURATION_IN_SEC: musicbrainz_recording_dict.get(
+                  ApiFields.Names.DURATION_IN_SEC),
+              MusicbrainzRecordingFields.RELEASE_DATE: earliest_release_date}
+
+    return musicbrainz_artists, fields
+
+
+def create_musicbrainz_recording_instance_from_dict(musicbrainz_recording_id: str,
+                                                    musicbrainz_recording_dict: dict) -> MusicbrainzRecording:
+    musicbrainz_artists, defaults = _prepare_musicbrainz_recording_data(musicbrainz_recording_dict)
     musicbrainz_recording: MusicbrainzRecording
     musicbrainz_recording, _ = MusicbrainzRecording.objects.get_or_create(musicbrainz_id=musicbrainz_recording_id,
                                                                           defaults=defaults)
+    musicbrainz_recording.musicbrainz_artists.set(musicbrainz_artists)
+    return musicbrainz_recording
+
+
+def create_or_update_musicbrainz_recording_instance_from_dict(musicbrainz_recording_id: str,
+                                                              musicbrainz_recording_dict: dict) -> MusicbrainzRecording:
+    musicbrainz_artists, update_fields = _prepare_musicbrainz_recording_data(musicbrainz_recording_dict)
+    musicbrainz_recording: MusicbrainzRecording
+    musicbrainz_recording, created = MusicbrainzRecording.objects.get_or_create(musicbrainz_id=musicbrainz_recording_id,
+                                                                                defaults=update_fields)
+    if not created:
+        for field, value in update_fields.items():
+            setattr(musicbrainz_recording, field, value)
+        musicbrainz_recording.save(update_fields=list(update_fields.keys()))
     musicbrainz_recording.musicbrainz_artists.set(musicbrainz_artists)
     return musicbrainz_recording

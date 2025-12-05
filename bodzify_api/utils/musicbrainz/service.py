@@ -94,12 +94,9 @@ def get_musicbrainz_recording_lookup_result(user: User,
                 musicbrainz_recording_missing_cause_message = None
             else:
                 musicbrainz_recording_id = musicbrainz_recording_dict[ApiFields.Names.ID]
-                try:
-                    musicbrainz_recording = MusicbrainzRecording.objects.get(musicbrainz_id=musicbrainz_recording_id)
-                except ObjectDoesNotExist:
-                    musicbrainz_recording = utils.create_musicbrainz_recording_instance_from_dict(
-                        musicbrainz_recording_id=musicbrainz_recording_id,
-                        musicbrainz_recording_dict=musicbrainz_recording_dict)
+                musicbrainz_recording = utils.create_or_update_musicbrainz_recording_instance_from_dict(
+                    musicbrainz_recording_id=musicbrainz_recording_id,
+                    musicbrainz_recording_dict=musicbrainz_recording_dict)
 
         except musicbrainz_exception.MusicbrainzRecordingLookupException as e:
             exception_mapping: dict[type, MbRecordingMissingCauseCode.Codes] = {
