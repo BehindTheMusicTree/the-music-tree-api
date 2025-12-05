@@ -59,13 +59,37 @@ def pytest_runtest_setup(item):
         pytest.skip("A critical test has failed. Skipping the rest of the tests..")
 
 
+def _get_test_directory_order(item) -> int:
+    """Get the order priority for a test based on its directory structure.
+
+    Returns:
+        int: Order priority (lower = earlier execution)
+        - 0: critical/
+        - 1: unit/
+        - 2: integration/
+        - 3: e2e/
+        - 4: other directories
+    """
+    test_path = str(item.fspath)
+    if '/critical/' in test_path:
+        return 0
+    elif '/unit/' in test_path:
+        return 1
+    elif '/integration/' in test_path:
+        return 2
+    elif '/e2e/' in test_path:
+        return 3
+    else:
+        return 4
+
+
 def pytest_collection_modifyitems(config, items):
-    # Set critical tests first and slow tests last
+    # Order tests: critical marker first, then by directory (critical → unit → integration → e2e), slow marker last
     critical_tests = []
     normal_tests = []
     slow_tests = []
 
-    print("Ordering tests: critical tests first, slow tests last")
+    print("Ordering tests: critical marker first, then by directory (critical → unit → integration → e2e), slow marker last")
     for item in items:
         critical_marker = item.get_closest_marker("critical")
         slow_marker = item.get_closest_marker("slow")
@@ -76,6 +100,11 @@ def pytest_collection_modifyitems(config, items):
             slow_tests.append(item)
         else:
             normal_tests.append(item)
+
+    # Sort each category by directory order
+    critical_tests.sort(key=_get_test_directory_order)
+    normal_tests.sort(key=_get_test_directory_order)
+    slow_tests.sort(key=_get_test_directory_order)
 
     items[:] = critical_tests + normal_tests + slow_tests
 
@@ -113,7 +142,7 @@ def enable_audio_metadata_analysis(request):
 
 def _cleanup_test_user_directories() -> None:
     """Cleanup test user library directories.
-    
+
     This function removes all test user library directories that start with
     TEST_USER_LIBRARIES_DIR_NAME_PREFIXE. It's called from multiple hooks to ensure
     cleanup happens even if tests are interrupted or fail.
