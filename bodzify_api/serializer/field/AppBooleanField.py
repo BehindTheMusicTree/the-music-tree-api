@@ -20,10 +20,13 @@ class AppBooleanField(AppField, serializers.BooleanField):
     def run_validation(self, data: Any = ...) -> bool | None:
         """
         Override run_validation to ensure our to_internal_value is called.
+        This bypasses DRF's BooleanField.run_validation which might call
+        AppField.to_internal_value (which returns None) via super().
         """
         if data is ...:
             empty = {}
             data = self.get_value(empty)
+        # Call our to_internal_value directly
         return self.to_internal_value(data)
 
     def to_internal_value(self, data: Any) -> bool | None:

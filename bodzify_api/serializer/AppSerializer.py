@@ -219,6 +219,13 @@ class AppSerializer(serializers.Serializer, Generic[T]):
         try:
             # Handle both flat dictionaries and nested structures
             if isinstance(data, dict):
+                # Normalize multipart form data: extract single values from lists for non-list fields
+                request = self.context.get('request')
+                if request and hasattr(
+                        request, 'content_type') and request.content_type and request.content_type.startswith(
+                        'multipart/form-data'):
+                    data = self._normalize_multipart_data(data)
+
                 # Get known fields and check for unknown fields
                 _, unknown_fields = self._collect_known_fields_and_malformed_array_fields_names(data)
                 if len(unknown_fields) == 1:
@@ -266,3 +273,33 @@ class AppSerializer(serializers.Serializer, Generic[T]):
             raise AppValidationException(field_name=str(e),
                                          message=str(e),
                                          field_validation_error_code=FieldValidationErrorCode.FORMAT_INVALID)
+
+    def _normalize_multipart_data(self, data: dict) -> dict:
+        """
+        Normalize multipart form data by extracting single values from lists
+        for non-list fields. List fields are identified by the [] suffix.
+
+        Args:
+            data: The parsed request data dictionary
+
+        Returns:
+            Normalized dictionary with single values extracted from lists
+        """
+        normalized = {}
+        for key, value in data.items():
+            # List fields in multipart use [] suffix - keep them as lists
+            if key.endswith('[]'):
+                normalized[key] = value
+            # For non-list fields, extract single value from list if present
+            elif isinstance(value, list):
+                if len(value) == 0:
+                    normalized[key] = None
+                elif len(value) == 1:
+                    normalized[key] = value[0]
+                else:
+                    # Multiple values for non-list field - keep as list
+                    # (this shouldn't happen for single-value fields, but handle gracefully)
+                    normalized[key] = value
+            else:
+                normalized[key] = value
+        return normalized

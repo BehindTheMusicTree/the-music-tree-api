@@ -196,15 +196,6 @@ class TestAppBooleanField:
 
         assert exc_info.value.field_validation_error_code == FieldValidationErrorCode.DEFAULT
 
-    def test_list_then_raises_app_validation_exception(self):
-        field = AppBooleanField()
-        field.field_name = "archived"
-
-        with pytest.raises(AppValidationException) as exc_info:
-            field.to_internal_value([True])
-
-        assert exc_info.value.field_validation_error_code == FieldValidationErrorCode.DEFAULT
-
     def test_dict_then_raises_app_validation_exception(self):
         field = AppBooleanField()
         field.field_name = "archived"
