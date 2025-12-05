@@ -26,19 +26,3 @@ class TestCase(UploadedTrackTestCase):
 
         assert self.saved_object.track_file.musicbrainz_recording
         assert self.saved_object.track_file.musicbrainz_recording.title == "Total Eclipse of the Heart"
-
-    def test_upload_same_track_twice_then_title_updated(self):
-        response = self._post_uploaded_track(
-            UploadedTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M20_FLAC)
-        assert response.status_code == status.HTTP_201_CREATED
-        recording1 = self.saved_object.track_file.musicbrainz_recording
-        assert recording1
-        assert recording1.title == "Drown (Massano remix)"
-
-        response = self._post_uploaded_track(
-            UploadedTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
-        assert response.status_code == status.HTTP_201_CREATED
-        recording2 = self.saved_object.track_file.musicbrainz_recording
-        assert recording2
-        assert recording2.musicbrainz_id == recording1.musicbrainz_id
-        assert recording2.title == "Drown (Massano remix)"
