@@ -67,4 +67,4 @@ class TestCase(UploadedTrackTestCase, NullableCharBodyDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == to_camel_case(PostFields.ALBUM_NAME)
-        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+        assert error['code'] == FieldValidationErrorCode.DUPLICATE
