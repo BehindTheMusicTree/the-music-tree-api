@@ -270,9 +270,11 @@ The serializer handles multipart and JSON requests differently:
 **AppField Overview:**
 
 All custom field classes should inherit from `AppField` (not DRF's `Field` directly). `AppField` provides:
-- Consistent error handling using `AppValidationException`
+- Consistent error handling using `AppValidationException` (for input validation)
 - Automatic error code mapping from DRF validation keys
 - Proper field name handling for list fields (with `[]` suffix)
+
+**Note:** `AppField` fields can be used in both input and output serializers. The validation error handling is only triggered during input validation (`to_internal_value`). For output serializers, fields are used for serialization (`to_representation`) only.
 
 **Error Code Mapping:**
 
@@ -290,11 +292,11 @@ All custom field classes should inherit from `AppField` (not DRF's `Field` direc
 ```python
 # genre.py
 from bodzify_api.model.genre.Fields import Fields
-from bodzify_api.serializer.AppSerializer import AppSerializer
+from bodzify_api.serializer.AppInputSerializer import AppInputSerializer
 from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.serializer.field.AppListField import AppListField
 
-class GenreSerializer(AppSerializer):
+class GenreSerializer(AppInputSerializer):
     name = AppCharField()
     tags = AppListField(child=AppCharField())
     
@@ -337,7 +339,7 @@ Content-Type: application/json
 }
 ```
 
-See `bodzify_api.serializer.AppSerializer` and `bodzify_api.serializer.field.AppField` for detailed implementation documentation.
+See `bodzify_api.serializer.AppInputSerializer` and `bodzify_api.serializer.field.AppField` for detailed implementation documentation.
 
 ### Views and ViewSets
 

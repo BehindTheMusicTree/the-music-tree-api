@@ -11,9 +11,14 @@ class AppField(Field):
     Base field class for all app-specific serializer fields.
 
     This field extends Django REST Framework's Field to provide:
-    - Consistent error handling using AppValidationException
+    - Consistent error handling using AppValidationException (for input validation)
     - Automatic error code mapping from DRF validation keys
     - Proper field name handling for list fields (with [] suffix)
+
+    Note: AppField fields can be used in both input and output serializers.
+    The validation error handling (AppValidationException) is only triggered
+    during input validation (to_internal_value). For output serializers,
+    fields are used for serialization (to_representation) only.
 
     Key Features:
     ------------
