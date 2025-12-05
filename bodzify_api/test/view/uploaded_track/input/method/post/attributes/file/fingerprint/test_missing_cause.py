@@ -4,7 +4,9 @@ from time import sleep
 import docker
 import docker.errors
 import pytest
+from requests.exceptions import ReadTimeout, ConnectTimeout, ConnectionError as RequestsConnectionError
 from rest_framework import status
+from urllib3.exceptions import ReadTimeoutError, ConnectTimeoutError
 
 from bodzify_api import settings
 from bodzify_api.model.uploaded_track.file.fingerprinting.missing_cause.code.FingerprintMissingCauseCode import (
@@ -16,34 +18,58 @@ from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedT
 
 logging.basicConfig(level=logging.DEBUG, format='%(levelname)s    %(name)s:%(filename)s:%(lineno)d %(message)s')
 
+DOCKER_TIMEOUT = 5
+
 
 def stop_docker_container(container_id_or_name):
-    client = docker.from_env()
     try:
+        client = docker.from_env(timeout=DOCKER_TIMEOUT)
         container = client.containers.get(container_id_or_name)
-        container.stop()
+        container.stop(timeout=DOCKER_TIMEOUT)
         logging.debug(f"Container {container_id_or_name} stopped successfully.")
+    except (ReadTimeout, ReadTimeoutError, ConnectTimeout, ConnectTimeoutError, RequestsConnectionError) as e:
+        error_msg = f"Failed to stop container {container_id_or_name}: Docker daemon connection timeout. Is Docker running?"
+        logging.error(error_msg)
+        raise ConnectionError(error_msg) from e
     except docker.errors.NotFound:
-        logging.debug(f"Container {container_id_or_name} not found.")
+        error_msg = f"Failed to stop container {container_id_or_name}: Container not found."
+        logging.error(error_msg)
+        raise
+    except docker.errors.APIError as e:
+        error_msg = f"Failed to stop container {container_id_or_name}: Docker API error - {e}"
+        logging.error(error_msg)
+        raise
     except Exception as e:
-        logging.error(f"Error stopping container {container_id_or_name}: {e}")
+        error_msg = f"Failed to stop container {container_id_or_name}: Unexpected error - {type(e).__name__}: {e}"
+        logging.error(error_msg)
         raise
 
 
 def restart_docker_container(container_id_or_name):
-    client = docker.from_env()
     try:
+        client = docker.from_env(timeout=DOCKER_TIMEOUT)
         container = client.containers.get(container_id_or_name)
         container.start()
-        sleep(5)  # Wait for the container to restart
+        sleep(5)
         logging.debug(f"Container {container_id_or_name} restarted successfully.")
-        container.reload()  # Refresh the container's attributes
+        container.reload()
         status = container.status
         logging.debug(f"Container {container_id_or_name} status: {status}")
+    except (ReadTimeout, ReadTimeoutError, ConnectTimeout, ConnectTimeoutError, RequestsConnectionError) as e:
+        error_msg = f"Failed to restart container {container_id_or_name}: Docker daemon connection timeout. Is Docker running?"
+        logging.error(error_msg)
+        raise ConnectionError(error_msg) from e
     except docker.errors.NotFound:
-        logging.debug(f"Container {container_id_or_name} not found.")
+        error_msg = f"Failed to restart container {container_id_or_name}: Container not found."
+        logging.error(error_msg)
+        raise
+    except docker.errors.APIError as e:
+        error_msg = f"Failed to restart container {container_id_or_name}: Docker API error - {e}"
+        logging.error(error_msg)
+        raise
     except Exception as e:
-        logging.error(f"Error restarting container {container_id_or_name}: {e}")
+        error_msg = f"Failed to restart container {container_id_or_name}: Unexpected error - {type(e).__name__}: {e}"
+        logging.error(error_msg)
         raise
 
 
