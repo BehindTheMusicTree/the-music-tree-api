@@ -96,12 +96,25 @@ class DuplicateFieldsMiddleware:
                 # and request.data is not available in middleware (only available in DRF views)
                 if data_to_check is None and request.method in ['PUT', 'PATCH']:
                     try:
+                        # Store the original body before parsing to make it re-readable for DRF
+                        # RequestLoggingMiddleware may have already stored it, but we ensure it's stored
+                        if not hasattr(request, '_body') or request._body is None:
+                            request._body = request.body
+
                         # Manually parse multipart data from raw body to detect duplicates
                         # This is necessary because Django doesn't populate request.POST for PUT/PATCH
                         parser = DjangoMultiPartParser(request.META, request, [TemporaryFileUploadHandler()])
-                        parsed_data, _ = parser.parse()
+                        parsed_data, files = parser.parse()
                         if isinstance(parsed_data, QueryDict) and len(parsed_data) > 0:
                             data_to_check = parsed_data
+
+                            # Restore the body stream so DRF can parse it later
+                            # Reset the request stream to the stored body
+                            from io import BytesIO
+                            if hasattr(request, '_body') and request._body:
+                                request._stream = BytesIO(request._body)
+                                # Mark that the stream has been reset
+                                request._read_started = False
                     except Exception as e:
                         logger.info(f"[DuplicateFieldsMiddleware] Failed to manually parse multipart data: {e}")
                         # Fall through to check request.data if it's a Request instance
