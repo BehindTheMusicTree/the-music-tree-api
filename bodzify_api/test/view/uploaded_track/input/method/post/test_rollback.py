@@ -8,9 +8,9 @@ class TestCase(UploadedTrackTestCase):
 
     def test_exception_then_rollback(self):
         genre_name = "Rock"
-        with patch('bodzify_api.model.uploaded_track.UploadedTrack.UploadedTrack') as mock:
+        with patch('bodzify_api.model.uploaded_track.UploadedTrack.UploadedTrack.save') as mock_save:
             exception_message = "Save failed!"
-            mock.side_effect = Exception(exception_message)
+            mock_save.side_effect = Exception(exception_message)
             try:
                 self._post_uploaded_track(genre_name=genre_name)
             except Exception as e:
