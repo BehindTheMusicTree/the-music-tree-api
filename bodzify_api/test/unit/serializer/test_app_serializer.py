@@ -1,6 +1,6 @@
 import pytest
 
-from bodzify_api.serializer.AppSerializer import AppSerializer
+from bodzify_api.serializer.AppInputSerializer import AppInputSerializer
 
 
 class TestAppSerializer:
@@ -47,6 +47,6 @@ class TestAppSerializer:
         ),
     ])
     def test_normalize_multipart_data_then_returns_expected_output(self, input_data, expected_output):
-        serializer = AppSerializer()
+        serializer = AppInputSerializer()
         normalized = serializer._normalize_multipart_data(input_data)
         assert normalized == expected_output

@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.serializer.AppSerializer import AppSerializer
+from bodzify_api.serializer.AppInputSerializer import AppInputSerializer
 from bodzify_api.test.view.playlist.children.manual.ManualPlaylistTestCase import ManualPlaylistTestCase
 
 
@@ -16,4 +16,4 @@ class TestCase(ManualPlaylistTestCase):
         assert self.bad_request_result_field_errors[0][
             'code'] == FieldValidationErrorCode.NO_UPDATES
         assert self.bad_request_result_field_errors[0][
-            'field'] == AppSerializer.REQUEST_FIELD
+            'field'] == AppInputSerializer.REQUEST_FIELD

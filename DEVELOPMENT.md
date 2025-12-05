@@ -24,6 +24,7 @@ This document outlines the coding standards and best practices for developing th
   - [Multipart Form Data](#multipart-form-data)
 - [Project Documentation](#project-documentation)
   - [Documentation Files](#documentation-files)
+  - [Code Style Reference](#code-style-reference)
 
 ## Code Quality
 
@@ -235,17 +236,108 @@ See [Private Resource Filtering](.cursor/rules/private-resource-filtering.mdc) f
 - **One class per file** - Each serializer should be in its own file
 - **Use field name constants** - Reference fields using constants from `Fields.py`
 - **Use `AppValidationException`** - For validation errors, raise `AppValidationException` instead of DRF's `ValidationError`
+- **Inherit from AppInputSerializer** - All **input serializers** (POST, PUT, etc.) should inherit from `AppInputSerializer` (not DRF's `Serializer` directly)
+- **Use App fields** - Use `AppCharField`, `AppListField`, etc. instead of DRF's base fields
 
-**Good example:**
+**AppInputSerializer Overview:**
+
+`AppInputSerializer` extends Django REST Framework's `Serializer` to provide input validation features:
+- Consistent error handling using `AppValidationException`
+- Multipart form data normalization and validation
+- Duplicate field detection (for JSON requests)
+- Unknown field detection
+- List field handling with `[]` suffix for multipart requests
+
+**Note:** `AppInputSerializer` is specialized for **input validation** (POST, PUT requests). Output serializers (read-only, for GET responses like `*DetailedSerializer`, `*SimpleSerializer`, `*MinimumSerializer`) do not need `AppInputSerializer` and can inherit directly from `serializers.ModelSerializer`.
+
+**Multipart vs JSON Request Handling:**
+
+The serializer handles multipart and JSON requests differently:
+
+1. **List Fields**:
+   - **Multipart**: List fields MUST use `[]` suffix (e.g., `artists_names[]`)
+   - **JSON**: List fields can be specified without `[]` suffix
+   - The serializer automatically maps `[]` suffix fields to their base field names
+
+2. **Field Normalization**:
+   - Multipart data is normalized: single values are extracted from lists for non-list fields
+   - JSON data is used as-is
+
+3. **Duplicate Field Detection**:
+   - **Multipart**: Handled by `DuplicateFieldsMiddleware` before reaching serializer
+   - **JSON**: Handled by serializer's `_check_duplicate_fields()` method
+
+**AppField Overview:**
+
+All custom field classes should inherit from `AppField` (not DRF's `Field` directly). `AppField` provides:
+- Consistent error handling using `AppValidationException`
+- Automatic error code mapping from DRF validation keys
+- Proper field name handling for list fields (with `[]` suffix)
+
+**Error Code Mapping:**
+
+`AppField` automatically maps common DRF validation keys to application-specific error codes:
+- `'required'` → `FieldValidationErrorCode.REQUIRED`
+- `'null'` → `FieldValidationErrorCode.REQUIRED`
+- `'blank'` → `FieldValidationErrorCode.BLANK`
+- `'invalid'` → `FieldValidationErrorCode.FORMAT_INVALID`
+- `'max_length'` → `FieldValidationErrorCode.STRING_TOO_LONG`
+- `'min_length'` → `FieldValidationErrorCode.STRING_TOO_SHORT`
+- And more (see `AppField.validation_error_code_mapping`)
+
+**Good examples:**
+
 ```python
 # genre.py
 from bodzify_api.model.genre.Fields import Fields
+from bodzify_api.serializer.AppSerializer import AppSerializer
+from bodzify_api.serializer.field.AppCharField import AppCharField
+from bodzify_api.serializer.field.AppListField import AppListField
 
-class GenreSerializer(serializers.ModelSerializer):
+class GenreSerializer(AppSerializer):
+    name = AppCharField()
+    tags = AppListField(child=AppCharField())
+    
     class Meta:
-        model = Genre
-        fields = [Fields.NAME, Fields.UUID, Fields.PARENT]
+        fields = [Fields.NAME, Fields.TAGS]
 ```
+
+```python
+# Custom field example
+from bodzify_api.serializer.field.AppField import AppField
+from rest_framework import serializers
+
+class AppCharField(AppField, serializers.CharField):
+    def to_internal_value(self, data):
+        if not isinstance(data, str):
+            self.fail('invalid')  # Raises AppValidationException
+        return data
+```
+
+**Request Format Examples:**
+
+```http
+# ✅ Good - Multipart with list field
+POST /api/v0.2.0/library/uploaded/
+Content-Type: multipart/form-data
+
+title: "Song Title"
+artists_names[]: "Artist 1"
+artists_names[]: "Artist 2"
+```
+
+```json
+// ✅ Good - JSON with list field (no [] suffix needed)
+POST /api/v0.2.0/library/uploaded/
+Content-Type: application/json
+
+{
+  "title": "Song Title",
+  "artists_names": ["Artist 1", "Artist 2"]
+}
+```
+
+See `bodzify_api.serializer.AppSerializer` and `bodzify_api.serializer.field.AppField` for detailed implementation documentation.
 
 ### Views and ViewSets
 

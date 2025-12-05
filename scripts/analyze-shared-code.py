@@ -42,11 +42,11 @@ def analyze_file(file_path: Path) -> dict[str, Any]:
     try:
         with open(file_path, "r", encoding="utf-8") as f:
             content = f.read()
-        
+
         tree = ast.parse(content, filename=str(file_path))
         analyzer = ImportAnalyzer()
         analyzer.visit(tree)
-        
+
         return {
             "path": str(file_path),
             "imports": analyzer.imports,
@@ -66,14 +66,14 @@ def find_python_files(directory: Path) -> list[Path]:
     for root, dirs, files in os.walk(directory):
         # Skip __pycache__ directories
         dirs[:] = [d for d in dirs if d != "__pycache__"]
-        
+
         for file in files:
             if file.endswith(".py"):
                 file_path = Path(root) / file
                 # Optionally exclude test files
                 # if "test" not in str(file_path):
                 python_files.append(file_path)
-    
+
     return python_files
 
 
@@ -88,30 +88,30 @@ def build_dependency_graph(analyses: list[dict]) -> dict[str, Any]:
             module_path = path.replace("/", ".").replace(".py", "")
             if module_path.startswith("bodzify_api."):
                 module_map[module_path] = analysis
-    
+
     # Build dependency graph
     graph = {}
     for module_path, analysis in module_map.items():
         dependencies = set()
-        
+
         # Add imports
         for imp in analysis.get("imports", []):
             if imp.startswith("bodzify_api."):
                 dependencies.add(imp)
-        
+
         # Add from imports
         for from_imp in analysis.get("from_imports", []):
             if from_imp.startswith("bodzify_api."):
                 # Extract module from "module.Class"
                 dep_module = ".".join(from_imp.split(".")[:-1])
                 dependencies.add(dep_module)
-        
+
         if dependencies:
             graph[module_path] = {
                 "dependencies": list(dependencies),
                 "lines": analysis.get("lines", 0),
             }
-    
+
     return graph
 
 
@@ -120,12 +120,12 @@ def find_shared_components(graph: dict[str, Any], min_dependents: int = 3) -> di
     # Count how many modules depend on each module
     dependent_count = defaultdict(int)
     dependents = defaultdict(list)
-    
+
     for module, data in graph.items():
         for dep in data.get("dependencies", []):
             dependent_count[dep] += 1
             dependents[dep].append(module)
-    
+
     # Find modules with many dependents
     shared = {}
     for module, count in dependent_count.items():
@@ -135,7 +135,7 @@ def find_shared_components(graph: dict[str, Any], min_dependents: int = 3) -> di
                 "dependents": dependents[module],
                 "lines": graph.get(module, {}).get("lines", 0),
             }
-    
+
     return shared
 
 
@@ -151,7 +151,7 @@ def categorize_component(module_path: str) -> str:
         return "core_infrastructure"
     elif "utils" in module_path:
         return "utility"
-    elif "serializer" in module_path and "AppSerializer" in module_path:
+    elif "serializer" in module_path and "AppInputSerializer" in module_path:
         return "core_infrastructure"
     elif "model" in module_path:
         return "domain_model"
@@ -185,27 +185,27 @@ def categorize_component(module_path: str) -> str:
 def main(directory: Path, output: Path, min_dependents: int) -> None:
     """Analyze codebase to identify shared code components."""
     click.echo(f"Analyzing {directory}...")
-    
+
     # Find all Python files
     python_files = find_python_files(directory)
     click.echo(f"Found {len(python_files)} Python files")
-    
+
     # Analyze each file
     analyses = []
     for file_path in python_files:
         analysis = analyze_file(file_path)
         analyses.append(analysis)
-    
+
     click.echo(f"Analyzed {len(analyses)} files")
-    
+
     # Build dependency graph
     graph = build_dependency_graph(analyses)
     click.echo(f"Built dependency graph with {len(graph)} modules")
-    
+
     # Find shared components
     shared = find_shared_components(graph, min_dependents)
     click.echo(f"Found {len(shared)} shared components (used by {min_dependents}+ modules)")
-    
+
     # Categorize components
     categorized = defaultdict(list)
     for module_path, data in shared.items():
@@ -216,7 +216,7 @@ def main(directory: Path, output: Path, min_dependents: int) -> None:
             "dependents": data["dependents"][:10],  # Limit to first 10
             "lines": data["lines"],
         })
-    
+
     # Prepare output
     result = {
         "summary": {
@@ -239,11 +239,11 @@ def main(directory: Path, output: Path, min_dependents: int) -> None:
             for module, data in shared.items()
         },
     }
-    
+
     # Write output
     with open(output, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2)
-    
+
     click.echo(f"\nResults written to {output}")
     click.echo("\nSummary by category:")
     for category, components in categorized.items():
@@ -254,7 +254,3 @@ def main(directory: Path, output: Path, min_dependents: int) -> None:
 
 if __name__ == "__main__":
     main()
-
-
-
-

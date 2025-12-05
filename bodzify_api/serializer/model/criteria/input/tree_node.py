@@ -3,13 +3,13 @@ from rest_framework.serializers import DictField
 from bodzify_api import settings
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
-from bodzify_api.serializer.AppSerializer import AppSerializer
+from bodzify_api.serializer.AppInputSerializer import AppInputSerializer
 from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.serializer.field.AppListField import AppListField
 from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields
 
 
-class CriteriaTreeNodeSerializer(AppSerializer):
+class CriteriaTreeNodeSerializer(AppInputSerializer):
     name = AppCharField(max_length=settings.CRITERIA_NAME_LEN_MAX, allow_blank=False, required=True)
     children = AppListField(child=DictField(), required=False, default=list, allow_null=True)
 

@@ -9,7 +9,60 @@ from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValid
 class AppField(Field):
     """
     Base field class for all app-specific serializer fields.
-    Provides consistent error handling and field name handling across the application.
+
+    This field extends Django REST Framework's Field to provide:
+    - Consistent error handling using AppValidationException
+    - Automatic error code mapping from DRF validation keys
+    - Proper field name handling for list fields (with [] suffix)
+
+    Key Features:
+    ------------
+    1. **Error Handling**: All validation errors are raised as AppValidationException
+       instead of DRF's ValidationError, ensuring consistent error responses.
+
+    2. **Error Code Mapping**: Automatically maps common DRF validation keys to
+       application-specific error codes via `validation_error_code_mapping`.
+
+    3. **List Field Names**: Automatically appends [] suffix to field names for
+       list fields in error responses (e.g., `artists_names[]`).
+
+    4. **Customizable Error Codes**: Child classes can override
+       `validation_error_code_mapping` to customize error code mappings.
+
+    Error Code Mapping:
+    -------------------
+    The following DRF validation keys are automatically mapped:
+    - 'required' → FieldValidationErrorCode.REQUIRED
+    - 'null' → FieldValidationErrorCode.REQUIRED
+    - 'blank' → FieldValidationErrorCode.BLANK
+    - 'invalid' → FieldValidationErrorCode.FORMAT_INVALID
+    - 'max_length' → FieldValidationErrorCode.STRING_TOO_LONG
+    - 'min_length' → FieldValidationErrorCode.STRING_TOO_SHORT
+    - 'invalid_choice' → FieldValidationErrorCode.ENUM_INVALID
+    - And more (see validation_error_code_mapping)
+
+    Usage:
+    ------
+    All custom field classes should inherit from AppField:
+
+    ```python
+    class AppCharField(AppField, serializers.CharField):
+        def to_internal_value(self, data):
+            if not isinstance(data, str):
+                self.fail('invalid')  # Raises AppValidationException
+            return data
+    ```
+
+    The `fail()` method automatically:
+    - Looks up the error message from error_messages
+    - Maps the error key to an appropriate error code
+    - Raises AppValidationException with proper field name
+
+    Note:
+    -----
+    The base `to_internal_value()` method returns None to prevent
+    NotImplementedError when subclasses call super().to_internal_value().
+    All subclasses must override this method with their own implementation.
     """
 
     # Default mapping of DRF validation keys to our custom error codes
