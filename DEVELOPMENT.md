@@ -20,6 +20,8 @@ This document outlines the coding standards and best practices for developing th
   - [Serializers](#serializers)
   - [Views and ViewSets](#views-and-viewsets)
   - [Filtering](#filtering)
+- [API Request Format](#api-request-format)
+  - [Multipart Form Data](#multipart-form-data)
 - [Project Documentation](#project-documentation)
   - [Documentation Files](#documentation-files)
 
@@ -257,6 +259,63 @@ class GenreSerializer(serializers.ModelSerializer):
 - **Use Django Filter** - Leverage django-filter for filtering capabilities
 - **Consistent parameters** - Use `ConsistentParametersFilterBackend` for consistent parameter handling
 - **Private resource filtering** - Always include `user` in filter queries
+
+## API Request Format
+
+### Multipart Form Data
+
+**Duplicate Field Validation**
+
+According to the HTTP specification (RFC 7578), duplicate field names are standard and allowed in `multipart/form-data`. However, this application enforces a validation rule that **rejects duplicate fields** to prevent confusion and ensure data integrity. This is an application-level constraint, not a protocol requirement.
+
+**Rules:**
+- ❌ **Duplicate fields are rejected** - Sending the same field name multiple times will result in a `400 Bad Request` error with error code `duplicate`
+- ✅ **List fields are allowed** - Fields with a `[]` suffix (e.g., `artists_names[]`) are allowed to have multiple values, as this is the intended way to send arrays in multipart form data
+
+**Examples:**
+
+```http
+# ❌ Bad - Duplicate field
+POST /api/v0.2.0/library/uploaded/
+Content-Type: multipart/form-data
+
+title: "Song Title 1"
+title: "Song Title 2"  # Error: duplicate field
+
+# ✅ Good - Single value
+POST /api/v0.2.0/library/uploaded/
+Content-Type: multipart/form-data
+
+title: "Song Title"
+
+# ✅ Good - List field with multiple values
+POST /api/v0.2.0/library/uploaded/
+Content-Type: multipart/form-data
+
+title: "Song Title"
+artists_names[]: "Artist 1"
+artists_names[]: "Artist 2"
+artists_names[]: "Artist 3"
+```
+
+**Error Response:**
+
+When duplicate fields are detected, the API returns:
+
+```json
+{
+  "title": {
+    "message": "Duplicate field detected.",
+    "code": "duplicate"
+  }
+}
+```
+
+**Implementation:**
+
+Duplicate field detection is handled by `DuplicateFieldsMiddleware` before request data reaches the serializer. For PUT/PATCH requests, the middleware manually parses multipart data since Django doesn't populate `request.POST` for these methods.
+
+See `bodzify_api.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware` for implementation details.
 
 ## Project Documentation
 
