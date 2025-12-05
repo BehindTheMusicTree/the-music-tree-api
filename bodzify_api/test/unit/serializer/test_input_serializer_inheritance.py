@@ -93,6 +93,9 @@ class TestInputSerializerInheritance(AppTestCase):
             try:
                 module = __import__(modname, fromlist=[""])
                 for name, obj in inspect.getmembers(module, inspect.isclass):
+                    # Exclude AppInputSerializer by name (safety check in case object identity fails)
+                    if name == "AppInputSerializer":
+                        continue
                     if (
                         name.endswith("Serializer")
                         and obj not in self.BASE_SERIALIZER_CLASSES
