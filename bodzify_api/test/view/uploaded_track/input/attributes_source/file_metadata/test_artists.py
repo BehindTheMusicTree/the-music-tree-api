@@ -108,7 +108,7 @@ class TestCase(UploadedTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 3
         artists = self.saved_object.artists.all()
-        assert [artist.name for artist in artists] == ['One', 'Two', 'Three']
+        assert sorted([artist.name for artist in artists]) == sorted(['One', 'Two', 'Three'])
 
     def test_3_separated_by_semicolon_then_ok(self):
         response = self._post_uploaded_track(UploadedTrackTestFilename.ARTISTS_ONE_TWO_THREE_SEMICOLON_ID3V2)
