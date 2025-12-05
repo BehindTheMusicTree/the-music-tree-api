@@ -8,7 +8,7 @@ from django.core.files.uploadedfile import TemporaryUploadedFile
 from django.db import models
 from django.db.models.fields.files import FieldFile
 from django.db.models import F
-from django.db.models.signals import pre_delete
+from django.db.models.signals import pre_delete, pre_save
 from django.dispatch import receiver
 from django.utils.translation import gettext as _
 
@@ -197,6 +197,12 @@ class TrackFile(PrivateStandardResource):
 
     def handle_flac_md5(self) -> bool:
         return False
+
+
+@receiver(pre_save, sender=TrackFile)
+def handle_pre_save(sender, instance: TrackFile, **kwargs):
+    if not os.path.exists(instance.user.lib_abs_path):
+        os.makedirs(instance.user.lib_abs_path)
 
 
 @receiver(pre_delete, sender=TrackFile)
