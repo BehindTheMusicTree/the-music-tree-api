@@ -39,6 +39,15 @@ def stop_docker_container(container_id_or_name):
         error_msg = f"Failed to stop container {container_id_or_name}: Docker API error - {e}"
         logging.error(error_msg)
         raise
+    except docker.errors.DockerException as e:
+        error_str = str(e).lower()
+        if "timeout" in error_str or "timed out" in error_str:
+            error_msg = f"Failed to stop container {container_id_or_name}: Docker daemon connection timeout. Is Docker running?"
+            logging.error(error_msg)
+            raise ConnectionError(error_msg) from e
+        error_msg = f"Failed to stop container {container_id_or_name}: Docker error - {e}"
+        logging.error(error_msg)
+        raise
     except Exception as e:
         error_msg = f"Failed to stop container {container_id_or_name}: Unexpected error - {type(e).__name__}: {e}"
         logging.error(error_msg)
@@ -65,6 +74,15 @@ def restart_docker_container(container_id_or_name):
         raise
     except docker.errors.APIError as e:
         error_msg = f"Failed to restart container {container_id_or_name}: Docker API error - {e}"
+        logging.error(error_msg)
+        raise
+    except docker.errors.DockerException as e:
+        error_str = str(e).lower()
+        if "timeout" in error_str or "timed out" in error_str:
+            error_msg = f"Failed to restart container {container_id_or_name}: Docker daemon connection timeout. Is Docker running?"
+            logging.error(error_msg)
+            raise ConnectionError(error_msg) from e
+        error_msg = f"Failed to restart container {container_id_or_name}: Docker error - {e}"
         logging.error(error_msg)
         raise
     except Exception as e:
