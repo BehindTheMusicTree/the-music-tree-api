@@ -88,7 +88,7 @@ class TestCase(UploadedTrackTestCase, PutBodyDataTestCase):
         uploaded_track = self.model_fixture_factory.create_uploaded_track_with_file(title="Foire", album=album)
         self.model_fixture_factory.create_uploaded_track_with_file(title="Josie", album=album)
 
-        data = {PutFields.ALBUM_NAME: "Paul", PutFields.ALBUM_ARTISTS_NAMES: ["James"]}
+        data = {PutFields.ALBUM_NAME: "Paul", PutFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["James"]}
         response = self._put_uploaded_track(uuid=uploaded_track.uuid, **data)
 
         assert response.status_code == status.HTTP_200_OK
