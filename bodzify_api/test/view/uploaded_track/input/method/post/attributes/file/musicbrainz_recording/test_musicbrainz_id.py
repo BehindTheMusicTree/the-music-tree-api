@@ -30,7 +30,8 @@ class TestCase(UploadedTrackTestCase):
         expected_musicbrainz_recording_id = "9f3c3b61-41a6-4bb9-a49c-33606f536784"
         if (track_musicbrainz_recording is None
                 or track_musicbrainz_recording.musicbrainz_id != expected_musicbrainz_recording_id):
-            warnings.warn(f"The expected MusicBrainz recording id {track_musicbrainz_recording} is not the one expected {expected_musicbrainz_recording_id}")
+            warnings.warn(
+                f"The expected MusicBrainz recording id {track_musicbrainz_recording} is not the one expected {expected_musicbrainz_recording_id}")
 
     def test_different_format_but_same_musicbrainz_recording(self):
         response = self._post_uploaded_track(
@@ -38,8 +39,10 @@ class TestCase(UploadedTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         recording1 = self.saved_object.track_file.musicbrainz_recording
         if not recording1:
-            warnings.warn(("Recording 1 is None because of the following missing cause: "
-                           f"{self.saved_object.track_file.musicbrainz_recording_missing_cause}"))
+            missing_cause = self.saved_object.track_file.musicbrainz_recording_missing_cause
+            code_label = missing_cause.code.label if missing_cause else "Unknown"
+            message = missing_cause.message if missing_cause and missing_cause.message else "No message"
+            warnings.warn(f"Recording 1 is None because of missing cause: {code_label} - {message}")
         else:
             flac_recording_id = recording1.musicbrainz_id
 
@@ -48,8 +51,10 @@ class TestCase(UploadedTrackTestCase):
             assert response.status_code == status.HTTP_201_CREATED
             recording2 = self.saved_object.track_file.musicbrainz_recording
             if not recording2:
-                warnings.warn(("Recording 2 is None because of the following missing cause: "
-                               f"{self.saved_object.track_file.musicbrainz_recording_missing_cause}"))
+                missing_cause = self.saved_object.track_file.musicbrainz_recording_missing_cause
+                code_label = missing_cause.code.label if missing_cause else "Unknown"
+                message = missing_cause.message if missing_cause and missing_cause.message else "No message"
+                warnings.warn(f"Recording 2 is None because of missing cause: {code_label} - {message}")
             else:
                 assert recording2
                 assert recording2.musicbrainz_id == flac_recording_id
