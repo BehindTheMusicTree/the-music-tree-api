@@ -27,6 +27,7 @@ def stop_docker_container(container_id_or_name):
         logging.debug(f"Container {container_id_or_name} not found.")
     except Exception as e:
         logging.error(f"Error stopping container {container_id_or_name}: {e}")
+        raise
 
 
 def restart_docker_container(container_id_or_name):
@@ -43,6 +44,7 @@ def restart_docker_container(container_id_or_name):
         logging.debug(f"Container {container_id_or_name} not found.")
     except Exception as e:
         logging.error(f"Error restarting container {container_id_or_name}: {e}")
+        raise
 
 
 @pytest.mark.usefixtures("enable_audio_metadata_analysis")
