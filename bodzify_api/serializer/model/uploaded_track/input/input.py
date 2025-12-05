@@ -60,11 +60,11 @@ class UploadedTrackInputSerializer(AppInputSerializer):
                                              field_name=Fields.ALBUM_NAME,
                                              field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
-        track_number = data.get(Fields.TRACK_NUMBER)
-        if track_number and data.get(Fields.ALBUM_NAME) in [None, ""]:
-            raise AppValidationException(field_name=Fields.ALBUM_NAME,
-                                         message="Album name must be specified if track position is.",
-                                         field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
+        if Fields.TRACK_NUMBER in data:
+            if data.get(Fields.TRACK_NUMBER) not in [None, ""] and data.get(Fields.ALBUM_NAME) in [None, ""]:
+                raise AppValidationException(field_name=Fields.ALBUM_NAME,
+                                             message="Album name must be specified if track position is.",
+                                             field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
     def validate(self, data: dict,):
         if Fields.LANGUAGE in data and data[Fields.LANGUAGE] == "":
