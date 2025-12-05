@@ -136,10 +136,18 @@ class AppSerializer(serializers.Serializer, Generic[T]):
                 pass
 
     def _validate_field(self, field: Field, value) -> Any:
+        from rest_framework.fields import empty as empty_sentinel, SkipField
         try:
+            # DRF's get_value returns empty sentinel if field not in data
+            # SkipField should be raised by get_value, but if we get empty sentinel,
+            # we should skip validation (field not provided)
+            if value is empty_sentinel:
+                raise SkipField()
             return field.run_validation(value)
         except AppValidationException as exc:
             raise exc
+        except SkipField:
+            raise
         except ValidationError as exc:
             try:
                 detail = exc.detail

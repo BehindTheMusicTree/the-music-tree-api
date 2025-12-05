@@ -23,9 +23,11 @@ class AppBooleanField(AppField, serializers.BooleanField):
         This bypasses DRF's BooleanField.run_validation which might call
         AppField.to_internal_value (which returns None) via super().
         """
+        from rest_framework.fields import empty as empty_sentinel
         if data is ...:
-            empty = {}
-            data = self.get_value(empty)
+            data = self.get_value({})
+            if data is empty_sentinel:
+                data = None
         # Call our to_internal_value directly
         return self.to_internal_value(data)
 
