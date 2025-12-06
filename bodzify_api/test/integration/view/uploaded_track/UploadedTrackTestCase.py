@@ -1,5 +1,4 @@
 from uuid import UUID
-from pathlib import Path
 
 from django.urls import reverse
 
@@ -14,9 +13,7 @@ from bodzify_api.utils import data_transformer
 class UploadedTrackTestCase(AppTestCase[UploadedTrack]):
     model_class = UploadedTrack
     saved_object: UploadedTrack
-    is_from_uploaded_track_test_case: bool = True  # Override the default value from AppTestCase
-
-    TEST_FILES_BASE_DIR = Path(__file__).parent.parent.parent / 'utils' / 'uploaded_track' / 'files'
+    is_from_uploaded_track_test_case: bool = True
 
     def _post_uploaded_track_from_url(
             self, test_uploaded_track_url: UploadedTrackDownloadTestUrl = UploadedTrackDownloadTestUrl.MP3, **kwargs):
