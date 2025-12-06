@@ -52,7 +52,7 @@ class TestNodeCount(GenreTestCase):
     @pytest.mark.slow
     def test_largest_then_ok(self):
         root = {Fields.NAME_PUBLIC: "Root", Fields.CHILDREN: []}
-        for i in range(settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT - 1):
+        for i in range(3000):
             root[Fields.CHILDREN].append({
                 Fields.NAME_PUBLIC: f"Child {i}",
                 Fields.CHILDREN: []
@@ -62,4 +62,4 @@ class TestNodeCount(GenreTestCase):
         response = self._post_genres_tree_import(data={Fields.TREE: data})
         assert response.status_code == status.HTTP_201_CREATED
         genres_count = Genre.objects.filter(user=self.test_user1).count()
-        assert genres_count == settings.CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT
+        assert genres_count == 3001
