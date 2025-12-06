@@ -69,7 +69,7 @@ class TestCase(UploadedTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == PostFields.RATING
-        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+        assert error['code'] == FieldValidationErrorCode.DUPLICATE
 
     def test_float_then_400_bad_request(self):
         response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_MP3, **{PostFields.RATING: 5.5})

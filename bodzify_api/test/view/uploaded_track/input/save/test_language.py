@@ -44,4 +44,4 @@ class TestCase(NullableCharBodyDataTestCase, UploadedTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == PutFields.LANGUAGE
-        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+        assert error['code'] == FieldValidationErrorCode.DUPLICATE
