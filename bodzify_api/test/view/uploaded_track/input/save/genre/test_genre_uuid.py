@@ -45,7 +45,7 @@ class TestCase(ForeignKeyBodyDataTestCase, UploadedTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == PostFields.GENRE
-        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+        assert error['code'] == FieldValidationErrorCode.DUPLICATE
 
     def test_invalid_uuid_then_400_bad_request(self):
         invalid_uuid = "036aa19e-d5ae-425a-93f2-125ccd145a15"
