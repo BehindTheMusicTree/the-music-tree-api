@@ -76,10 +76,20 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
   - Updated `ErrorResponse`, `AppValidationException`, `AppSerializer`, `ExceptionLoggingMiddleware`, and `RequestLoggingMiddleware` to safely handle DRF exceptions in Python 3.14
   - Prevents middleware crashes when exception stringification fails
 
+- **Filesystem Setup**: Fixed `setup-filesystem.sh` to check for `DJANGO_LOG_DIR` instead of `DJANGO_LOGS_DIR` to properly create log directories
+- **Filter Backend**: Added `get_schema_operation_parameters` method to `ConsistentParametersFilterBackend` for drf-spectacular compatibility with django-filter 25.2
+- **Django 6.0 Compatibility**: Replaced deprecated `CheckConstraint.check` with `condition` parameter in all model constraints
+  - Updated 6 model files: `CriteriaType`, `Criteria`, `Artist`, `Album`, `FingerprintMissingCauseCode`, `ManualPlaylist`
+  - Updated migration file `0001_initial.py` to use new syntax
+  - Resolves Django 6.0 deprecation warnings for `CheckConstraint.check`
+
 ### CI
 
 - **GitHub Automation**:
   - Auto-labeler workflow (`.github/workflows/labeler.yml`) for automatic PR labeling based on file paths
+  - Branch protection workflow (`.github/workflows/branch-protection.yml`) to enforce Git Flow rules
+    - Blocks PRs to `main` from non-hotfix/release branches
+    - Blocks PRs to `develop` from invalid branch types
   - Issue templates for bug reports and feature requests
   - Pull request template with comprehensive checklist
   - GitHub Discussions setup with category templates
@@ -117,15 +127,6 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
   - Updated `django-polymorphic` from 3.1.0 to 4.1.0 to resolve pkg_resources deprecation warning and ensure Django 5.2 compatibility
   - **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.8.0
   - Removed `mutagen` from direct dependencies. No longer needed as direct dependency since all audio operations now use `audiometa-python`
-
-### Fixed
-
-- **Filesystem Setup**: Fixed `setup-filesystem.sh` to check for `DJANGO_LOG_DIR` instead of `DJANGO_LOGS_DIR` to properly create log directories
-- **Filter Backend**: Added `get_schema_operation_parameters` method to `ConsistentParametersFilterBackend` for drf-spectacular compatibility with django-filter 25.2
-- **Django 6.0 Compatibility**: Replaced deprecated `CheckConstraint.check` with `condition` parameter in all model constraints
-  - Updated 6 model files: `CriteriaType`, `Criteria`, `Artist`, `Album`, `FingerprintMissingCauseCode`, `ManualPlaylist`
-  - Updated migration file `0001_initial.py` to use new syntax
-  - Resolves Django 6.0 deprecation warnings for `CheckConstraint.check`
 
 ### Documentation
 
@@ -168,26 +169,6 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 - **License**: Added Apache License 2.0
 
 - **Code of Conduct**: Added Contributor Covenant 2.1
-
-### CI
-
-- **Branch Protection**: Added automated enforcement of Git Flow branching rules
-  - PRs to `main` must come from `hotfix/*` or `release/*` branches only
-  - PRs to `develop` must come from `feature/*`, `chore/*`, or `dependabot/*` branches only
-  - Provides clear error messages when branch rules are violated
-
-- **CI/CD**: Updated GitHub Actions workflow to use `develop` branch instead of `dev`
-  - Updated Python version to 3.14 in CI workflows
-  - Added branch protection checks for Git Flow enforcement
-
-- **GitHub Automation**:
-  - Auto-labeler workflow (`.github/workflows/labeler.yml`) for automatic PR labeling based on file paths
-  - Branch protection workflow (`.github/workflows/branch-protection.yml`) to enforce Git Flow rules
-    - Blocks PRs to `main` from non-hotfix/release branches
-    - Blocks PRs to `develop` from invalid branch types
-  - Issue templates for bug reports and feature requests
-  - Pull request template with comprehensive checklist
-  - GitHub Discussions setup with category templates
 
 ## [v0.2.0] - 2025-04-03
 
