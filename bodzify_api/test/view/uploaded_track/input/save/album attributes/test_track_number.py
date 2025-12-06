@@ -27,14 +27,15 @@ class TestCase(UploadedTrackTestCase, NullablePositiveIntBodyDataTestCase):
 
     def test_string_castable_then_ok(self):
         response = self._post_uploaded_track(
-            UploadedTrackTestFilename.METADATA_NONE_MP3, **{PostFields.TRACK_NUMBER: '5'})
+            UploadedTrackTestFilename.METADATA_NONE_MP3, **
+            {PostFields.ALBUM_NAME: 'album', PostFields.TRACK_NUMBER: '5'})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_number == 5
 
     def test_string_not_castable_then_400_bad_request(self):
         response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_MP3,
-                                             **{PostFields.TRACK_NUMBER: 'five'})
+                                             **{PostFields.ALBUM_NAME: 'album', PostFields.TRACK_NUMBER: 'five'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -62,22 +63,26 @@ class TestCase(UploadedTrackTestCase, NullablePositiveIntBodyDataTestCase):
     def test_one_then_ok(self):
         track_number = 1
 
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_MP3, track_number=track_number)
+        response = self._post_uploaded_track(
+            UploadedTrackTestFilename.METADATA_NONE_MP3, **
+            {PostFields.ALBUM_NAME: 'album', PostFields.TRACK_NUMBER: track_number})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_number == track_number
 
     def test_largest_then_ok(self):
         track_number = settings.UPLOADED_TRACK_TRACK_NUMBER_MAX
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_MP3, track_number=track_number)
+        response = self._post_uploaded_track(
+            UploadedTrackTestFilename.METADATA_NONE_MP3, **
+            {PostFields.ALBUM_NAME: 'album', PostFields.TRACK_NUMBER: track_number})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.track_number == track_number
 
     def test_too_large_then_400_bad_request(self):
         response = self._post_uploaded_track(
-            UploadedTrackTestFilename.METADATA_NONE_MP3, album_name='album',
-            track_number=settings.UPLOADED_TRACK_TRACK_NUMBER_MAX + 1)
+            UploadedTrackTestFilename.METADATA_NONE_MP3,
+            **{PostFields.ALBUM_NAME: 'album', PostFields.TRACK_NUMBER: settings.UPLOADED_TRACK_TRACK_NUMBER_MAX + 1})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -86,7 +91,8 @@ class TestCase(UploadedTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert error['code'] == FieldValidationErrorCode.TRACK_NUMBER_TOO_LARGE
 
     def test_negative_then_400_bad_request(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.METADATA_NONE_MP3, track_number=-1)
+        response = self._post_uploaded_track(
+            UploadedTrackTestFilename.METADATA_NONE_MP3, **{PostFields.TRACK_NUMBER: -1})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -112,4 +118,4 @@ class TestCase(UploadedTrackTestCase, NullablePositiveIntBodyDataTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == to_camel_case(PostFields.TRACK_NUMBER)
-        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+        assert error['code'] == FieldValidationErrorCode.DUPLICATE
