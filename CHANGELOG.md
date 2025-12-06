@@ -89,6 +89,12 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### CI
 
+- **Test Configuration**: Filtered ResourceWarnings about unclosed files from Django's ORM in pytest configuration
+  - Added `ignore:unclosed file:ResourceWarning` filter to `pytest.ini`
+  - These warnings are non-actionable as they originate from Django's internal FileField handling
+  - Improves test output clarity by reducing noise from Django ORM file handle management
+  - Django automatically manages these file handles through garbage collection
+
 - **GitHub Automation**:
   - Auto-labeler workflow (`.github/workflows/labeler.yml`) for automatic PR labeling based on file paths
   - Branch protection workflow (`.github/workflows/branch-protection.yml`) to enforce Git Flow rules
