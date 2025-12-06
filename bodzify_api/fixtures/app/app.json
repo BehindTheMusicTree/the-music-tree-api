@@ -163,7 +163,7 @@
         "pk": 6,
         "fields": {
             "code": 6,
-            "label": "The MusicBrainz lookup failed with status code 5 (internal error)."
+            "label": "The MusicBrainz lookup failed with an unknown error code."
         }
     },
     
