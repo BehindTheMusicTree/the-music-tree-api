@@ -195,8 +195,24 @@ When making changes to the codebase, ensure relevant documentation is updated:
 - **DEVELOPMENT.md**: Update when changing development standards or adding new guidelines
 - **CONTRIBUTING.md**: Update when changing development workflow (primarily for maintainers; contributors may update in exceptional cases)
 - **code-style.md**: Update when changing code style conventions
+- **testing.md**: Update when changing testing standards or adding new test guidelines
 
 **Note:** Documentation should be updated as part of the same PR that introduces the changes, not as a separate follow-up PR.
+
+### Testing Documentation
+
+For comprehensive information about testing standards, conventions, and best practices, see [Testing Guidelines](testing.md).
+
+The testing documentation covers:
+
+- **Test Structure** - Test categories (unit, integration, e2e) and organization
+- **Test Naming Convention** - Naming patterns and examples
+- **Test Focus and Structure** - Guidelines for writing focused, maintainable tests
+- **Assertion Style** - Using `assert` instead of `assertEqual`
+- **Running Tests** - Commands for running tests
+- **External Service Dependencies** - Handling MusicBrainz and other external service dependencies in tests
+- **Test Configuration** - Pytest configuration and warning filters
+- **CI Testing** - Continuous integration testing setup
 
 ### Architecture Documentation
 
@@ -215,7 +231,7 @@ For detailed documentation on external service integrations, see:
 
 ### Code Style Reference
 
-For quick reference on code style conventions, see [code-style.md](code-style.md). For detailed guidelines, refer to the Cursor rules in `.cursor/rules/`:
+For quick reference on code style conventions, see [code-style.md](code-style.md). For testing guidelines, see [Testing Guidelines](testing.md). For detailed guidelines, refer to the Cursor rules in `.cursor/rules/`:
 
 - [One Class Per File](.cursor/rules/one-class-per-file.mdc)
 - [Field Name Constants](.cursor/rules/field-name-constants.mdc)

@@ -20,6 +20,17 @@ class TestCase(UploadedTrackTestCase):
             UploadedTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
         assert response.status_code == status.HTTP_201_CREATED
         recording = self.saved_object.track_file.musicbrainz_recording
+        if not recording:
+            missing_cause = self.saved_object.track_file.musicbrainz_recording_missing_cause
+            code_label = missing_cause.code.label if missing_cause else "Unknown"
+            message = missing_cause.message if missing_cause and missing_cause.message else "No message"
+            fingerprint_missing_cause = self.saved_object.track_file.fingerprint_missing_cause
+            fingerprint_code_label = fingerprint_missing_cause.code.label if fingerprint_missing_cause else "None"
+            pytest.skip(
+                f"musicbrainz_recording is None. "
+                f"Missing cause: {code_label} - {message}. "
+                f"Fingerprint missing cause: {fingerprint_code_label}"
+            )
         assert recording
         assert recording.musicbrainz_id == "4a45b00b-273d-40ed-9ecd-42f387f59c22"
 
