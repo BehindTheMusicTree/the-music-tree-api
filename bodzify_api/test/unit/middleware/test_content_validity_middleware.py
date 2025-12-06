@@ -96,18 +96,18 @@ class TestContentValidityMiddleware:
         # Should pass through
         assert response == mock_response
 
-    def test_multipart_put_data_access_exception_then_400_parse_error(self):
-        """Test that if accessing request.data for PUT raises an exception, the request is rejected."""
+    def test_multipart_put_parse_exception_then_400_parse_error(self):
+        """Test that if parsing multipart data for PUT raises an exception, the request is rejected."""
         middleware = ContentValidityMiddleware(get_response=Mock())
-
+        
         request = MagicMock(spec=Request)
         request.method = 'PUT'
         request.content_type = 'multipart/form-data'
-        # Simulate request.data raising an exception when accessed
-
+        request.META = {'CONTENT_TYPE': 'multipart/form-data; boundary=invalid'}
+        # Simulate body access raising an exception
         def raise_exception():
             raise Exception("Corrupted data")
-        type(request).data = property(lambda self: raise_exception())  # type: ignore
+        type(request).body = property(lambda self: raise_exception())  # type: ignore
 
         response = middleware.__call__(request)
 
@@ -115,26 +115,27 @@ class TestContentValidityMiddleware:
         import json
         response_data = json.loads(response.content)
         assert 'details' in response_data
-        assert 'parse' in response_data['details']['message'].lower(
-        ) or 'malformed' in response_data['details']['message'].lower()
+        assert 'parse' in response_data['details']['message'].lower() or 'malformed' in response_data['details']['message'].lower()
 
     def test_multipart_put_data_accessible_then_passes(self):
-        """Test that if request.data is accessible for PUT, the request passes through."""
+        """Test that if multipart data can be parsed for PUT, the request passes through."""
         mock_response = Mock()
         mock_response.status_code = 200
-
+        
         def mock_get_response(req):
             return mock_response
-
+        
         middleware = ContentValidityMiddleware(get_response=mock_get_response)
-
+        
         request = MagicMock(spec=Request)
         request.method = 'PUT'
         request.content_type = 'multipart/form-data'
-        request.data = QueryDict()  # Accessible data
-
+        request.META = {'CONTENT_TYPE': 'multipart/form-data; boundary=----WebKitFormBoundary'}
+        request.body = b'------WebKitFormBoundary\r\nContent-Disposition: form-data; name="test"\r\n\r\nvalue\r\n------WebKitFormBoundary--\r\n'
+        request._body = request.body
+        
         response = middleware.__call__(request)
-
+        
         # Should pass through
         assert response == mock_response
 

@@ -43,21 +43,17 @@ class ListValueValidationMiddleware:
             content_type = request.content_type or ''
 
             if content_type == 'application/json':
-                try:
-                    # For JSON, check request.data if available (DRF Request)
-                    if isinstance(request, Request):
+                # For JSON, check request.data if available (DRF Request)
+                # Note: ContentValidityMiddleware (which runs before this) validates that request.data
+                # is accessible, so it should always be available here. If it's not, ContentValidityMiddleware
+                # would have already rejected the request.
+                if isinstance(request, Request):
+                    data = request.data  # type: ignore
+                    if isinstance(data, dict):
                         try:
-                            data = request.data  # type: ignore
-                            if isinstance(data, dict):
-                                try:
-                                    self._validate_list_values_json(data)
-                                except AppValidationException as e:
-                                    return self._handle_validation_error(e)
-                        except Exception:
-                            # If request.data not available yet, skip (will be checked in serializer)
-                            pass
-                except Exception as e:
-                    logger.debug(f"[ListValueValidationMiddleware] Failed to validate JSON: {e}")
+                            self._validate_list_values_json(data)
+                        except AppValidationException as e:
+                            return self._handle_validation_error(e)
 
             elif content_type.startswith('multipart/form-data'):
                 data_to_check = None
@@ -92,9 +88,16 @@ class ListValueValidationMiddleware:
                                 request._stream = BytesIO(request._body)  # type: ignore
                                 request._read_started = False  # type: ignore
                     except Exception as e:
-                        logger.debug(f"[ListValueValidationMiddleware] Failed to parse multipart data: {e}")
+                        # If we can't parse multipart data, this is a parsing failure that should be rejected.
+                        # ContentValidityMiddleware (which runs before this) also uses Django's MultiPartParser
+                        # to validate parsing, so this should rarely happen. We catch it here as well for
+                        # defense in depth.
+                        logger.warning(f"[ListValueValidationMiddleware] Failed to parse multipart data: {e}")
+                        from rest_framework.exceptions import ParseError
+                        return self._handle_parse_error(ParseError(
+                            'Failed to parse multipart form data. The request may be malformed or corrupted.'))
 
-                    # Validate list values in multipart data
+                # Validate list values in multipart data
                 if data_to_check:
                     try:
                         self._validate_list_values_multipart(data_to_check)
@@ -107,6 +110,11 @@ class ListValueValidationMiddleware:
     def _handle_validation_error(self, exc: AppValidationException) -> JsonResponse:
         """Handle validation errors by converting them to proper error responses."""
         return ErrorResponse._from_validation_error(exc)
+
+    def _handle_parse_error(self, exc) -> JsonResponse:
+        """Handle parse errors by converting them to proper error responses."""
+        from rest_framework.exceptions import ParseError
+        return ErrorResponse.handle_exception(exc)
 
     def _validate_list_values_multipart(self, data: QueryDict | dict) -> None:
         """Validate that list fields don't contain both empty and non-empty values."""
