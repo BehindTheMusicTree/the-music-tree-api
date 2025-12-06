@@ -8,8 +8,11 @@ This document describes how input data flows from HTTP request reception through
 - [Request Reception](#request-reception)
 - [Middleware Processing](#middleware-processing)
   - [Middleware Order](#middleware-order)
+  - [ContentTypeValidationMiddleware](#contenttypevalidationmiddleware)
   - [CamelToSnakeMiddleware](#cameltosnakemiddleware)
+  - [ContentValidityMiddleware](#contentvaliditymiddleware)
   - [TestClientEmptyListMiddleware](#testclientemptylistmiddleware)
+  - [ListValueValidationMiddleware](#listvaluevalidationmiddleware)
   - [DuplicateFieldsMiddleware](#duplicatefieldsmiddleware)
 - [DRF Parsing](#drf-parsing)
   - [Parsers](#parsers)
@@ -62,14 +65,15 @@ Middleware processes requests in the order defined in `settings.py`. Each middle
 5. `CommonMiddleware` - Common utilities
 6. `ContentTypeValidationMiddleware` - Content-Type validation and JSON structure validation
 7. `CamelToSnakeMiddleware` - Field name conversion (camelCase → snake_case)
-8. `TestClientEmptyListMiddleware` - Empty list normalization (test client only)
-9. `ListValueValidationMiddleware` - List value validation (rejects empty values mixed with non-empty)
-10. `DuplicateFieldsMiddleware` - Duplicate field detection
-10. `RequestLoggingMiddleware` - Request logging
-11. `CsrfViewMiddleware` - CSRF protection
-12. `AuthenticationMiddleware` - Authentication
-13. `MessageMiddleware` - Messages framework
-14. `XFrameOptionsMiddleware` - Clickjacking protection
+8. `ContentValidityMiddleware` - Content validity and parsing validation
+9. `TestClientEmptyListMiddleware` - Empty list normalization (test client only)
+10. `ListValueValidationMiddleware` - List value validation (rejects empty values mixed with non-empty)
+11. `DuplicateFieldsMiddleware` - Duplicate field detection
+12. `RequestLoggingMiddleware` - Request logging
+13. `CsrfViewMiddleware` - CSRF protection
+14. `AuthenticationMiddleware` - Authentication
+15. `MessageMiddleware` - Messages framework
+16. `XFrameOptionsMiddleware` - Clickjacking protection
 
 ### ContentTypeValidationMiddleware
 
@@ -105,6 +109,24 @@ Middleware processes requests in the order defined in `settings.py`. Each middle
 # Output: {"artist_name": "Muse"}
 ```
 
+### ContentValidityMiddleware
+
+**Purpose**: Validates that request data is accessible and properly parsed.
+
+**Processing**:
+- **JSON requests**: Validates that `request.data` is accessible after `CamelToSnakeMiddleware`
+- **Multipart POST requests**: Validates that `request.POST` is accessible
+- **Multipart PUT/PATCH requests**: Validates that `request.data` can be accessed (DRF will parse it)
+- **Rejects requests**: If accessing request data raises an exception, rejects with `400 ParseError`
+
+**Example**:
+```python
+# If request.data access fails → 400 ParseError: "Failed to parse request data..."
+# If request.POST access fails → 400 ParseError: "Failed to parse multipart form data..."
+```
+
+**Note**: This middleware ensures that parsing failures are caught early and rejected, rather than allowing malformed requests to reach validation middleware or serializers.
+
 ### TestClientEmptyListMiddleware
 
 **Purpose**: Normalizes empty list fields for test client requests.
@@ -128,9 +150,9 @@ Middleware processes requests in the order defined in `settings.py`. Each middle
 **Purpose**: Detects and rejects list fields containing both empty and non-empty values.
 
 **Processing**:
-- **POST requests**: Validates `request.POST` for multipart requests
+- **POST requests**: Validates `request.POST` for multipart requests (after TestClientEmptyListMiddleware normalization)
 - **PUT/PATCH requests**: Manually parses multipart data to validate
-- **JSON requests**: Validates `request.data` if available
+- **JSON requests**: Validates `request.data` (after ContentValidityMiddleware ensures it's accessible)
 - **Validation rule**: List fields cannot contain both empty values (`''`, `None`) and non-empty values
 
 **Example**:
@@ -140,7 +162,7 @@ Middleware processes requests in the order defined in `settings.py`. Each middle
 # ❌ Invalid: {"artists_names[]": ["Muse", ""]}  # Mixed empty and non-empty
 ```
 
-**Note**: This validation is also performed at the field level (`ArtistsNamesField`) as a fallback for edge cases where middleware parsing fails.
+**Note**: This validation is also performed at the field level (`ArtistsNamesField`) as a fallback for defense in depth. ContentValidityMiddleware ensures parsing failures are rejected before reaching this middleware.
 
 ### DuplicateFieldsMiddleware
 
@@ -250,18 +272,24 @@ For test client requests, the serializer normalizes empty list fields:
 ### POST Request (Multipart)
 
 1. **Request Reception**: Django receives multipart/form-data
-2. **CamelToSnakeMiddleware**: Converts `request.POST` field names to snake_case
-3. **TestClientEmptyListMiddleware**: Normalizes `['']` to `[]` in `request.POST`
-4. **DRF Parsing**: When serializer accesses `request.data`, DRF uses `request.POST` (already normalized)
-5. **Serializer Validation**: Validates and normalizes the data
+2. **ContentTypeValidationMiddleware**: Validates Content-Type header
+3. **CamelToSnakeMiddleware**: Converts `request.POST` field names to snake_case
+4. **ContentValidityMiddleware**: Validates that `request.POST` is accessible
+5. **TestClientEmptyListMiddleware**: Normalizes `['']` to `[]` in `request.POST` (test client only)
+6. **ListValueValidationMiddleware**: Validates list values
+7. **DRF Parsing**: When serializer accesses `request.data`, DRF uses `request.POST` (already normalized)
+8. **Serializer Validation**: Validates and normalizes the data
 
 ### PUT Request (Multipart)
 
 1. **Request Reception**: Django receives multipart/form-data
-2. **CamelToSnakeMiddleware**: Does not process (no `request.POST` for PUT)
-3. **TestClientEmptyListMiddleware**: Does not process (handled in serializer)
-4. **DRF Parsing**: When serializer accesses `request.data`, DRF parses from `request.body`
-5. **Serializer Validation**: 
+2. **ContentTypeValidationMiddleware**: Validates Content-Type header
+3. **CamelToSnakeMiddleware**: Does not process (no `request.POST` for PUT)
+4. **ContentValidityMiddleware**: Validates that `request.data` can be accessed (DRF will parse it)
+5. **TestClientEmptyListMiddleware**: Does not process (handled in serializer)
+6. **ListValueValidationMiddleware**: Manually parses multipart data to validate list values
+7. **DRF Parsing**: When serializer accesses `request.data`, DRF parses from `request.body`
+8. **Serializer Validation**: 
    - Normalizes multipart data structure
    - Normalizes test client empty lists (`['']` → `[]`)
    - Validates fields
@@ -271,9 +299,10 @@ For test client requests, the serializer normalizes empty list fields:
 1. **Request Reception**: Django receives JSON body
 2. **ContentTypeValidationMiddleware**: Validates Content-Type and JSON structure (rejects arrays, double-encoded JSON)
 3. **CamelToSnakeMiddleware**: Parses JSON, converts field names, sets `request.data` directly
-4. **ListValueValidationMiddleware**: Validates list values (if `request.data` is available)
-5. **DRF Parsing**: `request.data` already set by middleware (no lazy parsing)
-6. **Serializer Validation**: Validates the data
+4. **ContentValidityMiddleware**: Validates that `request.data` is accessible (rejects if parsing failed)
+5. **ListValueValidationMiddleware**: Validates list values
+6. **DRF Parsing**: `request.data` already set by middleware (no lazy parsing)
+7. **Serializer Validation**: Validates the data
 
 ## Key Differences: POST vs PUT/PATCH
 
