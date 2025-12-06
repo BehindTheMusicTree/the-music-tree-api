@@ -1,4 +1,0 @@
-class StaticFileStates:
-    SERVING = "SERVING"
-    COLLECTING = "COLLECTING"
-    NOT_NEEDED = "NOT_NEEDED"
