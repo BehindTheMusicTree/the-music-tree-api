@@ -6,10 +6,10 @@ tmp-uploaded-files/
 .venv/
 .env
 .DS_Store
-bodzify_api/fixtures/*
-!bodzify_api/fixtures/*/
+api/fixtures/*
+!api/fixtures/*/
 
-bodzify_api/fixtures/genres/complete_genre_tree.json
+api/fixtures/genres/complete_genre_tree.json
 
 # Draft documents (internal planning, not version controlled)
 .github/descriptions/
