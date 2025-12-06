@@ -388,6 +388,13 @@ class AppInputSerializer(serializers.Serializer, Generic[T]):
                 # Normalize multipart form data: extract single values from lists for non-list fields
                 if is_multipart:
                     data = self._normalize_multipart_data(data)
+                    # For test client requests, also normalize [''] back to [] for empty list fields
+                    # This handles the workaround where AppApiClient converts [] to [''] to preserve empty lists
+                    # Note: This is done in the serializer rather than middleware because accessing
+                    # request.data in middleware triggers DRF parsing, but overriding it is unreliable
+                    # due to DRF's internal caching mechanism
+                    if request and request.META.get('HTTP_X_TEST_CLIENT') == 'true':
+                        data = self._normalize_test_client_empty_lists(data)
 
                 self._check_duplicate_fields(self.context.get(self.REQUEST_FIELD))
 
@@ -452,14 +459,9 @@ class AppInputSerializer(serializers.Serializer, Generic[T]):
                 # For QueryDict, value is already a list from lists()
                 # For regular dict, ensure it's a list
                 if isinstance(data, QueryDict):
-                    # Filter out empty strings from list fields (empty list should be [], not [''])
-                    filtered_value = [v for v in value if v != '']
-                    normalized[key] = filtered_value if filtered_value else []
+                    normalized[key] = value
                 else:
-                    list_value = value if isinstance(value, list) else [value]
-                    # Filter out empty strings from list fields
-                    filtered_value = [v for v in list_value if v != '']
-                    normalized[key] = filtered_value if filtered_value else []
+                    normalized[key] = value if isinstance(value, list) else [value]
             # For non-list fields, extract single value from list if present
             elif isinstance(value, list):
                 if len(value) == 0:
@@ -473,3 +475,37 @@ class AppInputSerializer(serializers.Serializer, Generic[T]):
             else:
                 normalized[key] = value
         return normalized
+
+    def _normalize_test_client_empty_lists(self, data: dict) -> dict:
+        """Normalize [''] back to [] for list fields (with [] suffix) in test client requests.
+
+        AppApiClient converts [] to [''] for list fields to preserve them (DRF's test client
+        drops empty lists). This method normalizes [''] back to [] so field validation sees
+        empty lists correctly.
+
+        Args:
+            data: The normalized multipart data dictionary (may be QueryDict or regular dict)
+
+        Returns:
+            Dictionary with [''] converted to [] for list fields
+        """
+        from django.http import QueryDict
+
+        if isinstance(data, QueryDict):
+            result = QueryDict(mutable=True)
+            for key, values in data.lists():
+                # For list fields (with [] suffix), convert [''] back to []
+                if key.endswith('[]') and values == ['']:
+                    result.setlist(key, [])
+                else:
+                    result.setlist(key, values)
+            return result
+        else:
+            # For regular dict, convert [''] to [] for list fields
+            normalized = {}
+            for key, value in data.items():
+                if key.endswith('[]') and isinstance(value, list) and value == ['']:
+                    normalized[key] = []
+                else:
+                    normalized[key] = value
+            return normalized

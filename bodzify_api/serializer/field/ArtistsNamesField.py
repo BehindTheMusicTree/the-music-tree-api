@@ -22,6 +22,10 @@ class ArtistsNamesField(AppField, ListField):
             return None
 
         if isinstance(data, (list, tuple)):
+            # Reject empty strings when there are other values
+            # Note: This validation is also performed in ListValueValidationMiddleware,
+            # but we keep it here as a fallback for edge cases where middleware parsing fails
+            # (e.g., PUT/PATCH multipart parsing errors, malformed multipart requests)
             if '' in data or None in data:
                 raise AppValidationException(
                     field_name=self.get_error_field_name(),

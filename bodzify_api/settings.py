@@ -553,6 +553,8 @@ def setup_middlewares():
         'django.middleware.common.CommonMiddleware',
         f'{APP_NAME}.middleware.ContentTypeValidationMiddleware.ContentTypeValidationMiddleware',
         f'{APP_NAME}.middleware.CamelToSnakeMiddleware.CamelToSnakeMiddleware',
+        f'{APP_NAME}.middleware.test_client.middleware.TestClientEmptyListMiddleware',
+        f'{APP_NAME}.middleware.list_value_validation.middleware.ListValueValidationMiddleware',
         f'{APP_NAME}.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware',
         f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
