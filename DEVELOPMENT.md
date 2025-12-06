@@ -2,7 +2,7 @@
 
 This document outlines the coding standards and best practices for developing this Django REST API project.
 
-For information about system architecture, patterns, and design decisions, see [Architecture documentation](docs/ARCHITECTURE.md).
+For information about system architecture, patterns, and design decisions, see [Architecture documentation](docs/architecture.md).
 
 ## Table of Contents
 
@@ -167,13 +167,13 @@ def get_genres(user: User, name: str | None = None) -> list[Genre]:
 
 - **Use `AppValidationException`** - Never raise DRF validation exceptions directly. Use `AppValidationException` for consistent error handling across the application
 
-For detailed information about error handling architecture, patterns, and examples, see [Architecture documentation](docs/ARCHITECTURE.md#error-handling).
+For detailed information about error handling architecture, patterns, and examples, see [Architecture documentation](docs/architecture.md#error-handling).
 
 See [Use Custom Validation Exception](.cursor/rules/use-custome-validation-exception.mdc) for detailed guidelines.
 
 ## Architecture
 
-For comprehensive information about system architecture, Django best practices, and design patterns, see [Architecture documentation](docs/ARCHITECTURE.md).
+For comprehensive information about system architecture, Django best practices, and design patterns, see [Architecture documentation](docs/architecture.md).
 
 The architecture documentation covers:
 
@@ -182,7 +182,7 @@ The architecture documentation covers:
 - **Django Best Practices** - Detailed patterns, examples, and guidelines for each component
 - **Related Documentation** - Links to input data flow and other architectural resources
 
-For API request format specifications, including multipart form data handling and duplicate field validation, see [Architecture documentation](docs/ARCHITECTURE.md#api-request-format).
+For API request format specifications, including multipart form data handling and duplicate field validation, see [Architecture documentation](docs/architecture.md#api-request-format).
 
 ## Project Documentation
 
@@ -202,7 +202,7 @@ When making changes to the codebase, ensure relevant documentation is updated:
 
 For detailed documentation on system architecture, patterns, and design decisions:
 
-- **Architecture Overview**: [Architecture documentation](docs/ARCHITECTURE.md) - Architectural patterns, design decisions, and system structure
+- **Architecture Overview**: [Architecture documentation](docs/architecture.md) - Architectural patterns, design decisions, and system structure
 - **Input Data Flow**: [Input Data Flow documentation](docs/input-data-flow.md) - How input data flows from HTTP request reception through middleware processing to final validation in serializers
 
 ### External Service Documentation
