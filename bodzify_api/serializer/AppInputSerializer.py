@@ -368,14 +368,13 @@ class AppInputSerializer(serializers.Serializer, Generic[T]):
         try:
             # Handle both flat dictionaries and nested structures
             if isinstance(data, dict):
-                # Normalize multipart form data: extract single values from lists for non-list fields
                 request = self.context.get('request')
-                if request and hasattr(
-                        request, 'content_type') and request.content_type and request.content_type.startswith(
-                        'multipart/form-data'):
-                    data = self._normalize_multipart_data(data)
+                is_multipart = request and hasattr(
+                    request, 'content_type') and request.content_type and request.content_type.startswith(
+                    'multipart/form-data')
 
-                # Get known fields and check for unknown fields
+                # Check for malformed array fields and unknown fields BEFORE normalization
+                # This must happen before normalization so we can detect list fields without [] suffix
                 _, unknown_fields = self._collect_known_fields_and_malformed_array_fields_names(data)
                 if len(unknown_fields) == 1:
                     raise AppValidationException(field_name=unknown_fields[0],
@@ -385,6 +384,10 @@ class AppInputSerializer(serializers.Serializer, Generic[T]):
                     raise AppValidationException(field_name=", ".join(unknown_fields),
                                                  message="Multiple unknown fields",
                                                  field_validation_error_code=FieldValidationErrorCode.UNKNOWN)
+
+                # Normalize multipart form data: extract single values from lists for non-list fields
+                if is_multipart:
+                    data = self._normalize_multipart_data(data)
 
                 self._check_duplicate_fields(self.context.get(self.REQUEST_FIELD))
 

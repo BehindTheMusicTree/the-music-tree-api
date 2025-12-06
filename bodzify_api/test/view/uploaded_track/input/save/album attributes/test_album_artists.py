@@ -1,3 +1,4 @@
+from django.urls import reverse
 from rest_framework import status
 
 from bodzify_api import settings
@@ -48,7 +49,9 @@ class TestCase(NullableListBodyDataTestCase, UploadedTrackTestCase):
         track = self.model_fixture_factory.create_uploaded_track_with_file(title="koko")
         malformed_put_json_field_name = "album_artists_names[]"
         data = {PostFields.ALBUM_NAME: "Best Of", malformed_put_json_field_name: ['muse']}
-        response = self._put_uploaded_track(track.uuid, **data)
+        response = self.api_client.put(
+            path=reverse('uploaded-track-detail', kwargs={'pk': track.uuid}),
+            data=data, format='json', handle_response=self._set_results)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
