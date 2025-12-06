@@ -25,7 +25,7 @@ Guidelines:
 5. Keep the name concise but informative
 6. Avoid generic terms like "test", "check", "verify"
 7. Test class names should be descriptive and follow the pattern `Test{Feature}` (e.g., `TestGenreImport`)
-8. Tests are located in `bodzify_api/test/`
+8. Tests are located in `api/test/`
 
 Bad examples:
 - `test_import` (too generic)

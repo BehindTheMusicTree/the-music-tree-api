@@ -9,7 +9,7 @@ Tests must follow the project's testing structure and conventions as specified i
 
 ## Test Location
 
-- Tests are located in `bodzify_api/test/`
+- Tests are located in `api/test/`
 
 ## Test Naming Convention
 

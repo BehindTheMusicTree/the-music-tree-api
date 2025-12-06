@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 env:
-  CONTAINER_ROOT_DIR: /home/app/
+  CONTAINER_ROOT_DIR: /home/api/
 
 jobs:
   collect-and-push-static-files:
