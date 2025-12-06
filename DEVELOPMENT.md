@@ -2,6 +2,8 @@
 
 This document outlines the coding standards and best practices for developing this Django REST API project.
 
+For information about system architecture, patterns, and design decisions, see [Architecture documentation](docs/ARCHITECTURE.md).
+
 ## Table of Contents
 
 - [Code Quality](#code-quality)
@@ -15,13 +17,7 @@ This document outlines the coding standards and best practices for developing th
     - [When NOT to Add Docstrings](#when-not-to-add-docstrings)
   - [Type Checking](#type-checking)
   - [Error Handling](#error-handling)
-- [Django Best Practices](#django-best-practices)
-  - [Models](#models)
-  - [Serializers](#serializers)
-  - [Views and ViewSets](#views-and-viewsets)
-  - [Filtering](#filtering)
-- [API Request Format](#api-request-format)
-  - [Multipart Form Data](#multipart-form-data)
+- [Architecture](#architecture)
 - [Project Documentation](#project-documentation)
   - [Documentation Files](#documentation-files)
   - [Code Style Reference](#code-style-reference)
@@ -169,247 +165,24 @@ def get_genres(user: User, name: str | None = None) -> list[Genre]:
 
 ### Error Handling
 
-- **Use `AppValidationException`** - Never raise DRF validation exceptions directly. Use `AppValidationException` for consistent error handling across the application.
+- **Use `AppValidationException`** - Never raise DRF validation exceptions directly. Use `AppValidationException` for consistent error handling across the application
 
-**Good example:**
-```python
-from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.model.genre.Fields import Fields
-
-def validate_genre_name(self, name: str, user: User) -> None:
-    if not name:
-        raise AppValidationException(
-            field_name=Fields.NAME,
-            message="Genre name cannot be empty",
-            field_validation_error_code=FieldValidationErrorCode.BLANK
-        )
-```
-
-**Bad example:**
-```python
-# Bad - Using DRF ValidationError
-from rest_framework.exceptions import ValidationError
-
-def validate_genre_name(self, name: str) -> None:
-    if not name:
-        raise ValidationError("Genre name cannot be empty")  # Bad
-```
+For detailed information about error handling architecture, patterns, and examples, see [Architecture documentation](docs/ARCHITECTURE.md#error-handling).
 
 See [Use Custom Validation Exception](.cursor/rules/use-custome-validation-exception.mdc) for detailed guidelines.
 
-## Django Best Practices
+## Architecture
 
-### Models
+For comprehensive information about system architecture, Django best practices, and design patterns, see [Architecture documentation](docs/ARCHITECTURE.md).
 
-- **One class per file** - Each model should be in its own file
-- **Use Managers** - Create custom managers when needed for common queries
-- **Use field name constants** - Reference fields using constants from `Fields.py`
-- **Private resource filtering** - Always include `user` in queries for private resources to ensure proper access control and take advantage of database indexing
+The architecture documentation covers:
 
-**Good example:**
-```python
-# Genre.py
-from bodzify_api.model.genre.Fields import Fields
+- **Request Processing Pipeline** - How requests flow through the system
+- **Core Architectural Patterns** - Models, Serializers, Views, Middleware, Filtering, and Error Handling
+- **Django Best Practices** - Detailed patterns, examples, and guidelines for each component
+- **Related Documentation** - Links to input data flow and other architectural resources
 
-class Genre(models.Model):
-    name = models.CharField(max_length=100)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
-    parent = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
-
-# Usage
-def get_user_genres(user: User) -> QuerySet:
-    return Genre.objects.filter(user=user)  # Good - includes user
-```
-
-**Bad example:**
-```python
-# Bad - Missing user filter
-def get_genre(genre_id: UUID) -> Genre:
-    return Genre.objects.get(id=genre_id)  # Bad - security risk!
-```
-
-See [Private Resource Filtering](.cursor/rules/private-resource-filtering.mdc) for detailed guidelines.
-
-### Serializers
-
-- **One class per file** - Each serializer should be in its own file
-- **Use field name constants** - Reference fields using constants from `Fields.py`
-- **Use `AppValidationException`** - For validation errors, raise `AppValidationException` instead of DRF's `ValidationError`
-- **Inherit from AppInputSerializer** - All **input serializers** (POST, PUT, etc.) should inherit from `AppInputSerializer` (not DRF's `Serializer` directly)
-- **Use App fields** - Use `AppCharField`, `AppListField`, etc. instead of DRF's base fields
-
-**AppInputSerializer Overview:**
-
-`AppInputSerializer` extends Django REST Framework's `Serializer` to provide input validation features:
-- Consistent error handling using `AppValidationException`
-- Multipart form data normalization and validation
-- Duplicate field detection (for JSON requests)
-- Unknown field detection
-- List field handling with `[]` suffix for multipart requests
-
-**Note:** `AppInputSerializer` is specialized for **input validation** (POST, PUT requests). Output serializers (read-only, for GET responses like `*DetailedSerializer`, `*SimpleSerializer`, `*MinimumSerializer`) do not need `AppInputSerializer` and can inherit directly from `serializers.ModelSerializer`.
-
-**Multipart vs JSON Request Handling:**
-
-The serializer handles multipart and JSON requests differently:
-
-1. **List Fields**:
-   - **Multipart**: List fields MUST use `[]` suffix (e.g., `artists_names[]`)
-   - **JSON**: List fields can be specified without `[]` suffix
-   - The serializer automatically maps `[]` suffix fields to their base field names
-
-2. **Field Normalization**:
-   - Multipart data is normalized: single values are extracted from lists for non-list fields
-   - JSON data is used as-is
-
-3. **Duplicate Field Detection**:
-   - **Multipart**: Handled by `DuplicateFieldsMiddleware` before reaching serializer
-   - **JSON**: Handled by serializer's `_check_duplicate_fields()` method
-
-**AppField Overview:**
-
-All custom field classes should inherit from `AppField` (not DRF's `Field` directly). `AppField` provides:
-- Consistent error handling using `AppValidationException` (for input validation)
-- Automatic error code mapping from DRF validation keys
-- Proper field name handling for list fields (with `[]` suffix)
-
-**Note:** `AppField` fields can be used in both input and output serializers. The validation error handling is only triggered during input validation (`to_internal_value`). For output serializers, fields are used for serialization (`to_representation`) only.
-
-**Error Code Mapping:**
-
-`AppField` automatically maps common DRF validation keys to application-specific error codes:
-- `'required'` → `FieldValidationErrorCode.REQUIRED`
-- `'null'` → `FieldValidationErrorCode.REQUIRED`
-- `'blank'` → `FieldValidationErrorCode.BLANK`
-- `'invalid'` → `FieldValidationErrorCode.FORMAT_INVALID`
-- `'max_length'` → `FieldValidationErrorCode.STRING_TOO_LONG`
-- `'min_length'` → `FieldValidationErrorCode.STRING_TOO_SHORT`
-- And more (see `AppField.validation_error_code_mapping`)
-
-**Good examples:**
-
-```python
-# genre.py
-from bodzify_api.model.genre.Fields import Fields
-from bodzify_api.serializer.AppInputSerializer import AppInputSerializer
-from bodzify_api.serializer.field.AppCharField import AppCharField
-from bodzify_api.serializer.field.AppListField import AppListField
-
-class GenreSerializer(AppInputSerializer):
-    name = AppCharField()
-    tags = AppListField(child=AppCharField())
-    
-    class Meta:
-        fields = [Fields.NAME, Fields.TAGS]
-```
-
-```python
-# Custom field example
-from bodzify_api.serializer.field.AppField import AppField
-from rest_framework import serializers
-
-class AppCharField(AppField, serializers.CharField):
-    def to_internal_value(self, data):
-        if not isinstance(data, str):
-            self.fail('invalid')  # Raises AppValidationException
-        return data
-```
-
-**Request Format Examples:**
-
-```http
-# ✅ Good - Multipart with list field
-POST /api/v0.2.0/library/uploaded/
-Content-Type: multipart/form-data
-
-title: "Song Title"
-artists_names[]: "Artist 1"
-artists_names[]: "Artist 2"
-```
-
-```json
-// ✅ Good - JSON with list field (no [] suffix needed)
-POST /api/v0.2.0/library/uploaded/
-Content-Type: application/json
-
-{
-  "title": "Song Title",
-  "artists_names": ["Artist 1", "Artist 2"]
-}
-```
-
-See `bodzify_api.serializer.AppInputSerializer` and `bodzify_api.serializer.field.AppField` for detailed implementation documentation.
-
-### Views and ViewSets
-
-- **Use ViewSets** - Prefer ViewSets over function-based views for consistency
-- **Use field name constants** - Reference fields using constants from `Fields.py`
-- **Proper error handling** - Use `AppValidationException` for validation errors
-- **Private resource filtering** - Always include `user` in queries for private resources
-
-### Filtering
-
-- **Use Django Filter** - Leverage django-filter for filtering capabilities
-- **Consistent parameters** - Use `ConsistentParametersFilterBackend` for consistent parameter handling
-- **Private resource filtering** - Always include `user` in filter queries
-
-## API Request Format
-
-### Multipart Form Data
-
-**Duplicate Field Validation**
-
-According to the HTTP specification (RFC 7578), duplicate field names are standard and allowed in `multipart/form-data`. However, this application enforces a validation rule that **rejects duplicate fields** to prevent confusion and ensure data integrity. This is an application-level constraint, not a protocol requirement.
-
-**Rules:**
-- ❌ **Duplicate fields are rejected** - Sending the same field name multiple times will result in a `400 Bad Request` error with error code `duplicate`
-- ✅ **List fields are allowed** - Fields with a `[]` suffix (e.g., `artists_names[]`) are allowed to have multiple values, as this is the intended way to send arrays in multipart form data
-
-**Examples:**
-
-```http
-# ❌ Bad - Duplicate field
-POST /api/v0.2.0/library/uploaded/
-Content-Type: multipart/form-data
-
-title: "Song Title 1"
-title: "Song Title 2"  # Error: duplicate field
-
-# ✅ Good - Single value
-POST /api/v0.2.0/library/uploaded/
-Content-Type: multipart/form-data
-
-title: "Song Title"
-
-# ✅ Good - List field with multiple values
-POST /api/v0.2.0/library/uploaded/
-Content-Type: multipart/form-data
-
-title: "Song Title"
-artists_names[]: "Artist 1"
-artists_names[]: "Artist 2"
-artists_names[]: "Artist 3"
-```
-
-**Error Response:**
-
-When duplicate fields are detected, the API returns:
-
-```json
-{
-  "title": {
-    "message": "Duplicate field detected.",
-    "code": "duplicate"
-  }
-}
-```
-
-**Implementation:**
-
-Duplicate field detection is handled by `DuplicateFieldsMiddleware` before request data reaches the serializer. For PUT/PATCH requests, the middleware manually parses multipart data since Django doesn't populate `request.POST` for these methods.
-
-See `bodzify_api.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware` for implementation details.
+For API request format specifications, including multipart form data handling and duplicate field validation, see [Architecture documentation](docs/ARCHITECTURE.md#api-request-format).
 
 ## Project Documentation
 
@@ -424,6 +197,13 @@ When making changes to the codebase, ensure relevant documentation is updated:
 - **code-style.md**: Update when changing code style conventions
 
 **Note:** Documentation should be updated as part of the same PR that introduces the changes, not as a separate follow-up PR.
+
+### Architecture Documentation
+
+For detailed documentation on system architecture, patterns, and design decisions:
+
+- **Architecture Overview**: [Architecture documentation](docs/ARCHITECTURE.md) - Architectural patterns, design decisions, and system structure
+- **Input Data Flow**: [Input Data Flow documentation](docs/input-data-flow.md) - How input data flows from HTTP request reception through middleware processing to final validation in serializers
 
 ### External Service Documentation
 
