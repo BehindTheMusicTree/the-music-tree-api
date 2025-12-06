@@ -198,6 +198,15 @@ cd bodzify-api-django
 
 You need to set up several environment variables for development, build, and run.
 
+**Environment Variable Handling:**
+
+The application uses strict environment variable validation:
+- **Required variables**: Must be set or the application will fail to start with a clear error message
+- **No fallbacks**: Required environment variables do not have default values - they must be explicitly set
+- **Path validation**: Path variables (like `MEDIA_DIR`) are validated to ensure the directories exist
+- **Type validation**: Boolean and integer variables are validated for correct types
+- **Application data**: Application data files (like reference data, fixtures) are stored relative to the codebase (`BASE_DIR`) and do not require environment variables
+
 **Development:**
 Create a copy of the file `env/dev/.env.dev.template` as `env/.env` and set the values.
 
@@ -236,6 +245,8 @@ Running the container requires the following environment variables:
 - `AFP_CONTAINER_NAME` (AFP meaning Audio FingerPrinter)
 - `AFP_PORT`
 - `AFP_POST_ENDPOINT`
+
+**Note:** Application data files (like the reference genre tree) are stored in the `data/` directory relative to the project root and are deployed with the codebase. They do not require environment variable configuration.
 
 #### Database Requirement
 

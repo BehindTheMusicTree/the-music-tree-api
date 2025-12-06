@@ -95,6 +95,9 @@ MEDIA_URL: str
 LIBRARIES_DIR_NAME: str
 LIBRARIES_DIR: Path
 
+# Data
+DATA_DIR: Path
+
 # API Keys
 SPOTIFY_CLIENT_ID: str
 SPOTIFY_CLIENT_SECRET: str
@@ -494,6 +497,14 @@ def setup_afp_connection():
     print_django(f"AFP_POST_FULL_URL: {AFP_POST_FULL_URL}")
 
 
+def setup_data_dir():
+    global DATA_DIR
+    DATA_DIR = BASE_DIR / 'data'
+    if not DATA_DIR.exists():
+        raise EnvironmentError(f"The data directory {DATA_DIR} does not exist.")
+    print_django(f"DATA_DIR: {DATA_DIR}")
+
+
 def setup_static_files():
     print_django(f"The app is using static files for {STATIC_FILES_STATE}")
 
@@ -749,6 +760,7 @@ if 'loaddata' in sys.argv:
     load_calculated_env_paths(BASE_DIR)
     STATIC_FILES_STATE = StaticFileStates.NOT_NEEDED
     setup_app_constants()
+    setup_data_dir()
     setup_installed_apps_and_caches()
     setup_middlewares()
     setup_django_constants()
@@ -759,6 +771,7 @@ else:
     load_calculated_env_paths(BASE_DIR)
     setup_app_exposure_if_needed()
     setup_app_constants()
+    setup_data_dir()
 
     STATIC_FILES = os.getenv('STATIC_FILES')
     if ENV == 'COLLECT_STATIC':
