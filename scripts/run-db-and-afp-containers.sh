@@ -48,12 +48,12 @@ main() {
 
     log_with_script_prefixe "Pulling the database and audio fingerprinter images..."
     log_with_script_prefixe $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
-    timeout 10 docker pull $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
+    timeout 300 docker pull $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
     if [ $? -ne 0 ]; then
         log_with_script_prefixe "ERROR: Failed to pull the database image (timeout or error)." >&2
         exit 1
     fi
-    timeout 10 docker pull $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
+    timeout 300 docker pull $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
     if [ $? -ne 0 ]; then
         log_with_script_prefixe "ERROR: Failed to pull the audio fingerprinter image (timeout or error)." >&2
         exit 1
