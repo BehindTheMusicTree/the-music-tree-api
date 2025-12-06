@@ -119,9 +119,9 @@ jobs:
       - name: Run pytest
         run: |
           if [ -n "${{ inputs.test_path || '' }}" ]; then
-            pytest -v --tb=short -W always -x --junitxml=test-results.xml "${{ inputs.test_path }}"
+            pytest -v --tb=short -x --junitxml=test-results.xml "${{ inputs.test_path }}"
           else
-            pytest -v --tb=short -W always -x --junitxml=test-results.xml bodzify_api/test/
+            pytest -v --tb=short -x --junitxml=test-results.xml bodzify_api/test/
           fi
 
       - name: Publish Test Results
