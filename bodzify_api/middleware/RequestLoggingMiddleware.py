@@ -82,30 +82,94 @@ class RequestLoggingMiddleware:
 
         except Exception as e:
             duration = time.time() - start_time
-            error_message = f"[{request_id}] Error: {str(e)} (took {duration:.3f}s)"
-            self.requestLogger.error(error_message)
-            self.requestDebugLogger.error(error_message)
+            try:
+                error_str = str(e)
+            except Exception:
+                try:
+                    error_str = repr(e)
+                except Exception:
+                    error_str = f"{type(e).__name__}: <unable to stringify exception>"
+            error_message = f"[{request_id}] Error: {error_str} (took {duration:.3f}s)"
+            try:
+                self.requestLogger.error(error_message)
+                self.requestDebugLogger.error(error_message)
+            except Exception as log_error:
+                try:
+                    log_error_str = str(log_error)
+                except Exception:
+                    try:
+                        log_error_str = repr(log_error)
+                    except Exception:
+                        log_error_str = f"{type(log_error).__name__}: <unable to stringify>"
+                try:
+                    self.requestDebugLogger.error(
+                        f"[{request_id}] Error logging exception: {type(log_error).__name__}: {log_error_str}")
+                except Exception:
+                    pass
 
             # Special logging for PUT requests to genres
             if request.method == 'PUT' and '/genres/' in request.path:
-                self.requestDebugLogger.error(
-                    f"[{request_id}] DEBUG: PUT request to genres failed with exception: {type(e).__name__}: {str(e)}")
-                import traceback
-                self.requestDebugLogger.error(f"[{request_id}] DEBUG: Exception traceback: {traceback.format_exc()}")
+                try:
+                    exc_str = str(e)
+                except Exception:
+                    exc_str = f"{type(e).__name__}: <unable to stringify exception>"
+                try:
+                    self.requestDebugLogger.error(
+                        f"[{request_id}] DEBUG: PUT request to genres failed with exception: {type(e).__name__}: {exc_str}")
+                    self.requestDebugLogger.error(
+                        f"[{request_id}] DEBUG: Exception traceback: {traceback.format_exc()}")
+                except Exception as log_error:
+                    self.requestDebugLogger.error(
+                        f"[{request_id}] Error in detailed logging: {type(log_error).__name__}: {str(log_error)}")
 
             raise
 
     def process_exception(self, request, exception):
         request_id = getattr(request, 'request_id', 'unknown')
-        self.requestLogger.error(f"[{request_id}] Exception: {type(exception).__name__} - {str(exception)}")
-        self.requestLogger.error('\n'.join(traceback.format_exception(
-            type(exception), exception, exception.__traceback__)))
+        try:
+            exc_str = str(exception)
+        except Exception:
+            exc_str = f"{type(exception).__name__}: <unable to stringify exception>"
+        try:
+            self.requestLogger.error(f"[{request_id}] Exception: {type(exception).__name__} - {exc_str}")
+            try:
+                tb_str = '\n'.join(traceback.format_exception(
+                    type(exception), exception, exception.__traceback__))
+                self.requestLogger.error(tb_str)
+            except Exception:
+                self.requestDebugLogger.error(
+                    f"[{request_id}] Error formatting traceback for {type(exception).__name__}")
+        except Exception as log_error:
+            try:
+                log_error_str = str(log_error)
+            except Exception:
+                log_error_str = f"{type(log_error).__name__}: <unable to stringify>"
+            self.requestDebugLogger.error(
+                f"[{request_id}] Error logging exception details: {type(log_error).__name__}: {log_error_str}")
 
         try:
             response = ErrorResponse.handle_exception(exception)
             self.requestLogger.error(f"[{request_id}] Error Response: {response.status_code} {response.reason_phrase}")
         except Exception as e:
-            self.requestLogger.error(f"[{request_id}] Error in ErrorResponse Handling: {type(e).__name__} - {str(e)}")
-            self.requestLogger.error('\n'.join(traceback.format_exception(type(e), e, e.__traceback__)))
+            try:
+                e_str = str(e)
+            except Exception:
+                e_str = f"{type(e).__name__}: <unable to stringify exception>"
+            try:
+                self.requestLogger.error(
+                    f"[{request_id}] Error in ErrorResponse Handling: {type(e).__name__} - {e_str}")
+                try:
+                    tb_str = '\n'.join(traceback.format_exception(type(e), e, e.__traceback__))
+                    self.requestLogger.error(tb_str)
+                except Exception:
+                    self.requestDebugLogger.error(
+                        f"[{request_id}] Error formatting traceback for ErrorResponse handling error")
+            except Exception as log_error:
+                try:
+                    log_error_str = str(log_error)
+                except Exception:
+                    log_error_str = f"{type(log_error).__name__}: <unable to stringify>"
+                self.requestDebugLogger.error(
+                    f"[{request_id}] Error logging ErrorResponse handling error: {type(log_error).__name__}: {log_error_str}")
 
         return None

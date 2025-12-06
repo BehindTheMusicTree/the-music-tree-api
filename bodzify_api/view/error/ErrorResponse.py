@@ -95,9 +95,13 @@ class ErrorResponse:
 
     @staticmethod
     def _from_invalid_jwt_token(exception: InvalidToken | NotAuthenticated | AuthenticationFailed) -> JsonResponse:
-        detail = exception.detail
-        message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
-        code = detail['code'] if isinstance(detail, dict) and 'code' in detail else exception.default_code
+        try:
+            detail = exception.detail
+            message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+            code = detail['code'] if isinstance(detail, dict) and 'code' in detail else exception.default_code
+        except (AttributeError, TypeError):
+            message = getattr(exception, 'default_detail', str(exception))
+            code = getattr(exception, 'default_code', 'authentication_failed')
         return ErrorResponse.create_error_response(
             error_detail={'message': message, 'code': code},
             api_error_code=ApiErrorCodeNumeric.AUTH_INVALID_CREDENTIALS)
@@ -113,8 +117,11 @@ class ErrorResponse:
 
     @staticmethod
     def _from_unsupported_media_type_exception(exception: UnsupportedMediaType) -> JsonResponse:
-        detail = exception.detail
-        message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+        try:
+            detail = exception.detail
+            message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+        except (AttributeError, TypeError):
+            message = getattr(exception, 'default_detail', str(exception))
         return ErrorResponse.create_error_response(
             error_detail={
                 'message': message,
@@ -124,9 +131,49 @@ class ErrorResponse:
 
     @staticmethod
     def _from_content_type_exception(exception: ParseError) -> JsonResponse:
-        detail = exception.detail
-        message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
-        code = detail['code'] if isinstance(detail, dict) and 'code' in detail else exception.default_code
+        # Try to access detail first (where the actual message is stored for ParseError created with string)
+        # But handle Python 3.14 compatibility issues
+        message = None
+        code = getattr(exception, 'default_code', 'parse_error')
+
+        try:
+            detail = exception.detail
+            if isinstance(detail, str):
+                message = detail
+            elif isinstance(detail, dict):
+                message = detail.get('detail', None)
+                code = detail.get('code', code)
+        except (AttributeError, TypeError):
+            # Python 3.14 compatibility: detail access failed, try alternatives
+            pass
+
+        # If we couldn't get message from detail, try other methods
+        if not message:
+            # Check if default_detail is different from the default DRF ParseError message
+            try:
+                default_detail = exception.default_detail
+                if default_detail and default_detail != "Malformed request.":
+                    message = default_detail
+                else:
+                    # Try to get from exception args (ParseError("message") stores it there)
+                    if hasattr(exception, 'args') and exception.args:
+                        message = str(exception.args[0]) if exception.args[0] else None
+            except (AttributeError, TypeError):
+                pass
+
+        # Last resort: try stringification
+        if not message:
+            try:
+                exc_str = str(exception)
+                if exc_str and exc_str != f"<{type(exception).__name__} instance>":
+                    message = exc_str
+            except Exception:
+                pass
+
+        # Final fallback
+        if not message:
+            message = 'Invalid input'
+
         return ErrorResponse.create_error_response(
             error_detail={'message': message, 'code': code},
             api_error_code=ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT)
@@ -235,7 +282,12 @@ class ErrorResponse:
                 api_error_code=ApiErrorCodeNumeric.VALIDATION_INVALID_INPUT
             )
         elif isinstance(exception, DrfValidationError):
-            error_detail = DrfValidationErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
+            try:
+                error_detail = DrfValidationErrorResponseDetail.convert_error_detail_to_dict(exception.detail)
+            except (AttributeError, TypeError):
+                error_detail = {
+                    'message': getattr(exception, 'default_detail', str(exception)),
+                    'code': 'validation_error'}
 
             # If it's already a dict with a message, use it directly
             if isinstance(error_detail, dict) and 'message' in error_detail:
@@ -299,16 +351,22 @@ class ErrorResponse:
 
     @staticmethod
     def _from_method_not_allowed_exception(exception: MethodNotAllowed) -> JsonResponse:
-        detail = exception.detail
-        message = str(detail) if isinstance(
-            detail, DRFErrorDetail) else detail['detail'] if isinstance(
-            detail, dict) and 'detail' in detail else exception.default_detail
+        try:
+            detail = exception.detail
+            message = str(detail) if isinstance(
+                detail, DRFErrorDetail) else detail['detail'] if isinstance(
+                detail, dict) and 'detail' in detail else exception.default_detail
+        except (AttributeError, TypeError):
+            message = getattr(exception, 'default_detail', str(exception))
         return ErrorResponse.create_error_response(error_detail={'message': message, 'code': 'method_not_allowed'},
                                                    api_error_code=ApiErrorCodeNumeric.VALIDATION_METHOD_NOT_ALLOWED)
 
     @staticmethod
     def _from_http_404_exception(exception: Http404) -> JsonResponse:
-        message = str(exception) if str(exception) else 'Resource not found'
+        try:
+            message = str(exception) or 'Resource not found'
+        except Exception:
+            message = 'Resource not found'
         return ErrorResponse.create_error_response(
             error_detail={'message': message, 'code': 'not_found'},
             api_error_code=ApiErrorCodeNumeric.RESOURCE_NOT_FOUND
@@ -316,8 +374,19 @@ class ErrorResponse:
 
     @staticmethod
     def _from_permission_denied_exception(exception: PermissionDenied) -> JsonResponse:
-        detail = exception.detail
-        message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+        try:
+            detail = exception.detail
+            message = detail['detail'] if isinstance(detail, dict) and 'detail' in detail else exception.default_detail
+        except (AttributeError, TypeError):
+            try:
+                message = getattr(exception, 'default_detail', None)
+                if message is None:
+                    try:
+                        message = str(exception)
+                    except Exception:
+                        message = 'Permission denied'
+            except Exception:
+                message = 'Permission denied'
         return ErrorResponse.create_error_response(
             error_detail={'message': message, 'code': 'permission_denied'},
             api_error_code=ApiErrorCodeNumeric.AUTH_INSUFFICIENT_PERMISSIONS
@@ -335,8 +404,12 @@ class ErrorResponse:
 
     @staticmethod
     def _from_spotify_authentication_exception(exception: SpotifyAuthenticationException) -> JsonResponse:
+        try:
+            message = str(exception)
+        except Exception:
+            message = f"{type(exception).__name__}: <unable to stringify exception>"
         return ErrorResponse.create_error_response(
-            error_detail={'message': str(exception), 'code': 'spotify_authentication_error'},
+            error_detail={'message': message, 'code': 'spotify_authentication_error'},
             api_error_code=ApiErrorCodeNumeric.AUTH_INVALID_CREDENTIALS)
 
     @staticmethod

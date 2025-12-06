@@ -55,7 +55,7 @@ class User(AbstractUser, BaseModel):
         return all_uploaded_tracks_mixin
 
     def does_track_filename_exist_in_lib(self, test_uploaded_track_filename: UploadedTrackTestFilename):
-        return os.path.isfile(Path(self.lib_abs_path) / str(test_uploaded_track_filename))
+        return os.path.isfile(Path(self.lib_abs_path) / test_uploaded_track_filename.value)
 
     def delete(self, *args, **kwargs):
         if self.lib_abs_path.exists():

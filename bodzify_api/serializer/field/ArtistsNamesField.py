@@ -21,14 +21,7 @@ class ArtistsNamesField(AppField, ListField):
         if not data:
             return None
 
-        if isinstance(data, (list, tuple)):
-            if '' in data or None in data:
-                raise AppValidationException(
-                    field_name=self.get_error_field_name(),
-                    message='Empty artist names are not allowed when another value is specified',
-                    field_validation_error_code=FieldValidationErrorCode.LIST_VALUE_EMPTY
-                )
-        else:
+        if not isinstance(data, (list, tuple)):
             data = [data]
 
         for artist_name in data:

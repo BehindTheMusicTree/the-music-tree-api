@@ -2,6 +2,8 @@
 
 This document outlines the coding standards and best practices for developing this Django REST API project.
 
+For information about system architecture, patterns, and design decisions, see [Architecture documentation](docs/architecture.md).
+
 ## Table of Contents
 
 - [Code Quality](#code-quality)
@@ -15,13 +17,10 @@ This document outlines the coding standards and best practices for developing th
     - [When NOT to Add Docstrings](#when-not-to-add-docstrings)
   - [Type Checking](#type-checking)
   - [Error Handling](#error-handling)
-- [Django Best Practices](#django-best-practices)
-  - [Models](#models)
-  - [Serializers](#serializers)
-  - [Views and ViewSets](#views-and-viewsets)
-  - [Filtering](#filtering)
+- [Architecture](#architecture)
 - [Project Documentation](#project-documentation)
   - [Documentation Files](#documentation-files)
+  - [Code Style Reference](#code-style-reference)
 
 ## Code Quality
 
@@ -166,97 +165,24 @@ def get_genres(user: User, name: str | None = None) -> list[Genre]:
 
 ### Error Handling
 
-- **Use `AppValidationException`** - Never raise DRF validation exceptions directly. Use `AppValidationException` for consistent error handling across the application.
+- **Use `AppValidationException`** - Never raise DRF validation exceptions directly. Use `AppValidationException` for consistent error handling across the application
 
-**Good example:**
-```python
-from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.model.genre.Fields import Fields
-
-def validate_genre_name(self, name: str, user: User) -> None:
-    if not name:
-        raise AppValidationException(
-            field_name=Fields.NAME,
-            message="Genre name cannot be empty",
-            field_validation_error_code=FieldValidationErrorCode.BLANK
-        )
-```
-
-**Bad example:**
-```python
-# Bad - Using DRF ValidationError
-from rest_framework.exceptions import ValidationError
-
-def validate_genre_name(self, name: str) -> None:
-    if not name:
-        raise ValidationError("Genre name cannot be empty")  # Bad
-```
+For detailed information about error handling architecture, patterns, and examples, see [Architecture documentation](docs/architecture.md#error-handling).
 
 See [Use Custom Validation Exception](.cursor/rules/use-custome-validation-exception.mdc) for detailed guidelines.
 
-## Django Best Practices
+## Architecture
 
-### Models
+For comprehensive information about system architecture, Django best practices, and design patterns, see [Architecture documentation](docs/architecture.md).
 
-- **One class per file** - Each model should be in its own file
-- **Use Managers** - Create custom managers when needed for common queries
-- **Use field name constants** - Reference fields using constants from `Fields.py`
-- **Private resource filtering** - Always include `user` in queries for private resources to ensure proper access control and take advantage of database indexing
+The architecture documentation covers:
 
-**Good example:**
-```python
-# Genre.py
-from bodzify_api.model.genre.Fields import Fields
+- **Request Processing Pipeline** - How requests flow through the system
+- **Core Architectural Patterns** - Models, Serializers, Views, Middleware, Filtering, and Error Handling
+- **Django Best Practices** - Detailed patterns, examples, and guidelines for each component
+- **Related Documentation** - Links to input data flow and other architectural resources
 
-class Genre(models.Model):
-    name = models.CharField(max_length=100)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
-    parent = models.ForeignKey('self', null=True, on_delete=models.CASCADE)
-
-# Usage
-def get_user_genres(user: User) -> QuerySet:
-    return Genre.objects.filter(user=user)  # Good - includes user
-```
-
-**Bad example:**
-```python
-# Bad - Missing user filter
-def get_genre(genre_id: UUID) -> Genre:
-    return Genre.objects.get(id=genre_id)  # Bad - security risk!
-```
-
-See [Private Resource Filtering](.cursor/rules/private-resource-filtering.mdc) for detailed guidelines.
-
-### Serializers
-
-- **One class per file** - Each serializer should be in its own file
-- **Use field name constants** - Reference fields using constants from `Fields.py`
-- **Use `AppValidationException`** - For validation errors, raise `AppValidationException` instead of DRF's `ValidationError`
-
-**Good example:**
-```python
-# genre.py
-from bodzify_api.model.genre.Fields import Fields
-
-class GenreSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Genre
-        fields = [Fields.NAME, Fields.UUID, Fields.PARENT]
-```
-
-### Views and ViewSets
-
-- **Use ViewSets** - Prefer ViewSets over function-based views for consistency
-- **Use field name constants** - Reference fields using constants from `Fields.py`
-- **Proper error handling** - Use `AppValidationException` for validation errors
-- **Private resource filtering** - Always include `user` in queries for private resources
-
-### Filtering
-
-- **Use Django Filter** - Leverage django-filter for filtering capabilities
-- **Consistent parameters** - Use `ConsistentParametersFilterBackend` for consistent parameter handling
-- **Private resource filtering** - Always include `user` in filter queries
+For API request format specifications, including multipart form data handling and duplicate field validation, see [Architecture documentation](docs/architecture.md#api-request-format).
 
 ## Project Documentation
 
@@ -269,12 +195,43 @@ When making changes to the codebase, ensure relevant documentation is updated:
 - **DEVELOPMENT.md**: Update when changing development standards or adding new guidelines
 - **CONTRIBUTING.md**: Update when changing development workflow (primarily for maintainers; contributors may update in exceptional cases)
 - **code-style.md**: Update when changing code style conventions
+- **testing.md**: Update when changing testing standards or adding new test guidelines
 
 **Note:** Documentation should be updated as part of the same PR that introduces the changes, not as a separate follow-up PR.
 
+### Testing Documentation
+
+For comprehensive information about testing standards, conventions, and best practices, see [Testing Guidelines](testing.md).
+
+The testing documentation covers:
+
+- **Test Structure** - Test categories (unit, integration, e2e) and organization
+- **Test Naming Convention** - Naming patterns and examples
+- **Test Focus and Structure** - Guidelines for writing focused, maintainable tests
+- **Assertion Style** - Using `assert` instead of `assertEqual`
+- **Running Tests** - Commands for running tests
+- **External Service Dependencies** - Handling MusicBrainz and other external service dependencies in tests
+- **Test Configuration** - Pytest configuration and warning filters
+- **CI Testing** - Continuous integration testing setup
+
+### Architecture Documentation
+
+For detailed documentation on system architecture, patterns, and design decisions:
+
+- **Architecture Overview**: [Architecture documentation](docs/architecture.md) - Architectural patterns, design decisions, and system structure
+- **Input Data Flow**: [Input Data Flow documentation](docs/input-data-flow.md) - How input data flows from HTTP request reception through middleware processing to final validation in serializers
+
+### External Service Documentation
+
+For detailed documentation on external service integrations, see:
+
+- **MusicBrainz Integration**: [MusicBrainz Integration documentation](bodzify_api/utils/musicbrainz/README.md) - Audio fingerprinting and MusicBrainz metadata lookup
+- **Spotify Integration**: [Spotify Integration documentation](bodzify_api/utils/spotify_api/README.md) - Spotify Web API integration
+- **Audio Metadata**: [Audio Metadata Handling documentation](bodzify_api/utils/audio_file_metadata/README.md) - Audio file metadata reading and writing
+
 ### Code Style Reference
 
-For quick reference on code style conventions, see [code-style.md](code-style.md). For detailed guidelines, refer to the Cursor rules in `.cursor/rules/`:
+For quick reference on code style conventions, see [code-style.md](code-style.md). For testing guidelines, see [Testing Guidelines](testing.md). For detailed guidelines, refer to the Cursor rules in `.cursor/rules/`:
 
 - [One Class Per File](.cursor/rules/one-class-per-file.mdc)
 - [Field Name Constants](.cursor/rules/field-name-constants.mdc)

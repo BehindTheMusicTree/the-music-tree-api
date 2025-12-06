@@ -66,19 +66,13 @@ class AppApiClient(APIClient):
         if format == 'json' and isinstance(prepared_data, dict):
             return transform_uuids(prepared_data)  # Only convert UUIDs to strings, let client handle JSON encoding
 
-        # For multipart, ensure empty arrays are preserved by sending an empty string
+        # For multipart requests, convert empty lists [] to [''] for list fields (with [] suffix)
+        # This preserves empty list fields that DRF's test client would otherwise drop
+        # The middleware will normalize [''] back to [] during request processing
         if format == 'multipart' and isinstance(prepared_data, dict):
-            result = {}
-            for key, value in prepared_data.items():
-                if isinstance(value, list):
-                    if len(value) == 0:
-                        # Send empty string for empty arrays to ensure field is preserved
-                        result[key] = ['']
-                    else:
-                        result[key] = value
-                else:
-                    result[key] = value
-            return result
+            for key, value in list(prepared_data.items()):
+                if key.endswith('[]') and isinstance(value, list) and len(value) == 0:
+                    prepared_data[key] = ['']
 
         return prepared_data
 
@@ -101,6 +95,8 @@ class AppApiClient(APIClient):
         extra = extra.copy()
         content_type = self._get_content_type(format, content_type)
         extra['HTTP_ACCEPT'] = 'application/json'
+        # Mark requests from test client so middleware can handle empty list conversion
+        extra['HTTP_X_TEST_CLIENT'] = 'true'
         handle_response = extra.pop('handle_response', None)
 
         return extra, handle_response, content_type

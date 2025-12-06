@@ -130,6 +130,10 @@ This file tracks future work, improvements, and testing tasks for Bodzify API.
   - Database query optimization analysis
   - Test response times under various loads
   - Identify and fix N+1 query problems
+  - [ ] **Set tracemalloc strategy**
+    - Add a configurable tracemalloc strategy for deterministic memory profiling in CI and local development
+    - Add CI hooks or workflow steps to collect tracemalloc snapshots to detect memory regressions
+    - Document recommended tracemalloc configuration and guidance in `CONTRIBUTING.md` / `DEVELOPMENT.md`
 
 - [ ] **API contract testing**
   - Validate OpenAPI schema accuracy

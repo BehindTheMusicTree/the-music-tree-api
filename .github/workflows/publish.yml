@@ -1,0 +1,28 @@
+name: Publish
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  collect-static-files:
+    name: Collect Static Files
+    uses: ./.github/workflows/static-files.yml
+
+  build:
+    name: Build Docker Image
+    needs: [collect-static-files]
+    uses: ./.github/workflows/build.yml
+    with:
+      commit_hash: ${{ needs.collect-static-files.outputs.collect_static_files_commit_hash }}
+    secrets: inherit
+
+  deploy:
+    name: Deploy to Server
+    needs: [build]
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
+

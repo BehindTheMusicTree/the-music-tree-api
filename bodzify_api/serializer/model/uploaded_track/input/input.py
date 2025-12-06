@@ -5,7 +5,7 @@ from bodzify_api.exception.validation.app.AppValidationException import AppValid
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.model.artist.Artist import Artist
 from bodzify_api.model.user.User import User
-from bodzify_api.serializer.AppSerializer import AppSerializer
+from bodzify_api.serializer.AppInputSerializer import AppInputSerializer
 from bodzify_api.serializer.field.AppCharField import AppCharField
 from bodzify_api.serializer.field.ArtistsNamesField import ArtistsNamesField
 from bodzify_api.serializer.field.TrackNumberField import TrackNumberField
@@ -17,7 +17,7 @@ from bodzify_api.utils import data_transformer
 from .Fields import Fields
 
 
-class UploadedTrackInputSerializer(AppSerializer):
+class UploadedTrackInputSerializer(AppInputSerializer):
     track_file_fingerprint_must_be_unique = serializers.BooleanField(required=False)
     title = AppCharField(
         max_length=settings.UPLOADED_TRACK_TITLE_LEN_MAX, required=False, allow_blank=False, allow_null=True)
@@ -60,10 +60,11 @@ class UploadedTrackInputSerializer(AppSerializer):
                                              field_name=Fields.ALBUM_NAME,
                                              field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
-        if data.get(Fields.TRACK_NUMBER) is not None and data.get(Fields.ALBUM_NAME) in [None, ""]:
-            AppValidationException(field_name=Fields.ALBUM_NAME,
-                                   message="Album name must be specified if track position is.",
-                                   field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
+        if Fields.TRACK_NUMBER in data:
+            if data.get(Fields.TRACK_NUMBER) not in [None, ""] and data.get(Fields.ALBUM_NAME) in [None, ""]:
+                raise AppValidationException(field_name=Fields.ALBUM_NAME,
+                                             message="Album name must be specified if track position is.",
+                                             field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
     def validate(self, data: dict,):
         if Fields.LANGUAGE in data and data[Fields.LANGUAGE] == "":

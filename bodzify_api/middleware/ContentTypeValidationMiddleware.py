@@ -41,6 +41,11 @@ class ContentTypeValidationMiddleware:
                     if decoded.startswith('"') and decoded.endswith('"'):
                         return self.handle_error(ParseError(
                             'Double-encoded JSON detected. Send the JSON object directly without string encoding.'))
+
+                    # Reject if JSON root is an array (API expects objects)
+                    if decoded.startswith('[') and decoded.endswith(']'):
+                        return self.handle_error(ParseError(
+                            'JSON root must be an object, not an array. Send a JSON object with field names.'))
                 except UnicodeDecodeError:
                     return self.handle_error(ParseError('Invalid UTF-8 encoding'))
 

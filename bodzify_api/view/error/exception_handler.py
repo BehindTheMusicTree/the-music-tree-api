@@ -1,9 +1,11 @@
+import sys
 
 from django.http.response import Http404
 from django.conf import settings
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework.exceptions import (
-    NotAuthenticated, ValidationError, MethodNotAllowed, PermissionDenied, AuthenticationFailed
+    NotAuthenticated, ValidationError, MethodNotAllowed, PermissionDenied, AuthenticationFailed, ParseError,
+    UnsupportedMediaType
 )
 
 from bodzify_api.view.error.ErrorResponse import ErrorResponse
@@ -14,6 +16,7 @@ def custom_exception_handler(exc, context):
     Custom exception handler for DRF that integrates with our ErrorResponse system.
     In debug mode, it falls back to Django's default HTML traceback.
     In production, it uses our custom error response format.
+    In test mode, it always returns JSON responses to avoid Django's debug error page rendering.
 
     Important Note on Middleware Exceptions:
     --------------------------------------
@@ -44,16 +47,18 @@ def custom_exception_handler(exc, context):
         context: Additional context (includes the request)
 
     Returns:
-        Response object with error details in production,
-        None in debug mode to let Django's default handler show the traceback page
+        Response object with error details in production and tests,
+        None in debug mode (non-test) to let Django's default handler show the traceback page
     """
+
+    is_test_mode = 'pytest' in sys.argv[0]
 
     if settings.DEBUG and not isinstance(
         exc,
         (ValidationError, InvalidToken, NotAuthenticated, AuthenticationFailed, MethodNotAllowed, Http404,
-         PermissionDenied)):
-        # Return None to let Django's default handler show the HTML traceback page
+         PermissionDenied, ParseError, UnsupportedMediaType)):
+        if is_test_mode:
+            return ErrorResponse.handle_exception(exc)
         return None
 
-    # In production, use our custom error response
     return ErrorResponse.handle_exception(exc)

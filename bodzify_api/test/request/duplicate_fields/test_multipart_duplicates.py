@@ -3,7 +3,7 @@ from rest_framework import status
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as UploadedTrackFields
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
+from bodzify_api.test.integration.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
 class TestMultipartDuplicateFields(UploadedTrackTestCase):
@@ -19,9 +19,7 @@ class TestMultipartDuplicateFields(UploadedTrackTestCase):
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == UploadedTrackFields.TITLE
 
-        # The raised error will be invalid format as the duplicated data in multipart form data will be converted to
-        # a list
-        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+        assert error['code'] == FieldValidationErrorCode.DUPLICATE
 
     def test_duplicate_fields_on_multipart_put_then_400_bad_request(self):
         uploaded_track = self.model_fixture_factory.create_uploaded_track_with_file(title="Hey Ho")
@@ -36,7 +34,7 @@ class TestMultipartDuplicateFields(UploadedTrackTestCase):
         assert len(self.bad_request_result_field_errors) == 1
         error = self.bad_request_result_field_errors[0]
         assert error['field'] == UploadedTrackFields.TITLE
-        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+        assert error['code'] == FieldValidationErrorCode.DUPLICATE
 
     def test_duplicate_fields_on_multipart_patch_then_400_bad_request(self):
         # PATCH is not supported yet by the app

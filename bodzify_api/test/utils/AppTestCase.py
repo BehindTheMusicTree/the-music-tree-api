@@ -143,7 +143,7 @@ class AppTestCase(TestCase, Generic[T]):
     # (testing metadata updates for example)
     def _post_uploaded_track(self, test_uploaded_track_filename: UploadedTrackTestFilename = UploadedTrackTestFilename.DEFAULT_MP3,
                              **kwargs) -> Union[JsonResponse, HttpResponse]:
-        file_abs_path = self.TEST_FILES_BASE_DIR / test_uploaded_track_filename
+        file_abs_path = self.TEST_FILES_BASE_DIR / test_uploaded_track_filename.value
 
         with open(file_abs_path, "rb") as sample_file:
             file_field_dict = {UploadedTrackPostFields.TRACK_FILE_PUBLIC: sample_file}
@@ -161,7 +161,7 @@ class AppTestCase(TestCase, Generic[T]):
         if self.is_from_uploaded_track_test_case:
             return self.api_client.put(
                 path=reverse('uploaded-track-detail', kwargs={'pk': uuid}),
-                data=kwargs, handle_response=self._set_results)
+                data=kwargs, format='multipart', handle_response=self._set_results)
         else:
             return self.api_client.put(
                 path=reverse('uploaded-track-detail', kwargs={'pk': uuid}), data=kwargs)

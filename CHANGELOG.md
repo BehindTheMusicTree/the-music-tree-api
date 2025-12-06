@@ -67,7 +67,33 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
     - Copies fixture files from `bodzify_api/fixtures/*.json`
   - Integrated filesystem setup into `setup-worktree.sh` for automatic directory and log file creation
 
+### Fixed
+
+- **Error Handling**: Fixed Python 3.14 compatibility issues with exception attribute access
+  - Wrapped all `exception.detail` accesses in try-except blocks to handle `AttributeError` and `TypeError`
+  - Added safe stringification fallbacks for all `str(exception)` calls
+  - Fixed `TypeError: 'super' object has no attribute 'dicts'` error in exception logging middleware
+  - Updated `ErrorResponse`, `AppValidationException`, `AppSerializer`, `ExceptionLoggingMiddleware`, and `RequestLoggingMiddleware` to safely handle DRF exceptions in Python 3.14
+  - Prevents middleware crashes when exception stringification fails
+
+- **Filesystem Setup**: Fixed `setup-filesystem.sh` to check for `DJANGO_LOG_DIR` instead of `DJANGO_LOGS_DIR` to properly create log directories
+- **Filter Backend**: Added `get_schema_operation_parameters` method to `ConsistentParametersFilterBackend` for drf-spectacular compatibility with django-filter 25.2
+- **Django 6.0 Compatibility**: Replaced deprecated `CheckConstraint.check` with `condition` parameter in all model constraints
+  - Updated 6 model files: `CriteriaType`, `Criteria`, `Artist`, `Album`, `FingerprintMissingCauseCode`, `ManualPlaylist`
+  - Updated migration file `0001_initial.py` to use new syntax
+  - Resolves Django 6.0 deprecation warnings for `CheckConstraint.check`
+
+- **Criteria Tree Import**: Removed debug print statements from `import_criteria_tree` method that were causing test hangs
+  - Eliminated excessive I/O overhead when processing large tree imports (30,000+ nodes)
+  - Fixed test hangs and significantly improved performance for large tree import operations
+
 ### CI
+
+- **Test Configuration**: Filtered ResourceWarnings about unclosed files from Django's ORM in pytest configuration
+  - Added `ignore:unclosed file:ResourceWarning` filter to `pytest.ini`
+  - These warnings are non-actionable as they originate from Django's internal FileField handling
+  - Improves test output clarity by reducing noise from Django ORM file handle management
+  - Django automatically manages these file handles through garbage collection
 
 - **GitHub Automation**:
   - Auto-labeler workflow (`.github/workflows/labeler.yml`) for automatic PR labeling based on file paths
@@ -80,8 +106,20 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 - **Branch Protection**: Added automated enforcement of Git Flow branching rules
   - PRs to `main` must come from `hotfix/*` or `release/*` branches only
-  - PRs to `develop` must come from `feature/*`, `chore/*`, `hotfix/*`, or `release/*` branches only
+  - PRs to `develop` must come from `feature/*`, `chore/*`, or `dependabot/*` branches only
   - Provides clear error messages when branch rules are violated
+
+- **CI Workflow**: Split monolithic CI workflow into focused, reusable workflows
+  - Updated `test.yml` workflow to run tests on pushes and pull requests (removed redundant `ci.yml` wrapper)
+  - Added fail-fast flag (`-x`) to pytest for faster CI feedback on test failures
+  - Created `static-files.yml` workflow for collecting and pushing static files
+  - Created `build.yml` workflow for Docker image building and pushing
+  - Created `deploy.yml` workflow for server deployment tasks
+  - Created `publish.yml` workflow for releases (triggers on version tags `v*`)
+  - Publishing workflow handles static files collection, Docker build, and deployment
+  - Improved workflow maintainability and reusability
+  - Each workflow can now be triggered independently via workflow_dispatch
+  - Separation of concerns: tests run on every change, publishing only on releases
 
 - **CI/CD**: Updated GitHub Actions workflow to use `develop` branch instead of `dev`
   - Updated Python version to 3.14 in CI workflows
@@ -93,20 +131,12 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 - **Dependencies**: 
   - Updated `Django` from 5.0.3 to 5.2.8
   - Updated `asgiref` from 3.7.2 to 3.8.1 for Django 5.2.8 compatibility
+  - Updated `psycopg2-binary` from 2.9.5 to 2.9.11 for Python 3.14 compatibility
   - Updated `django-stubs` from 5.1.1 to 5.2.1 for Django 5.2.8 compatibility
   - Updated `django-filter` from 22.1 to 25.2 for Python 3.14 compatibility (fixes `pkgutil.find_loader` removal)
   - Updated `django-polymorphic` from 3.1.0 to 4.1.0 to resolve pkg_resources deprecation warning and ensure Django 5.2 compatibility
   - **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.8.0
   - Removed `mutagen` from direct dependencies. No longer needed as direct dependency since all audio operations now use `audiometa-python`
-
-### Fixed
-
-- **Filesystem Setup**: Fixed `setup-filesystem.sh` to check for `DJANGO_LOG_DIR` instead of `DJANGO_LOGS_DIR` to properly create log directories
-- **Filter Backend**: Added `get_schema_operation_parameters` method to `ConsistentParametersFilterBackend` for drf-spectacular compatibility with django-filter 25.2
-- **Django 6.0 Compatibility**: Replaced deprecated `CheckConstraint.check` with `condition` parameter in all model constraints
-  - Updated 6 model files: `CriteriaType`, `Criteria`, `Artist`, `Album`, `FingerprintMissingCauseCode`, `ManualPlaylist`
-  - Updated migration file `0001_initial.py` to use new syntax
-  - Resolves Django 6.0 deprecation warnings for `CheckConstraint.check`
 
 ### Documentation
 
@@ -150,29 +180,6 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 - **Code of Conduct**: Added Contributor Covenant 2.1
 
-### CI
-
-<<<<<<< HEAD
-- **Branch Protection**: Added automated enforcement of Git Flow branching rules
-  - PRs to `main` must come from `hotfix/*` or `release/*` branches only
-  - PRs to `develop` must come from `feature/*`, `chore/*`, or `dependabot/*` branches only
-  - Provides clear error messages when branch rules are violated
-
-- **CI/CD**: Updated GitHub Actions workflow to use `develop` branch instead of `dev`
-  - Updated Python version to 3.14 in CI workflows
-  - Added branch protection checks for Git Flow enforcement
-
-- **GitHub Automation**:
-  - Auto-labeler workflow (`.github/workflows/labeler.yml`) for automatic PR labeling based on file paths
-  - Branch protection workflow (`.github/workflows/branch-protection.yml`) to enforce Git Flow rules
-    - Blocks PRs to `main` from non-hotfix/release branches
-    - Blocks PRs to `develop` from invalid branch types
-  - Issue templates for bug reports and feature requests
-  - Pull request template with comprehensive checklist
-  - GitHub Discussions setup with category templates
-
-=======
->>>>>>> origin/develop
 ## [v0.2.0] - 2025-04-03
 
 ### Added

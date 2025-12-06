@@ -48,30 +48,45 @@ main() {
 
     log_with_script_prefixe "Pulling the database and audio fingerprinter images..."
     log_with_script_prefixe $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
-    docker pull $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
+    timeout 300 docker pull $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
     if [ $? -ne 0 ]; then
-        log_with_script_prefixe "ERROR: Failed to pull the database image." >&2
+        log_with_script_prefixe "ERROR: Failed to pull the database image (timeout or error)." >&2
         exit 1
     fi
-    docker pull $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
+    timeout 300 docker pull $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
     if [ $? -ne 0 ]; then
-        log_with_script_prefixe "ERROR: Failed to pull the audio fingerprinter image." >&2
+        log_with_script_prefixe "ERROR: Failed to pull the audio fingerprinter image (timeout or error)." >&2
         exit 1
     fi
     log_with_script_prefixe "Images pulled successfully."
 
-    CONTAINER_IDS=$(docker ps -a -q)
-    if [ -n "$CONTAINER_IDS" ]; then
-        log_with_script_prefixe "Removing existing containers..."
-        docker rm -f $CONTAINER_IDS
-        log_with_script_prefixe "Containers removed successfully."
+    if timeout 10 docker ps -a --format '{{.Names}}' | grep -q "^${DB_CONTAINER_NAME}$"; then
+        log_with_script_prefixe "Removing existing database container: $DB_CONTAINER_NAME"
+        timeout 30 docker rm -f $DB_CONTAINER_NAME
+        if [ $? -ne 0 ]; then
+            log_with_script_prefixe "ERROR: Failed to remove database container (timeout or error)." >&2
+            exit 1
+        fi
+        log_with_script_prefixe "Database container removed successfully."
     else
-        log_with_script_prefixe "No container to remove."
+        log_with_script_prefixe "No existing database container to remove."
+    fi
+
+    if timeout 10 docker ps -a --format '{{.Names}}' | grep -q "^${AFP_CONTAINER_NAME}$"; then
+        log_with_script_prefixe "Removing existing AFP container: $AFP_CONTAINER_NAME"
+        timeout 30 docker rm -f $AFP_CONTAINER_NAME
+        if [ $? -ne 0 ]; then
+            log_with_script_prefixe "ERROR: Failed to remove AFP container (timeout or error)." >&2
+            exit 1
+        fi
+        log_with_script_prefixe "AFP container removed successfully."
+    else
+        log_with_script_prefixe "No existing AFP container to remove."
     fi
 
     log_with_script_prefixe "Running the database container..."
     if [ "$DB_DATA_MUST_PERSIST" = true ]; then
-        docker run \
+        timeout 60 docker run \
             --name=$DB_CONTAINER_NAME \
             --volume=db-data:$DB_DATA_DIR \
             -p $DB_PORT:$DB_PORT \
@@ -82,7 +97,7 @@ main() {
             -e POSTGRES_PORT=$DB_PORT \
             -d $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
     else
-        docker run \
+        timeout 60 docker run \
             --name=$DB_CONTAINER_NAME \
             -p $DB_PORT:$DB_PORT \
             -e ENV=$ENV \
@@ -92,10 +107,14 @@ main() {
             -e POSTGRES_PORT=$DB_PORT \
             -d $DOCKERHUB_USERNAME/$DB_IMAGE_REPO:$DB_VERSION
     fi
+    if [ $? -ne 0 ]; then
+        log_with_script_prefixe "ERROR: Failed to run database container (timeout or error)." >&2
+        exit 1
+    fi
     log_with_script_prefixe "Database container running successfully."
 
     log_with_script_prefixe "Running the audio fingerprinter container..."
-    docker run \
+    timeout 60 docker run \
         --name=$AFP_CONTAINER_NAME \
         --volume=$TMP_UPLOADED_FILES:$AFP_POOL_DIR_EXTERNAL \
         -p $AFP_PORT:$AFP_PORT \
@@ -103,14 +122,18 @@ main() {
         -e DEBUG=$DEBUG \
         -e APP_PORT=$AFP_PORT \
         -d $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
+    if [ $? -ne 0 ]; then
+        log_with_script_prefixe "ERROR: Failed to run audio fingerprinter container (timeout or error)." >&2
+        exit 1
+    fi
     log_with_script_prefixe "Audio fingerprinter container running successfully."
 
     log_with_script_prefixe "Containers running successfully."
 
     log_with_script_prefixe "Removing unused Docker images..."
-    docker image prune -f
+    timeout 30 docker image prune -f
     if [ $? -ne 0 ]; then
-        log_with_script_prefixe "ERROR: Failed to remove unused Docker images." >&2
+        log_with_script_prefixe "ERROR: Failed to remove unused Docker images (timeout or error)." >&2
         exit 1
     fi
     log_with_script_prefixe "Unused Docker images removed successfully."

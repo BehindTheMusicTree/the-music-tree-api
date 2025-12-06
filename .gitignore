@@ -20,3 +20,4 @@ node_modules/
 
 # Cache files (may contain sensitive tokens)
 .cache
+pr_desc/

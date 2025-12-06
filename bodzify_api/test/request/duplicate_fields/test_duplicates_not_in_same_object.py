@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
+from bodzify_api.test.integration.view.criteria.GenreTestCase import GenreTestCase
 from bodzify_api.serializer.model.criteria.input.tree_import.Fields import Fields
 
 

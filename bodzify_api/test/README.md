@@ -81,8 +81,18 @@ Examples:
 - `test_invalid_extension_then_raises_app_validation_exception`
 - `test_id3v2_mp3_5_stars_then_10`
 
-## Legacy Tests
+## Test Configuration
 
-Existing tests in `bodzify_api/test/view/` are integration tests and will remain there for now. New tests should be organized according to the unit/integration/e2e structure.
+### Warning Filters
+
+The pytest configuration (`pytest.ini`) includes filters to suppress non-actionable warnings:
+
+- **ResourceWarnings for unclosed files**: Filtered to reduce noise from Django's ORM file handling
+  - These warnings occur when Django's ORM accesses `FileField` values internally
+  - Django manages these file handles automatically through garbage collection
+  - The warnings are non-actionable and originate from Django's internal code, not application code
+  - Filter: `ignore:unclosed file:ResourceWarning`
+
+This configuration improves test output clarity while still showing actionable warnings from application code.
 
 

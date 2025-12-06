@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from bodzify_api.model.album.Album import Album
-from bodzify_api.serializer.AppSerializer import AppSerializer
+from bodzify_api.serializer.AppInputSerializer import AppInputSerializer
 from bodzify_api.serializer.model.album.Fields import Fields as AvailableFields
 from bodzify_api.serializer.model.artist.minimum import ArtistMinimumSerializer
 
@@ -12,7 +12,7 @@ class Fields:
     ALBUM_ARTISTS = AvailableFields.ALBUM_ARTISTS
 
 
-class AlbumMinimumSerializer(AppSerializer, serializers.ModelSerializer):
+class AlbumMinimumSerializer(AppInputSerializer, serializers.ModelSerializer):
     album_artists = ArtistMinimumSerializer(many=True)
 
     class Meta:

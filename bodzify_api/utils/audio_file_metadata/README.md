@@ -1,6 +1,6 @@
 # Audio Metadata Handling
 
-This module provides audio metadata handling capabilities for the Bodzify API using [`audiometa-python`](https://github.com/your-username/audiometa-python) version 0.3.1.
+This module provides audio metadata handling capabilities for the Bodzify API using [`audiometa-python`](https://pypi.org/project/audiometa-python/) version 0.4.1.
 
 ## Table of Contents
 
@@ -95,9 +95,45 @@ This ensures maximum compatibility and data preservation, as metadata may exist 
 
 The library also supports reading from a specific format only (not exposed through the adapter).
 
+#### Metadata Parsing Principles
+
+The application follows `audiometa`'s metadata parsing principles. For detailed documentation, refer to the [audiometa-python library documentation](https://pypi.org/project/audiometa-python/).
+
+**Key Principles:**
+
+1. **List Fields Are Not Further Split**: When `audiometa` returns list-type fields (e.g., `ARTISTS`, `ALBUM_ARTISTS`, `GENRES_NAMES`), the application accepts them as-is without additional splitting. This preserves the original metadata structure as interpreted by the library.
+
+2. **Format-Specific Behavior**: Different metadata formats handle separators differently:
+   - **ID3v2 (MP3)**: When a single tag contains separators (e.g., `"One/Two/Three"`), `audiometa` splits it into a list `['One', 'Two', 'Three']`
+   - **Vorbis (FLAC)**: When multiple tags exist (e.g., tag 1: `"One"`, tag 2: `"Two/Three"`), `audiometa` returns them as separate list items `['One', 'Two/Three']` without splitting the slash within individual tag values
+   - The application respects this format-specific behavior and does not apply additional splitting
+
+3. **Multiple Tag Handling**: For formats that support multiple tags with the same key (e.g., Vorbis comments), `audiometa` returns each tag as a separate list item. The application treats each list item as a distinct value, preserving the multi-tag structure.
+
+**Chosen Strategy:**
+
+- **Trust `audiometa`'s parsing**: The application relies on `audiometa` to handle format-specific parsing and separator splitting
+- **No post-processing**: List values returned by `audiometa` are used directly without additional splitting or normalization
+- **Consistent behavior**: This ensures consistent metadata handling regardless of the source format (ID3v2, Vorbis, RIFF)
+
+**Example:**
+
+```python
+# Vorbis file with multiple ALBUMARTIST tags:
+# Tag 1: "One"
+# Tag 2: "Two/Three"
+# audiometa returns: ['One', 'Two/Three']
+# Application creates 2 artists: "One" and "Two/Three" (not split further)
+
+# ID3v2 file with single tag containing separators:
+# Tag: "One/Two/Three"
+# audiometa returns: ['One', 'Two', 'Three']
+# Application creates 3 artists: "One", "Two", "Three"
+```
+
 ```python
 from bodzify_api.utils import audiometa_adapter
-from audiometa import UnifiedMetadataKey
+from bodzify_api.utils.audiometa_adapter.utils.AppMetadataKey import AppMetadataKey
 
 # Get merged metadata from all available formats
 metadata = audiometa_adapter.get_merged_app_metadata(
@@ -106,14 +142,14 @@ metadata = audiometa_adapter.get_merged_app_metadata(
 )
 
 # Access specific fields
-title = metadata.get(UnifiedMetadataKey.TITLE)
-artists = metadata.get(UnifiedMetadataKey.ARTISTS)  # List of artist names
-genres = metadata.get(UnifiedMetadataKey.GENRES_NAMES)  # List of genre names
+title = metadata.get(AppMetadataKey.TITLE)
+artists = metadata.get(AppMetadataKey.ARTISTS_NAMES)  # List of artist names
+album_artists = metadata.get(AppMetadataKey.ALBUM_ARTISTS_NAMES)  # List of album artist names
 
 # Get a specific metadata field
 rating = audiometa_adapter.get_specific_metadata(
     file=uploaded_file,
-    app_metadata_key=UnifiedMetadataKey.RATING
+    app_metadata_key=AppMetadataKey.RATING
 )
 ```
 

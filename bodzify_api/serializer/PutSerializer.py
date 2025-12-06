@@ -4,10 +4,10 @@ from django.core.exceptions import ImproperlyConfigured
 
 from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.serializer.AppSerializer import AppSerializer
+from bodzify_api.serializer.AppInputSerializer import AppInputSerializer
 
 
-class PutSerializer(AppSerializer):
+class PutSerializer(AppInputSerializer):
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
 
