@@ -3,7 +3,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.test.view.criteria.GenreTestCase import GenreTestCase
+from bodzify_api.test.integration.view.criteria.GenreTestCase import GenreTestCase
 
 
 class TestCase(GenreTestCase):

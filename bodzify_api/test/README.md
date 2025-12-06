@@ -81,10 +81,6 @@ Examples:
 - `test_invalid_extension_then_raises_app_validation_exception`
 - `test_id3v2_mp3_5_stars_then_10`
 
-## Legacy Tests
-
-Existing tests in `bodzify_api/test/view/` are integration tests and will remain there for now. New tests should be organized according to the unit/integration/e2e structure.
-
 ## Test Configuration
 
 ### Warning Filters

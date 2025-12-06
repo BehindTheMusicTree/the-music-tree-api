@@ -2,7 +2,7 @@
 from rest_framework import status
 
 from bodzify_api import settings
-from bodzify_api.test.view.album.AlbumTestCase import AlbumTestCase
+from bodzify_api.test.integration.view.album.AlbumTestCase import AlbumTestCase
 
 
 class TestCase(AlbumTestCase):

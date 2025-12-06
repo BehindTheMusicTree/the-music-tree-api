@@ -3,7 +3,7 @@ from rest_framework import status
 from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from bodzify_api.serializer.model.uploaded_track.input.post.Fields import Fields as UploadedTrackFields
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
+from bodzify_api.test.integration.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 
 
 class TestMultipartDuplicateFields(UploadedTrackTestCase):

@@ -6,7 +6,7 @@ from django.test import override_settings
 from rest_framework import status
 
 from bodzify_api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
-from bodzify_api.test.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
+from bodzify_api.test.integration.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
 from bodzify_api.view.error.ApiErrorCode import ApiErrorCodeNumeric
 
 
