@@ -83,6 +83,10 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
   - Updated migration file `0001_initial.py` to use new syntax
   - Resolves Django 6.0 deprecation warnings for `CheckConstraint.check`
 
+- **Criteria Tree Import**: Removed debug print statements from `import_criteria_tree` method that were causing test hangs
+  - Eliminated excessive I/O overhead when processing large tree imports (30,000+ nodes)
+  - Fixed test hangs and significantly improved performance for large tree import operations
+
 ### CI
 
 - **GitHub Automation**:
