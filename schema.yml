@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: bodzify API
+  title: TheMusicTreeAPI
   version: 1.0.0
   description: 'API to handle genre oriented music libraries '
 paths:

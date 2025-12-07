@@ -122,7 +122,7 @@ class UploadedTrackViewSet(AppModelViewSet[UploadedTrack]):
                'album_artists_name', an new album is created.\n
                - wether the field 'album_artists_name' is empty or not specified, it tells that the track's album has no 
                artist.\n
-               - if 'album_name' is empty or missing and 'album_artists_name' is specified, bodzify will reject the 
+               - if 'album_name' is empty or missing and 'album_artists_name' is specified, the API will reject the 
                request.
             """))
     def update(self, request, *args, **kwargs):
