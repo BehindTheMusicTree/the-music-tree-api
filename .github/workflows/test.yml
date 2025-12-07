@@ -19,7 +19,7 @@ on:
     branches: [main, develop]
 
 env:
-  CONTAINER_ROOT_DIR: /home/app/
+  CONTAINER_ROOT_DIR: /home/api/
   DB_CONNECTION_TEST_MAX_ATTEMPTS: 10
   DB_CONNECTION_TEST_SLEEP_INTERVAL: 5
 
@@ -111,7 +111,7 @@ jobs:
         env:
           FIXTURES_DIR: ${{ vars.APP_NAME }}/fixtures/
         run: |
-          cp ${{ env.FIXTURES_DIR }}app/*.json ${{ env.FIXTURES_DIR }}
+          cp ${{ env.FIXTURES_DIR }}api/*.json ${{ env.FIXTURES_DIR }}
 
       - name: Init django data
         run: bash scripts/init-django-data.sh
@@ -121,7 +121,7 @@ jobs:
           if [ -n "${{ inputs.test_path || '' }}" ]; then
             pytest -v --tb=short -x --junitxml=test-results.xml "${{ inputs.test_path }}"
           else
-            pytest -v --tb=short -x --junitxml=test-results.xml bodzify_api/test/
+            pytest -v --tb=short -x --junitxml=test-results.xml api/test/
           fi
 
       - name: Publish Test Results
