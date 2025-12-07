@@ -1,1 +1,1 @@
-default_app_config = 'api.apps.BodzifyApiConfig'
+default_app_config = 'api.apps.ApiConfig'

@@ -3,5 +3,5 @@ from django.apps import AppConfig
 from . import settings
 
 
-class BodzifyApiConfig(AppConfig):
+class ApiConfig(AppConfig):
     name = 'api'
