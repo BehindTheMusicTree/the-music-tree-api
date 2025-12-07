@@ -1,0 +1,211 @@
+import os
+import shutil
+from pathlib import Path
+
+import pytest
+from _pytest.main import Session
+from django.test import override_settings
+from api import settings
+
+
+@pytest.fixture(autouse=True)
+def set_debug_for_tests():
+    """Set DEBUG=True by default for tests.
+
+    Individual tests can use @override_settings(DEBUG=False) when needed.
+    """
+    with override_settings(DEBUG=True):
+        yield
+
+
+critical_test_failed = False
+
+
+IGNORED_TEST_DIRS = [
+    'utils/',
+]
+
+
+def pytest_ignore_collect(path, config):
+    str_path = str(path)
+    return any(ignored_dir in str_path for ignored_dir in IGNORED_TEST_DIRS)
+
+
+def base_childinstance(request, db):
+    test_case = request.param()
+    test_case.setUp()
+    yield test_case
+    test_case.tearDown
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "critical: mark test as critical to pass")
+    config.addinivalue_line("markers", "slow: mark test as long-running")
+
+
+def pytest_runtest_makereport(item, call):
+    global critical_test_failed
+    critical_marker = item.get_closest_marker("critical")
+    if call.when == "call" and critical_marker:
+        if call.excinfo:
+            critical_test_failed = True
+            print(f"\nCRITICAL TEST FAILED: {item.name}")
+            print(f"Output: {call.excinfo}")
+
+
+@pytest.hookimpl(tryfirst=True)
+def pytest_runtest_setup(item):
+    if critical_test_failed:
+        pytest.skip("A critical test has failed. Skipping the rest of the tests..")
+
+
+def _get_test_directory_order(item) -> int:
+    """Get the order priority for a test based on its directory structure.
+
+    Returns:
+        int: Order priority (lower = earlier execution)
+        - 0: critical/
+        - 1: unit/
+        - 2: integration/
+        - 3: e2e/
+        - 4: other directories
+    """
+    test_path = str(item.fspath)
+    if '/critical/' in test_path:
+        return 0
+    elif '/unit/' in test_path:
+        return 1
+    elif '/integration/' in test_path:
+        return 2
+    elif '/e2e/' in test_path:
+        return 3
+    else:
+        return 4
+
+
+def pytest_collection_modifyitems(config, items):
+    # Order tests: critical marker first, then by directory (critical → unit → integration → e2e), slow marker last
+    critical_tests = []
+    normal_tests = []
+    slow_tests = []
+
+    print("Ordering tests: critical marker first, then by directory (critical → unit → integration → e2e), slow marker last")
+    for item in items:
+        critical_marker = item.get_closest_marker("critical")
+        slow_marker = item.get_closest_marker("slow")
+
+        if critical_marker:
+            critical_tests.append(item)
+        elif slow_marker:
+            slow_tests.append(item)
+        else:
+            normal_tests.append(item)
+
+    # Sort each category by directory order
+    critical_tests.sort(key=_get_test_directory_order)
+    normal_tests.sort(key=_get_test_directory_order)
+    slow_tests.sort(key=_get_test_directory_order)
+
+    items[:] = critical_tests + normal_tests + slow_tests
+
+
+@pytest.fixture()
+def enable_audio_metadata_analysis(request):
+    """Control audio metadata analysis state in tests.
+
+    This fixture allows tests to control whether audio metadata analysis is enabled or disabled.
+    It can be used in two ways:
+
+    1. As a simple fixture:
+       @pytest.fixture(enable_audio_metadata_analysis)
+       def test_something():
+           # Audio metadata analysis will be enabled
+
+    2. With parametrize to control the state:
+       @pytest.mark.parametrize('enable_audio_metadata_analysis', [True, False], indirect=True)
+       def test_something():
+           # Will run twice - once with analysis enabled, once disabled
+
+    Args:
+        request: The pytest request object containing the parametrized value if used with parametrize
+
+    Yields:
+        None: The fixture handles environment setup/teardown
+    """
+
+    # Get the enable value from parametrize or default to True
+    enable = getattr(request, 'param', True)
+    os.environ['AUDIO_META_ANALYSIS_ENABLED_OVERRIDE'] = str(enable).lower()
+    yield
+    os.environ['AUDIO_META_ANALYSIS_ENABLED_OVERRIDE'] = 'false'
+
+
+def _cleanup_test_user_directories() -> None:
+    """Cleanup test user library directories.
+
+    This function removes all test user library directories that start with
+    TEST_USER_LIBRARIES_DIR_NAME_PREFIXE. It's called from multiple hooks to ensure
+    cleanup happens even if tests are interrupted or fail.
+    """
+    libraries_path = Path(settings.LIBRARIES_DIR)
+    removed_dirs: list[str] = []
+    failed_dirs: list[str] = []
+
+    try:
+        if not libraries_path.exists():
+            return
+
+        for entry in libraries_path.iterdir():
+            if entry.is_dir() and entry.name.startswith(settings.TEST_USER_LIBRARIES_DIR_NAME_PREFIXE):
+                try:
+                    shutil.rmtree(entry)
+                    removed_dirs.append(str(entry))
+                except (OSError, shutil.Error) as e:
+                    failed_dirs.append(str(entry))
+                    print(f"Error: Failed to remove directory {entry}: {str(e)}")
+
+        if removed_dirs:
+            print(f"\nSuccessfully removed {len(removed_dirs)} test directories:")
+            for dir_path in removed_dirs:
+                print(f"- {dir_path}")
+
+        if failed_dirs:
+            print(f"\nFailed to remove {len(failed_dirs)} test directories:")
+            for dir_path in failed_dirs:
+                print(f"- {dir_path}")
+
+    except Exception as e:
+        print(f"Error: Unexpected error during cleanup: {str(e)}")
+
+
+@pytest.hookimpl(trylast=True)
+def pytest_runtest_teardown(item, nextitem):
+    """Cleanup test user directories after each test if it's the last test in the class."""
+    if nextitem is None or nextitem.cls != item.cls:
+        _cleanup_test_user_directories()
+
+
+def pytest_sessionfinish(session: Session, exitstatus: int) -> None:
+    """
+    Cleanup test user libraries after test run completion.
+
+    This function is called after the entire test suite has finished executing.
+    It performs cleanup operations by removing test user library directories
+    to ensure a clean state for subsequent test runs.
+
+    Args:
+        session: The pytest Session object containing test run information
+        exitstatus: The exit status code of the test run
+
+    Returns:
+        None
+    """
+    print("Executing post-test cleanup operations...")
+    _cleanup_test_user_directories()
+    print("Cleanup complete.")
+
+
+@pytest.hookimpl(trylast=True)
+def pytest_unconfigure(config):
+    """Cleanup test user directories when pytest is unconfigured (e.g., on interruption)."""
+    _cleanup_test_user_directories()
