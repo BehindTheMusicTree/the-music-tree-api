@@ -76,7 +76,9 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
   - Updated `ErrorResponse`, `AppValidationException`, `AppSerializer`, `ExceptionLoggingMiddleware`, and `RequestLoggingMiddleware` to safely handle DRF exceptions in Python 3.14
   - Prevents middleware crashes when exception stringification fails
 
-- **Filesystem Setup**: Fixed `setup-filesystem.sh` to check for `DJANGO_LOG_DIR` instead of `DJANGO_LOGS_DIR` to properly create log directories
+- **Filesystem Setup**: 
+Fixed `setup-filesystem.sh` to check for `DJANGO_LOG_DIR` instead of `DJANGO_LOGS_DIR` to properly create log directories
+Update app name to 'api'
 - **Filter Backend**: Added `get_schema_operation_parameters` method to `ConsistentParametersFilterBackend` for drf-spectacular compatibility with django-filter 25.2
 - **Django 6.0 Compatibility**: Replaced deprecated `CheckConstraint.check` with `condition` parameter in all model constraints
   - Updated 6 model files: `CriteriaType`, `Criteria`, `Artist`, `Album`, `FingerprintMissingCauseCode`, `ManualPlaylist`
