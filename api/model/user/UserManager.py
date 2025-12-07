@@ -53,7 +53,7 @@ class UserManager(BaseManager[T], BaseUserManager):
             instance.delete()
 
 
-@receiver(post_save, sender=settings.APP_NAME + '.User')
+@receiver(post_save, sender='api.User')
 def create_user_criterialess_playlists(sender, instance, created, **kwargs):
     if created:
         for criteria_type in [CriteriaTypePks.GENRE, CriteriaTypePks.TAG]:

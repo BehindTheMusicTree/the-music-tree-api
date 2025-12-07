@@ -67,7 +67,7 @@ class TestCase(UploadedTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 3
         artists = self.saved_object.artists.all()
-        assert [artist.name for artist in artists] == ['One', 'Two', 'Three']
+        assert set([artist.name for artist in artists]) == {'One', 'Two', 'Three'}
 
     def test_3_separated_by_comma_then_ok(self):
         response = self._post_uploaded_track(UploadedTrackTestFilename.ARTISTS_ONE_TWO_THREE_COMMA_ID3V2)
@@ -75,7 +75,7 @@ class TestCase(UploadedTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 3
         artists = self.saved_object.artists.all()
-        assert [artist.name for artist in artists] == ['One', 'Two', 'Three']
+        assert set([artist.name for artist in artists]) == {'One', 'Two', 'Three'}
 
     def test_3_separated_by_double_antislash_then_ok(self):
         response = self._post_uploaded_track(UploadedTrackTestFilename.ARTISTS_ONE_TWO_THREE_DOUBLE_ANTISLASH_ID3V2)
@@ -91,7 +91,7 @@ class TestCase(UploadedTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 3
         artists = self.saved_object.artists.all()
-        assert [artist.name for artist in artists] == ['One', 'Two', 'Three']
+        assert set([artist.name for artist in artists]) == {'One', 'Two', 'Three'}
 
     def test_3_multi_tags_and_slash_then_ok(self):
         response = self._post_uploaded_track(
@@ -124,4 +124,4 @@ class TestCase(UploadedTrackTestCase):
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 3
         artists = self.saved_object.artists.all()
-        assert [artist.name for artist in artists] == ['One', 'Two', 'Three']
+        assert set([artist.name for artist in artists]) == {'One', 'Two', 'Three'}

@@ -196,7 +196,7 @@ class TestSpotifyAPIOperations(AppTestCase):
         assert result
         self.mock_spotify_instance.search.assert_called_once_with(q="isrc:USRC12345678", type='track', limit=1)
 
-    @mock.patch('api.utils_api.utils.create_spotify_lib_track_instance_from_dict')
+    @mock.patch('api.utils.spotify_api.utils.create_spotify_lib_track_instance_from_dict')
     def test_search_spotify_lib_tracks_with_valid_query_then_creates_track_models(self, mock_create_track):
         # Reset singleton to ensure fresh instance with mocked spotify
         SpotifyClient._instance = None
@@ -231,7 +231,7 @@ class TestSpotifyAPIOperations(AppTestCase):
         assert len(result) == 1
         assert result[0] == mock_track_instance
 
-    @mock.patch('api.utils_api.utils.create_spotify_lib_track_instance_from_dict')
+    @mock.patch('api.utils.spotify_api.utils.create_spotify_lib_track_instance_from_dict')
     @mock.patch('api.model.spotify_resource.children.track.SpotifyLibTrack.SpotifyLibTrack.objects.get')
     def test_get_or_create_spotify_lib_track_with_existing_track_then_returns_existing_track(
             self, mock_track_get, mock_create_track):
@@ -247,8 +247,8 @@ class TestSpotifyAPIOperations(AppTestCase):
         mock_create_track.assert_not_called()
         assert result == mock_track
 
-    @mock.patch('api.utils_api.utils.create_spotify_lib_track_instance_from_dict')
-    @mock.patch('api.utils_api.managers.SpotifyApiLibTrackManager.SpotifyClient')
+    @mock.patch('api.utils.spotify_api.utils.create_spotify_lib_track_instance_from_dict')
+    @mock.patch('api.utils.spotify_api.managers.SpotifyApiLibTrackManager.SpotifyClient')
     def test_get_or_create_spotify_lib_track_with_new_track_then_creates_and_returns_track(
             self, mock_spotify_client_class, mock_create_track):
         mock_spotify_client = mock.MagicMock()

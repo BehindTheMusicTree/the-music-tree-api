@@ -143,7 +143,7 @@ empty_db() {
 }
 
 remove_migrations() {
-	MIGRATIONS_DIR="${PROJECT_DIR}${APP_NAME}/migrations/"
+	MIGRATIONS_DIR="${PROJECT_DIR}api/migrations/"
 	log_with_script_prefixe "Deleting migrations in directory $MIGRATIONS_DIR ..."
 	log_with_script_prefixe "Deleting .py migrations..."
 	find "${MIGRATIONS_DIR}" -name "*.py" -not -name "__init__.py" -exec rm -f {} \;

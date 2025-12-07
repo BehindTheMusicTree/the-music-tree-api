@@ -16,7 +16,20 @@ from api.test.integration.view.uploaded_track.UploadedTrackTestCase import Uploa
 @pytest.mark.usefixtures("enable_audio_metadata_analysis")
 class TestCase(UploadedTrackTestCase):
 
-    def test_ok_then_no_missing_cause(self):
+    @patch('acoustid.lookup')
+    def test_ok_then_no_missing_cause(self, mock_lookup):
+        mock_lookup.return_value = {
+            'status': 'ok',
+            'results': [{
+                'score': 1.0,
+                'recordings': [{
+                    'id': '0383dadf-2a4e-4d10-a46a-e9e041da8eb3',
+                    'title': 'We Are the Champions',
+                    'artists': [{'id': '0383dadf-2a4e-4d10-a46a-e9e041da8eb3', 'name': 'Queen'}],
+                    'duration': 181
+                }]
+            }]
+        }
         response = self._post_uploaded_track(UploadedTrackTestFilename.RECORDING_SHOWMUSTGOON_MP3)
 
         assert response.status_code == status.HTTP_201_CREATED
@@ -73,7 +86,7 @@ class TestCase(UploadedTrackTestCase):
 
     def test_dns_resolution_error_then_corresponding_missing_cause(self):
         with patch(
-            'api.utilsainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration'
+            'api.utils.musicbrainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration'
         ) as mock_get_fingerprint:
             error_message = "Failed to resolve 'api.acoustid.org' ([Errno 8] nodename nor servname provided, or not known)"
             mock_get_fingerprint.side_effect = (
@@ -91,7 +104,7 @@ class TestCase(UploadedTrackTestCase):
 
     def test_internal_error_then_corresponding_missing_cause(self):
         with patch(
-            'api.utilsainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration'
+            'api.utils.musicbrainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration'
         ) as mock_get_fingerprint:
             error_message = "Internal server error occurred"
             mock_get_fingerprint.side_effect = (
@@ -127,7 +140,7 @@ class TestCase(UploadedTrackTestCase):
 
     def test_unknown_status_code_then_corresponding_missing_cause(self):
         with patch(
-            'api.utilsainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration'
+            'api.utils.musicbrainz.service._get_musicbrainz_best_recording_dict_from_fingerprint_and_duration'
         ) as mock_get_fingerprint:
             mock_get_fingerprint.side_effect = (
                 musicbrainz_exception.UnknownStatusMusicbrainzRecordingLookupException("unknown_status"))

@@ -18,7 +18,7 @@ class TestSpotifyProfile(AppTestCase):
             spotify_id='spotify_user2_id')
         self._login_as_test_user1()
 
-    @mock.patch('api.utils_api.oauth.spotipy.Spotify')
+    @mock.patch('api.utils.spotify_api.oauth.spotipy.Spotify')
     def test_get_user_info_with_valid_token_then_returns_complete_profile(self, mock_spotify):
         mock_spotify.return_value.current_user.return_value = {
             Fields.ID: "test_user",
@@ -41,7 +41,7 @@ class TestSpotifyProfile(AppTestCase):
         assert user_info[Fields.IMAGES][0][Fields.URL] == "https://example.com/image.jpg"
         mock_spotify.return_value.current_user.assert_called_once()
 
-    @mock.patch('api.utils_api.oauth.spotipy.Spotify')
+    @mock.patch('api.utils.spotify_api.oauth.spotipy.Spotify')
     def test_get_user_info_with_minimal_profile_then_returns_basic_fields(self, mock_spotify):
         mock_spotify.return_value.current_user.return_value = {
             Fields.ID: "test_user",
@@ -59,7 +59,7 @@ class TestSpotifyProfile(AppTestCase):
         assert Fields.IMAGES not in user_info
         mock_spotify.return_value.current_user.assert_called_once()
 
-    @mock.patch('api.utils_api.oauth.spotipy.Spotify')
+    @mock.patch('api.utils.spotify_api.oauth.spotipy.Spotify')
     def test_get_user_info_with_invalid_token_then_raises_exception(self, mock_spotify):
         mock_spotify.return_value.current_user.side_effect = Exception("Invalid token")
 
@@ -68,7 +68,7 @@ class TestSpotifyProfile(AppTestCase):
             service.get_user_info("invalid_token")
         assert "Failed to get user info" in str(context.exception)
 
-    @mock.patch('api.utils_api.oauth.spotipy.Spotify')
+    @mock.patch('api.utils.spotify_api.oauth.spotipy.Spotify')
     def test_get_user_info_with_network_error_then_raises_exception(self, mock_spotify):
         mock_spotify.return_value.current_user.side_effect = Exception("Network error")
 

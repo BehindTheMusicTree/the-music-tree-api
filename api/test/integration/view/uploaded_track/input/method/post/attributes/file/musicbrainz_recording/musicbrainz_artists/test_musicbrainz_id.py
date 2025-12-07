@@ -1,5 +1,6 @@
 import pytest
 import warnings
+from unittest.mock import patch
 
 from django.db.models import QuerySet
 from rest_framework import status
@@ -13,13 +14,35 @@ from api.test.integration.view.uploaded_track.UploadedTrackTestCase import Uploa
 class TestCase(UploadedTrackTestCase):
 
     def test_one_then_ok(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.RECORDING_QUEEN_WEARETHECHAMPIONS_MP3)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.musicbrainz_recording
-        musicbrainz_artists: QuerySet[MbArtist] = \
-            self.saved_object.track_file.musicbrainz_recording.musicbrainz_artists.all()
-        assert musicbrainz_artists[0].musicbrainz_id == "0383dadf-2a4e-4d10-a46a-e9e041da8eb3"
-        assert musicbrainz_artists[0].name == "Queen"
+        with patch('acoustid.lookup') as mock_lookup:
+            mock_lookup.return_value = {
+                'status': 'ok',
+                'results': [
+                    {
+                        'score': 1.0,
+                        'recordings': [
+                            {
+                                'id': 'some_recording_id',
+                                'title': 'We Are the Champions',
+                                'artists': [
+                                    {
+                                        'id': '0383dadf-2a4e-4d10-a46a-e9e041da8eb3',
+                                        'name': 'Queen'
+                                    }
+                                ],
+                                'duration': 180
+                            }
+                        ]
+                    }
+                ]
+            }
+            response = self._post_uploaded_track(UploadedTrackTestFilename.RECORDING_QUEEN_WEARETHECHAMPIONS_MP3)
+            assert response.status_code == status.HTTP_201_CREATED
+            assert self.saved_object.track_file.musicbrainz_recording
+            musicbrainz_artists: QuerySet[MbArtist] = \
+                self.saved_object.track_file.musicbrainz_recording.musicbrainz_artists.all()
+            assert musicbrainz_artists[0].musicbrainz_id == "0383dadf-2a4e-4d10-a46a-e9e041da8eb3"
+            assert musicbrainz_artists[0].name == "Queen"
 
     def test_multiple_then_ok(self):
         response = self._post_uploaded_track(
@@ -39,18 +62,40 @@ class TestCase(UploadedTrackTestCase):
             warnings.warn("Musicbrainz recording not found for test_multiple_then_ok")
 
     def test_same_artist_then_same_uuid(self):
-        response = self._post_uploaded_track(UploadedTrackTestFilename.RECORDING_QUEEN_WEARETHECHAMPIONS_MP3)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.musicbrainz_recording
-        musicbrainz_artists: QuerySet[MbArtist] = \
-            self.saved_object.track_file.musicbrainz_recording.musicbrainz_artists.all()
-        first_track_musicbrainz_artist_id = musicbrainz_artists[0].musicbrainz_id
+        with patch('acoustid.lookup') as mock_lookup:
+            mock_lookup.return_value = {
+                'status': 'ok',
+                'results': [
+                    {
+                        'score': 1.0,
+                        'recordings': [
+                            {
+                                'id': 'some_recording_id',
+                                'title': 'We Are the Champions',
+                                'artists': [
+                                    {
+                                        'id': '0383dadf-2a4e-4d10-a46a-e9e041da8eb3',
+                                        'name': 'Queen'
+                                    }
+                                ],
+                                'duration': 180
+                            }
+                        ]
+                    }
+                ]
+            }
+            response = self._post_uploaded_track(UploadedTrackTestFilename.RECORDING_QUEEN_WEARETHECHAMPIONS_MP3)
+            assert response.status_code == status.HTTP_201_CREATED
+            assert self.saved_object.track_file.musicbrainz_recording
+            musicbrainz_artists: QuerySet[MbArtist] = \
+                self.saved_object.track_file.musicbrainz_recording.musicbrainz_artists.all()
+            first_track_musicbrainz_artist_id = musicbrainz_artists[0].musicbrainz_id
 
-        response = self._post_uploaded_track(UploadedTrackTestFilename.RECORDING_QUEEN_WEARETHECHAMPIONS_MP3)
-        assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.track_file.musicbrainz_recording
-        musicbrainz_artists: QuerySet[MbArtist] = \
-            self.saved_object.track_file.musicbrainz_recording.musicbrainz_artists.all()
-        second_track_musicbrainz_artist_id = musicbrainz_artists[0].musicbrainz_id
+            response = self._post_uploaded_track(UploadedTrackTestFilename.RECORDING_QUEEN_WEARETHECHAMPIONS_MP3)
+            assert response.status_code == status.HTTP_201_CREATED
+            assert self.saved_object.track_file.musicbrainz_recording
+            musicbrainz_artists: QuerySet[MbArtist] = \
+                self.saved_object.track_file.musicbrainz_recording.musicbrainz_artists.all()
+            second_track_musicbrainz_artist_id = musicbrainz_artists[0].musicbrainz_id
 
-        assert first_track_musicbrainz_artist_id == second_track_musicbrainz_artist_id
+            assert first_track_musicbrainz_artist_id == second_track_musicbrainz_artist_id
