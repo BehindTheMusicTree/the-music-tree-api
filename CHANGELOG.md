@@ -64,7 +64,7 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
   - Includes `setup-worktree.sh` script for automated worktree setup with virtual environment and dependencies
   - Added `.git-worktree-copy` configuration for copying gitignored files to new worktrees
     - Copies `env/.venv` Python virtual environment
-    - Copies fixture files from `bodzify_api/fixtures/*.json`
+    - Copies fixture files from `api/fixtures/*.json`
   - Integrated filesystem setup into `setup-worktree.sh` for automatic directory and log file creation
 
 ### Fixed
