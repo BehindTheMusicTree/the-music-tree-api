@@ -113,9 +113,6 @@ jobs:
           if [ -d "${FIXTURES_DIR}app" ]; then
             cp ${FIXTURES_DIR}app/*.json ${FIXTURES_DIR} 2>/dev/null || true
           fi
-          if [ -d "${FIXTURES_DIR}genres" ]; then
-            cp ${FIXTURES_DIR}genres/*.json ${FIXTURES_DIR} 2>/dev/null || true
-          fi
           if [ -d "${FIXTURES_DIR}users/test" ]; then
             cp ${FIXTURES_DIR}users/test/*.json ${FIXTURES_DIR} 2>/dev/null || true
           fi
