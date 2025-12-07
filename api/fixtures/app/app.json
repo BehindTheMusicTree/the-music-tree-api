@@ -1,0 +1,187 @@
+[
+    {
+        "model": "api.criteriatype",
+        "pk": 0,
+        "fields": {
+            "label": "genre"
+        }
+    },
+    {
+        "model": "api.criteriatype",
+        "pk": 1,
+        "fields": {
+            "label": "tag"
+        }
+    },
+    
+    
+    {
+        "model": "api.fingerprintmissingcausecode",
+        "pk": 0,
+        "fields": {
+            "code": 0,
+            "label": "The audio meta analysis is disabled."
+        }
+    },
+    {
+        "model": "api.fingerprintmissingcausecode",
+        "pk": 1,
+        "fields": {
+            "code": 1,
+            "label": "The Audio Fingerprinter service was not found."
+        }
+    },
+    {
+        "model": "api.fingerprintmissingcausecode",
+        "pk": 2,
+        "fields": {
+            "code": 2,
+            "label": "The use of the fpcalc software in the Audio Fingerprinter service failed with status 2. The file may be corrupted."
+        }
+    },
+    {
+        "model": "api.fingerprintmissingcausecode",
+        "pk": 3,
+        "fields": {
+            "code": 3,
+            "label": "The Audio Fingerprinter service does not support the files's extension."
+        }
+    },
+    {
+        "model": "api.fingerprintmissingcausecode",
+        "pk": 4,
+        "fields": {
+            "code": 4,
+            "label": "The Audio Fingerprinter service does not handle the files's type."
+        }
+    },
+    {
+        "model": "api.fingerprintmissingcausecode",
+        "pk": 5,
+        "fields": {
+            "code": 5,
+            "label": "The Audio Fingerprinter could not find the specified file in the pool directory."
+        }
+    },
+    {
+        "model": "api.fingerprintmissingcausecode",
+        "pk": 6,
+        "fields": {
+            "code": 6,
+            "label": "The Audio Fingerprinter returned a 400 Bad Request response that could not be analysed."
+        }
+    },
+    {
+        "model": "api.fingerprintmissingcausecode",
+        "pk": 7,
+        "fields": {
+            "code": 7,
+            "label": "The Audio Fingerprinter returned a 500 Internal Error."
+        }
+    },
+    {
+        "model": "api.fingerprintmissingcausecode",
+        "pk": 8,
+        "fields": {
+            "code": 8,
+            "label": "The Audio Fingerprinter returned a 504 timeout error."
+        }
+    },
+    {
+        "model": "api.fingerprintmissingcausecode",
+        "pk": 9,
+        "fields": {
+            "code": 9,
+            "label": "The connexion to the Audio Fingerprinter could not be established for an unknown reason."
+        }
+    },
+    {
+        "model": "api.fingerprintmissingcausecode",
+        "pk": 10,
+        "fields": {
+            "code": 10,
+            "label": "The Audio Fingerprinter service returned an unknown 422 Unprocessable Entity error."
+        }
+    },
+    
+    {
+        "model": "api.mbrecordingmissingcausecode",
+        "pk": 0,
+        "fields": {
+            "code": 0,
+            "label": "The audio meta analysis is disabled."
+        }
+    },
+
+    {
+        "model": "api.mbrecordingmissingcausecode",
+        "pk": 1,
+        "fields": {
+            "code": 1,
+            "label": "The track's file is missing."
+        }
+    },
+    
+    {
+        "model": "api.mbrecordingmissingcausecode",
+        "pk": 2,
+        "fields": {
+            "code": 2,
+            "label": "The track's duration is below or equals 1 second. MusicBrainz won't lookup."
+        }
+    },
+    
+    {
+        "model": "api.mbrecordingmissingcausecode",
+        "pk": 3,
+        "fields": {
+            "code": 3,
+            "label": "The Musicbrainz lookup did not find a matching recording."
+        }
+    },
+    
+    {
+        "model": "api.mbrecordingmissingcausecode",
+        "pk": 4,
+        "fields": {
+            "code": 4,
+            "label": "The MusicBrainz lookup failed with status code 3 (invalid fingerprint)."
+        }
+    },
+    
+    {
+        "model": "api.mbrecordingmissingcausecode",
+        "pk": 5,
+        "fields": {
+            "code": 5,
+            "label": "The MusicBrainz lookup failed with status code 5 (internal error)."
+        }
+    },
+    
+    {
+        "model": "api.mbrecordingmissingcausecode",
+        "pk": 6,
+        "fields": {
+            "code": 6,
+            "label": "The MusicBrainz lookup failed with an unknown error code."
+        }
+    },
+    
+    {
+        "model": "api.mbrecordingmissingcausecode",
+        "pk": 7,
+        "fields": {
+            "code": 7,
+            "label": "The MusicBrainz lookup failed with an unknown status code."
+        }
+    },
+    
+    {
+        "model": "api.mbrecordingmissingcausecode",
+        "pk": 8,
+        "fields": {
+            "code": 8,
+            "label": "The MusicBrainz lookup failed resolving MusicBrainz DNS."
+        }
+    }
+]

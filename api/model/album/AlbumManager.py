@@ -1,0 +1,90 @@
+from typing import TYPE_CHECKING
+
+from django.db import transaction
+from django.db.models import QuerySet
+
+from api.model.uploaded_track_mixin.Fields import Fields
+from api.model.uploaded_track_mixin.UploadedTrackMixinWithInternalNameManager import UploadedTrackMixinWithInternalNameManager
+
+
+if TYPE_CHECKING:
+    from api.model.artist.Artist import Artist
+    from api.model.user.User import User
+
+    from .Album import Album
+
+
+class AlbumManager(UploadedTrackMixinWithInternalNameManager['Album']):
+    model: type['Album']
+
+    def _get_instance_from_name_and_artists_after_potential_creations(
+            self, user: 'User', name: str, album_artists: list) -> 'Album | None':
+        album_queryset = self.filter(user=user, name=name)
+        if len(album_artists) > 0:
+            for album_artist in album_artists:
+                album_queryset = album_queryset.filter(album_artists__in=[album_artist])
+        else:
+            album_queryset = album_queryset.filter(album_artists=None)
+
+        return (self.create_instance_with_album_artists_list(user=user,
+                                                             name=name,
+                                                             album_artists_list=album_artists)
+                if album_queryset.count() == 0 else album_queryset.first())
+
+    def get_default_ordering(self) -> list[str]:
+        return [Fields.NAME_INTERNAL]
+
+    def create_instance_with_album_artists_list(
+            self, user: 'User', name: str, album_artists_list: list['Artist']) -> 'Album':
+        album: 'Album' = self.create(user=user, name=name)
+        if album_artists_list:
+            album.album_artists.set(album_artists_list)
+        return album
+
+    def get_album_from_name_and_album_artists_names_after_potential_creations(
+            self, user: 'User', name: str, album_artists_names: list) -> 'Album | None':
+        from api.model.artist.Artist import Artist
+        if album_artists_names and len(album_artists_names):
+            album_artists = [Artist.objects.get_or_create(user=user, name=artist_name)[0]
+                             for artist_name in album_artists_names]
+        else:
+            album_artists = []
+
+        return self._get_instance_from_name_and_artists_after_potential_creations(
+            user=user, name=name, album_artists=album_artists)
+
+    def delete_instance(self, instance: 'Album') -> None:
+        with transaction.atomic():
+            self.delete_instance_with_tracks_and_potentially_artists(instance)
+
+    def delete_instance_with_tracks_and_potentially_artists(self, instance: 'Album'):
+        from api.model.artist.Artist import Artist
+        from api.model.uploaded_track.UploadedTrack import UploadedTrack
+
+        # Keep this deletion order for rollback tests: first delete tracks, then delete album, then delete artists
+
+        artists_linked_to_album_and_track: list[Artist] = []
+        uploaded_tracks: QuerySet[UploadedTrack] = instance.uploaded_tracks.all()
+        for track in uploaded_tracks:
+            if track.artists.exists():
+                for artist in track.artists.all():
+                    if artist not in artists_linked_to_album_and_track:
+                        artists_linked_to_album_and_track.append(artist)
+            track.delete()
+
+        for album_artist in instance.album_artists.all():
+            if album_artist not in artists_linked_to_album_and_track:
+                artists_linked_to_album_and_track.append(album_artist)
+
+        instance.delete()
+
+        for artist in artists_linked_to_album_and_track:
+            Artist.objects.delete_instance_if_nothing_linked(artist)
+
+    def delete_instance_if_no_track_linked_with_potential_album_artist_deletion(self, instance: 'Album'):
+        from api.model.artist.Artist import Artist
+        if instance.uploaded_tracks.count() == 0:
+            album_artists = list(instance.album_artists.all())  # Copy the list before the deletion
+            instance.delete()
+            for album_artist in album_artists:
+                Artist.objects.delete_instance_if_nothing_linked(album_artist)

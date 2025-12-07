@@ -1,0 +1,81 @@
+
+from typing import TYPE_CHECKING, Any, Generic, MutableMapping, TypeVar
+
+from django.db import models
+
+from .BaseQuerySet import BaseQuerySet
+
+
+if TYPE_CHECKING:
+    from .BaseModel import BaseModel
+
+
+T = TypeVar('T', bound='BaseModel')  # type: ignore
+
+
+class BaseManager(models.Manager, Generic[T]):
+    model: type[T]
+
+    def get_or_create(self, defaults: MutableMapping[str, Any] | None = None, **kwargs: Any) -> tuple[T, bool]:
+        try:
+            instance = self.get_queryset().get(**kwargs)
+            return instance, False
+        except self.model.DoesNotExist:
+            params = {**kwargs}
+            if defaults is not None:
+                params.update(defaults)
+            instance = self.create(**params)
+            return instance, True
+
+    def get_default_ordering(self):
+        raise NotImplementedError()
+
+    def get_queryset(self) -> BaseQuerySet:
+        return BaseQuerySet(self.model, using=self._db)
+
+    def _transform_field_key(self, instance: T, key: str) -> str:
+        """Transform field key based on model's field configuration"""
+        from api.model.uploaded_track_mixin.query_utils import uses_internal_name, Fields
+
+        # Handle internal name transformation if applicable
+        if key == Fields.NAME_PUBLIC and uses_internal_name(instance.__class__):
+            return Fields.NAME_INTERNAL
+        return key
+
+    def update_instance(self, instance: T, **kwargs) -> T:
+        # Initialize dictionaries for different types of updates
+        save_kwargs = {}
+        many_to_many_updates = {}
+        regular_updates = {}
+
+        # Separate fields based on their type and purpose
+        for key, value in kwargs.items():
+            if key in ['update_fields', 'force_insert', 'force_update', 'using']:
+                save_kwargs[key] = value
+            else:
+                if hasattr(instance, key):
+                    transformed_key = self._transform_field_key(instance, key)
+                    field = instance._meta.get_field(transformed_key)
+                    if isinstance(field, models.ManyToManyField):
+                        many_to_many_updates[transformed_key] = value
+                    else:
+                        regular_updates[transformed_key] = value
+                else:
+                    raise ValueError(f"Field {key} does not exist in {instance.__class__.__name__}")
+
+        # Update regular fields with transformed keys
+        for key, value in regular_updates.items():
+            setattr(instance, key, value)
+
+        # Save the instance with regular updates
+        save_kwargs['update_fields'] = list(regular_updates.keys())
+        instance.save(**save_kwargs)
+
+        # Handle M2M fields after save
+        for key, value in many_to_many_updates.items():
+            getattr(instance, key).set(value)
+        instance.refresh_from_db()  # Refresh the instance to get the updated M2M fields
+        return instance
+
+    def delete_instance(self, instance: T):
+        raise NotImplementedError()

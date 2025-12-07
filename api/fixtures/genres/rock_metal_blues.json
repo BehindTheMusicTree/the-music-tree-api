@@ -1,0 +1,523 @@
+{
+  "tree": [
+    {
+      "name": "Rock",
+      "children": [
+        {
+          "name": "Classic Rock",
+          "children": [
+            {
+              "name": "British Invasion",
+              "children": [
+                {
+                  "name": "Beatles Style",
+                  "children": []
+                },
+                {
+                  "name": "Rolling Stones Style",
+                  "children": []
+                },
+                {
+                  "name": "The Who Style",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Psychedelic Rock",
+              "children": [
+                {
+                  "name": "British Psychedelia",
+                  "children": []
+                },
+                {
+                  "name": "San Francisco Sound",
+                  "children": []
+                },
+                {
+                  "name": "Progressive Psychedelia",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Folk Rock",
+              "children": [
+                {
+                  "name": "British Folk Rock",
+                  "children": []
+                },
+                {
+                  "name": "American Folk Rock",
+                  "children": []
+                },
+                {
+                  "name": "Celtic Folk Rock",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Progressive Rock",
+          "children": [
+            {
+              "name": "Symphonic Prog",
+              "children": [
+                {
+                  "name": "Classic Symphonic Prog",
+                  "children": []
+                },
+                {
+                  "name": "Modern Symphonic Prog",
+                  "children": []
+                },
+                {
+                  "name": "Neo-Prog",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Canterbury Scene",
+              "children": [
+                {
+                  "name": "Classic Canterbury",
+                  "children": []
+                },
+                {
+                  "name": "Modern Canterbury",
+                  "children": []
+                },
+                {
+                  "name": "Jazz Fusion Canterbury",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Experimental Prog",
+              "children": [
+                {
+                  "name": "Avant-Prog",
+                  "children": []
+                },
+                {
+                  "name": "RIO",
+                  "children": []
+                },
+                {
+                  "name": "Zeuhl",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Alternative Rock",
+          "children": [
+            {
+              "name": "Grunge",
+              "children": [
+                {
+                  "name": "Seattle Sound",
+                  "children": []
+                },
+                {
+                  "name": "Post-Grunge",
+                  "children": []
+                },
+                {
+                  "name": "Alternative Metal",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Indie Rock",
+              "children": [
+                {
+                  "name": "Britpop",
+                  "children": []
+                },
+                {
+                  "name": "Lo-Fi",
+                  "children": []
+                },
+                {
+                  "name": "Math Rock",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Post-Rock",
+              "children": [
+                {
+                  "name": "Crescendo Core",
+                  "children": []
+                },
+                {
+                  "name": "Ambient Post-Rock",
+                  "children": []
+                },
+                {
+                  "name": "Experimental Post-Rock",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Metal",
+      "children": [
+        {
+          "name": "Heavy Metal",
+          "children": [
+            {
+              "name": "Classic Heavy Metal",
+              "children": [
+                {
+                  "name": "NWOBHM",
+                  "children": []
+                },
+                {
+                  "name": "US Power Metal",
+                  "children": []
+                },
+                {
+                  "name": "Traditional Heavy Metal",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Power Metal",
+              "children": [
+                {
+                  "name": "European Power Metal",
+                  "children": []
+                },
+                {
+                  "name": "Symphonic Power Metal",
+                  "children": []
+                },
+                {
+                  "name": "Progressive Power Metal",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Speed Metal",
+              "children": [
+                {
+                  "name": "Classic Speed Metal",
+                  "children": []
+                },
+                {
+                  "name": "Thrash Metal",
+                  "children": []
+                },
+                {
+                  "name": "Progressive Speed Metal",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Extreme Metal",
+          "children": [
+            {
+              "name": "Death Metal",
+              "children": [
+                {
+                  "name": "Technical Death Metal",
+                  "children": []
+                },
+                {
+                  "name": "Melodic Death Metal",
+                  "children": []
+                },
+                {
+                  "name": "Progressive Death Metal",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Black Metal",
+              "children": [
+                {
+                  "name": "Symphonic Black Metal",
+                  "children": []
+                },
+                {
+                  "name": "Atmospheric Black Metal",
+                  "children": []
+                },
+                {
+                  "name": "Progressive Black Metal",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Doom Metal",
+              "children": [
+                {
+                  "name": "Traditional Doom",
+                  "children": []
+                },
+                {
+                  "name": "Death Doom",
+                  "children": []
+                },
+                {
+                  "name": "Funeral Doom",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Modern Metal",
+          "children": [
+            {
+              "name": "Metalcore",
+              "children": [
+                {
+                  "name": "Melodic Metalcore",
+                  "children": []
+                },
+                {
+                  "name": "Progressive Metalcore",
+                  "children": []
+                },
+                {
+                  "name": "Technical Metalcore",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Nu Metal",
+              "children": [
+                {
+                  "name": "Classic Nu Metal",
+                  "children": []
+                },
+                {
+                  "name": "Modern Nu Metal",
+                  "children": []
+                },
+                {
+                  "name": "Experimental Nu Metal",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Industrial Metal",
+              "children": [
+                {
+                  "name": "Classic Industrial Metal",
+                  "children": []
+                },
+                {
+                  "name": "Modern Industrial Metal",
+                  "children": []
+                },
+                {
+                  "name": "Experimental Industrial Metal",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Blues",
+      "children": [
+        {
+          "name": "Traditional Blues",
+          "children": [
+            {
+              "name": "Delta Blues",
+              "children": [
+                {
+                  "name": "Classic Delta Blues",
+                  "children": []
+                },
+                {
+                  "name": "Country Blues",
+                  "children": []
+                },
+                {
+                  "name": "Piedmont Blues",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Chicago Blues",
+              "children": [
+                {
+                  "name": "Electric Chicago Blues",
+                  "children": []
+                },
+                {
+                  "name": "Classic Chicago Blues",
+                  "children": []
+                },
+                {
+                  "name": "Modern Chicago Blues",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Texas Blues",
+              "children": [
+                {
+                  "name": "Classic Texas Blues",
+                  "children": []
+                },
+                {
+                  "name": "Modern Texas Blues",
+                  "children": []
+                },
+                {
+                  "name": "Texas Blues Rock",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Modern Blues",
+          "children": [
+            {
+              "name": "Blues Rock",
+              "children": [
+                {
+                  "name": "Classic Blues Rock",
+                  "children": []
+                },
+                {
+                  "name": "Modern Blues Rock",
+                  "children": []
+                },
+                {
+                  "name": "Progressive Blues Rock",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Contemporary Blues",
+              "children": [
+                {
+                  "name": "Soul Blues",
+                  "children": []
+                },
+                {
+                  "name": "Jazz Blues",
+                  "children": []
+                },
+                {
+                  "name": "Folk Blues",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Experimental Blues",
+              "children": [
+                {
+                  "name": "Blues Fusion",
+                  "children": []
+                },
+                {
+                  "name": "Progressive Blues",
+                  "children": []
+                },
+                {
+                  "name": "Avant-Garde Blues",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Regional Blues",
+          "children": [
+            {
+              "name": "British Blues",
+              "children": [
+                {
+                  "name": "Classic British Blues",
+                  "children": []
+                },
+                {
+                  "name": "Modern British Blues",
+                  "children": []
+                },
+                {
+                  "name": "British Blues Rock",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "West Coast Blues",
+              "children": [
+                {
+                  "name": "Classic West Coast Blues",
+                  "children": []
+                },
+                {
+                  "name": "Modern West Coast Blues",
+                  "children": []
+                },
+                {
+                  "name": "Jazz Blues West Coast",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "name": "Memphis Blues",
+              "children": [
+                {
+                  "name": "Classic Memphis Blues",
+                  "children": []
+                },
+                {
+                  "name": "Modern Memphis Blues",
+                  "children": []
+                },
+                {
+                  "name": "Soul Memphis Blues",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

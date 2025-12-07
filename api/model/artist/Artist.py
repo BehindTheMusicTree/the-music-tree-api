@@ -1,0 +1,38 @@
+from typing import TYPE_CHECKING
+
+from django.db import models
+
+from api import settings
+from api.model.field.AppCharField import AppCharField
+from api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
+
+from .ArtistManager import ArtistManager
+from .Fields import Fields
+
+
+if TYPE_CHECKING:
+    from api.model.album.Album import Album
+    from api.model.uploaded_track.UploadedTrack import UploadedTrack
+
+
+class Artist(UploadedTrackMixin):
+    _name = AppCharField(max_length=settings.ARTIST_NAME_LEN_MAX, default=None, db_column=Fields.NAME_PUBLIC)
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    if TYPE_CHECKING:
+        albums: models.QuerySet['Album']
+
+    objects: ArtistManager = ArtistManager()
+
+    @property
+    def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
+        return getattr(self, Fields.UPLOADED_TRACKS_RELATED_NAME)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=~models.Q(_name=""), name="artist_non_empty_name")]
+
+    def __str__(self) -> str:
+        return f"{self.uuid} | {self._name}"
