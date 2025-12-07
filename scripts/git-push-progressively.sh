@@ -12,13 +12,68 @@ fi
 commit_message=$1
 max_retries=3
 retry_delay=5
-push_timeout=1200
+push_timeout=1800
+large_upload_threshold_mb=10
+
+estimate_push_size() {
+    local current_branch=$(git rev-parse --abbrev-ref HEAD)
+    local remote_ref="origin/${current_branch}"
+    
+    if ! git rev-parse --verify "$remote_ref" >/dev/null 2>&1; then
+        git fetch origin "$current_branch" --quiet 2>/dev/null || true
+        if ! git rev-parse --verify "$remote_ref" >/dev/null 2>&1; then
+            echo 0
+            return
+        fi
+    fi
+    
+    local local_commit=$(git rev-parse HEAD 2>/dev/null || echo "")
+    local remote_commit=$(git rev-parse "$remote_ref" 2>/dev/null || echo "")
+    
+    if [ -z "$local_commit" ] || [ -z "$remote_commit" ] || [ "$local_commit" = "$remote_commit" ]; then
+        echo 0
+        return
+    fi
+    
+    local size_bytes=$(git rev-list --objects "$remote_commit".."$local_commit" 2>/dev/null | \
+        git cat-file --batch-check='%(objectsize)' 2>/dev/null | \
+        awk '{sum+=$1} END {printf "%.0f", sum+0}')
+    
+    if [ -z "$size_bytes" ] || [ "$size_bytes" = "" ]; then
+        echo 0
+    else
+        echo "$size_bytes"
+    fi
+}
 
 push_with_timeout() {
+    local push_size_bytes=$(estimate_push_size)
+    local push_size_mb=0
+    
+    if [ -n "$push_size_bytes" ] && [ "$push_size_bytes" != "0" ] && [ "$push_size_bytes" != "" ]; then
+        push_size_mb=$(awk "BEGIN {printf \"%.0f\", $push_size_bytes / 1024 / 1024}")
+    fi
+    
+    local use_http11=false
+    local http_version="HTTP/2"
+    
+    if [ $push_size_mb -gt $large_upload_threshold_mb ]; then
+        use_http11=true
+        http_version="HTTP/1.1"
+        log "Large upload detected (~${push_size_mb}MB). Using ${http_version} for better reliability..."
+    else
+        log "Small upload detected (~${push_size_mb}MB). Using ${http_version} for faster transfer..."
+    fi
+    
     log "Starting git push (timeout: ${push_timeout}s = $((push_timeout / 60)) minutes)..."
     
     local output_file=$(mktemp)
-    git push --verbose --progress > "$output_file" 2>&1 &
+    
+    if [ "$use_http11" = true ]; then
+        GIT_CURL_VERBOSE=1 GIT_TRACE=1 git -c http.version=HTTP/1.1 push --verbose --progress > "$output_file" 2>&1 &
+    else
+        GIT_CURL_VERBOSE=1 GIT_TRACE=1 git push --verbose --progress > "$output_file" 2>&1 &
+    fi
     local push_pid=$!
     local elapsed=0
     local last_line_count=0
