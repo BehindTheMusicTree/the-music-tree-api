@@ -23,11 +23,11 @@ class AllUploadedTracksViewSet(AppModelViewSet[AllUploadedTracksMixin]):
 
     @extend_schema(responses=UploadedTrackMinimumSerializer(many=True))
     def list(self, args, **kwargs):
-        queryset = self.get_queryset()
-        queryset = self.filter_queryset(queryset)
-        allUploadedTracksMixin: AllUploadedTracksMixin | None = queryset.first()
-        if not allUploadedTracksMixin:
-            raise APIException('System initialization error: User data is corrupted')
+        # Validate filters
+        dummy_qs = self.get_queryset()
+        self.filter_queryset(dummy_qs)
+
+        allUploadedTracksMixin = self.get_object()
         page = self.paginate_queryset(allUploadedTracksMixin.uploaded_tracks_not_archived_sorted)
 
         if page is not None:

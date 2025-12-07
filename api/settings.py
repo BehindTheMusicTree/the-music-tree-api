@@ -7,7 +7,7 @@ from typing import Any
 
 # Third-party imports
 from api.utils.AppStaticFileStates import StaticFileStates
-from api.ader import (
+from api.utils.env_var_loader import (
     load_calculated_env_paths,
     load_env_vars_from_file_if_exists,
     load_required_bool_env_var,
@@ -15,7 +15,7 @@ from api.ader import (
     load_required_secret_env_var,
     load_required_str_env_var
 )
-from api.rt print_django
+from api.utils.utils import print_django
 
 
 TEST_USER_LIBRARIES_DIR_NAME_PREFIXE: str
@@ -282,7 +282,7 @@ def init_logs_if_needed():
                     'level': 'INFO',
                     'propagate': True
                 },
-                LoggersName.APP: {
+                APP_NAME: {
                     'handlers': [APP_NAME, 'console'],
                     'level': 'DEBUG',
                     'propagate': True
@@ -301,7 +301,7 @@ def setup_app_exposure_if_needed():
     print_django("API_ROOT_BASE: " + API_ROOT_BASE)
 
     global ROOT_URLCONF
-    ROOT_URLCONF = f'{APP_NAME}.urls'
+    ROOT_URLCONF = 'api.urls'
 
     if APP_IS_EXPOSED:
         print_django("APP_IS_EXPOSED is true. Setting up security.")
@@ -536,7 +536,7 @@ def setup_installed_apps_and_caches():
                       'rest_framework.authtoken',
                       'coverage',
                       'drf_multiple_model',
-                      APP_NAME]
+                      'api']
 
     if APP_IS_EXPOSED == True:
         INSTALLED_APPS.append('rest_framework_simplejwt')
@@ -560,15 +560,15 @@ def setup_middlewares():
         'django.middleware.security.SecurityMiddleware',
         'corsheaders.middleware.CorsMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
-        f'{APP_NAME}.middleware.HostValidationMiddleware.HostValidationMiddleware',
+        'api.middleware.HostValidationMiddleware.HostValidationMiddleware',
         'django.middleware.common.CommonMiddleware',
-        f'{APP_NAME}.middleware.ContentTypeValidationMiddleware.ContentTypeValidationMiddleware',
-        f'{APP_NAME}.middleware.CamelToSnakeMiddleware.CamelToSnakeMiddleware',
-        f'{APP_NAME}.middleware.content_validity.middleware.ContentValidityMiddleware',
-        f'{APP_NAME}.middleware.test_client.middleware.TestClientEmptyListMiddleware',
-        f'{APP_NAME}.middleware.list_value_validation.middleware.ListValueValidationMiddleware',
-        f'{APP_NAME}.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware',
-        f'{APP_NAME}.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
+        'api.middleware.ContentTypeValidationMiddleware.ContentTypeValidationMiddleware',
+        'api.middleware.CamelToSnakeMiddleware.CamelToSnakeMiddleware',
+        'api.middleware.content_validity.middleware.ContentValidityMiddleware',
+        'api.middleware.test_client.middleware.TestClientEmptyListMiddleware',
+        'api.middleware.list_value_validation.middleware.ListValueValidationMiddleware',
+        'api.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware',
+        'api.middleware.RequestLoggingMiddleware.RequestLoggingMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
@@ -626,10 +626,10 @@ def setup_templates():
 
 def setup_django_constants():
     global WSGI_APPLICATION
-    WSGI_APPLICATION = f'{APP_NAME}.wsgi.application'
+    WSGI_APPLICATION = 'api.wsgi.application'
 
     global AUTH_USER_MODEL
-    AUTH_USER_MODEL = f'{APP_NAME}.User'
+    AUTH_USER_MODEL = 'api.User'
 
     global AUTH_PASSWORD_VALIDATORS
     AUTH_PASSWORD_VALIDATORS = [{'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', },

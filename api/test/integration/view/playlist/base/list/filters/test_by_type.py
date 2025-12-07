@@ -7,7 +7,7 @@ from api.model.playlist.children.manual.ManualPlaylistTypeLabel import VALUE as 
 from api.serializer.model.playlist.base.output.detailed import Fields as PlaylistGetFields
 from api.test.utils.field.filter.char.EnumCharFilterTestCase import EnumCharFilterTestCase
 from api.test.integration.view.playlist.base.PlaylistTestCase import PlaylistTestCase
-from api.ta_transformer import to_camel_case, to_snake_case
+from api.utils.data_transformer import to_camel_case, to_snake_case
 
 
 class TestCase(EnumCharFilterTestCase, PlaylistTestCase):

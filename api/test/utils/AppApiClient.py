@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from rest_framework.test import APIClient
 
 from api.utils import data_transformer
-from api. import transform_uuids
+from api.utils.json_utils import transform_uuids
 
 
 class AppApiClient(APIClient):

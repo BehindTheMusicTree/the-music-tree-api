@@ -5,14 +5,14 @@ from django.core.files.base import File as DjangoFile
 
 from api import settings
 from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from api.n.validation.app.AppValidationException import AppValidationException
-from api.er.User import User
+from api.exception.validation.app.AppValidationException import AppValidationException
+from api.model.user.User import User
 from api.serializer.field.TrackFileField import TrackFileField
 from api.serializer.model.uploaded_track.input.Fields import Fields
 from api.serializer.model.uploaded_track.input.input import UploadedTrackInputSerializer
-from api.port audio_file_metadata, data_transformer, utils
-from api._metadata.exceptions import FileCorruptedError
-from api._metadata.AppMetadataKey import AppMetadataKey
+from api.utils import audio_file_metadata, data_transformer, utils
+from api.utils.audio_file_metadata.exceptions import FileCorruptedError
+from api.utils.audio_file_metadata.AppMetadataKey import AppMetadataKey
 from .Fields import Fields as PostFields
 
 
@@ -80,7 +80,7 @@ class UploadedTrackPostSerializer(UploadedTrackInputSerializer):
     def _handle_genre(self, input_data: dict, file_metadata: dict, user: User):
         genre_name = file_metadata.get(AppMetadataKey.GENRE_NAME)
         if genre_name:
-            from api.iteria.children.genre.Genre import Genre
+            from api.model.criteria.children.genre.Genre import Genre
             input_data[PostFields.GENRE] = Genre.objects.get_or_create(user=user, name=genre_name)[0]
 
     def _get_input_data_from_file(self, file, user: User):

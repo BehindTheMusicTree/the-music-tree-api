@@ -8,8 +8,8 @@ from api.exception.spotify import (
 from api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
 from api.test.utils.AppTestCase import AppTestCase
 from api.utils.spotify_api.SpotifyClient import SpotifyClient
-from api.utils_api.managers.SpotifyApiLibTrackManager import SpotifyApiLibTrackManager
-from api.utils_api.ApiFields import ApiFields
+from api.utils.spotify_api.managers.SpotifyApiLibTrackManager import SpotifyApiLibTrackManager
+from api.utils.spotify_api.ApiFields import ApiFields
 
 
 class TestSpotifyAPIOperations(AppTestCase):

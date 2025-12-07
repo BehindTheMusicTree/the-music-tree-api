@@ -33,6 +33,9 @@ class TestCase(GenreTestCase):
 
         response = self._delete_genre(uuid=criteria.uuid)
 
+        if response.status_code == 500:
+            print("Response content:", response.content.decode())
+
         assert response.status_code == status.HTTP_204_NO_CONTENT
 
         child_first.refresh_from_db()

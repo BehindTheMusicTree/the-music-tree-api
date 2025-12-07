@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from api.model.spotify_resource.children.artist.SpotifyArtist import SpotifyArtist
 from api.utils.spotify_api.SpotifyClient import SpotifyClient
-from api.i.ApiFields import ApiFields
+from api.utils.spotify_api.ApiFields import ApiFields
 
 
 class SpotifyApiArtistManager:

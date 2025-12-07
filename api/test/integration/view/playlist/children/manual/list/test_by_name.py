@@ -2,9 +2,9 @@ from rest_framework import status
 
 from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from api.filtering.set.playlist.Fields import Fields as FilterFields
-from api..playlist.children.manual.output.Fields import Fields
-from api..filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
-from api..view.playlist.children.manual.ManualPlaylistTestCase import ManualPlaylistTestCase
+from api.serializer.model.playlist.children.manual.output.Fields import Fields
+from api.test.utils.field.filter.char.NotNullableFreeCharFilterTestCase import NotNullableFreeCharFilterTestCase
+from api.test.integration.view.playlist.children.manual.ManualPlaylistTestCase import ManualPlaylistTestCase
 
 
 class TestCase(ManualPlaylistTestCase, NotNullableFreeCharFilterTestCase):

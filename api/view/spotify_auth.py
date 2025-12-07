@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.contrib.auth import login
 
 from api.utils.spotify_api.oauth import SpotifyOAuthService
-from api.utilsort create_jwt_token
+from api.utils.jwt import create_jwt_token
 from api.model.user.spotify.SpotifyUser import SpotifyUser
 from api.model.user.spotify.Fields import Fields as SpotifyUserFields
 from api.model.spotify_resource.Fields import Fields as SpotifyFields

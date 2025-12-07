@@ -1,7 +1,7 @@
 import pytest
 
 from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from api.n.validation.app.AppValidationException import AppValidationException
+from api.exception.validation.app.AppValidationException import AppValidationException
 from api.serializer.field.AppBooleanField import AppBooleanField
 
 

@@ -4,7 +4,7 @@ import pytest
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from api.n.validation.app.AppValidationException import AppValidationException
+from api.exception.validation.app.AppValidationException import AppValidationException
 from api.validator.TrackFileValidator import TrackFileValidator
 
 

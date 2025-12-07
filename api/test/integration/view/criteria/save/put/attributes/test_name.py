@@ -6,7 +6,7 @@ from api.serializer.model.criteria.input.put import Fields as PutFields
 from api.test.utils.field.body_data.method.PutBodyDataTestCase import PutBodyDataTestCase
 from api.test.integration.view.criteria.GenreTestCase import GenreTestCase
 from api.utils import audio_file_metadata
-from api.utilsile_metadata.AppMetadataKey import AppMetadataKey
+from api.utils.audio_file_metadata.AppMetadataKey import AppMetadataKey
 
 
 class TestCase(GenreTestCase, PutBodyDataTestCase):

@@ -2,7 +2,7 @@ from django.db.models.base import ModelBase as DjangoModelBase
 
 from api import settings
 from api.utils.data_transformer import to_snake_case
-from api.rt print_django
+from api.utils.utils import print_django
 
 
 class DynamicTableNameModelBase(DjangoModelBase):

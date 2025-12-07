@@ -40,53 +40,53 @@ class Migration(migrations.Migration):
                 ('password', models.CharField(max_length=128, verbose_name='password')),
                 ('last_login', models.DateTimeField(blank=True, null=True, verbose_name='last login')),
                 ('is_superuser', models.BooleanField(
-                     default=False,
-                     help_text='Designates that this user has all permissions without explicitly assigning them.',
-                     verbose_name='superuser status')),
+                    default=False,
+                    help_text='Designates that this user has all permissions without explicitly assigning them.',
+                    verbose_name='superuser status')),
                 ('username', models.CharField(
-                     error_messages={'unique': 'A user with that username already exists.'},
-                     help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', max_length=150,
-                     unique=True, validators=[django.contrib.auth.validators.UnicodeUsernameValidator()],
-                     verbose_name='username')),
+                    error_messages={'unique': 'A user with that username already exists.'},
+                    help_text='Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.', max_length=150,
+                    unique=True, validators=[django.contrib.auth.validators.UnicodeUsernameValidator()],
+                    verbose_name='username')),
                 ('first_name', models.CharField(blank=True, max_length=150, verbose_name='first name')),
                 ('last_name', models.CharField(blank=True, max_length=150, verbose_name='last name')),
                 ('email', models.EmailField(blank=True, max_length=254, verbose_name='email address')),
                 ('is_staff', models.BooleanField(
-                     default=False, help_text='Designates whether the user can log into this admin site.',
-                     verbose_name='staff status')),
+                    default=False, help_text='Designates whether the user can log into this admin site.',
+                    verbose_name='staff status')),
                 ('is_active', models.BooleanField(
-                     default=True,
-                     help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.',
-                     verbose_name='active')),
+                    default=True,
+                    help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.',
+                    verbose_name='active')),
                 ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name='date joined')),
                 ('is_test_user', models.BooleanField(default=False)),
                 ('lib_path_relative_to_media', models.GeneratedField(
-                     db_persist=True, expression=api.model.utils.ConditionalExpression.ConditionalExpression(
-                         condition_field='is_test_user', output_field=api.model.field.AppCharField(
-                             max_length=256),
-                         when_false=api.model.utils.ConcatOp.ConcatOp(
-                             models.Value('libraries'),
-                             models.Value('/'),
-                             models.Value('user_'),
-                             models.F('id')),
-                         when_true=api.model.utils.ConcatOp.ConcatOp(
-                             models.Value('libraries'),
-                             models.Value('/'),
-                             models.Value('test_user_'),
-                             models.F('id'))),
-                     output_field=api.model.field.AppCharField(max_length=256))),
+                    db_persist=True, expression=api.model.utils.ConditionalExpression.ConditionalExpression(
+                        condition_field='is_test_user', output_field=api.model.field.AppCharField(
+                            max_length=256),
+                        when_false=api.model.utils.ConcatOp.ConcatOp(
+                            models.Value('libraries'),
+                            models.Value('/'),
+                            models.Value('user_'),
+                            models.F('id')),
+                        when_true=api.model.utils.ConcatOp.ConcatOp(
+                            models.Value('libraries'),
+                            models.Value('/'),
+                            models.Value('test_user_'),
+                            models.F('id'))),
+                    output_field=api.model.field.AppCharField(max_length=256))),
                 ('groups', models.ManyToManyField(
-                     blank=True,
-                     help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
-                     related_name='user_set', related_query_name='user', to='auth.group', verbose_name='groups')),
+                    blank=True,
+                    help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+                    related_name='user_set', related_query_name='user', to='auth.group', verbose_name='groups')),
                 ('user_permissions', models.ManyToManyField(
-                     blank=True, help_text='Specific permissions for this user.', related_name='user_set',
-                     related_query_name='user', to='auth.permission', verbose_name='user permissions')),
+                    blank=True, help_text='Specific permissions for this user.', related_name='user_set',
+                    related_query_name='user', to='auth.permission', verbose_name='user permissions')),
             ],
             options={
                 'verbose_name': 'User',
                 'verbose_name_plural': 'Users',
-                'db_table': 'bodzify_api_user',
+                'db_table': 'the_music_tree_api_user',
             },
         ),
         migrations.CreateModel(
@@ -102,29 +102,29 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Playlist',
                 'verbose_name_plural': 'Playlists',
-                'db_table': 'bodzify_api_playlist',
+                'db_table': 'the_music_tree_api_playlist',
             },
         ),
         migrations.CreateModel(
             name='MbRecordingMissingCauseCode',
             fields=[
                 ('code', models.PositiveIntegerField(
-                     choices=[(0, 'Audio Meta Amalysis Disabled'),
-                              (1, 'Track File Fingerprinting Failed'),
-                              (2, 'Duration Below Or Equal 1 Sec'),
-                              (3, 'Lookup Found No Matching Recording'),
-                              (4, 'Lookup Failed Due To Invalid Fingerprint'),
-                              (5, 'Lookup Failed With Internal Error'),
-                              (6, 'Lookup Failed With Unknown Response Error Code'),
-                              (7, 'Lookup Failed With Unknown Response Status Code'),
-                              (8, 'Lookup Failed Dns Resolution Error')],
-                     primary_key=True, serialize=False, unique=True)),
+                    choices=[(0, 'Audio Meta Amalysis Disabled'),
+                             (1, 'Track File Fingerprinting Failed'),
+                             (2, 'Duration Below Or Equal 1 Sec'),
+                             (3, 'Lookup Found No Matching Recording'),
+                             (4, 'Lookup Failed Due To Invalid Fingerprint'),
+                             (5, 'Lookup Failed With Internal Error'),
+                             (6, 'Lookup Failed With Unknown Response Error Code'),
+                             (7, 'Lookup Failed With Unknown Response Status Code'),
+                             (8, 'Lookup Failed Dns Resolution Error')],
+                    primary_key=True, serialize=False, unique=True)),
                 ('label', api.model.field.AppCharField(max_length=256, unique=True)),
             ],
             options={
                 'verbose_name': 'MusicBrainz Recording Missing Cause Code',
                 'verbose_name_plural': 'MusicBrainz Recording Missing Causes Codes',
-                'db_table': 'bodzify_api_mb_recording_missing_cause_code',
+                'db_table': 'the_music_tree_api_mb_recording_missing_cause_code',
             },
         ),
         migrations.CreateModel(
@@ -145,9 +145,9 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Spotify User',
                 'verbose_name_plural': 'Spotify Users',
-                'db_table': 'bodzify_api_spotify_user',
+                'db_table': 'the_music_tree_api_spotify_user',
             },
-            bases=('api.
+            bases=('api.User',)
         ),
         migrations.CreateModel(
             name='Artist',
@@ -159,7 +159,7 @@ class Migration(migrations.Migration):
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'db_table': 'bodzify_api_artist',
+                'db_table': 'the_music_tree_api_artist',
             },
         ),
         migrations.CreateModel(
@@ -171,10 +171,10 @@ class Migration(migrations.Migration):
                 ('_name', api.model.field.AppCharField(db_column='name', default=None, max_length=256)),
                 ('year', api.model.field.AppCharField(default=None, max_length=4, null=True)),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL)),
-                ('album_artists', api.model.field.foreign_key.PrivateManyToManyField.PrivateManyToManyField(related_name='albums', to='api.
+                ('album_artists', api.model.field.foreign_key.PrivateManyToManyField.PrivateManyToManyField(related_name='albums', to='api.Artist')),
             ],
             options={
-                'db_table': 'bodzify_api_album',
+                'db_table': 'the_music_tree_api_album',
             },
         ),
         migrations.CreateModel(
@@ -184,14 +184,14 @@ class Migration(migrations.Migration):
                 ('created_on', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
                 ('updated_on', models.DateTimeField(null=True)),
                 ('_name', api.model.field.AppCharField(db_column='name', max_length=256)),
-                ('parent', api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='children', to='api.
-                ('root', api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='descendants', to='api.
+                ('parent', api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='children', to='api.Criteria')),
+                ('root', api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='descendants', to='api.Criteria')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'verbose_name': 'Criteria',
                 'verbose_name_plural': 'Criterias',
-                'db_table': 'bodzify_api_criteria',
+                'db_table': 'the_music_tree_api_criteria',
             },
         ),
         migrations.CreateModel(
@@ -199,24 +199,24 @@ class Migration(migrations.Migration):
             fields=[
             ],
             options={
-                'db_table': 'bodzify_api_genre',
+                'db_table': 'the_music_tree_api_genre',
                 'proxy': True,
                 'indexes': [],
                 'constraints': [],
             },
-            bases=('api.
+            bases=('api.Criteria',)
         ),
         migrations.CreateModel(
             name='Tag',
             fields=[
             ],
             options={
-                'db_table': 'bodzify_api_tag',
+                'db_table': 'the_music_tree_api_tag',
                 'proxy': True,
                 'indexes': [],
                 'constraints': [],
             },
-            bases=('api.
+            bases=('api.Criteria',)
         ),
         migrations.CreateModel(
             name='CriteriaLineageRel',
@@ -225,45 +225,45 @@ class Migration(migrations.Migration):
                 ('created_on', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
                 ('updated_on', models.DateTimeField(null=True)),
                 ('degree', models.PositiveIntegerField()),
-                ('ascendant', api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='descendants_rels', to='api.
-                ('descendant', api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ascendants_rels', to='api.
+                ('ascendant', api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='descendants_rels', to='api.Criteria')),
+                ('descendant', api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='ascendants_rels', to='api.Criteria')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'verbose_name': 'Criteria Lineage Relation',
                 'verbose_name_plural': 'Criteria Lineage Relations',
-                'db_table': 'bodzify_api_criteria_lineage_rel',
+                'db_table': 'the_music_tree_api_criteria_lineage_rel',
             },
         ),
         migrations.AddField(
             model_name='criteria',
             name='ascendants',
-            field=api.model.field.foreign_key.PrivateManyToManyField.PrivateManyToManyField(through='api.el', through_fields=('descendant', 'ascendant'), to='api.critapi.api.
+            field=api.model.field.foreign_key.PrivateManyToManyField.PrivateManyToManyField(through='api.CriteriaLineageRel', through_fields=('descendant', 'ascendant'), to='api.Criteria'),
         ),
         migrations.CreateModel(
             name='CriteriaPlaylist',
             fields=[
-                ('playlist', api.model.field.foreign_key.PrivateOneToOneField.PrivateOneToOneField(on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, related_name='criteria_playlist', serialize=False, to='api.
+                ('playlist', api.model.field.foreign_key.PrivateOneToOneField.PrivateOneToOneField(on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, related_name='criteria_playlist', serialize=False, to='api.Playlist')),
             ],
             options={
                 'verbose_name': 'Criteria Playlist',
                 'verbose_name_plural': 'Criteria Playlists',
-                'db_table': 'bodzify_api_criteria_playlist',
+                'db_table': 'the_music_tree_api_criteria_playlist',
             },
-            bases=('api.
+            bases=('api.Playlist',)
         ),
         migrations.CreateModel(
             name='ManualPlaylist',
             fields=[
-                ('playlist', api.model.field.foreign_key.PrivateOneToOneField.PrivateOneToOneField(on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, related_name='manual_playlist', serialize=False, to='api.
+                ('playlist', api.model.field.foreign_key.PrivateOneToOneField.PrivateOneToOneField(on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, related_name='manual_playlist', serialize=False, to='api.Playlist')),
                 ('_name', api.model.field.AppCharField(db_column='name', max_length=256)),
             ],
             options={
                 'verbose_name': 'Manual Playlist',
                 'verbose_name_plural': 'Manual Playlists',
-                'db_table': 'bodzify_api_manual_playlist',
+                'db_table': 'the_music_tree_api_manual_playlist',
             },
-            bases=('api.
+            bases=('api.Playlist',)
         ),
         migrations.CreateModel(
             name='CriteriaType',
@@ -274,14 +274,14 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Criteria Type',
                 'verbose_name_plural': 'Criteria Types',
-                'db_table': 'bodzify_api_criteria_type',
+                'db_table': 'the_music_tree_api_criteria_type',
                 'constraints': [models.CheckConstraint(condition=models.Q(('label', ''), _negated=True), name='criteria_non_empty_label')],
             },
         ),
         migrations.AddField(
             model_name='criteria',
             name='type',
-            field=api.model.field.foreign_key.AppForeignKey.AppForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.
+            field=api.model.field.foreign_key.AppForeignKey.AppForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.CriteriaType'),
         ),
         migrations.CreateModel(
             name='FingerprintMissingCauseCode',
@@ -292,7 +292,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Fingerprinting Error Code',
                 'verbose_name_plural': 'Fingerprinting Error Codes',
-                'db_table': 'bodzify_api_fingerprint_missing_cause_code',
+                'db_table': 'the_music_tree_api_fingerprint_missing_cause_code',
                 'constraints': [models.CheckConstraint(condition=models.Q(('label', ''), _negated=True), name='fingerprint_missing_cause_non_empty_label')],
             },
         ),
@@ -304,12 +304,12 @@ class Migration(migrations.Migration):
                 ('updated_on', models.DateTimeField(null=True)),
                 ('message', api.model.field.AppCharField(max_length=256, null=True)),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL)),
-                ('code', api.model.field.foreign_key.AppForeignKey.AppForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='api.ngcausecode')),
+                ('code', api.model.field.foreign_key.AppForeignKey.AppForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='api.FingerprintMissingCauseCode')),
             ],
             options={
                 'verbose_name': 'Fingerprinting Error',
                 'verbose_name_plural': 'Fingerprinting Errors',
-                'db_table': 'bodzify_api_fingerprint_missing_cause',
+                'db_table': 'the_music_tree_api_fingerprint_missing_cause',
             },
         ),
         migrations.CreateModel(
@@ -325,7 +325,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Musicbrainz Artist',
                 'verbose_name_plural': 'Musicbrainz Artists',
-                'db_table': 'bodzify_api_mb_artist',
+                'db_table': 'the_music_tree_api_mb_artist',
                 'indexes': [models.Index(fields=['musicbrainz_id'], name='mb_artist_id_idx')],
             },
         ),
@@ -337,12 +337,12 @@ class Migration(migrations.Migration):
                 ('updated_on', models.DateTimeField(null=True)),
                 ('message', api.model.field.AppCharField(max_length=400, null=True)),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL)),
-                ('code', api.model.field.foreign_key.AppForeignKey.AppForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='api.ngcausecode')),
+                ('code', api.model.field.foreign_key.AppForeignKey.AppForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, to='api.MbRecordingMissingCauseCode')),
             ],
             options={
                 'verbose_name': 'MusicBrainz Recording Missing Cause',
                 'verbose_name_plural': 'MusicBrainz Recording Missing Causes',
-                'db_table': 'bodzify_api_mb_recording_missing_cause',
+                'db_table': 'the_music_tree_api_mb_recording_missing_cause',
             },
         ),
         migrations.CreateModel(
@@ -357,12 +357,12 @@ class Migration(migrations.Migration):
                 ('score', models.DecimalField(decimal_places=8, editable=False, max_digits=9)),
                 ('duration_in_sec', models.IntegerField(editable=False, null=True)),
                 ('release_date', models.DateField(blank=True, editable=False, null=True)),
-                ('musicbrainz_artists', api.model.field.foreign_key.AppManyToManyField.AppManyToManyField(to='api.
+                ('musicbrainz_artists', api.model.field.foreign_key.AppManyToManyField.AppManyToManyField(to='api.MbArtist')),
             ],
             options={
                 'verbose_name': 'MusicBrainz Recording',
                 'verbose_name_plural': 'MusicBrainz Recordings',
-                'db_table': 'bodzify_api_musicbrainz_recording',
+                'db_table': 'the_music_tree_api_musicbrainz_recording',
             },
         ),
         migrations.CreateModel(
@@ -378,7 +378,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Play',
                 'verbose_name_plural': 'Plays',
-                'db_table': 'bodzify_api_play',
+                'db_table': 'the_music_tree_api_play',
             },
         ),
         migrations.CreateModel(
@@ -396,7 +396,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Spotify Artist',
                 'verbose_name_plural': 'Spotify Artists',
-                'db_table': 'bodzify_api_spotify_artist',
+                'db_table': 'the_music_tree_api_spotify_artist',
                 'indexes': [models.Index(fields=['spotify_id'], name='sp_artist_id_idx')],
             },
         ),
@@ -419,12 +419,12 @@ class Migration(migrations.Migration):
                 ('href', models.URLField(blank=True, db_column='href', editable=False, max_length=512, null=True)),
                 ('type', api.model.field.AppCharField(db_column='type', editable=False, max_length=50, null=True)),
                 ('uri', api.model.field.AppCharField(db_column='uri', editable=False, max_length=256, null=True)),
-                ('spotify_artists', api.model.field.foreign_key.AppManyToManyField.AppManyToManyField(db_column='spotify_artists', to='api.,
+                ('spotify_artists', api.model.field.foreign_key.AppManyToManyField.AppManyToManyField(db_column='spotify_artists', to='api.SpotifyArtist')),
             ],
             options={
                 'verbose_name': 'Spotify Library Track',
                 'verbose_name_plural': 'Spotify Library Tracks',
-                'db_table': 'bodzify_api_spotify_lib_track',
+                'db_table': 'the_music_tree_api_spotify_lib_track',
             },
         ),
         migrations.CreateModel(
@@ -440,14 +440,14 @@ class Migration(migrations.Migration):
                 ('rating', models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(10)])),
                 ('language', api.model.field.AppCharField(blank=True, default=None, max_length=3, null=True)),
                 ('archived', models.BooleanField(default=False)),
-                ('album', api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='uploaded_tracks_of_album', to='api.
-                ('artists', api.model.field.foreign_key.PrivateManyToManyField.PrivateManyToManyField(blank=True, related_name='uploaded_tracks_of_artist', to='api.
+                ('album', api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='uploaded_tracks_of_album', to='api.Album')),
+                ('artists', api.model.field.foreign_key.PrivateManyToManyField.PrivateManyToManyField(blank=True, related_name='uploaded_tracks_of_artist', to='api.Artist')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'verbose_name': 'Uploaded Track',
                 'verbose_name_plural': 'Uploaded Tracks',
-                'db_table': 'bodzify_api_uploaded_track',
+                'db_table': 'the_music_tree_api_uploaded_track',
             },
         ),
         migrations.CreateModel(
@@ -456,7 +456,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('created_on', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
                 ('updated_on', models.DateTimeField(null=True)),
-                ('file', models.FileField(help_text='Only audio formats accepted.', max_length=256, storage=api.model.utils.PreserveSpacesStorage.PreserveSpacesStorage(), upload_to=api.model.utils.utils.get_user_lib_path, validators=[api.ileValidator.TrackFileValidator()])),
+                ('file', models.FileField(help_text='Only audio formats accepted.', max_length=256, storage=api.model.utils.PreserveSpacesStorage.PreserveSpacesStorage(), upload_to=api.model.utils.utils.get_user_lib_path, validators=[api.validator.TrackFileValidator.TrackFileValidator()])),
                 ('duration_in_sec', models.PositiveIntegerField()),
                 ('fingerprint_memory', models.BinaryField(blank=True, default=None, editable=True, null=True)),
                 ('md5_has_been_corrected', models.BooleanField(default=False)),
@@ -464,16 +464,16 @@ class Migration(migrations.Migration):
                 ('size_in_ko', models.GeneratedField(db_persist=True, expression=django.db.models.expressions.CombinedExpression(models.F('size_in_bytes'), '/', models.Value(1024)), output_field=models.DecimalField(decimal_places=2, max_digits=8))),
                 ('size_in_mo', models.GeneratedField(db_persist=True, expression=django.db.models.expressions.CombinedExpression(models.F('size_in_bytes'), '/', models.Value(1048576)), output_field=models.DecimalField(decimal_places=2, max_digits=5))),
                 ('bitrate_in_kbps', models.IntegerField()),
-                ('fingerprint_missing_cause', api.model.field.foreign_key.AppForeignKey.AppForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='api.ngcause')),
-                ('musicbrainz_recording', api.model.field.foreign_key.AppForeignKey.AppForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='api.ding')),
-                ('musicbrainz_recording_missing_cause', api.model.field.foreign_key.AppOneToOneField.AppOneToOneField(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='api.ngcause')),
+                ('fingerprint_missing_cause', api.model.field.foreign_key.AppForeignKey.AppForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='api.FingerprintMissingCause')),
+                ('musicbrainz_recording', api.model.field.foreign_key.AppForeignKey.AppForeignKey(default=None, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='api.MusicbrainzRecording')),
+                ('musicbrainz_recording_missing_cause', api.model.field.foreign_key.AppOneToOneField.AppOneToOneField(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='api.MbRecordingMissingCause')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL)),
-                ('uploaded_track', api.model.field.foreign_key.PrivateOneToOneField.PrivateOneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='track_file', to='api.,
+                ('uploaded_track', api.model.field.foreign_key.PrivateOneToOneField.PrivateOneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='track_file', to='api.UploadedTrack')),
             ],
             options={
                 'verbose_name': 'Track File',
                 'verbose_name_plural': 'Track Files',
-                'db_table': 'bodzify_api_track_file',
+                'db_table': 'the_music_tree_api_track_file',
             },
         ),
         migrations.CreateModel(
@@ -483,20 +483,20 @@ class Migration(migrations.Migration):
                 ('created_on', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
                 ('updated_on', models.DateTimeField(null=True)),
                 ('position', models.PositiveIntegerField(blank=True, null=True)),
-                ('playlist', api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='uploaded_track_playlist_rels', to='api.
-                ('uploaded_track', api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='uploaded_track_playlist_rels', to='api.,
+                ('playlist', api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='uploaded_track_playlist_rels', to='api.Playlist')),
+                ('uploaded_track', api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='uploaded_track_playlist_rels', to='api.UploadedTrack')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='%(class)ss', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'verbose_name': 'Uploaded Track Playlist Relation',
                 'verbose_name_plural': 'Uploaded Track Playlist Relations',
-                'db_table': 'bodzify_api_uploaded_track_playlist_rel',
+                'db_table': 'the_music_tree_api_uploaded_track_playlist_rel',
             },
         ),
         migrations.AddField(
             model_name='uploadedtrack',
             name='playlists',
-            field=api.model.field.foreign_key.PrivateManyToManyField.PrivateManyToManyField(related_name='uploaded_tracks_of_playlist', through='api.ylistRel', to='api.playapi.api.
+            field=api.model.field.foreign_key.PrivateManyToManyField.PrivateManyToManyField(related_name='uploaded_tracks_of_playlist', through='api.UploadedTrackPlaylistRel', to='api.Playlist'),
         ),
         migrations.CreateModel(
             name='AllUploadedTracksMixin',
@@ -509,7 +509,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'All Uploaded Tracks Mixin',
                 'verbose_name_plural': 'All Uploaded Tracks Mixins',
-                'db_table': 'bodzify_api_all_uploaded_tracks_mixin',
+                'db_table': 'the_music_tree_api_all_uploaded_tracks_mixin',
                 'constraints': [models.UniqueConstraint(fields=('user',), name='unique_user_all_tracks_mixin')],
             },
         ),
@@ -524,7 +524,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='uploadedtrack',
             name='genre',
-            field=api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='uploaded_tracks_of_criteria', to='api.
+            field=api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='uploaded_tracks_of_criteria', to='api.Criteria'),
         ),
         migrations.AddIndex(
             model_name='criterialineagerel',
@@ -533,46 +533,46 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='criteriaplaylist',
             name='criteria',
-            field=api.model.field.foreign_key.PrivateOneToOneField.PrivateOneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='criteria_playlist', to='api.
+            field=api.model.field.foreign_key.PrivateOneToOneField.PrivateOneToOneField(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='criteria_playlist', to='api.Criteria'),
         ),
         migrations.AddField(
             model_name='criteriaplaylist',
             name='parent',
-            field=api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='children', to='api.'),
+            field=api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='children', to='api.CriteriaPlaylist'),
         ),
         migrations.AddField(
             model_name='criteriaplaylist',
             name='root',
-            field=api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='root_descendants', to='api.'),
+            field=api.model.field.foreign_key.PrivateForeignKey.PrivateForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='root_descendants', to='api.CriteriaPlaylist'),
         ),
         migrations.AddField(
             model_name='criteriaplaylist',
             name='type',
-            field=api.model.field.foreign_key.AppForeignKey.AppForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.
+            field=api.model.field.foreign_key.AppForeignKey.AppForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.CriteriaType'),
         ),
         migrations.CreateModel(
             name='GenrePlaylist',
             fields=[
             ],
             options={
-                'db_table': 'bodzify_api_genre_playlist',
+                'db_table': 'the_music_tree_api_genre_playlist',
                 'proxy': True,
                 'indexes': [],
                 'constraints': [],
             },
-            bases=('api.',),
+            bases=('api.CriteriaPlaylist',)
         ),
         migrations.CreateModel(
             name='TagPlaylist',
             fields=[
             ],
             options={
-                'db_table': 'bodzify_api_tag_playlist',
+                'db_table': 'the_music_tree_api_tag_playlist',
                 'proxy': True,
                 'indexes': [],
                 'constraints': [],
             },
-            bases=('api.',),
+            bases=('api.CriteriaPlaylist',)
         ),
         migrations.AddIndex(
             model_name='manualplaylist',
@@ -608,7 +608,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name='play',
-            index=models.Index(fields=['user', 'content_type', 'content_uuid'], name='bodzify_api_user_id_8d1a6a_idx'),
+            index=models.Index(fields=['user', 'content_type', 'content_uuid'], name='the_music_tree_api_user_id_8d1a6a_idx'),
         ),
         migrations.AddIndex(
             model_name='spotifylibtrack',
@@ -616,23 +616,23 @@ class Migration(migrations.Migration):
         ),
         migrations.AddIndex(
             model_name='uploadedtrackplaylistrel',
-            index=models.Index(fields=['user', 'playlist'], name='bodzify_api_user_id_467636_idx'),
+            index=models.Index(fields=['user', 'playlist'], name='the_music_tree_api_user_id_467636_idx'),
         ),
         migrations.AddIndex(
             model_name='uploadedtrackplaylistrel',
-            index=models.Index(fields=['user', 'uploaded_track'], name='bodzify_api_user_id_bd4afd_idx'),
+            index=models.Index(fields=['user', 'uploaded_track'], name='the_music_tree_api_user_id_bd4afd_idx'),
         ),
         migrations.AddIndex(
             model_name='uploadedtrack',
-            index=models.Index(fields=['user', 'title'], name='bodzify_api_user_id_fe0c9e_idx'),
+            index=models.Index(fields=['user', 'title'], name='the_music_tree_api_user_id_fe0c9e_idx'),
         ),
         migrations.AddIndex(
             model_name='uploadedtrack',
-            index=models.Index(fields=['user', 'genre'], name='bodzify_api_user_id_0bb305_idx'),
+            index=models.Index(fields=['user', 'genre'], name='the_music_tree_api_user_id_0bb305_idx'),
         ),
         migrations.AddIndex(
             model_name='uploadedtrack',
-            index=models.Index(fields=['user', 'album'], name='bodzify_api_user_id_b2b8d8_idx'),
+            index=models.Index(fields=['user', 'album'], name='the_music_tree_api_user_id_b2b8d8_idx'),
         ),
         migrations.AddIndex(
             model_name='criteriaplaylist',

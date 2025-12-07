@@ -33,8 +33,8 @@ from api.model.uploaded_track.Fields import Fields as UploadedTrackFields
 from api.model.utils import utils as model_utils
 from api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
 from api.utils import audio_fingerprinter, audio_file_metadata, musicbrainz
-from api.utilsile_metadata import AppMetadata
-from api.utilsile_metadata.exceptions import FileCorruptedError
+from api.utils.audio_file_metadata.types import AppMetadata
+from api.utils.audio_file_metadata.exceptions import FileCorruptedError
 from api.validator.TrackFileValidator import TrackFileValidator
 
 from .Fields import Fields

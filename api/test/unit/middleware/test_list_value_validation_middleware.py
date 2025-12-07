@@ -4,7 +4,7 @@ from django.http import HttpRequest, QueryDict
 from rest_framework.request import Request
 
 from api.exception.validation.app.AppValidationException import AppValidationException
-from api.n.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from api.middleware.list_value_validation.middleware import ListValueValidationMiddleware
 
 

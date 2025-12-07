@@ -4,7 +4,7 @@ from api.exception.validation.FieldValidationErrorCode import FieldValidationErr
 from api.serializer.model.uploaded_track.input.post.Fields import Fields as PostFields
 from api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from api.test.integration.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
-from api.ta_transformer import to_camel_case
+from api.utils.data_transformer import to_camel_case
 
 
 class TestCase(UploadedTrackTestCase):

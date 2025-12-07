@@ -158,7 +158,7 @@ class ListValueValidationMiddleware:
 
                 if has_empty and has_non_empty:
                     # Convert field name to camelCase for error response
-                    from api.utilsdata_transformer
+                    from api.utils import data_transformer
                     field_name = data_transformer.to_camel_case(key)
                     raise AppValidationException(
                         field_name=field_name,

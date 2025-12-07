@@ -7,7 +7,7 @@ from django.utils.translation import gettext as _
 from api import settings
 from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from api.serializer.model.uploaded_track.input.post.Fields import Fields
-from api.le_path_utils import get_file_path
+from api.utils.file_path_utils import get_file_path
 
 
 @deconstructible
@@ -44,7 +44,7 @@ class TrackFileValidator:
             if field and hasattr(field, 'fail'):
                 field.fail(FieldValidationErrorCode.TRACK_FILE_EXTENSION_INVALID, message)
             else:
-                from api.n.validation.app.AppValidationException import AppValidationException
+                from api.exception.validation.app.AppValidationException import AppValidationException
                 raise AppValidationException(
                     message=message,
                     field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_EXTENSION_INVALID,
@@ -59,7 +59,7 @@ class TrackFileValidator:
             if field and hasattr(field, 'fail'):
                 field.fail(FieldValidationErrorCode.FILE_TOO_LARGE, message)
             else:
-                from api.n.validation.app.AppValidationException import AppValidationException
+                from api.exception.validation.app.AppValidationException import AppValidationException
                 raise AppValidationException(
                     field_name=self.field_name,
                     message=message,
@@ -103,7 +103,7 @@ class TrackFileValidator:
             if field and hasattr(field, 'fail'):
                 field.fail(FieldValidationErrorCode.TRACK_FILE_TYPE_INVALID, message)
             else:
-                from api.n.validation.app.AppValidationException import AppValidationException
+                from api.exception.validation.app.AppValidationException import AppValidationException
                 raise AppValidationException(
                     field_name=self.field_name, message=message,
                     field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_TYPE_INVALID)

@@ -7,7 +7,7 @@ from api.model.playlist.Playlist import Playlist
 from api.model.uploaded_track.UploadedTrack import UploadedTrack
 from api.serializer.model.play.input.schema.PostFields import Fields
 from api.test.integration.view.play.PlayTestCase import PlayTestCase
-from api.ta_transformer import to_camel_case
+from api.utils.data_transformer import to_camel_case
 
 
 class TestCase(PlayTestCase):
