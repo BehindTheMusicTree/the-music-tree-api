@@ -1,0 +1,16 @@
+
+
+from api.test.utils.AppTestCase import AppTestCase
+
+
+class ForeignKeyBodyDataTestCase(AppTestCase):
+
+    def setUp(self, methods_names_to_implement: list[str] | None = None) -> None:
+        class_methods_names_to_implement = ['test_existing_then_ok',
+                                            'test_empty_then_none',
+                                            'test_multi_value_then_400_bad_request',
+                                            'test_non_existing_then_400_bad_request',
+                                            'test_invalid_uuid_then_400_bad_request']
+        if methods_names_to_implement:
+            class_methods_names_to_implement += methods_names_to_implement
+        return super().setUp(class_methods_names_to_implement)
