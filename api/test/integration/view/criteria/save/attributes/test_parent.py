@@ -1,0 +1,56 @@
+from rest_framework import status
+
+from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from api.serializer.model.criteria.input.Fields import Fields as CriteriaInputFields
+from api.test.utils.field.body_data.type.ForeignKeyBodyDataTestCase import ForeignKeyBodyDataTestCase
+from api.test.integration.view.criteria.GenreTestCase import GenreTestCase
+
+
+class TestCase(GenreTestCase, ForeignKeyBodyDataTestCase):
+
+    def test_multi_value_then_400_bad_request(self):
+        response = self._post_genre(**{CriteriaInputFields.NAME_PUBLIC: "Punk",
+                                    CriteriaInputFields.PARENT: ["value", "value2"]})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == CriteriaInputFields.PARENT
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+
+    def test_empty_then_none(self):
+        response = self._post_genre(**{CriteriaInputFields.NAME_PUBLIC: "Punk", CriteriaInputFields.PARENT: ""})
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.parent == None
+
+    def test_existing_then_ok(self):
+        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
+
+        response = self._post_genre(**{CriteriaInputFields.NAME_PUBLIC: "Punk",
+                                    CriteriaInputFields.PARENT: genre_rock.uuid})
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.parent == genre_rock
+
+    def test_invalid_uuid_then_400_bad_request(self):
+        response = self._post_genre(**{CriteriaInputFields.NAME_PUBLIC: "Punk",
+                                    CriteriaInputFields.PARENT: "invalid"})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == CriteriaInputFields.PARENT
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+
+    def test_non_existing_then_400_bad_request(self):
+        self.model_fixture_factory.create_genre(name="Rock")
+
+        response = self._post_genre(**{CriteriaInputFields.NAME_PUBLIC: "Punk",
+                                       CriteriaInputFields.PARENT: "5d63bbee-32ca-47d9-89fe-fd82f18dd183"})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == CriteriaInputFields.PARENT
+        assert error['code'] == FieldValidationErrorCode.REFERENCE_INVALID
