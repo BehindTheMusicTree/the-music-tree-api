@@ -1,0 +1,69 @@
+
+from typing import TYPE_CHECKING
+
+from django.db import models
+from django.db.models import Q
+from django.db.models.query import QuerySet
+
+from api import settings
+from api.model.album.AlbumManager import AlbumManager
+from api.model.artist.Artist import Artist
+from api.model.artist.Fields import Fields as ArtistFields
+from api.model.field.AppCharField import AppCharField
+from api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
+from api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
+from api.model.uploaded_track.Fields import Fields as UploadedTrackFields
+
+from .Fields import Fields
+
+
+if TYPE_CHECKING:
+    from api.model.uploaded_track.UploadedTrack import UploadedTrack
+
+
+class Album(UploadedTrackMixin):
+    _name = AppCharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None, db_column=Fields.NAME_PUBLIC)
+    year = AppCharField(max_length=4, default=None, null=True)
+    album_artists: QuerySet[Artist] = PrivateManyToManyField(Artist, related_name=ArtistFields.ALBUMS)  # type: ignore
+
+    objects: AlbumManager = AlbumManager()
+
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
+        return getattr(self, Fields.UPLOADED_TRACKS_RELATED_NAME)
+
+    @property
+    def uploaded_tracks_not_archived_sorted(self) -> models.QuerySet['UploadedTrack']:
+        return self.uploaded_tracks_not_archived.annotate(
+            null_position=Q(track_number__isnull=True)).order_by(
+            'null_position', UploadedTrackFields.TRACK_NUMBER, UploadedTrackFields.TITLE)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=~models.Q(_name=""), name="album_non_empty_name")]
+
+    def __str__(self) -> str:
+        string = f"{self.uuid} | {self._name}"
+
+        # Get artist names directly from the database to avoid recursion
+        artist_names = self.album_artists.values_list('_name', flat=True)
+        if artist_names:
+            string += f" by {', '.join(artist_names)}"
+        else:
+            string += " [No Artist]"
+
+        tracks: list[UploadedTrack] = list(self.uploaded_tracks_not_archived.all())
+        if tracks:
+            track_details = []
+            for track in tracks:
+                track_position = f"{track.track_number}." if track.track_number else "--."
+                track_artists = ", ".join(str(artist) for artist in track.artists.all())
+                track_artists = f"{track_artists} | " if track_artists else "[No Artist] | "
+                track_details.append(f"{track_position}{track_artists}{track.title}")
+            track_details_str = "; ".join(track_details)
+            string += f" | Tracks not archived: {track_details_str}"
+
+        return string

@@ -1,0 +1,19 @@
+from rest_framework import status
+
+from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from api.serializer.AppInputSerializer import AppInputSerializer
+from api.test.integration.view.criteria.GenreTestCase import GenreTestCase
+
+
+class TestCase(GenreTestCase):
+
+    def test_no_field_specified_then_400_bad_request(self):
+        genre_rock = self.model_fixture_factory.create_genre(name="Rock")
+
+        response = self._put_genre(uuid=genre_rock.uuid)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == AppInputSerializer.REQUEST_FIELD
+        assert error['code'] == FieldValidationErrorCode.NO_UPDATES

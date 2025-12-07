@@ -62,7 +62,7 @@ DOCKER_COMPOSE_PARTIAL_AFP_FILE="${SCRIPTS_DIR}afp${DOCKER_COMPOSE_PARTIAL_FILEN
 log "Generating the AFP partial docker-compose files in $DOCKER_COMPOSE_PARTIAL_AFP_FILE..."
 cat << EOF > "$DOCKER_COMPOSE_PARTIAL_AFP_FILE"
   audio_fingerprinter:
-    working_dir: /app/
+    working_dir: /api/
     image: $DOCKERHUB_USERNAME/$AFP_IMAGE_REPO:$AFP_VERSION
     container_name: $AFP_CONTAINER_NAME
     volumes:

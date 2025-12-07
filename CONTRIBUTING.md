@@ -108,8 +108,8 @@ We follow a **strict Git Flow** model:
 2. Clone your fork:
 
    ```bash
-   git clone https://github.com/YOUR-USERNAME/bodzify-api-django.git
-   cd bodzify-api-django
+   git clone https://github.com/YOUR-USERNAME/the-music-tree-api.git
+   cd the-music-tree-api
    ```
 
 **For maintainers:**
@@ -117,8 +117,8 @@ We follow a **strict Git Flow** model:
 Clone the main repository directly:
 
 ```bash
-git clone https://github.com/mignot/bodzify-api-django.git
-cd bodzify-api-django
+git clone https://github.com/BehindTheMusicTree/the-music-tree-api.git
+cd the-music-tree-api
 ```
 
 ### 1. Environment Setup
@@ -133,8 +133,8 @@ cd bodzify-api-django
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/mignot/bodzify-api-django.git
-   cd bodzify-api-django
+   git clone https://github.com/BehindTheMusicTree/the-music-tree-api.git
+   cd the-music-tree-api
    ```
 
 2. Set up environment variables:
@@ -398,21 +398,21 @@ We use pytest for all automated testing with Django.
 pytest
 
 # Run tests for a specific module
-pytest bodzify_api/test/view/track/
+pytest api/test/view/track/
 
 # Run tests with coverage
-pytest --cov=bodzify_api --cov-report=html --cov-report=term-missing
+pytest --cov=app --cov-report=html --cov-report=term-missing
 
 # Run tests with verbose output
 pytest -v
 
 # Run a specific test file
-pytest bodzify_api/test/view/track/test_specific.py
+pytest api/test/view/track/test_specific.py
 ```
 
 **Test Structure:**
 
-- Tests are located in `bodzify_api/test/`
+- Tests are located in `api/test/`
 - Follow the naming convention: `test_{scenario}_then_{expected_result}`
 - Use `assert` instead of `assertEqual`
 - Each test should focus on a single scenario

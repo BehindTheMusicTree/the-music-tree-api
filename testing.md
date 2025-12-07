@@ -28,7 +28,7 @@ Tests are organized into three categories: **unit**, **integration**, and **e2e*
 
 Unit tests test individual functions, classes, or modules in isolation with mocked dependencies.
 
-**Location:** `bodzify_api/test/unit/`
+**Location:** `api/test/unit/`
 
 **Examples:**
 - `unit/utils/audiometa_adapter/` - Tests for audiometa adapter functions
@@ -45,7 +45,7 @@ Unit tests test individual functions, classes, or modules in isolation with mock
 
 Integration tests test how multiple components work together, typically through API endpoints.
 
-**Location:** `bodzify_api/test/integration/`
+**Location:** `api/test/integration/`
 
 **Examples:**
 - `integration/view/uploaded_track/` - Tests for uploaded track API endpoints
@@ -61,7 +61,7 @@ Integration tests test how multiple components work together, typically through 
 
 End-to-end tests test complete user workflows and critical paths.
 
-**Location:** `bodzify_api/test/e2e/`
+**Location:** `api/test/e2e/`
 
 **Examples:**
 - Full user workflows (upload → process → retrieve)
@@ -75,7 +75,7 @@ End-to-end tests test complete user workflows and critical paths.
 
 ### Test Location
 
-All tests are located in `bodzify_api/test/` directory, organized by category.
+All tests are located in `api/test/` directory, organized by category.
 
 ## Test Naming Convention
 
@@ -195,19 +195,19 @@ pytest
 
 Run specific category:
 ```bash
-pytest bodzify_api/test/unit/
-pytest bodzify_api/test/integration/
-pytest bodzify_api/test/e2e/
+pytest api/test/unit/
+pytest api/test/integration/
+pytest api/test/e2e/
 ```
 
 Run specific test file:
 ```bash
-pytest bodzify_api/test/unit/utils/audiometa_adapter/test_audiometa_adapter.py
+pytest api/test/unit/utils/audiometa_adapter/test_audiometa_adapter.py
 ```
 
 Run specific test:
 ```bash
-pytest bodzify_api/test/view/track/test_specific.py::TestCase::test_specific_scenario
+pytest api/test/view/track/test_specific.py::TestCase::test_specific_scenario
 ```
 
 ## External Service Dependencies

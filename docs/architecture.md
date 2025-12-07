@@ -95,7 +95,7 @@ When duplicate fields are detected, the API returns:
 
 Duplicate field detection is handled by `DuplicateFieldsMiddleware` before request data reaches the serializer. For PUT/PATCH requests, the middleware manually parses multipart data since Django doesn't populate `request.POST` for these methods.
 
-See `bodzify_api.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware` for implementation details.
+See `api.middleware.duplicate_fields.middleware.DuplicateFieldsMiddleware` for implementation details.
 
 ## Core Architectural Patterns
 
@@ -124,7 +124,7 @@ The application uses a hierarchical model structure with base classes for common
 **Good example:**
 ```python
 # Genre.py
-from bodzify_api.model.genre.Fields import Fields
+from api.model.genre.Fields import Fields
 
 class Genre(PrivateStandardResource):
     name = models.CharField(max_length=100)
@@ -227,10 +227,10 @@ All custom field classes should inherit from `AppField` (not DRF's `Field` direc
 
 ```python
 # genre.py
-from bodzify_api.model.genre.Fields import Fields
-from bodzify_api.serializer.AppInputSerializer import AppInputSerializer
-from bodzify_api.serializer.field.AppCharField import AppCharField
-from bodzify_api.serializer.field.AppListField import AppListField
+from api.model.genre.Fields import Fields
+from api.serializer.AppInputSerializer import AppInputSerializer
+from api.serializer.field.AppCharField import AppCharField
+from api.serializer.field.AppListField import AppListField
 
 class GenreSerializer(AppInputSerializer):
     name = AppCharField()
@@ -242,7 +242,7 @@ class GenreSerializer(AppInputSerializer):
 
 ```python
 # Custom field example
-from bodzify_api.serializer.field.AppField import AppField
+from api.serializer.field.AppField import AppField
 from rest_framework import serializers
 
 class AppCharField(AppField, serializers.CharField):
@@ -398,9 +398,9 @@ class GenreFilterSet(AppFilterSet):
 
 **Good example:**
 ```python
-from bodzify_api.exception.validation.app.AppValidationException import AppValidationException
-from bodzify_api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from bodzify_api.model.genre.Fields import Fields
+from api.exception.validation.app.AppValidationException import AppValidationException
+from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from api.model.genre.Fields import Fields
 
 def validate_genre_name(self, name: str, user: User) -> None:
     if not name:

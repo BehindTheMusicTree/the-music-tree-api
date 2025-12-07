@@ -49,7 +49,7 @@ apply_migrations() {
 load_initial_fixtures() {
   log_with_script_prefixe "Loading initial data."
   log_with_script_prefixe "Loading app.json..."
-  app_fixture="${PROJECT_DIR}${APP_NAME}/fixtures/app.json"
+  app_fixture="${PROJECT_DIR}api/fixtures/app.json"
   if [ -f "$app_fixture" ]; then
       python3 $MANAGE_SCRIPT loaddata $app_fixture
       if [ $? -ne 0 ]; then
@@ -57,21 +57,32 @@ load_initial_fixtures() {
           exit 1
       fi
   else
-      log_with_script_prefixe "ERROR: app.json not found in ${PROJECT_DIR}${APP_NAME}/fixtures/" >&2
+      log_with_script_prefixe "ERROR: app.json not found in ${PROJECT_DIR}api/fixtures/" >&2
       exit 1
   fi
   log_with_script_prefixe "app.json loaded successfully."
 
   log_with_script_prefixe "Loading other fixtures..."
-  for fixture in ${PROJECT_DIR}${APP_NAME}/fixtures/*.json; 
+  for fixture in ${PROJECT_DIR}api/fixtures/*.json; 
   do
+    if [ "$fixture" = "$app_fixture" ]; then
+      continue
+    fi
+    
+    if [ ! -f "$fixture" ]; then
+      continue
+    fi
+    
+    if ! python3 -c "import json, sys; data = json.load(open('$fixture')); sys.exit(0 if (isinstance(data, list) and len(data) > 0 and isinstance(data[0], dict) and 'model' in data[0]) else 1)" 2>/dev/null; then
+      log_with_script_prefixe "Skipping $fixture (not a Django fixture format)"
+      continue
+    fi
+    
     log_with_script_prefixe "Loading fixture $fixture ..."
-    if [ "$fixture" != "$app_fixture" ]; then
-        python3 $MANAGE_SCRIPT loaddata $fixture
-        if [ $? -ne 0 ]; then
-            log_with_script_prefixe "ERROR: Failed to load initial data from $fixture" >&2
-            exit 1
-        fi
+    python3 $MANAGE_SCRIPT loaddata $fixture
+    if [ $? -ne 0 ]; then
+        log_with_script_prefixe "ERROR: Failed to load initial data from $fixture" >&2
+        exit 1
     fi
     log_with_script_prefixe "Fixture $fixture loaded."
   done

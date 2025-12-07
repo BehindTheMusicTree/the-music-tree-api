@@ -4,6 +4,6 @@
 # Copy Python virtual environment from env directory
 env/.venv
 
-# Copy fixture files directly in bodzify_api/fixtures
-bodzify_api/fixtures/*.json
+# Copy fixture files directly in api/fixtures
+api/fixtures/*.json
 

@@ -16,7 +16,7 @@
 	],
 	"python.testing.pytestEnabled": true,
 	"python.testing.pytestArgs": [
-		"bodzify_api"
+		"the_music_tree_api"
 	],
 	"python.analysis.autoImportCompletions": true,
 	"editor.defaultFormatter": "ms-python.autopep8",
@@ -33,5 +33,5 @@
 	"python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
 	"cursorpyright.analysis.autoImportCompletions": true,
 	"cursorpyright.analysis.typeCheckingMode": "basic",
-	"python.pythonPath": "${workspaceFolder}/.venv/bin/python",
+	"python.pythonPath": "/Users/mignot/git/the-music-tree-api-rename-filesystem-according-to-project/.venv/bin/python",
 }

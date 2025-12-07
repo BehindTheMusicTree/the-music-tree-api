@@ -6,163 +6,163 @@ track:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/model/track/**'
-        - 'bodzify_api/serializer/model/track/**'
-        - 'bodzify_api/view/viewset/model/lib_track/**'
-        - 'bodzify_api/test/view/track/**'
-        - 'bodzify_api/utils/audio_metadata/**'
-        - 'bodzify_api/utils/AudioFile.py'
-        - 'bodzify_api/validator/TrackFileValidator.py'
-        - 'bodzify_api/validator/TrackUrlValidator.py'
+        - 'api/model/track/**'
+        - 'api/serializer/model/track/**'
+        - 'api/view/viewset/model/lib_track/**'
+        - 'api/test/view/track/**'
+        - 'api/utils/audio_metadata/**'
+        - 'api/utils/AudioFile.py'
+        - 'api/validator/TrackFileValidator.py'
+        - 'api/validator/TrackUrlValidator.py'
 
 artist:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/model/artist/**'
-        - 'bodzify_api/serializer/model/artist/**'
-        - 'bodzify_api/view/viewset/model/ArtistViewSet.py'
-        - 'bodzify_api/test/view/artist/**'
-        - 'bodzify_api/filtering/set/artist/**'
+        - 'api/model/artist/**'
+        - 'api/serializer/model/artist/**'
+        - 'api/view/viewset/model/ArtistViewSet.py'
+        - 'api/test/view/artist/**'
+        - 'api/filtering/set/artist/**'
 
 album:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/model/album/**'
-        - 'bodzify_api/serializer/model/album/**'
-        - 'bodzify_api/view/viewset/model/AlbumViewSet.py'
-        - 'bodzify_api/test/view/album/**'
-        - 'bodzify_api/filtering/set/album/**'
+        - 'api/model/album/**'
+        - 'api/serializer/model/album/**'
+        - 'api/view/viewset/model/AlbumViewSet.py'
+        - 'api/test/view/album/**'
+        - 'api/filtering/set/album/**'
 
 genre:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/model/criteria/children/genre/**'
-        - 'bodzify_api/model/criteria/**'
-        - 'bodzify_api/serializer/model/criteria/**'
-        - 'bodzify_api/view/viewset/model/criteria/**'
-        - 'bodzify_api/test/view/genre/**'
-        - 'bodzify_api/fixtures/genres/**'
+        - 'api/model/criteria/children/genre/**'
+        - 'api/model/criteria/**'
+        - 'api/serializer/model/criteria/**'
+        - 'api/view/viewset/model/criteria/**'
+        - 'api/test/view/genre/**'
+        - 'api/fixtures/genres/**'
 
 tag:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/model/criteria/children/tag/**'
-        - 'bodzify_api/serializer/model/tag/**'
-        - 'bodzify_api/view/viewset/model/criteria/children/TagViewSet.py'
-        - 'bodzify_api/test/view/tag/**'
+        - 'api/model/criteria/children/tag/**'
+        - 'api/serializer/model/tag/**'
+        - 'api/view/viewset/model/criteria/children/TagViewSet.py'
+        - 'api/test/view/tag/**'
 
 playlist:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/model/playlist/**'
-        - 'bodzify_api/serializer/model/playlist/**'
-        - 'bodzify_api/view/viewset/model/playlist/**'
-        - 'bodzify_api/test/view/playlist/**'
-        - 'bodzify_api/filtering/set/playlist/**'
+        - 'api/model/playlist/**'
+        - 'api/serializer/model/playlist/**'
+        - 'api/view/viewset/model/playlist/**'
+        - 'api/test/view/playlist/**'
+        - 'api/filtering/set/playlist/**'
 
 play:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/model/play/**'
-        - 'bodzify_api/serializer/model/play/**'
-        - 'bodzify_api/view/viewset/model/PlayViewSet.py'
-        - 'bodzify_api/test/view/play/**'
-        - 'bodzify_api/filtering/set/play/**'
+        - 'api/model/play/**'
+        - 'api/serializer/model/play/**'
+        - 'api/view/viewset/model/PlayViewSet.py'
+        - 'api/test/view/play/**'
+        - 'api/filtering/set/play/**'
 
 user:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/model/user/**'
-        - 'bodzify_api/serializer/model/user/**'
-        - 'bodzify_api/view/viewset/model/UserViewSet.py'
-        - 'bodzify_api/test/view/user/**'
-        - 'bodzify_api/fixtures/users/**'
+        - 'api/model/user/**'
+        - 'api/serializer/model/user/**'
+        - 'api/view/viewset/model/UserViewSet.py'
+        - 'api/test/view/user/**'
+        - 'api/fixtures/users/**'
 
 spotify:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/model/spotify_resource/**'
-        - 'bodzify_api/model/spotify/**'
-        - 'bodzify_api/serializer/model/spotify/**'
-        - 'bodzify_api/view/spotify/**'
-        - 'bodzify_api/utils/spotify/**'
-        - 'bodzify_api/test/spotify/**'
-        - 'bodzify_api/exception/spotify.py'
+        - 'api/model/spotify_resource/**'
+        - 'api/model/spotify/**'
+        - 'api/serializer/model/spotify/**'
+        - 'api/view/spotify/**'
+        - 'api/utils/spotify/**'
+        - 'api/test/spotify/**'
+        - 'api/exception/spotify.py'
 
 musicbrainz:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/model/musicbrainz_resource/**'
-        - 'bodzify_api/utils/musicbrainz/**'
-        - 'bodzify_api/exception/musicbrainz.py'
+        - 'api/model/musicbrainz_resource/**'
+        - 'api/utils/musicbrainz/**'
+        - 'api/exception/musicbrainz.py'
 
 audio-fingerprinting:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/utils/audio_fingerprinter/**'
-        - 'bodzify_api/test/view/track/**/fingerprint/**'
+        - 'api/utils/audio_fingerprinter/**'
+        - 'api/test/view/track/**/fingerprint/**'
 
 filtering:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/filtering/**'
-        - 'bodzify_api/view/viewset/SearchViewSet.py'
+        - 'api/filtering/**'
+        - 'api/view/viewset/SearchViewSet.py'
 
 middleware:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/middleware/**'
+        - 'api/middleware/**'
 
 serializer:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/serializer/**'
+        - 'api/serializer/**'
 
 model:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/model/**'
-        - 'bodzify_api/models.py'
+        - 'api/model/**'
+        - 'api/models.py'
 
 view:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/view/**'
-        - 'bodzify_api/urls.py'
+        - 'api/view/**'
+        - 'api/urls.py'
 
 exception:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/exception/**'
+        - 'api/exception/**'
 
 utils:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/utils/**'
+        - 'api/utils/**'
 
 # Type labels - based on file types and purposes
 test:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/test/**'
+        - 'api/test/**'
         - 'pytest.ini'
         - 'conftest.py'
 
@@ -216,40 +216,40 @@ migration:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/migrations/**'
+        - 'api/migrations/**'
 
 settings:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/settings.py'
+        - 'api/settings.py'
 
 admin:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/admin.py'
+        - 'api/admin.py'
 
 fixtures:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/fixtures/**'
+        - 'api/fixtures/**'
 
 logging:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/logging/**'
+        - 'api/logging/**'
 
 management:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/management/**'
+        - 'api/management/**'
 
 validator:
   - any:
     - changed-files:
       - any-glob-to-any-file:
-        - 'bodzify_api/validator/**'
+        - 'api/validator/**'

@@ -1,0 +1,82 @@
+
+
+from rest_framework import status
+
+from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
+from api.model.playlist.Playlist import Playlist
+from api.model.uploaded_track.UploadedTrack import UploadedTrack
+from api.serializer.model.play.input.schema.PostFields import Fields
+from api.test.integration.view.play.PlayTestCase import PlayTestCase
+from api.utils.data_transformer import to_camel_case
+
+
+class TestCase(PlayTestCase):
+
+    def test_extra_field_then_400_bad_request(self) -> None:
+        extra_field = 'extraField'
+        response = self._post_play(**{extra_field: 'value'})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == extra_field
+        assert error['code'] == FieldValidationErrorCode.UNKNOWN
+
+    def test_multiple_values_for_content_then_400_bad_request(self) -> None:
+        playlist1_uuid = self.model_fixture_factory.create_manual_playlist(name='test').uuid
+        playlist2_uuid = self.model_fixture_factory.create_manual_playlist(name='test').uuid
+
+        data = {to_camel_case(Fields.CONTENT): [playlist1_uuid, playlist2_uuid]}
+        response = self._post_play(**data)
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == to_camel_case(Fields.CONTENT)
+        assert error['code'] == FieldValidationErrorCode.FORMAT_INVALID
+
+    def test_non_existant_content_then_400_bad_request(self):
+        response = self._post_play(**{to_camel_case(Fields.CONTENT): '88978e5e-5238-442b-bd24-dbbde478e090'})
+
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert len(self.bad_request_result_field_errors) == 1
+        error = self.bad_request_result_field_errors[0]
+        assert error['field'] == to_camel_case(Fields.CONTENT)
+        assert error['code'] == FieldValidationErrorCode.REFERENCE_INVALID
+
+    def test_playlist_play(self) -> None:
+        current_play_count = 42
+        playlist_before_update: Playlist = self.model_fixture_factory.create_manual_playlist(
+            name='test', play_count=current_play_count)
+
+        response = self._post_play(**{to_camel_case(Fields.CONTENT): playlist_before_update.uuid})
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.content.uuid == playlist_before_update.uuid
+        assert self.saved_object.content.play_count == current_play_count + 1
+
+    def test_playlist_play_then_returns_uploaded_tracks(self) -> None:
+        criteria = self.model_fixture_factory.create_genre(name='criteria1')
+        uploaded_track = self.model_fixture_factory.create_uploaded_track_with_file(
+            title="track", genre=criteria, use_manager_for_genre_playlist_adding=True)
+
+        data = {to_camel_case(Fields.CONTENT): criteria.criteria_playlist.uuid}
+        response = self._post_play(**data)
+
+        assert response.status_code == status.HTTP_201_CREATED
+        playlist: Playlist = self.saved_object.content  # type: ignore
+        assert playlist.uploaded_tracks.count() == 1
+        playlist_uploaded_track: UploadedTrack | None = playlist.uploaded_tracks.first()
+        assert playlist_uploaded_track
+        assert playlist_uploaded_track.uuid == uploaded_track.uuid
+
+    def test_uploaded_track_play(self) -> None:
+        current_play_count = 455
+        uploaded_track = self.model_fixture_factory.create_uploaded_track_with_file(
+            title='test', play_count=current_play_count)
+
+        response = self._post_play(**{to_camel_case(Fields.CONTENT): uploaded_track.uuid})
+
+        assert response.status_code == status.HTTP_201_CREATED
+        assert self.saved_object.content.uuid == uploaded_track.uuid
+        assert self.saved_object.content.play_count == current_play_count + 1
