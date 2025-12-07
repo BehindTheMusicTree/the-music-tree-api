@@ -13,8 +13,8 @@ on:
         description: 'Specific test path to run (optional)'
         required: false
         type: string
-  push:
-    branches: [main, develop, 'release/*', 'hotfix/*']
+  # push:
+  #   branches: [main, develop, 'release/*', 'hotfix/*', 'chore/*']
   pull_request:
     branches: [main, develop]
 
