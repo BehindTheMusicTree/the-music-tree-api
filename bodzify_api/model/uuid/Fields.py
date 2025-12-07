@@ -1,2 +1,0 @@
-class Fields:
-    UUID = 'uuid'
