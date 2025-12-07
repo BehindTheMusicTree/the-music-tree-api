@@ -108,10 +108,20 @@ jobs:
         run: bash scripts/wait-for-postgres-db.sh ${{ env.DB_URL }} ${{ env.DB_PORT }} ${{ env.DB_CONNECTION_TEST_MAX_ATTEMPTS }} ${{ env.DB_CONNECTION_TEST_SLEEP_INTERVAL }}
 
       - name: Set up fixtures files
-        env:
-          FIXTURES_DIR: ${{ vars.APP_NAME }}/fixtures/
         run: |
-          cp ${{ env.FIXTURES_DIR }}api/*.json ${{ env.FIXTURES_DIR }}
+          FIXTURES_DIR=api/fixtures/
+          if [ -d "${FIXTURES_DIR}app" ]; then
+            cp ${FIXTURES_DIR}app/*.json ${FIXTURES_DIR} 2>/dev/null || true
+          fi
+          if [ -d "${FIXTURES_DIR}genres" ]; then
+            cp ${FIXTURES_DIR}genres/*.json ${FIXTURES_DIR} 2>/dev/null || true
+          fi
+          if [ -d "${FIXTURES_DIR}users/test" ]; then
+            cp ${FIXTURES_DIR}users/test/*.json ${FIXTURES_DIR} 2>/dev/null || true
+          fi
+          if [ -d "${FIXTURES_DIR}users/umg" ]; then
+            cp ${FIXTURES_DIR}users/umg/*.json ${FIXTURES_DIR} 2>/dev/null || true
+          fi
 
       - name: Init django data
         run: bash scripts/init-django-data.sh
