@@ -37,10 +37,6 @@ from api.model.playlist.Playlist import Playlist
 from api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from api.model.utils import utils as model_utils
 from api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
-from api.utils import audio_file_metadata
-from api.utils.audio_file_metadata.AppMetadataKey import AppMetadataKey
-from api.utils.audio_file_metadata.types import AppMetadata
-from api.utils.audio_file_metadata.exceptions import FileCorruptedError
 from api.validator.TrackFileValidator import TrackFileValidator
 
 from .Fields import Fields
@@ -160,64 +156,10 @@ class UploadedTrack(TrackablePlayCount):
 
     def _prepare_save(self, ctx) -> dict:
         if self.file:
-            if self.extension.lower() == '.flac':
-                if audio_file_metadata.is_flac_md5_valid(self.file):
-                    self.md5_has_been_corrected = False
-                else:
-                    try:
-                        self.file = audio_file_metadata.fix_md5_checking(self.file)
-                        self.md5_has_been_corrected = True
-                    except FileCorruptedError as e:
-                        raise AppValidationException(
-                            field_name=TrackFileFields.FILE,
-                            message='The FLAC file appears to be corrupted and cannot be processed.',
-                            field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_CORRUPTED)
-            try:
-                duration = audio_file_metadata.get_duration_in_sec(self.file)
-                self.duration_in_sec = duration if duration > 1 else 1
-                self.bitrate_in_kbps = audio_file_metadata.get_bitrate(self.file)
-                self.size_in_bytes = self.file.size
-                self._manage_musicbrainz_recording()
-            except FileCorruptedError as e:
-                raise AppValidationException(field_name=TrackFileFields.FILE,
-                                             message="File corrupted",
-                                             field_validation_error_code=FieldValidationErrorCode.TRACK_FILE_CORRUPTED)
-            except Exception:
-                raise
+            self.size_in_bytes = self.file.size
+            self._manage_musicbrainz_recording()
         return ctx.kwargs
 
-    def update_file_metadata(self, app_metadata: AppMetadata):
-        if self.file:
-            audio_file_metadata.update_file_metadata(file=self.file,
-                                                     app_metadata=app_metadata,
-                                                     normalized_rating_max_value=settings.UPLOADED_TRACK_RATING_VALUE_MAX)
-
-    def update_file_metadata_from_uploaded_track_instance_values(self):
-        normalized_metadata = dict()
-        normalized_metadata[AppMetadataKey.TITLE] = self.title
-
-        if self.artists.exists():
-            artists_names_tag = [artist.name for artist in self.artists.all()]
-        else:
-            artists_names_tag = None
-        normalized_metadata[AppMetadataKey.ARTISTS_NAMES] = artists_names_tag
-
-        if self.album:
-            album_name_tag = self.album.name
-            album_artists_list = self.album.album_artists.all()
-            album_artists_tag = [
-                album_artist.name for album_artist in album_artists_list] if album_artists_list.exists() else None
-        else:
-            album_name_tag = None
-            album_artists_tag = None
-
-        normalized_metadata[AppMetadataKey.ALBUM_NAME] = album_name_tag
-        normalized_metadata[AppMetadataKey.ALBUM_ARTISTS_NAMES] = album_artists_tag
-        normalized_metadata[AppMetadataKey.GENRE_NAME] = self.genre.name if self.genre else None
-        normalized_metadata[AppMetadataKey.RATING] = self.rating
-        normalized_metadata[AppMetadataKey.LANGUAGE] = self.language if self.language else None
-
-        self.update_file_metadata(app_metadata=normalized_metadata)
 
     @property
     def playlists_with_positions(self) -> list[tuple[str, int]]:
