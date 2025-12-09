@@ -1,13 +1,13 @@
 [
     {
-        "model": "api.criteriatype",
+        "model": "the_music_tree_api.criteriatype",
         "pk": 0,
         "fields": {
             "label": "genre"
         }
     },
     {
-        "model": "api.criteriatype",
+        "model": "the_music_tree_api.criteriatype",
         "pk": 1,
         "fields": {
             "label": "tag"
@@ -16,7 +16,7 @@
     
     
     {
-        "model": "api.mbrecordingmissingcausecode",
+        "model": "the_music_tree_api.mbrecordingmissingcausecode",
         "pk": 0,
         "fields": {
             "code": 0,
@@ -25,7 +25,7 @@
     },
 
     {
-        "model": "api.mbrecordingmissingcausecode",
+        "model": "the_music_tree_api.mbrecordingmissingcausecode",
         "pk": 1,
         "fields": {
             "code": 1,
@@ -34,7 +34,7 @@
     },
     
     {
-        "model": "api.mbrecordingmissingcausecode",
+        "model": "the_music_tree_api.mbrecordingmissingcausecode",
         "pk": 2,
         "fields": {
             "code": 2,
@@ -43,7 +43,7 @@
     },
     
     {
-        "model": "api.mbrecordingmissingcausecode",
+        "model": "the_music_tree_api.mbrecordingmissingcausecode",
         "pk": 3,
         "fields": {
             "code": 3,
@@ -52,7 +52,7 @@
     },
     
     {
-        "model": "api.mbrecordingmissingcausecode",
+        "model": "the_music_tree_api.mbrecordingmissingcausecode",
         "pk": 4,
         "fields": {
             "code": 4,
@@ -61,7 +61,7 @@
     },
     
     {
-        "model": "api.mbrecordingmissingcausecode",
+        "model": "the_music_tree_api.mbrecordingmissingcausecode",
         "pk": 5,
         "fields": {
             "code": 5,
@@ -70,7 +70,7 @@
     },
     
     {
-        "model": "api.mbrecordingmissingcausecode",
+        "model": "the_music_tree_api.mbrecordingmissingcausecode",
         "pk": 6,
         "fields": {
             "code": 6,
@@ -79,7 +79,7 @@
     },
     
     {
-        "model": "api.mbrecordingmissingcausecode",
+        "model": "the_music_tree_api.mbrecordingmissingcausecode",
         "pk": 7,
         "fields": {
             "code": 7,
@@ -88,7 +88,7 @@
     },
     
     {
-        "model": "api.mbrecordingmissingcausecode",
+        "model": "the_music_tree_api.mbrecordingmissingcausecode",
         "pk": 8,
         "fields": {
             "code": 8,

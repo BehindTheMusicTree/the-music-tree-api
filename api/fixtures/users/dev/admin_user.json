@@ -1,6 +1,6 @@
 [
     {
-        "model": "api.user", 
+        "model": "the_music_tree_api.user", 
         "id": 1, 
         "fields": {
             "password": "pbkdf2_sha256$720000$ES1EzZcF6wYKrUyFbCeXnP$yc0T1C+rpuPCBlUwB8hsSCoQUTnGJwbpLrmCx8Gpeec=", 

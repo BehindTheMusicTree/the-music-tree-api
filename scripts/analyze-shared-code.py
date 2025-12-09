@@ -86,7 +86,7 @@ def build_dependency_graph(analyses: list[dict]) -> dict[str, Any]:
             path = analysis["path"]
             # Convert file path to module path
             module_path = path.replace("/", ".").replace(".py", "")
-            if module_path.startswith("api."):
+            if module_path.startswith("the_music_tree_api."):
                 module_map[module_path] = analysis
 
     # Build dependency graph
@@ -96,12 +96,12 @@ def build_dependency_graph(analyses: list[dict]) -> dict[str, Any]:
 
         # Add imports
         for imp in analysis.get("imports", []):
-            if imp.startswith("api."):
+            if imp.startswith("the_music_tree_api."):
                 dependencies.add(imp)
 
         # Add from imports
         for from_imp in analysis.get("from_imports", []):
-            if from_imp.startswith("api."):
+            if from_imp.startswith("the_music_tree_api."):
                 # Extract module from "module.Class"
                 dep_module = ".".join(from_imp.split(".")[:-1])
                 dependencies.add(dep_module)
