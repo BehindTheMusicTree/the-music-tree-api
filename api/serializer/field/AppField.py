@@ -113,8 +113,6 @@ class AppField(Field):
             msg = f"Invalid input for {class_name}."
 
         if key == 'invalid':
-            if msg.startswith('Failed to download file:'):
-                code = FieldValidationErrorCode.TRACK_FILE_DOWNLOAD_FAILED
             code = self.invalid_message_validation_error_code_mapping.get(msg, FieldValidationErrorCode.DEFAULT)
         else:
             code = self.validation_error_code_mapping.get(key, FieldValidationErrorCode.DEFAULT)
