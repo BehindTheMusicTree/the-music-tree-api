@@ -8,8 +8,8 @@ from api.model.criteria.type.CriteriaType import CriteriaType
 from api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 
 from api.model.criteria.Fields import Fields as ModelFields
-from api.model.uploaded_track_mixin.UploadedTrackMixinWithInternalNameManager import (
-    UploadedTrackMixinWithInternalNameManager
+from api.model.track_mixin.TrackMixinWithInternalNameManager import (
+    TrackMixinWithInternalNameManager
 )
 from api.serializer.model.criteria.input.tree_import.Fields import Fields as TreeImportFields
 from api.serializer.model.criteria.input.Fields import Fields as InputFields
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 T = TypeVar('T', bound='Criteria')
 
 
-class CriteriaManager(UploadedTrackMixinWithInternalNameManager[T]):
+class CriteriaManager(TrackMixinWithInternalNameManager[T]):
     model: type[T]
 
     def _get_criteria_type(self) -> 'CriteriaType':
@@ -94,16 +94,16 @@ class CriteriaManager(UploadedTrackMixinWithInternalNameManager[T]):
                                                      **{Fields.PARENT: playlist_parent})
 
             common_criteria = self.get_common_ascendant(updated_instance, old_parent)
-            CriteriaPlaylist.objects.update_ascendants_uploaded_tracks(instance=updated_instance.criteria_playlist,
-                                                                       old_parent=old_parent,
-                                                                       common_criteria=common_criteria)
+            CriteriaPlaylist.objects.update_ascendants_tracks(instance=updated_instance.criteria_playlist,
+                                                              old_parent=old_parent,
+                                                              common_criteria=common_criteria)
 
             if old_root != updated_instance.root:
                 self.update_children_root(criteria=updated_instance, new_root=updated_instance.root)
                 CriteriaPlaylist.objects.update_instance_and_children_root(instance=updated_instance.criteria_playlist,
                                                                            root=updated_instance.root.criteria_playlist)
 
-        if old_name != updated_instance.name and updated_instance.uploaded_tracks:
+        if old_name != updated_instance.name and updated_instance.tracks:
             pass
 
         return updated_instance
@@ -139,16 +139,16 @@ class CriteriaManager(UploadedTrackMixinWithInternalNameManager[T]):
         """
         from api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 
-        from api.model.uploaded_track.Fields import Fields as UploadedTrackFields
+        from api.model.track.Fields import Fields as TrackFields
 
-        criteria_uploaded_tracks = instance.uploaded_tracks.all()
-        for uploaded_track in criteria_uploaded_tracks:
-            uploaded_track.genre = instance.parent
-            uploaded_track.save(update_fields=[f'{UploadedTrackFields.GENRE}_id'])
+        criteria_tracks = instance.tracks.all()
+        for track in criteria_tracks:
+            track.genre = instance.parent
+            track.save(update_fields=[f'{TrackFields.GENRE}_id'])
 
         if instance.is_root:
             CriteriaPlaylist.objects.transfer_direct_tracks_to_criterialess_playlist(
-                direct_tracks=criteria_uploaded_tracks,
+                direct_tracks=criteria_tracks,
                 criteria_playlist=instance.criteria_playlist)
 
         if instance.children.exists():

@@ -8,15 +8,15 @@ from api.exception.validation.FieldValidationErrorCode import FieldValidationErr
 from api.exception.validation.app.AppValidationException import AppValidationException
 from api.model.user.User import User
 from api.serializer.field.TrackFileField import TrackFileField
-from api.serializer.model.uploaded_track.input.Fields import Fields
-from api.serializer.model.uploaded_track.input.input import UploadedTrackInputSerializer
+from api.serializer.model.track.input.Fields import Fields
+from api.serializer.model.track.input.input import TrackInputSerializer
 from api.utils import audio_file_metadata, data_transformer, utils
 from api.utils.audio_file_metadata.exceptions import FileCorruptedError
 from api.utils.audio_file_metadata.AppMetadataKey import AppMetadataKey
 from .Fields import Fields as PostFields
 
 
-class UploadedTrackPostSerializer(UploadedTrackInputSerializer):
+class TrackPostSerializer(TrackInputSerializer):
     file = TrackFileField(required=True)
 
     def _get_generated_title_from_data(self, file: DjangoFile, data: dict):

@@ -4,14 +4,14 @@ from typing import TYPE_CHECKING
 from django.db import models
 
 from api.model.private_unique_resource.PrivateUniqueResource import PrivateUniqueResource
-from api.model.uploaded_track.Fields import Fields as UploadedTrackFields
+from api.model.track.Fields import Fields as TrackFields
 
 
 if TYPE_CHECKING:
-    from api.model.uploaded_track.UploadedTrack import UploadedTrack
+    from api.model.track.Track import Track
 
 
-class UploadedTrackMixin(PrivateUniqueResource):
+class TrackMixin(PrivateUniqueResource):
 
     class Meta:
         abstract = True
@@ -23,25 +23,25 @@ class UploadedTrackMixin(PrivateUniqueResource):
 
     @property
     @abstractmethod
-    def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
+    def tracks(self) -> models.QuerySet['Track']:
         pass
 
     @property
     @abstractmethod
-    def uploaded_tracks_not_archived(self) -> models.QuerySet['UploadedTrack']:
-        return self.uploaded_tracks.filter(archived=False)
+    def tracks_not_archived(self) -> models.QuerySet['Track']:
+        return self.tracks.filter(archived=False)
 
     @property
-    def uploaded_tracks_not_archived_sorted(self) -> models.QuerySet['UploadedTrack']:
-        return self.uploaded_tracks_not_archived.order_by(f'-{UploadedTrackFields.CREATED_ON}')
+    def tracks_not_archived_sorted(self) -> models.QuerySet['Track']:
+        return self.tracks_not_archived.order_by(f'-{TrackFields.CREATED_ON}')
 
     @property
-    def uploaded_tracks_not_archived_count(self) -> int:
-        return self.uploaded_tracks_not_archived.count()
+    def tracks_not_archived_count(self) -> int:
+        return self.tracks_not_archived.count()
 
     @property
-    def uploaded_tracks_archived_count(self) -> int:
-        return self.uploaded_tracks.filter(archived=True).count()
+    def tracks_archived_count(self) -> int:
+        return self.tracks.filter(archived=True).count()
 
     @property
     def duration_in_sec(self) -> int:

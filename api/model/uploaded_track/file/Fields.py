@@ -2,7 +2,7 @@ from api.model.private_standard_resource.Fields import Fields as PrivateStandard
 
 
 class Fields(PrivateStandardResourceFields):
-    UPLOADED_TRACK = 'uploaded_track'
+    UPLOADED_TRACK = 'track'
     FILE = 'file'
     FILENAME = 'filename'
     EXTENSION = 'extension'

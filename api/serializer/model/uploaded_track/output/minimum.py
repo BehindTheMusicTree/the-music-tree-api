@@ -1,16 +1,16 @@
 from rest_framework import serializers
 
-from api.model.uploaded_track.UploadedTrack import UploadedTrack
+from api.model.track.Track import Track
 from api.serializer.model.artist.minimum import ArtistMinimumSerializer
 
 from .Fields import Fields
 
 
-class UploadedTrackMinimumSerializer(serializers.ModelSerializer):
+class TrackMinimumSerializer(serializers.ModelSerializer):
     artists = ArtistMinimumSerializer(many=True)
 
     class Meta:
-        model = UploadedTrack
+        model = Track
         fields = [Fields.UUID,
                   Fields.TITLE,
                   Fields.ARTISTS]

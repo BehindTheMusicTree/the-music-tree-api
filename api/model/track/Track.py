@@ -48,6 +48,7 @@ class Track(TrackablePlayCount):
         blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(settings.UPLOADED_TRACK_RATING_VALUE_MAX)])
     language = AppCharField(max_length=settings.LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
+    duration_in_sec = models.PositiveIntegerField(null=True, blank=True)
     playlists = PrivateManyToManyField(
         Playlist, through='TrackPlaylistRel', related_name=PlayListFields.TRACKS_RELATED_NAME)
 
@@ -89,11 +90,10 @@ class Track(TrackablePlayCount):
             artist.name for artist in artists) if self.artists.exists() else f"no {Fields.ARTISTS}"
         return f"{self.uuid} | '{self.title}' by {artists_str}"
 
-
     @property
     def playlists_with_positions(self) -> list[tuple[str, int]]:
         from api.model.track_playlist_rel.TrackPlaylistRel import Fields as TrackPlaylistRelFields
         from api.model.track_playlist_rel.TrackPlaylistRel import TrackPlaylistRel
         track_playlist_rels = TrackPlaylistRel.objects.filter(user=self.user, track=self)
         return list(track_playlist_rels.values_list(TrackPlaylistRelFields.PLAYLIST + '__uuid',
-                                                             TrackPlaylistRelFields.POSITION))
+                                                    TrackPlaylistRelFields.POSITION))

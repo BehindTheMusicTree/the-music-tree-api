@@ -1,14 +1,14 @@
 from rest_framework import serializers
 
-from api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
-from api.serializer.model.uploaded_track.output.detailed import UploadedTrackDetailedSerializer
+from api.model.track_playlist_rel.TrackPlaylistRel import TrackPlaylistRel
+from api.serializer.model.track.output.detailed import TrackDetailedSerializer
 
 from .Fields import Fields
 
 
-class UploadedTrackPlaylistRelWithoutPlaylist(serializers.ModelSerializer):
-    uploaded_track = UploadedTrackDetailedSerializer()
+class TrackPlaylistRelWithoutPlaylist(serializers.ModelSerializer):
+    track = TrackDetailedSerializer()
 
     class Meta:
-        model = UploadedTrackPlaylistRel
+        model = TrackPlaylistRel
         fields = [Fields.UPLOADED_TRACK_PUBLIC, Fields.POSITION,]

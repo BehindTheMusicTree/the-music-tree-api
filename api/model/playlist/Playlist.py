@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, cast
 
 from django.db import models
 
-from api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
+from api.model.track_mixin.TrackMixin import TrackMixin
 from api.model.playlist.PlaylistManager import PlaylistManager
 from api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .children.manual.ManualPlaylist import ManualPlaylist
 
 
-class Playlist(UploadedTrackMixin, TrackablePlayCount):
+class Playlist(TrackMixin, TrackablePlayCount):
 
     objects: PlaylistManager = PlaylistManager()
 
@@ -36,7 +36,7 @@ class Playlist(UploadedTrackMixin, TrackablePlayCount):
         return f'{self.uuid} | {self.name}'
 
     @property
-    def uploaded_tracks(self) -> models.QuerySet['Track']:
+    def tracks(self) -> models.QuerySet['Track']:
         return getattr(self, Fields.TRACKS_RELATED_NAME)
 
     @property
@@ -53,7 +53,7 @@ class Playlist(UploadedTrackMixin, TrackablePlayCount):
             raise ValueError('Playlist has no type')
 
     @property
-    def uploaded_tracks_not_archived_dict_by_position(self) -> dict[int | None, 'Track']:
+    def tracks_not_archived_dict_by_position(self) -> dict[int | None, 'Track']:
         """
         Returns a dictionary of Track objects where dict[position] = track.
         Includes both non-archived tracks (with position) and archived tracks (position is None).

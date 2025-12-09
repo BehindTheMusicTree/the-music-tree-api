@@ -4,7 +4,7 @@ from django.db import models
 
 from api import settings
 from api.model.field.AppCharField import AppCharField
-from api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
+from api.model.track_mixin.TrackMixin import TrackMixin
 
 from .ArtistManager import ArtistManager
 from .Fields import Fields
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from api.model.track.Track import Track
 
 
-class Artist(UploadedTrackMixin):
+class Artist(TrackMixin):
     _name = AppCharField(max_length=settings.ARTIST_NAME_LEN_MAX, default=None, db_column=Fields.NAME_PUBLIC)
 
     @property
@@ -28,7 +28,7 @@ class Artist(UploadedTrackMixin):
     objects: ArtistManager = ArtistManager()
 
     @property
-    def uploaded_tracks(self) -> models.QuerySet['Track']:
+    def tracks(self) -> models.QuerySet['Track']:
         return getattr(self, Fields.TRACKS_RELATED_NAME)
 
     class Meta:

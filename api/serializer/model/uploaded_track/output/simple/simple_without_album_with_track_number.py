@@ -1,7 +1,7 @@
 
 from rest_framework import serializers
 
-from api.model.uploaded_track.UploadedTrack import UploadedTrack
+from api.model.track.Track import Track
 from api.serializer.model.artist.minimum import ArtistMinimumSerializer
 from api.serializer.model.criteria.output.minimum import CriteriaMinimumSerializer
 
@@ -19,12 +19,12 @@ class Fields:
     PLAY_COUNT = SimpleFields.PLAY_COUNT
 
 
-class UploadedTrackSimpleWithoutAlbumWithPositionInAlbumSerializer(serializers.ModelSerializer):
+class TrackSimpleWithoutAlbumWithPositionInAlbumSerializer(serializers.ModelSerializer):
     genre = CriteriaMinimumSerializer()
     artists = ArtistMinimumSerializer(many=True)
 
     class Meta:
-        model = UploadedTrack
+        model = Track
         fields = [Fields.UUID,
                   Fields.TITLE,
                   Fields.ARTISTS,

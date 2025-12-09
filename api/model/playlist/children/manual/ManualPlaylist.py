@@ -3,7 +3,7 @@ from django.db import models
 from api import settings
 from api.model.field.AppCharField import AppCharField
 from api.model.field.foreign_key.PrivateOneToOneField import PrivateOneToOneField
-from api.model.uploaded_track_mixin.UploadedTrackMixinWithInternalNameManager import UploadedTrackMixinWithInternalNameManager
+from api.model.track_mixin.TrackMixinWithInternalNameManager import TrackMixinWithInternalNameManager
 from api.model.playlist.children.manual import ManualPlaylistTypeLabel
 from api.model.playlist.Fields import Fields as PlayListFields
 from api.model.playlist.Playlist import Playlist
@@ -22,7 +22,7 @@ class ManualPlaylist(Playlist):
                          null=False,
                          db_column=Fields.NAME_PUBLIC)  # type: ignore
 
-    objects: UploadedTrackMixinWithInternalNameManager = UploadedTrackMixinWithInternalNameManager()
+    objects: TrackMixinWithInternalNameManager = TrackMixinWithInternalNameManager()
 
     @property
     def name(self) -> str:

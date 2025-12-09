@@ -1,5 +1,5 @@
-from api.model.uploaded_track_mixin.Fields import Fields as UploadedTrackMixinFields
+from api.model.track_mixin.Fields import Fields as TrackMixinFields
 
 
-class Fields(UploadedTrackMixinFields):
+class Fields(TrackMixinFields):
     pass

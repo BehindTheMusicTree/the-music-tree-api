@@ -23,7 +23,7 @@ from api.model.musicbrainz_resource.children.recording.missing_cause.code.MbReco
     MbRecordingMissingCauseCode
 )
 from api.model.private_standard_resource.PrivateStandardResource import PrivateStandardResource
-from api.model.uploaded_track.Fields import Fields as UploadedTrackFields
+from api.model.track.Fields import Fields as TrackFields
 from api.model.utils import utils as model_utils
 from api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
 
@@ -31,8 +31,8 @@ from .Fields import Fields
 
 
 class TrackFile(PrivateStandardResource):
-    uploaded_track = PrivateOneToOneField(  # type: ignore
-        'UploadedTrack', on_delete=models.CASCADE, related_name=UploadedTrackFields.TRACK_FILE_INTERNAL)
+    track = PrivateOneToOneField(  # type: ignore
+        'Track', on_delete=models.CASCADE, related_name=TrackFields.TRACK_FILE_INTERNAL)
     file: TemporaryUploadedFile | FieldFile = models.FileField(  # type: ignore
         upload_to=model_utils.get_user_lib_path,
         storage=PreserveSpacesStorage(),
@@ -53,8 +53,8 @@ class TrackFile(PrivateStandardResource):
         MbRecordingMissingCause, on_delete=models.DO_NOTHING, null=True)
 
     if TYPE_CHECKING:
-        from ..UploadedTrack import UploadedTrack
-        uploaded_track: UploadedTrack
+        from ..Track import Track
+        track: Track
 
     class Meta:
         verbose_name = 'Track File'

@@ -13,7 +13,7 @@ from api.model.field.AppCharField import AppCharField
 from api.model.field.foreign_key.AppForeignKey import AppForeignKey
 from api.model.field.foreign_key.PrivateForeignKey import PrivateForeignKey
 from api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
-from api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
+from api.model.track_mixin.TrackMixin import TrackMixin
 from api.utils.model import SaveContext
 
 from .Fields import Fields
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from .lineage_rel.CriteriaLineageRel import CriteriaLineageRel
 
 
-class Criteria(UploadedTrackMixin):
+class Criteria(TrackMixin):
     _name = AppCharField(max_length=settings.CRITERIA_NAME_LEN_MAX, db_column=Fields.NAME_PUBLIC)
     ascendants: QuerySet['Criteria'] = PrivateManyToManyField('self',
                                                               through='CriteriaLineageRel',
@@ -56,7 +56,7 @@ class Criteria(UploadedTrackMixin):
         return self._name
 
     @property
-    def uploaded_tracks(self) -> models.QuerySet['Track']:
+    def tracks(self) -> models.QuerySet['Track']:
         return getattr(self, Fields.TRACKS_RELATED_NAME)
 
     @property

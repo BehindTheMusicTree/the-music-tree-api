@@ -1,4 +1,4 @@
-from api.serializer.model.uploaded_track.output.Fields import Fields as AvailableFields
+from api.serializer.model.track.output.Fields import Fields as AvailableFields
 
 
 class Fields:

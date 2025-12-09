@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from api.filtering.set.search.AlbumSearchFilterSet import AlbumSearchFilterSet
 from api.filtering.set.search.ArtistSearchFilterSet import ArtistSearchFilterSet
 from api.filtering.set.search.CriteriaPlaylistSearchFilterSet import CriteriaPlaylistSearchFilterSet
-from api.filtering.set.search.UploadedTrackSearchFilterSet import UploadedTrackSearchFilterSet
+from api.filtering.set.search.TrackSearchFilterSet import TrackSearchFilterSet
 from api.filtering.set.search.ManualPlaylistSearchFilterSet import ManualPlaylistSearchFilterSet
 from api.model.album.Album import Album
 from api.model.artist.Artist import Artist
@@ -14,10 +14,10 @@ from api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from api.model.playlist.children.criteria.CriterialessPlaylistNames import CriterialessPlaylistNames
 from api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
-from api.model.uploaded_track.UploadedTrack import UploadedTrack
+from api.model.track.Track import Track
 from api.serializer.model.album.minimum import AlbumMinimumSerializer
 from api.serializer.model.artist.simple import ArtistSimpleSerializer
-from api.serializer.model.uploaded_track.output.detailed import UploadedTrackDetailedSerializer
+from api.serializer.model.track.output.detailed import TrackDetailedSerializer
 from api.serializer.model.playlist.children.criteria.output.simple import CriteriaSimpleSerializer
 from api.serializer.model.playlist.children.manual.output.simple import ManualPlaylistSimpleSerializer
 
@@ -42,7 +42,7 @@ class SearchViewSet(ObjectMultipleModelAPIViewSet):
 
     # Only used by drf spectacular to generate the schema
     def get_detailed_serializer_class(self):
-        return UploadedTrackDetailedSerializer
+        return TrackDetailedSerializer
 
     @extend_schema(
         parameters=[
@@ -59,7 +59,7 @@ class SearchViewSet(ObjectMultipleModelAPIViewSet):
                 - Playlist (searched and ordered by name);
                 - Artist (searched and ordered by name);
                 - Album (searched and ordered by name);
-                - UploadedTrack (searched and ordered by title).
+                - Track (searched and ordered by title).
             """)
     )
     def get_querylist(self):
@@ -67,16 +67,16 @@ class SearchViewSet(ObjectMultipleModelAPIViewSet):
         query = self.request.query_params.get('query', '')
 
         # Base querysets filtered by user
-        uploaded_track_qs = UploadedTrack.objects.filter(user=user)
+        track_qs = Track.objects.filter(user=user)
         manual_playlist_qs = ManualPlaylist.objects.filter(user=user)
         criteria_playlist_qs = CriteriaPlaylist.objects.filter(user=user)
         album_qs = Album.objects.filter(user=user)
         artist_qs = Artist.objects.filter(user=user)
 
         # Apply filtersets
-        uploaded_track_fs = UploadedTrackSearchFilterSet(
+        track_fs = TrackSearchFilterSet(
             data=self.request.query_params,
-            queryset=uploaded_track_qs
+            queryset=track_qs
         )
         manual_playlist_fs = ManualPlaylistSearchFilterSet(
             data=self.request.query_params,
@@ -113,8 +113,8 @@ class SearchViewSet(ObjectMultipleModelAPIViewSet):
 
         querylist = (
             {
-                'queryset': uploaded_track_fs.qs,
-                'serializer_class': UploadedTrackDetailedSerializer,
+                'queryset': track_fs.qs,
+                'serializer_class': TrackDetailedSerializer,
             },
             {
                 'queryset': manual_playlist_fs.qs,

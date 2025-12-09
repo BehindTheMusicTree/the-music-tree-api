@@ -5,7 +5,7 @@ from rest_framework import serializers
 from api.model.play.Play import Play
 from api.model.playlist.Playlist import Playlist
 from api.serializer.field.AppCharField import AppCharField
-from api.serializer.model.uploaded_track.output.detailed import UploadedTrackDetailedSerializer
+from api.serializer.model.track.output.detailed import TrackDetailedSerializer
 from api.serializer.model.playlist.base.output.detailed import PlaylistDetailedSerializer
 
 from .Fields import Fields
@@ -26,4 +26,4 @@ class PlayDetailedSerializer(serializers.ModelSerializer):
         if isinstance(obj.content, Playlist):
             return PlaylistDetailedSerializer(obj.content).data
         else:
-            return UploadedTrackDetailedSerializer(obj.content).data
+            return TrackDetailedSerializer(obj.content).data

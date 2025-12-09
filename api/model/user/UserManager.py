@@ -60,5 +60,5 @@ def create_user_criterialess_playlists(sender, instance, created, **kwargs):
             type = CriteriaType.objects.get(pk=criteria_type)
             CriteriaPlaylist.objects.create(user=instance, type=type, criteria=None)
 
-        from api.model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllUploadedTracksMixin
-        AllUploadedTracksMixin.objects.create(user=instance)
+        from api.model.all_tracks_mixin.AllTracksMixin import AllTracksMixin
+        AllTracksMixin.objects.create(user=instance)

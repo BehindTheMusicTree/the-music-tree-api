@@ -11,8 +11,8 @@ from api.serializer.model.criteria_lineage_rel.without_ascendant import (
 from api.serializer.model.criteria_lineage_rel.without_descendant import (
     CriteriaLineageRelWithoutDescendantSerializer
 )
-from api.serializer.model.uploaded_track.output.simple.simple_without_album_and_genre import (
-    UploadedTrackWithoutAlbumPlaylistGenreSerializer
+from api.serializer.model.track.output.simple.simple_without_album_and_genre import (
+    TrackWithoutAlbumPlaylistGenreSerializer
 )
 from api.serializer.model.playlist.children.criteria.output.minumum import CriteriaPlaylistMinimumSerializer
 
@@ -21,9 +21,9 @@ from .minimum import CriteriaMinimumSerializer
 
 
 class CriteriaDetailedSerializer(AppInputSerializer, serializers.ModelSerializer):
-    uploaded_tracks = UploadedTrackWithoutAlbumPlaylistGenreSerializer(
+    tracks = TrackWithoutAlbumPlaylistGenreSerializer(
         source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
-    uploaded_tracks_count = IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+    tracks_count = IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
     parent = CriteriaMinimumSerializer()
     ascendants = CriteriaLineageRelWithoutDescendantSerializer(source=ModelFields.ASCENDANTS_RELS, many=True)
     descendants = CriteriaLineageRelWithoutAscendantSerializer(source=ModelFields.DESCENDANTS_RELS, many=True)

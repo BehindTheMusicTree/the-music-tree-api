@@ -1,5 +1,5 @@
 from api.model.criteria.Criteria import Fields as ModelFields
-from api.model.uploaded_track.Fields import Fields as UploadedTrackFields
+from api.model.track.Fields import Fields as TrackFields
 
 
 class Fields:
@@ -14,7 +14,7 @@ class Fields:
     UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC = ModelFields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC
     UPLOADED_TRACKS_ARCHIVED_COUNT_INTERNAL = ModelFields.UPLOADED_TRACKS_ARCHIVED_COUNT_INTERNAL
     UPLOADED_TRACKS_ARCHIVED_COUNT_PUBLIC = ModelFields.UPLOADED_TRACKS_ARCHIVED_COUNT_PUBLIC
-    UPLOADED_TRACKS_TITLE = UploadedTrackFields.TITLE
+    UPLOADED_TRACKS_TITLE = TrackFields.TITLE
     ROOT = ModelFields.ROOT
     PARENT = ModelFields.PARENT
     ASCENDANTS = ModelFields.ASCENDANTS

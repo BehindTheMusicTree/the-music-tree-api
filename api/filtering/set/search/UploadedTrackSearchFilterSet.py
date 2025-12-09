@@ -1,10 +1,10 @@
-from api.model.uploaded_track.Fields import Fields as UploadedTrackFields
-from api.model.uploaded_track.UploadedTrack import UploadedTrack
+from api.model.track.Fields import Fields as TrackFields
+from api.model.track.Track import Track
 
 from .SearchFilterSet import SearchFilterSet
 
 
-class UploadedTrackSearchFilterSet(SearchFilterSet):
+class TrackSearchFilterSet(SearchFilterSet):
     class Meta(SearchFilterSet.Meta):
-        model = UploadedTrack
-        search_fields = [UploadedTrackFields.TITLE]
+        model = Track
+        search_fields = [TrackFields.TITLE]

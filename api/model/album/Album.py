@@ -11,7 +11,7 @@ from api.model.artist.Artist import Artist
 from api.model.artist.Fields import Fields as ArtistFields
 from api.model.field.AppCharField import AppCharField
 from api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
-from api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
+from api.model.track_mixin.TrackMixin import TrackMixin
 from api.model.track.Fields import Fields as TrackFields
 
 from .Fields import Fields
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from api.model.track.Track import Track
 
 
-class Album(UploadedTrackMixin):
+class Album(TrackMixin):
     _name = AppCharField(max_length=settings.ALBUM_NAME_LEN_MAX, default=None, db_column=Fields.NAME_PUBLIC)
     year = AppCharField(max_length=4, default=None, null=True)
     album_artists: QuerySet[Artist] = PrivateManyToManyField(Artist, related_name=ArtistFields.ALBUMS)  # type: ignore
@@ -33,12 +33,12 @@ class Album(UploadedTrackMixin):
         return self._name
 
     @property
-    def uploaded_tracks(self) -> models.QuerySet['Track']:
+    def tracks(self) -> models.QuerySet['Track']:
         return getattr(self, Fields.TRACKS_RELATED_NAME)
 
     @property
-    def uploaded_tracks_not_archived_sorted(self) -> models.QuerySet['Track']:
-        return self.uploaded_tracks_not_archived.annotate(
+    def tracks_not_archived_sorted(self) -> models.QuerySet['Track']:
+        return self.tracks_not_archived.annotate(
             null_position=Q(track_number__isnull=True)).order_by(
             'null_position', TrackFields.TRACK_NUMBER, TrackFields.TITLE)
 
@@ -55,7 +55,7 @@ class Album(UploadedTrackMixin):
         else:
             string += " [No Artist]"
 
-        tracks: list[Track] = list(self.uploaded_tracks_not_archived.all())
+        tracks: list[Track] = list(self.tracks_not_archived.all())
         if tracks:
             track_details = []
             for track in tracks:

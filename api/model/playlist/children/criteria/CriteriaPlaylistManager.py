@@ -9,7 +9,7 @@ from .Fields import Fields
 
 if TYPE_CHECKING:
     from api.model.criteria.Criteria import Criteria
-    from api.model.uploaded_track.UploadedTrack import UploadedTrack
+    from api.model.track.Track import Track
 
     from .CriterialessPlaylistNames import CriterialessPlaylistNames
     from .CriteriaPlaylist import CriteriaPlaylist
@@ -41,58 +41,58 @@ class CriteriaPlaylistManager(StandardResourceManager):
         for child in instance.children.all():
             self.update_instance_and_children_root(instance=child, root=root)
 
-    def update_ascendants_uploaded_tracks(
+    def update_ascendants_tracks(
             self, instance: 'CriteriaPlaylist', old_parent: 'Criteria | None', common_criteria: 'Criteria | None'):
         if instance.parent:
-            self.add_uploaded_tracks_to_instance_and_ascendants_until_criteria_limit(
-                instance=instance.parent, uploaded_tracks=instance.uploaded_tracks.all(), criteria_limit=common_criteria)
+            self.add_tracks_to_instance_and_ascendants_until_criteria_limit(
+                instance=instance.parent, tracks=instance.tracks.all(), criteria_limit=common_criteria)
 
         if old_parent:
-            self.remove_uploaded_tracks_from_instance_and_ascendants_until_criteria_limit(
-                instance=old_parent.criteria_playlist, uploaded_tracks=instance.uploaded_tracks.all(), criteria_limit=common_criteria)
+            self.remove_tracks_from_instance_and_ascendants_until_criteria_limit(
+                instance=old_parent.criteria_playlist, tracks=instance.tracks.all(), criteria_limit=common_criteria)
 
-    def add_uploaded_tracks_to_instance_and_ascendants_until_criteria_limit(self,
-                                                                            instance: 'CriteriaPlaylist',
-                                                                            uploaded_tracks: QuerySet['UploadedTrack'],
-                                                                            criteria_limit: 'Criteria | None' = None):
+    def add_tracks_to_instance_and_ascendants_until_criteria_limit(self,
+                                                                   instance: 'CriteriaPlaylist',
+                                                                   tracks: QuerySet['Track'],
+                                                                   criteria_limit: 'Criteria | None' = None):
         if instance.criteria != criteria_limit:
-            from api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
-            for uploaded_track in uploaded_tracks:
-                UploadedTrackPlaylistRel(user=instance.user, playlist=instance, uploaded_track=uploaded_track).save()
+            from api.model.track_playlist_rel.TrackPlaylistRel import TrackPlaylistRel
+            for track in tracks:
+                TrackPlaylistRel(user=instance.user, playlist=instance, track=track).save()
 
             if instance.parent:
-                self.add_uploaded_tracks_to_instance_and_ascendants_until_criteria_limit(
-                    instance=instance.parent, uploaded_tracks=uploaded_tracks, criteria_limit=criteria_limit)
+                self.add_tracks_to_instance_and_ascendants_until_criteria_limit(
+                    instance=instance.parent, tracks=tracks, criteria_limit=criteria_limit)
 
-    def remove_uploaded_tracks_from_instance_and_ascendants_until_criteria_limit(
+    def remove_tracks_from_instance_and_ascendants_until_criteria_limit(
             self, instance: 'CriteriaPlaylist',
-            uploaded_tracks: QuerySet['UploadedTrack'],
+            tracks: QuerySet['Track'],
             criteria_limit: 'Criteria | None' = None):
-        from api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
+        from api.model.track_playlist_rel.TrackPlaylistRel import TrackPlaylistRel
 
         if instance.criteria != criteria_limit:
-            instance.uploaded_track_playlist_rels.filter(uploaded_track__in=uploaded_tracks).delete()
-            UploadedTrackPlaylistRel.objects.update_positions_to_fill_deleted_ones(instance)
+            instance.track_playlist_rels.filter(track__in=tracks).delete()
+            TrackPlaylistRel.objects.update_positions_to_fill_deleted_ones(instance)
 
             if instance.parent:
-                self.remove_uploaded_tracks_from_instance_and_ascendants_until_criteria_limit(
-                    instance=instance.parent, uploaded_tracks=uploaded_tracks, criteria_limit=criteria_limit)
+                self.remove_tracks_from_instance_and_ascendants_until_criteria_limit(
+                    instance=instance.parent, tracks=tracks, criteria_limit=criteria_limit)
 
     def transfer_direct_tracks_to_criterialess_playlist(
-            self, direct_tracks: QuerySet['UploadedTrack'],
+            self, direct_tracks: QuerySet['Track'],
             criteria_playlist: 'CriteriaPlaylist'):
-        from api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
+        from api.model.track_playlist_rel.TrackPlaylistRel import TrackPlaylistRel
 
         criterialess_playlist = self.get(
             user=criteria_playlist.user, criteria=None, type=criteria_playlist.type)
 
-        direct_tracks_rels_in_criteria_playlist = criteria_playlist.uploaded_track_playlist_rels.filter(
-            uploaded_track__uuid__in=[track.uuid for track in direct_tracks]
+        direct_tracks_rels_in_criteria_playlist = criteria_playlist.track_playlist_rels.filter(
+            track__uuid__in=[track.uuid for track in direct_tracks]
         )
 
         direct_tracks_rels_not_archived = direct_tracks_rels_in_criteria_playlist.filter(position__isnull=False)
 
-        UploadedTrackPlaylistRel.objects.move_tracks_to_playlist_beginning(
+        TrackPlaylistRel.objects.move_tracks_to_playlist_beginning(
             source_rels=direct_tracks_rels_not_archived, target_playlist=criterialess_playlist)
 
         direct_tracks_rels_in_criteria_playlist.filter(position__isnull=True).update(playlist=criterialess_playlist)

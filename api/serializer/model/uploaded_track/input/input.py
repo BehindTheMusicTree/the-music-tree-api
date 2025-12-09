@@ -12,14 +12,14 @@ from api.serializer.field.TrackNumberField import TrackNumberField
 from api.serializer.field.RatingField import RatingField
 from api.serializer.field.criteria.CriteriaFieldInputType import CriteriaFieldInputType
 from api.serializer.field.criteria.GenreField import GenreField
-from api.model.uploaded_track.Fields import Fields as ModelFields
+from api.model.track.Fields import Fields as ModelFields
 from api.utils import data_transformer
 from .Fields import Fields
 
 
-class UploadedTrackInputSerializer(AppInputSerializer):
+class TrackInputSerializer(AppInputSerializer):
     title = AppCharField(
-        max_length=settings.UPLOADED_TRACK_TITLE_LEN_MAX, required=False, allow_blank=False, allow_null=True)
+        max_length=settings.TRACK_TITLE_LEN_MAX, required=False, allow_blank=False, allow_null=True)
     force_title_generation = serializers.BooleanField(required=False)
     artists_names = ArtistsNamesField(max_length=settings.ARTISTS_NAMES_LEN_MAX, required=False, allow_null=True)
     album_name = AppCharField(max_length=settings.ALBUM_NAME_LEN_MAX, required=False, allow_blank=True, allow_null=True)

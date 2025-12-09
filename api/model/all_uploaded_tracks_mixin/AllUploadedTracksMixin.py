@@ -1,16 +1,16 @@
 from django.db import models
 
-from api.model.all_uploaded_tracks_mixin.AllUploadedTrackMixinManager import AllUploadedTrackMixinManager
-from api.model.uploaded_track.UploadedTrack import UploadedTrack
+from api.model.all_tracks_mixin.AllTrackMixinManager import AllTrackMixinManager
+from api.model.track.Track import Track
 
-from ..uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
+from ..track_mixin.TrackMixin import TrackMixin
 from .Fields import Fields
 
 
 # One per user
-class AllUploadedTracksMixin(UploadedTrackMixin):
+class AllTracksMixin(TrackMixin):
 
-    objects: AllUploadedTrackMixinManager = AllUploadedTrackMixinManager()
+    objects: AllTrackMixinManager = AllTrackMixinManager()
 
     class Meta:
         verbose_name = 'All Uploaded Tracks Mixin'
@@ -25,8 +25,8 @@ class AllUploadedTracksMixin(UploadedTrackMixin):
         return 'All Tracks'
 
     @property
-    def uploaded_tracks(self) -> models.QuerySet[UploadedTrack]:
-        return UploadedTrack.objects.filter(user=self.user)
+    def tracks(self) -> models.QuerySet[Track]:
+        return Track.objects.filter(user=self.user)
 
     @property
     def type(self):

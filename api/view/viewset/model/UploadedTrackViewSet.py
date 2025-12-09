@@ -6,30 +6,30 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema  # type: ignor
 from rest_framework.decorators import action
 from typing import cast
 
-from api.filtering.set.uploaded_track.Fields import Fields as FilterFields
-from api.model.uploaded_track.UploadedTrack import UploadedTrack
-from api.serializer.model.uploaded_track.input.post.post import UploadedTrackPostSerializer
-from api.serializer.model.uploaded_track.input.post.Fields import Fields as PostFields
-from api.serializer.model.uploaded_track.input.put.put import UploadedTrackPutSerializer
-from api.serializer.model.uploaded_track.output.detailed import UploadedTrackDetailedSerializer
+from api.filtering.set.track.Fields import Fields as FilterFields
+from api.model.track.Track import Track
+from api.serializer.model.track.input.post.post import TrackPostSerializer
+from api.serializer.model.track.input.post.Fields import Fields as PostFields
+from api.serializer.model.track.input.put.put import TrackPutSerializer
+from api.serializer.model.track.output.detailed import TrackDetailedSerializer
 
 from .AppModelViewSet import AppModelViewSet
 
 
-class UploadedTrackViewSet(AppModelViewSet[UploadedTrack]):
+class TrackViewSet(AppModelViewSet[Track]):
     def __init__(self, **kwargs):
-        from api.filtering.set.uploaded_track.UploadedTrackFilterSet import UploadedTrackFilterSet
-        super().__init__(model_class=UploadedTrack,
-                         filterset_class=UploadedTrackFilterSet,
-                         simple_serializer_class=UploadedTrackDetailedSerializer,
-                         detailed_serializer_class=UploadedTrackDetailedSerializer,
-                         create_serializer_class=UploadedTrackPostSerializer,
-                         update_serializer_class=UploadedTrackPutSerializer,
+        from api.filtering.set.track.TrackFilterSet import TrackFilterSet
+        super().__init__(model_class=Track,
+                         filterset_class=TrackFilterSet,
+                         simple_serializer_class=TrackDetailedSerializer,
+                         detailed_serializer_class=TrackDetailedSerializer,
+                         create_serializer_class=TrackPostSerializer,
+                         update_serializer_class=TrackPutSerializer,
                          **kwargs)
 
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
-        track = cast(UploadedTrack, UploadedTrack.objects.get(uuid=pk))
+        track = cast(Track, Track.objects.get(uuid=pk))
         file = cast(File, track.track_file.file)
         if not file:
             raise ValueError("File not found")
@@ -41,7 +41,7 @@ class UploadedTrackViewSet(AppModelViewSet[UploadedTrack]):
 
         return self.get_file_response(file_path=file_path)
 
-    @extend_schema(request=UploadedTrackPostSerializer, responses=UploadedTrackDetailedSerializer, description=("""
+    @extend_schema(request=TrackPostSerializer, responses=TrackDetailedSerializer, description=("""
         Create a track with metadata by uploading or a file or downloading it from another source:
             # Uploading a file:
                 - if the file has no metadata 'title', it is set with the file's name without the extension (with an 
@@ -97,8 +97,8 @@ class UploadedTrackViewSet(AppModelViewSet[UploadedTrack]):
     def retrieve(self, *args, **kwargs):
         return self._handle_retrieve()
 
-    @extend_schema(request=UploadedTrackPutSerializer,
-                   responses=UploadedTrackDetailedSerializer,
+    @extend_schema(request=TrackPutSerializer,
+                   responses=TrackDetailedSerializer,
                    description=("""
             Updates a track:\n"
             - to not update a field, it mustn't be specified (e.g the line \"artist_name\":... 

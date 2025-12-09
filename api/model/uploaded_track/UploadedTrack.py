@@ -40,14 +40,14 @@ from api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
 
 from .Fields import Fields
 from .file.Fields import Fields as TrackFileFields
-from .UploadedTrackManager import UploadedTrackManager
+from .TrackManager import TrackManager
 
 
 if TYPE_CHECKING:
     from api.model.track_playlist_rel.TrackPlaylistRel import TrackPlaylistRel
 
 
-class UploadedTrack(TrackablePlayCount):
+class Track(TrackablePlayCount):
     title = AppCharField(max_length=settings.UPLOADED_TRACK_TITLE_LEN_MAX)
     artists = PrivateManyToManyField(Artist, blank=True, related_name=ArtistFields.TRACKS_RELATED_NAME)
     album: Album = PrivateForeignKey(Album,  # type: ignore
@@ -72,7 +72,7 @@ class UploadedTrack(TrackablePlayCount):
     archived = models.BooleanField(default=False)
     playlists = PrivateManyToManyField(
         Playlist, through='TrackPlaylistRel', related_name=PlayListFields.TRACKS_RELATED_NAME)
-    
+
     file: TemporaryUploadedFile | FieldFile = models.FileField(  # type: ignore
         upload_to=model_utils.get_user_lib_path,
         storage=PreserveSpacesStorage(),
@@ -99,7 +99,7 @@ class UploadedTrack(TrackablePlayCount):
     if TYPE_CHECKING:
         track_playlist_rels: models.QuerySet['TrackPlaylistRel']
 
-    objects: UploadedTrackManager = UploadedTrackManager()
+    objects: TrackManager = TrackManager()
 
     class Meta:
         verbose_name = 'Uploaded Track'
@@ -158,7 +158,6 @@ class UploadedTrack(TrackablePlayCount):
             self._manage_musicbrainz_recording()
         return ctx.kwargs
 
-
     @property
     def playlists_with_positions(self) -> list[tuple[str, int]]:
         from api.model.track_playlist_rel.TrackPlaylistRel import Fields as TrackPlaylistRelFields
@@ -168,13 +167,13 @@ class UploadedTrack(TrackablePlayCount):
                                                     TrackPlaylistRelFields.POSITION))
 
 
-@receiver(pre_save, sender=UploadedTrack)
-def handle_pre_save(sender, instance: UploadedTrack, **kwargs):
+@receiver(pre_save, sender=Track)
+def handle_pre_save(sender, instance: Track, **kwargs):
     if instance.file and not os.path.exists(instance.user.lib_abs_path):
         os.makedirs(instance.user.lib_abs_path)
 
 
-@receiver(pre_delete, sender=UploadedTrack)
-def handle_pre_delete(sender, instance: UploadedTrack, using, **kwargs):
+@receiver(pre_delete, sender=Track)
+def handle_pre_delete(sender, instance: Track, using, **kwargs):
     if instance.file:
         instance.file.delete(False)  # type: ignore

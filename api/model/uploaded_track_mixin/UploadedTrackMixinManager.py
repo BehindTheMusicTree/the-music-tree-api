@@ -6,12 +6,12 @@ from .Fields import Fields
 
 
 if TYPE_CHECKING:
-    from api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
+    from api.model.track_mixin.TrackMixin import TrackMixin
 
-T = TypeVar('T', bound='UploadedTrackMixin')
+T = TypeVar('T', bound='TrackMixin')
 
 
-class UploadedTrackMixinManager(StandardResourceManager[T]):
+class TrackMixinManager(StandardResourceManager[T]):
     model: type[T]
 
     def get_default_ordering(self) -> list[str]:

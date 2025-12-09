@@ -1,4 +1,4 @@
-from api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import Fields as ModelFields
+from api.model.track_playlist_rel.TrackPlaylistRel import Fields as ModelFields
 
 
 class Fields:

@@ -13,18 +13,18 @@ from api.model.base.BaseModel import BaseModel
 from api.model.field.AppCharField import AppCharField
 from api.model.utils.ConcatOp import ConcatOp
 from api.model.utils.ConditionalExpression import ConditionalExpression
-from api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
+from api.test.utils.track.TrackTestFilename import TrackTestFilename
 
 from .Fields import Fields
 from .UserManager import UserManager
 
 
 if TYPE_CHECKING:
-    from api.model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllUploadedTracksMixin
+    from api.model.all_tracks_mixin.AllTracksMixin import AllTracksMixin
 
 
 class User(AbstractUser, BaseModel):
-    DEFAULT_UPLOADED_TRACK_FILENAME_WITH_EXTENSION = "default.mp3"
+    DEFAULT_TRACK_FILENAME_WITH_EXTENSION = "default.mp3"
 
     is_test_user = models.BooleanField(default=False)
     lib_path_relative_to_media = models.GeneratedField(  # type: ignore
@@ -49,13 +49,13 @@ class User(AbstractUser, BaseModel):
         return settings.MEDIA_ROOT / self.lib_path_relative_to_media
 
     @cached_property
-    def all_uploaded_tracks_mixin(self) -> 'AllUploadedTracksMixin':
-        from api.model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllUploadedTracksMixin
-        all_uploaded_tracks_mixin, _ = AllUploadedTracksMixin.objects.get_or_create(user=self)
-        return all_uploaded_tracks_mixin
+    def all_tracks_mixin(self) -> 'AllTracksMixin':
+        from api.model.all_tracks_mixin.AllTracksMixin import AllTracksMixin
+        all_tracks_mixin, _ = AllTracksMixin.objects.get_or_create(user=self)
+        return all_tracks_mixin
 
-    def does_track_filename_exist_in_lib(self, test_uploaded_track_filename: UploadedTrackTestFilename):
-        return os.path.isfile(Path(self.lib_abs_path) / test_uploaded_track_filename.value)
+    def does_track_filename_exist_in_lib(self, test_track_filename: TrackTestFilename):
+        return os.path.isfile(Path(self.lib_abs_path) / test_track_filename.value)
 
     def delete(self, *args, **kwargs):
         if self.lib_abs_path.exists():

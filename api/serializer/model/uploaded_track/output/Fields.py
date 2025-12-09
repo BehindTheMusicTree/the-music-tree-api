@@ -1,5 +1,5 @@
 
-from api.model.uploaded_track.Fields import Fields as ModelFields
+from api.model.track.Fields import Fields as ModelFields
 
 
 class Fields:

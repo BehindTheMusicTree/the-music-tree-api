@@ -1,16 +1,16 @@
 from typing import TYPE_CHECKING, TypeVar
 
-from api.model.uploaded_track_mixin.Fields import Fields
-from api.model.uploaded_track_mixin.UploadedTrackMixinManager import UploadedTrackMixinManager
+from api.model.track_mixin.Fields import Fields
+from api.model.track_mixin.TrackMixinManager import TrackMixinManager
 
 
 if TYPE_CHECKING:
-    from api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
+    from api.model.track_mixin.TrackMixin import TrackMixin
 
-T = TypeVar('T', bound='UploadedTrackMixin')
+T = TypeVar('T', bound='TrackMixin')
 
 
-class UploadedTrackMixinWithInternalNameManager(UploadedTrackMixinManager[T]):
+class TrackMixinWithInternalNameManager(TrackMixinManager[T]):
     model: type[T]
 
     def get_default_ordering(self) -> list[str]:

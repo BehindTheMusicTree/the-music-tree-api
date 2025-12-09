@@ -2,8 +2,8 @@ from rest_framework import serializers
 
 from api.model.artist.Artist import Artist
 from api.serializer.model.album.minimum import AlbumMinimumSerializer
-from api.serializer.model.uploaded_track.output.simple.simple_without_artist import (
-    UploadedTrackSimpleWithoutPlaylistAndArtistSerializer
+from api.serializer.model.track.output.simple.simple_without_artist import (
+    TrackSimpleWithoutPlaylistAndArtistSerializer
 )
 
 from .Fields import Fields
@@ -11,10 +11,10 @@ from .Fields import Fields
 
 class ArtistDetailedSerializer(serializers.ModelSerializer):
     albums = AlbumMinimumSerializer(many=True)
-    uploaded_tracks = UploadedTrackSimpleWithoutPlaylistAndArtistSerializer(
+    tracks = TrackSimpleWithoutPlaylistAndArtistSerializer(
         source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
-    uploaded_tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
-    uploaded_tracks_archived_count = serializers.IntegerField()
+    tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+    tracks_archived_count = serializers.IntegerField()
 
     class Meta:
         model = Artist
