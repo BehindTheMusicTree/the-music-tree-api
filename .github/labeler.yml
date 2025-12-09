@@ -12,7 +12,6 @@ track:
         - 'api/test/view/track/**'
         - 'api/utils/audio_metadata/**'
         - 'api/utils/AudioFile.py'
-        - 'api/validator/TrackFileValidator.py'
         - 'api/validator/TrackUrlValidator.py'
 
 artist:
