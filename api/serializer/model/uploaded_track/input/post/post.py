@@ -10,9 +10,7 @@ from api.model.user.User import User
 from api.serializer.field.TrackFileField import TrackFileField
 from api.serializer.model.uploaded_track.input.Fields import Fields
 from api.serializer.model.uploaded_track.input.input import UploadedTrackInputSerializer
-from api.utils import audio_file_metadata, data_transformer, utils
-from api.utils.audio_file_metadata.exceptions import FileCorruptedError
-from api.utils.audio_file_metadata.AppMetadataKey import AppMetadataKey
+from api.utils import data_transformer, utils
 from .Fields import Fields as PostFields
 
 
