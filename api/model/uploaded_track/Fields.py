@@ -3,8 +3,8 @@ from api.model.trackable_play_count.Fields import Fields as TrackablePlayCountFi
 
 
 class Fields(PrivateUniqueResourceFields, TrackablePlayCountFields):
-    TRACK_FILE_INTERNAL = "track_file"
     FILE = "file"
+    SIZE_IN_BYTES = "size_in_bytes"
     TITLE = "title"
     ARTISTS = "artists"
     ALBUM = "album"

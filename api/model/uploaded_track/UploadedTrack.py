@@ -39,7 +39,6 @@ from api.model.utils import utils as model_utils
 from api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
 
 from .Fields import Fields
-from .file.Fields import Fields as TrackFileFields
 from .TrackManager import TrackManager
 
 
@@ -83,11 +82,11 @@ class Track(TrackablePlayCount):
     duration_in_sec = models.PositiveIntegerField(null=True, blank=True)
     md5_has_been_corrected = models.BooleanField(default=False)
     size_in_bytes = models.DecimalField(max_digits=11, decimal_places=2, null=True, blank=True)
-    size_in_ko = models.GeneratedField(expression=F(TrackFileFields.SIZE_IN_BYTES) / 1024,  # type: ignore
+    size_in_ko = models.GeneratedField(expression=F(Fields.SIZE_IN_BYTES) / 1024,  # type: ignore
                                        output_field=models.DecimalField(max_digits=8, decimal_places=2),
                                        db_persist=True,
                                        null=True)
-    size_in_mo = models.GeneratedField(expression=F(TrackFileFields.SIZE_IN_BYTES) / (1024 * 1024),  # type: ignore
+    size_in_mo = models.GeneratedField(expression=F(Fields.SIZE_IN_BYTES) / (1024 * 1024),  # type: ignore
                                        output_field=models.DecimalField(max_digits=5, decimal_places=2),
                                        db_persist=True,
                                        null=True)

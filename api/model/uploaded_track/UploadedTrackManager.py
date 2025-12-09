@@ -83,9 +83,6 @@ class TrackManager(StandardResourceManager['Track']):
     def create(self, **kwargs) -> 'Track':
         with transaction.atomic():
             artists = kwargs.pop(Fields.ARTISTS, None)
-            file = kwargs.pop(Fields.TRACK_FILE_INTERNAL, None)
-            if file:
-                kwargs[Fields.FILE] = file
 
             instance: Track = super().create(**kwargs)
             if artists:
@@ -94,20 +91,6 @@ class TrackManager(StandardResourceManager['Track']):
             self._add_to_genre_playlists(instance)
 
         return instance
-
-    def create_instance_with_track_file(
-            self, track_file_data: dict[str, Any], track_data: dict[str, Any]) -> 'Track':
-        with transaction.atomic():
-            artists = track_data.pop(Fields.ARTISTS, None)
-            if 'file' in track_file_data:
-                track_data[Fields.FILE] = track_file_data.pop('file')
-
-            track: Track = self.model(**track_data)
-            track.save()
-            if artists:
-                track.artists.set(artists)
-
-        return track
 
     def update_instance(self, old_instance: 'Track', **kwargs) -> 'Track':
         from api.model.album.Album import Album
