@@ -5,7 +5,7 @@ from .model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllUploadedT
 from .model.artist.Artist import Artist
 from .model.criteria.Criteria import Criteria
 from .model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
-from .model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
+from .model.track_playlist_rel.TrackPlaylistRel import TrackPlaylistRel
 from .model.musicbrainz_resource.children.artist.MbArtist import MbArtist
 from .model.musicbrainz_resource.children.recording.MbRecording import MusicbrainzRecording
 from .model.musicbrainz_resource.children.recording.missing_cause.code.MbRecordingMissingCauseCode import (
@@ -34,7 +34,7 @@ admin.site.register(CriteriaLineageRel)
 admin.site.register(Playlist)
 admin.site.register(ManualPlaylist)
 admin.site.register(CriteriaPlaylist)
-admin.site.register(UploadedTrackPlaylistRel)
+admin.site.register(TrackPlaylistRel)
 admin.site.register(MusicbrainzRecording)
 admin.site.register(MbRecordingMissingCause)
 admin.site.register(MbRecordingMissingCauseCode)

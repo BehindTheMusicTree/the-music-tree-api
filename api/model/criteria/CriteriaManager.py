@@ -104,8 +104,7 @@ class CriteriaManager(UploadedTrackMixinWithInternalNameManager[T]):
                                                                            root=updated_instance.root.criteria_playlist)
 
         if old_name != updated_instance.name and updated_instance.uploaded_tracks:
-            for uploaded_track in updated_instance.uploaded_tracks.all():
-                uploaded_track.update_file_metadata_from_uploaded_track_instance_values()
+            pass
 
         return updated_instance
 
@@ -146,7 +145,6 @@ class CriteriaManager(UploadedTrackMixinWithInternalNameManager[T]):
         for uploaded_track in criteria_uploaded_tracks:
             uploaded_track.genre = instance.parent
             uploaded_track.save(update_fields=[f'{UploadedTrackFields.GENRE}_id'])
-            uploaded_track.update_file_metadata_from_uploaded_track_instance_values()
 
         if instance.is_root:
             CriteriaPlaylist.objects.transfer_direct_tracks_to_criterialess_playlist(
