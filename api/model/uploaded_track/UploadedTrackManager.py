@@ -8,7 +8,6 @@ from api.model.artist.Artist import Artist
 from api.model.criteria.Criteria import Criteria
 from api.model.criteria.type.CriteriaTypePks import CriteriaTypePks
 from api.model.public_standard_resource.StandardResourceManager import StandardResourceManager
-from api.model.uploaded_track.file.Fields import Fields as TrackFileFields
 from api.model.user.User import User
 from api.serializer.model.uploaded_track.input.Fields import Fields as Fields
 
@@ -82,21 +81,15 @@ class UploadedTrackManager(StandardResourceManager['UploadedTrack']):
         self._remove_from_genre_playlists(instance=instance, old_genre=old_genre, genre_limit=common_genre)
 
     def create(self, **kwargs) -> 'UploadedTrack':
-        from .file.TrackFile import TrackFile
-
         with transaction.atomic():
             artists = kwargs.pop(Fields.ARTISTS, None)
-            track_file_model_data = dict()
-            track_file_model_data[TrackFileFields.FILE] = kwargs.pop(Fields.TRACK_FILE_INTERNAL)
+            file = kwargs.pop(Fields.TRACK_FILE_INTERNAL, None)
+            if file:
+                kwargs[Fields.FILE] = file
 
             instance: UploadedTrack = super().create(**kwargs)
             if artists:
                 instance.artists.set(artists)
-
-            track_file_model_data[TrackFileFields.USER] = instance.user
-            track_file_model_data[TrackFileFields.UPLOADED_TRACK] = instance
-
-            TrackFile.objects.create(**track_file_model_data)
 
             self._add_to_genre_playlists(instance)
 
@@ -105,17 +98,15 @@ class UploadedTrackManager(StandardResourceManager['UploadedTrack']):
 
     def create_instance_with_track_file(
             self, track_file_data: dict[str, Any], uploaded_track_data: dict[str, Any]) -> 'UploadedTrack':
-        from ..file.TrackFile import TrackFile
-
         with transaction.atomic():
             artists = uploaded_track_data.pop(Fields.ARTISTS, None)
+            if 'file' in track_file_data:
+                uploaded_track_data[Fields.FILE] = track_file_data.pop('file')
+            
             uploaded_track: UploadedTrack = self.model(**uploaded_track_data)
             uploaded_track.save()
             if artists:
                 uploaded_track.artists.set(artists)
-
-            track_file_data[TrackFileFields.UPLOADED_TRACK] = uploaded_track
-            TrackFile.objects.create(**track_file_data)
 
         uploaded_track.update_file_metadata_from_uploaded_track_instance_values()
 
