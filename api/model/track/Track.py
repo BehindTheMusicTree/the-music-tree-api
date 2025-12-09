@@ -48,7 +48,6 @@ class Track(TrackablePlayCount):
         blank=True,
         validators=[MinValueValidator(0), MaxValueValidator(settings.UPLOADED_TRACK_RATING_VALUE_MAX)])
     language = AppCharField(max_length=settings.LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
-    archived = models.BooleanField(default=False)
     playlists = PrivateManyToManyField(
         Playlist, through='TrackPlaylistRel', related_name=PlayListFields.TRACKS_RELATED_NAME)
 

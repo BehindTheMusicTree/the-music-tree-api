@@ -93,7 +93,6 @@ class TrackManager(StandardResourceManager['Track']):
     def update_instance(self, old_instance: 'Track', **kwargs) -> 'Track':
         from api.model.album.Album import Album
         from api.model.artist.Artist import Artist
-        from api.model.track_playlist_rel.TrackPlaylistRel import TrackPlaylistRel
 
         with transaction.atomic():
             old_album_artists_list = []
@@ -106,8 +105,6 @@ class TrackManager(StandardResourceManager['Track']):
 
             old_genre = old_instance.genre
             old_artists_list = list(old_instance.artists.all())
-
-            old_archived_state = old_instance.archived
 
             updated_instance: Track = super().update_instance(old_instance, **kwargs)
 
@@ -125,14 +122,6 @@ class TrackManager(StandardResourceManager['Track']):
                 for old_track_artist in old_track_artists_list:
                     if old_track_artist not in current_track_artists_list:
                         Artist.objects.delete_instance_if_nothing_linked(old_track_artist)
-
-            if old_archived_state != updated_instance.archived:
-                if updated_instance.archived:
-                    TrackPlaylistRel.objects.archive_instances_of_track(
-                        track=updated_instance)
-                else:
-                    TrackPlaylistRel.objects.unarchive_instances_of_track(
-                        track=updated_instance)
 
             return updated_instance
 

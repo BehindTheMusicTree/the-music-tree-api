@@ -13,5 +13,4 @@ class Fields(PrivateUniqueResourceFields, TrackablePlayCountFields):
     TRACK_PLAYLIST_RELS = "track_playlist_rels"
     LANGUAGE = "language"
     PLAYLISTS_PUBLIC = "playlists"
-    ARCHIVED = 'archived'
     RELATIVE_URL = "relative_url"
