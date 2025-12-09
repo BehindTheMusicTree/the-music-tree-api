@@ -12,3 +12,4 @@ class TrackPlaylistRelWithoutPlaylist(serializers.ModelSerializer):
     class Meta:
         model = TrackPlaylistRel
         fields = [Fields.TRACK_PUBLIC, Fields.POSITION,]
+

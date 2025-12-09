@@ -8,3 +8,4 @@ class TrackSearchFilterSet(SearchFilterSet):
     class Meta(SearchFilterSet.Meta):
         model = Track
         search_fields = [TrackFields.TITLE]
+

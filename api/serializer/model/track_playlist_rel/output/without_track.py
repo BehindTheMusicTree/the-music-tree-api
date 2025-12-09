@@ -13,3 +13,4 @@ class TrackPlaylistRelWithoutTrack(serializers.ModelSerializer):
         model = TrackPlaylistRel
         fields = [Fields.PLAYLIST,
                   Fields.POSITION]
+

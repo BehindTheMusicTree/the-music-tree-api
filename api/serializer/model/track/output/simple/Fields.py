@@ -11,3 +11,4 @@ class Fields:
     RATING = OutputFields.RATING
     LANGUAGE = OutputFields.LANGUAGE
     PLAY_COUNT = OutputFields.PLAY_COUNT
+

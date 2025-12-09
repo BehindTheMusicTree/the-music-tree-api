@@ -14,3 +14,4 @@ class TrackMinimumSerializer(serializers.ModelSerializer):
         fields = [Fields.UUID,
                   Fields.TITLE,
                   Fields.ARTISTS]
+
