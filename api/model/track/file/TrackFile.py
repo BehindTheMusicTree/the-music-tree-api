@@ -23,10 +23,6 @@ from api.model.private_standard_resource.PrivateStandardResource import PrivateS
 from api.model.track.Fields import Fields as TrackFields
 from api.model.utils import utils as model_utils
 from api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
-from api.utils import audio_file_metadata
-from api.utils.audio_file_metadata.types import AppMetadata
-from api.utils.audio_file_metadata.exceptions import FileCorruptedError
-from api.validator.TrackFileValidator import TrackFileValidator
 
 from .Fields import Fields
 
@@ -38,7 +34,6 @@ class TrackFile(PrivateStandardResource):
         upload_to=model_utils.get_user_lib_path,
         storage=PreserveSpacesStorage(),
         help_text="Only audio formats accepted.",
-        validators=[TrackFileValidator(),],
         max_length=settings.FILE_PATH_MAX_LENGTH)
     duration_in_sec = models.PositiveIntegerField()
     md5_has_been_corrected = models.BooleanField(default=False)

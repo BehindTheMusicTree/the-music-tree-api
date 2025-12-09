@@ -37,7 +37,6 @@ from api.model.playlist.Playlist import Playlist
 from api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from api.model.utils import utils as model_utils
 from api.model.utils.PreserveSpacesStorage import PreserveSpacesStorage
-from api.validator.TrackFileValidator import TrackFileValidator
 
 from .Fields import Fields
 from .file.Fields import Fields as TrackFileFields
@@ -78,7 +77,6 @@ class UploadedTrack(TrackablePlayCount):
         upload_to=model_utils.get_user_lib_path,
         storage=PreserveSpacesStorage(),
         help_text="Only audio formats accepted.",
-        validators=[TrackFileValidator(),],
         max_length=settings.FILE_PATH_MAX_LENGTH,
         null=True,
         blank=True)
