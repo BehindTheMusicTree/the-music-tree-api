@@ -11,7 +11,6 @@ from api.exception.validation.FieldValidationErrorCode import FieldValidationErr
 from api.serializer.field.AppField import AppField
 from api.serializer.field.AppFileField import AppFileField
 from api.serializer.field.AppUrlField import AppUrlField
-from api.validator.TrackFileValidator import TrackFileValidator
 from api.validator.TrackUrlValidator import TrackUrlValidator
 
 
@@ -27,7 +26,7 @@ class TrackFileField(AppField):
         super().__init__(**kwargs)
 
         self.url_field = AppUrlField(validators=[TrackUrlValidator()], allow_null=self._allow_null)
-        self.file_field = AppFileField(validators=[TrackFileValidator()], allow_null=self._allow_null)
+        self.file_field = AppFileField(allow_null=self._allow_null)
 
     def bind(self, field_name: str, parent: Any) -> None:
         """
