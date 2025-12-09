@@ -463,22 +463,6 @@ def setup_app_constants():
     CRITERIA_TREE_IMPORT_MAX_TOTAL_COUNT = 30000
 
 
-def setup_afp_connection():
-    if APP_IS_EXPOSED:
-        print_django("The app is exposed. The AFP host is the AFP container name.")
-        AFP_BASE_URL = AFP_CONTAINER_NAME
-    else:
-        print_django("The app is not exposed. The AFP host is the AFP url.")
-        AFP_BASE_URL = load_required_str_env_var('AFP_URL')
-
-    AFP_PORT = load_required_str_env_var('AFP_PORT')
-    AFP_POST_ENDPOINT = load_required_str_env_var('AFP_POST_ENDPOINT')
-
-    global AFP_POST_FULL_URL
-    AFP_POST_FULL_URL = "http://" + AFP_BASE_URL + ":" + AFP_PORT + '/' + AFP_POST_ENDPOINT
-    print_django(f"AFP_POST_FULL_URL: {AFP_POST_FULL_URL}")
-
-
 def setup_data_dir():
     global DATA_DIR
     DATA_DIR = BASE_DIR / 'data'
@@ -784,10 +768,7 @@ else:
     if not FILE_UPLOAD_TEMP_DIR:
         print_django("TMP_UPLOADED_FILES/FILE_UPLOAD_TEMP_DIR is not set. The app will not handle media files.")
         FILE_UPLOAD_ENABLED = False
-        for var_name in ['AFP_PORT',
-                         'AFP_CONTAINER_NAME',
-                         'AFP_POST_ENDPOINT',
-                         'ACOUSTID_API_KEY',
+        for var_name in ['ACOUSTID_API_KEY',
                          'MEDIA_DIR',
                          'LIBRARIES_DIR_NAME']:
             if os.getenv(var_name):
@@ -795,8 +776,6 @@ else:
                     TMP_UPLOADED_FILES/FILE_UPLOAD_TEMP_DIR is not.")
     else:
         FILE_UPLOAD_ENABLED = True
-        AFP_CONTAINER_NAME = load_required_str_env_var('AFP_CONTAINER_NAME')
         setup_media_dirs()
-        setup_afp_connection()
 
 print_django("Finished loading settings.")
