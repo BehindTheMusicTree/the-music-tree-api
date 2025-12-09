@@ -115,7 +115,7 @@ class UploadedTrackManager(StandardResourceManager['UploadedTrack']):
     def update_instance(self, old_instance: 'UploadedTrack', **kwargs) -> 'UploadedTrack':
         from api.model.album.Album import Album
         from api.model.artist.Artist import Artist
-        from api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
+        from api.model.track_playlist_rel.TrackPlaylistRel import TrackPlaylistRel
 
         with transaction.atomic():
             old_album_artists_list = []
@@ -153,11 +153,11 @@ class UploadedTrackManager(StandardResourceManager['UploadedTrack']):
 
             if old_archived_state != updated_instance.archived:
                 if updated_instance.archived:
-                    UploadedTrackPlaylistRel.objects.archive_instances_of_uploaded_track(
-                        uploaded_track=updated_instance)
+                    TrackPlaylistRel.objects.archive_instances_of_track(
+                        track=updated_instance)
                 else:
-                    UploadedTrackPlaylistRel.objects.unarchive_instances_of_uploaded_track(
-                        uploaded_track=updated_instance)
+                    TrackPlaylistRel.objects.unarchive_instances_of_track(
+                        track=updated_instance)
 
             return updated_instance
 
