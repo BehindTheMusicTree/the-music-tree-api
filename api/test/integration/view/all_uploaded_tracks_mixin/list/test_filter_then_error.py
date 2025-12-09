@@ -2,14 +2,14 @@ from rest_framework import status
 
 from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 
-from ..AllUploadedTracksMixinTestCase import AllUploadedTracksMixinTestCase
+from ..AllTracksMixinTestCase import AllTracksMixinTestCase
 
 
-class TestCase(AllUploadedTracksMixinTestCase):
+class TestCase(AllTracksMixinTestCase):
 
     def test_filter_then_400_bad_request(self):
         filter = 'filter'
-        response = self._get_all_uploaded_tracks_mixin(**{filter: 'a'})
+        response = self._get_all_tracks_mixin(**{filter: 'a'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         error = self.bad_request_result_field_errors[0]

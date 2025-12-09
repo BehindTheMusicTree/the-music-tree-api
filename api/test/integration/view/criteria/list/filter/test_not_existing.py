@@ -1,14 +1,14 @@
 from rest_framework import status
 
 from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from api.test.integration.view.uploaded_track.UploadedTrackTestCase import UploadedTrackTestCase
+from api.test.integration.view.track.TrackTestCase import TrackTestCase
 
 
-class TestCase(UploadedTrackTestCase):
+class TestCase(TrackTestCase):
 
     def test_filter_not_existing_then_400_bad_request(self):
         invalid_filter_name = 'invalidFilter'
-        response = self._list_uploaded_tracks(**{invalid_filter_name: 'invalidFilter'})
+        response = self._list_tracks(**{invalid_filter_name: 'invalidFilter'})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1

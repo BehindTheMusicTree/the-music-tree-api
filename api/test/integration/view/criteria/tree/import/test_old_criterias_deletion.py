@@ -1,8 +1,8 @@
 from rest_framework import status
 
 from api.model.criteria.children.genre.Genre import Genre
-from api.model.uploaded_track_playlist_rel.Fields import Fields as UploadedTrackPlaylistRelFields
-from api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
+from api.model.track_playlist_rel.Fields import Fields as TrackPlaylistRelFields
+from api.model.track_playlist_rel.TrackPlaylistRel import TrackPlaylistRel
 from api.model.playlist.Playlist import Playlist
 from api.model.playlist.children.criteria.genre.GenrePlaylist import GenrePlaylist
 from api.test.integration.view.criteria.GenreTestCase import GenreTestCase
@@ -12,11 +12,11 @@ from api.serializer.model.criteria.input.tree_import.Fields import Fields
 class TestOldCriteriasDeletion(GenreTestCase):
     def test_import_new_tree_then_old_genre_deleted(self):
         old_genre = self.model_fixture_factory.create_genre(name="Old Rock")
-        self.model_fixture_factory.create_uploaded_track_with_file(
+        self.model_fixture_factory.create_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_uploaded_track_with_file(
+        self.model_fixture_factory.create_track_with_file(
             title="Track 2", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_uploaded_track_with_file(
+        self.model_fixture_factory.create_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
@@ -27,11 +27,11 @@ class TestOldCriteriasDeletion(GenreTestCase):
 
     def test_import_new_tree_then_old_playlist_deleted(self):
         old_genre = self.model_fixture_factory.create_genre(name="Old Rock")
-        self.model_fixture_factory.create_uploaded_track_with_file(
+        self.model_fixture_factory.create_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_uploaded_track_with_file(
+        self.model_fixture_factory.create_track_with_file(
             title="Track 2", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_uploaded_track_with_file(
+        self.model_fixture_factory.create_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
@@ -42,11 +42,11 @@ class TestOldCriteriasDeletion(GenreTestCase):
 
     def test_import_new_tree_then_tracks_moved_to_criterialess_playlist(self):
         self.model_fixture_factory.create_genre(name="Old Rock")
-        self.model_fixture_factory.create_uploaded_track_with_file(
+        self.model_fixture_factory.create_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_uploaded_track_with_file(
+        self.model_fixture_factory.create_track_with_file(
             title="Track 2", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_uploaded_track_with_file(
+        self.model_fixture_factory.create_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
@@ -55,9 +55,9 @@ class TestOldCriteriasDeletion(GenreTestCase):
         assert response.status_code == status.HTTP_201_CREATED
 
         criterialess_playlist = GenrePlaylist.objects.get(user=self.test_user1, criteria=None)
-        rels = UploadedTrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
-            UploadedTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL)
-        tracks = [getattr(rel, UploadedTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL) for rel in rels]
+        rels = TrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
+            TrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL)
+        tracks = [getattr(rel, TrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL) for rel in rels]
         assert len(tracks) == 3
         track_titles = [track.title for track in tracks]
         assert "Track 1" in track_titles
@@ -66,11 +66,11 @@ class TestOldCriteriasDeletion(GenreTestCase):
 
     def test_import_new_tree_then_genre_metadata_cleared(self):
         self.model_fixture_factory.create_genre(name="Old Rock")
-        self.model_fixture_factory.create_uploaded_track_with_file(
+        self.model_fixture_factory.create_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_uploaded_track_with_file(
+        self.model_fixture_factory.create_track_with_file(
             title="Track 2", use_manager_for_genre_playlist_adding=True)
-        self.model_fixture_factory.create_uploaded_track_with_file(
+        self.model_fixture_factory.create_track_with_file(
             title="Track 3", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
@@ -79,9 +79,9 @@ class TestOldCriteriasDeletion(GenreTestCase):
         assert response.status_code == status.HTTP_201_CREATED
 
         criterialess_playlist = GenrePlaylist.objects.get(user=self.test_user1, criteria=None)
-        rels = UploadedTrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
-            UploadedTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL)
-        tracks = [getattr(rel, UploadedTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL) for rel in rels]
+        rels = TrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
+            TrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL)
+        tracks = [getattr(rel, TrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL) for rel in rels]
         for track in tracks:
             assert track.genre is None
 
@@ -89,9 +89,9 @@ class TestOldCriteriasDeletion(GenreTestCase):
         old_genre1 = self.model_fixture_factory.create_genre(name="Old Rock 1")
         old_genre2 = self.model_fixture_factory.create_genre(name="Old Rock 2")
 
-        track1 = self.model_fixture_factory.create_uploaded_track_with_file(
+        track1 = self.model_fixture_factory.create_track_with_file(
             title="Track 1", use_manager_for_genre_playlist_adding=True)
-        track2 = self.model_fixture_factory.create_uploaded_track_with_file(
+        track2 = self.model_fixture_factory.create_track_with_file(
             title="Track 2", use_manager_for_genre_playlist_adding=True)
 
         tree_data = [{Fields.NAME_PUBLIC: "New Rock", Fields.CHILDREN: []}]
@@ -108,9 +108,9 @@ class TestOldCriteriasDeletion(GenreTestCase):
 
         # Verify all tracks are moved to criterialess playlist
         criterialess_playlist = GenrePlaylist.objects.get(user=self.test_user1, criteria=None)
-        rels = UploadedTrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
-            UploadedTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL)
-        tracks = [getattr(rel, UploadedTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL) for rel in rels]
+        rels = TrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
+            TrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL)
+        tracks = [getattr(rel, TrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL) for rel in rels]
         assert len(tracks) == 2
         track_titles = [track.title for track in tracks]
         assert "Track 1" in track_titles
