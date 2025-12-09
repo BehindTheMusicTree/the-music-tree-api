@@ -56,8 +56,8 @@ class TestOldCriteriasDeletion(GenreTestCase):
 
         criterialess_playlist = GenrePlaylist.objects.get(user=self.test_user1, criteria=None)
         rels = TrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
-            TrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL)
-        tracks = [getattr(rel, TrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL) for rel in rels]
+            TrackPlaylistRelFields.TRACK_INTERNAL)
+        tracks = [getattr(rel, TrackPlaylistRelFields.TRACK_INTERNAL) for rel in rels]
         assert len(tracks) == 3
         track_titles = [track.title for track in tracks]
         assert "Track 1" in track_titles
@@ -80,8 +80,8 @@ class TestOldCriteriasDeletion(GenreTestCase):
 
         criterialess_playlist = GenrePlaylist.objects.get(user=self.test_user1, criteria=None)
         rels = TrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
-            TrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL)
-        tracks = [getattr(rel, TrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL) for rel in rels]
+            TrackPlaylistRelFields.TRACK_INTERNAL)
+        tracks = [getattr(rel, TrackPlaylistRelFields.TRACK_INTERNAL) for rel in rels]
         for track in tracks:
             assert track.genre is None
 
@@ -109,8 +109,8 @@ class TestOldCriteriasDeletion(GenreTestCase):
         # Verify all tracks are moved to criterialess playlist
         criterialess_playlist = GenrePlaylist.objects.get(user=self.test_user1, criteria=None)
         rels = TrackPlaylistRel.objects.filter(playlist=criterialess_playlist).select_related(
-            TrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL)
-        tracks = [getattr(rel, TrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL) for rel in rels]
+            TrackPlaylistRelFields.TRACK_INTERNAL)
+        tracks = [getattr(rel, TrackPlaylistRelFields.TRACK_INTERNAL) for rel in rels]
         assert len(tracks) == 2
         track_titles = [track.title for track in tracks]
         assert "Track 1" in track_titles

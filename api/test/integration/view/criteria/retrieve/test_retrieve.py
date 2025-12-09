@@ -32,9 +32,9 @@ class TestCase(GenreTestCase):
         response = self._retrieve_genre(uuid=criteria.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        tracks = self.result[to_camel_case(RetrieveFields.UPLOADED_TRACKS_NOT_ARCHIVED_PUBLIC)]
+        tracks = self.result[to_camel_case(RetrieveFields.TRACKS_NOT_ARCHIVED_PUBLIC)]
         assert len(tracks) == 2
-        titles = [track[RetrieveFields.UPLOADED_TRACKS_TITLE] for track in tracks]
+        titles = [track[RetrieveFields.TRACKS_TITLE] for track in tracks]
         assert title1 in titles
         assert title2 in titles
         uuids = [UUID(track[RetrieveFields.UUID]) for track in tracks]

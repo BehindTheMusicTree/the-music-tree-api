@@ -12,8 +12,8 @@ from .Fields import Fields
 class ArtistDetailedSerializer(serializers.ModelSerializer):
     albums = AlbumMinimumSerializer(many=True)
     tracks = TrackSimpleWithoutPlaylistAndArtistSerializer(
-        source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
-    tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+        source=Fields.TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
+    tracks_count = serializers.IntegerField(source=Fields.TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
     tracks_archived_count = serializers.IntegerField()
 
     class Meta:
@@ -21,10 +21,10 @@ class ArtistDetailedSerializer(serializers.ModelSerializer):
         fields = [Fields.UUID,
                   Fields.NAME_PUBLIC,
                   Fields.ALBUMS,
-                  Fields.UPLOADED_TRACKS_NOT_ARCHIVED_PUBLIC,
-                  Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
+                  Fields.TRACKS_NOT_ARCHIVED_PUBLIC,
+                  Fields.TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
                   Fields.DURATION_IN_SEC,
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC,
-                  Fields.UPLOADED_TRACKS_ARCHIVED_COUNT_PUBLIC,
+                  Fields.TRACKS_ARCHIVED_COUNT_PUBLIC,
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON]

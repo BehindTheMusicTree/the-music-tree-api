@@ -11,9 +11,9 @@ from .Fields import Fields
 
 
 class ManualPlaylistDetailedSerializer(serializers.ModelSerializer):
-    tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+    tracks_count = serializers.IntegerField(source=Fields.TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
     tracks = TrackSimpleWithoutPlaylistAndAlbumSerializer(
-        source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
+        source=Fields.TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
     tracks_archived_count = serializers.IntegerField()
     name = AppCharField()
 
@@ -21,8 +21,8 @@ class ManualPlaylistDetailedSerializer(serializers.ModelSerializer):
         model = ManualPlaylist
         fields = [Fields.UUID,
                   Fields.NAME,
-                  Fields.UPLOADED_TRACKS_NOT_ARCHIVED_PUBLIC,
-                  Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
-                  Fields.UPLOADED_TRACKS_ARCHIVED_COUNT_PUBLIC,
+                  Fields.TRACKS_NOT_ARCHIVED_PUBLIC,
+                  Fields.TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
+                  Fields.TRACKS_ARCHIVED_COUNT_PUBLIC,
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON,]

@@ -7,8 +7,8 @@ from api.serializer.model.playlist.base.output.Fields import Fields as Available
 
 class Fields:
     UUID = AvailableFields.UUID
-    UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL = AvailableFields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL
-    UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC = AvailableFields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC
+    TRACKS_NOT_ARCHIVED_COUNT_INTERNAL = AvailableFields.TRACKS_NOT_ARCHIVED_COUNT_INTERNAL
+    TRACKS_NOT_ARCHIVED_COUNT_PUBLIC = AvailableFields.TRACKS_NOT_ARCHIVED_COUNT_PUBLIC
     DURATION_STR_IN_HOUR_MIN_SEC = AvailableFields.DURATION_STR_IN_HOUR_MIN_SEC
     NAME = AvailableFields.NAME
     TYPE_LABEL_INTERNAL = AvailableFields.TYPE_LABEL_INTERNAL
@@ -18,13 +18,13 @@ class Fields:
 
 class PlaylistSimpleSerializer(serializers.ModelSerializer):
     type = AppCharField(source=Fields.TYPE_LABEL_INTERNAL)
-    tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+    tracks_count = serializers.IntegerField(source=Fields.TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
 
     class Meta:
         model = Playlist
         fields = [Fields.UUID,
                   Fields.NAME,
                   Fields.TYPE_LABEL_PUBLIC,
-                  Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
+                  Fields.TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC,
                   Fields.CREATED_ON]

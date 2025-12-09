@@ -139,7 +139,11 @@ class AppTestCase(TestCase, Generic[T]):
     # (testing metadata updates for example)
     def _post_track(self, **kwargs) -> Union[JsonResponse, HttpResponse]:
         return self.api_client.post(
+<<<<<<< HEAD
             path=reverse('uploaded-track-list'), data=kwargs, format='multipart', handle_response=self._set_results)
+=======
+            path=reverse('uploaded-track-list'), data=kwargs, handle_response=self._set_results)
+>>>>>>> 70465365c (refactor: remove library-only features)
 
     # Defined here and not in TrackTestCase because other views needs sometimes to put a track for testing purposes
     # (testing Genre deletion for example)
@@ -147,7 +151,7 @@ class AppTestCase(TestCase, Generic[T]):
         if self.is_from_track_test_case:
             return self.api_client.put(
                 path=reverse('uploaded-track-detail', kwargs={'pk': uuid}),
-                data=kwargs, format='multipart', handle_response=self._set_results)
+                data=kwargs, handle_response=self._set_results)
         else:
             return self.api_client.put(
                 path=reverse('uploaded-track-detail', kwargs={'pk': uuid}), data=kwargs)
@@ -155,7 +159,7 @@ class AppTestCase(TestCase, Generic[T]):
     def _post_track_being_logged_out(self):
         self._logout()
         return self.api_client.post(
-            path=reverse('uploaded-track-list'), data={}, format='multipart', handle_response=self._set_results)
+            path=reverse('uploaded-track-list'), data={}, handle_response=self._set_results)
 
     def setUp(self, methods_names_to_implement: list[str] | None = None) -> None:
 

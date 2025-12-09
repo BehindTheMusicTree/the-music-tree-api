@@ -15,7 +15,11 @@ class TrackTestCase(AppTestCase[Track]):
 
     def _post_track(self, **kwargs):
         return self.api_client.post(
+<<<<<<< HEAD
             path=reverse('uploaded-track-list'), data=kwargs, format='multipart', handle_response=self._set_results)
+=======
+            path=reverse('uploaded-track-list'), data=kwargs, handle_response=self._set_results)
+>>>>>>> 70465365c (refactor: remove library-only features)
 
     def _post_track_without_file(self, **kwargs):
         return self.api_client.post(

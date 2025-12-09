@@ -41,11 +41,28 @@ class TrackPlaylistRelManager(StandardResourceManager):
             relation.position = i
             relation.save(update_fields=[Fields.POSITION])
 
+    def archive_instances_of_track(self, track: 'Track'):
+        for track_playlist_rel in track.track_playlist_rels.all():
+            track_old_position = cast(
+                int, track_playlist_rel.position)  # Is not None before archiving
+            track_playlist_rel.position = None
+            track_playlist_rel.save(update_fields=[Fields.POSITION])
+
+            self._decrement_positions_of_following_tracks(
+                track_playlist_rel.playlist, track_old_position)
+
+    def unarchive_instances_of_track(self, track: 'Track'):
+        for track_playlist_rel in track.track_playlist_rels.all():
+            self._increment_positions_of_following_tracks(track_playlist_rel.playlist, 1)
+            track_playlist_rel.position = 1
+            track_playlist_rel.save(update_fields=[Fields.POSITION])
+
     def delete_instance(self, user: User, playlist: 'Playlist', track: 'Track'):
         from .TrackPlaylistRel import TrackPlaylistRel
         track_playlist_rel: TrackPlaylistRel = self.get(
             user=user, playlist=playlist, track=track)
-        self._decrement_positions_of_following_tracks(playlist, track_playlist_rel.position)
+        if track_playlist_rel.position is not None:  # if track not archived
+            self._decrement_positions_of_following_tracks(playlist, track_playlist_rel.position)
         track_playlist_rel.delete()
 
     def move_tracks_to_playlist_beginning(
@@ -70,9 +87,13 @@ class TrackPlaylistRelManager(StandardResourceManager):
 
     def get_ordered_relations_for_playlist(self, playlist: 'Playlist') -> QuerySet['TrackPlaylistRel']:
         """
-        Returns ordered relations for a playlist, sorted by position.
+        Returns ordered relations for a playlist, with non-archived tracks first (sorted by position)
+        followed by archived tracks (null positions).
         """
         return self.filter(
             user=playlist.user,
             playlist=playlist
-        ).select_related('track').order_by(Fields.POSITION)
+        ).select_related('track').order_by(
+            F(Fields.POSITION).desc(nulls_last=True),
+            Fields.POSITION
+        )

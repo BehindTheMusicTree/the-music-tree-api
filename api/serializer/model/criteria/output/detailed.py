@@ -22,8 +22,8 @@ from .minimum import CriteriaMinimumSerializer
 
 class CriteriaDetailedSerializer(AppInputSerializer, serializers.ModelSerializer):
     tracks = TrackWithoutAlbumPlaylistGenreSerializer(
-        source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
-    tracks_count = IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+        source=Fields.TRACKS_NOT_ARCHIVED_INTERNAL, many=True)
+    tracks_count = IntegerField(source=Fields.TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
     parent = CriteriaMinimumSerializer()
     ascendants = CriteriaLineageRelWithoutDescendantSerializer(source=ModelFields.ASCENDANTS_RELS, many=True)
     descendants = CriteriaLineageRelWithoutAscendantSerializer(source=ModelFields.DESCENDANTS_RELS, many=True)
@@ -42,8 +42,8 @@ class CriteriaDetailedSerializer(AppInputSerializer, serializers.ModelSerializer
                   Fields.ROOT,
                   Fields.CHILDREN,
                   Fields.CRITERIA_PLAYLIST,
-                  Fields.UPLOADED_TRACKS_NOT_ARCHIVED_PUBLIC,
-                  Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
-                  Fields.UPLOADED_TRACKS_ARCHIVED_COUNT_PUBLIC,
+                  Fields.TRACKS_NOT_ARCHIVED_PUBLIC,
+                  Fields.TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
+                  Fields.TRACKS_ARCHIVED_COUNT_PUBLIC,
                   Fields.CREATED_ON,
                   Fields.UPDATED_ON]

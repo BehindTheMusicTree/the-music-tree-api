@@ -98,7 +98,7 @@ class ModelFixtureFactory:
         model_fields = {
             TrackPlaylistRelFields.USER: user or self.default_test_user,
             TrackPlaylistRelFields.PLAYLIST: playlist,
-            TrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL: track,
+            TrackPlaylistRelFields.TRACK_INTERNAL: track,
         }
         return G(TrackPlaylistRel, **model_fields)
 

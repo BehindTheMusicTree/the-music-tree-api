@@ -12,8 +12,8 @@ from .Fields import Fields
 
 class CriteriaPlaylistDetailedSerializer(serializers.ModelSerializer):
     track_playlist_relations = TrackPlaylistRelWithoutPlaylist(
-        source=Fields.UPLOADED_TRACK_PLAYLIST_RELS_INTERNAL, many=True)
-    tracks_count = serializers.IntegerField(source=Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
+        source=Fields.TRACK_PLAYLIST_RELS_INTERNAL, many=True)
+    tracks_count = serializers.IntegerField(source=Fields.TRACKS_NOT_ARCHIVED_COUNT_INTERNAL)
     tracks_archived_count = serializers.IntegerField()
     criteria = CriteriaMinimumSerializer()
     root = CriteriaPlaylistMinimumSerializer()  # type: ignore
@@ -23,11 +23,11 @@ class CriteriaPlaylistDetailedSerializer(serializers.ModelSerializer):
         model = CriteriaPlaylist
         fields = [Fields.UUID,
                   Fields.NAME,
-                  Fields.UPLOADED_TRACK_PLAYLIST_RELS_PUBLIC,
-                  Fields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
+                  Fields.TRACK_PLAYLIST_RELS_PUBLIC,
+                  Fields.TRACKS_NOT_ARCHIVED_COUNT_PUBLIC,
                   Fields.DURATION_IN_SEC,
                   Fields.DURATION_STR_IN_HOUR_MIN_SEC,
-                  Fields.UPLOADED_TRACKS_ARCHIVED_COUNT_PUBLIC,
+                  Fields.TRACKS_ARCHIVED_COUNT_PUBLIC,
                   Fields.CRITERIA,
                   Fields.PARENT,
                   Fields.ROOT,

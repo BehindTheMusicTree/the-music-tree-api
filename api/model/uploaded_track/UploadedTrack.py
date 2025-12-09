@@ -47,7 +47,7 @@ if TYPE_CHECKING:
 
 
 class Track(TrackablePlayCount):
-    title = AppCharField(max_length=settings.UPLOADED_TRACK_TITLE_LEN_MAX)
+    title = AppCharField(max_length=settings.TRACK_TITLE_LEN_MAX)
     artists = PrivateManyToManyField(Artist, blank=True, related_name=ArtistFields.TRACKS_RELATED_NAME)
     album: Album = PrivateForeignKey(Album,  # type: ignore
                                      on_delete=models.CASCADE,
@@ -57,7 +57,7 @@ class Track(TrackablePlayCount):
     track_number = models.PositiveIntegerField(
         null=True,
         blank=True,
-        validators=[MinValueValidator(1), MaxValueValidator(settings.UPLOADED_TRACK_TRACK_NUMBER_MAX)])
+        validators=[MinValueValidator(1), MaxValueValidator(settings.TRACK_TRACK_NUMBER_MAX)])
     genre = PrivateForeignKey(Genre,
                               on_delete=models.DO_NOTHING,
                               null=True,
@@ -66,7 +66,7 @@ class Track(TrackablePlayCount):
     rating = models.IntegerField(
         null=True,
         blank=True,
-        validators=[MinValueValidator(0), MaxValueValidator(settings.UPLOADED_TRACK_RATING_VALUE_MAX)])
+        validators=[MinValueValidator(0), MaxValueValidator(settings.TRACK_RATING_VALUE_MAX)])
     language = AppCharField(max_length=settings.LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
     archived = models.BooleanField(default=False)
     playlists = PrivateManyToManyField(
