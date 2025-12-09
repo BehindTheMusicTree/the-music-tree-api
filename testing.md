@@ -49,7 +49,6 @@ Integration tests test how multiple components work together, typically through 
 
 **Examples:**
 - `integration/view/uploaded_track/` - Tests for uploaded track API endpoints
-- Tests that verify metadata reading/writing through the full API stack
 
 **Characteristics:**
 - Use database
