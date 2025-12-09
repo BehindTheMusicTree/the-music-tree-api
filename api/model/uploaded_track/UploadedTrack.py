@@ -110,7 +110,7 @@ class UploadedTrack(TrackablePlayCount):
 
     @property
     def relative_url(self) -> str:
-        return f"library/uploaded/{self.uuid}/"
+        return f"library/track/{self.uuid}/"
 
     @property
     def filename(self) -> str:
