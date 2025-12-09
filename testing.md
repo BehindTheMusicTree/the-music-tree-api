@@ -47,7 +47,7 @@ Integration tests test how multiple components work together, typically through 
 **Location:** `api/test/integration/`
 
 **Examples:**
-- `integration/view/uploaded_track/` - Tests for uploaded track API endpoints
+- `integration/view/track/` - Tests for uploaded track API endpoints
 
 **Characteristics:**
 - Use database
@@ -228,8 +228,8 @@ Tests that verify MusicBrainz recording ID retrieval should **not fail** when th
 **Example:**
 ```python
 def test_drown_7m21_mp3_then_ok(self):
-    response = self._post_uploaded_track(
-        UploadedTrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
+    response = self._post_track(
+        TrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
     assert response.status_code == status.HTTP_201_CREATED
     recording = self.saved_object.track_file.musicbrainz_recording
     if not recording:
