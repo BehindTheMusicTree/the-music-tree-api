@@ -101,8 +101,7 @@ class UploadedTrackPostSerializer(UploadedTrackInputSerializer):
         user = self.context['request'].user
         file = cast(DjangoFile, data.get(PostFields.TRACK_FILE_PUBLIC))  # Required so not None
         input_data = self._get_input_data_from_file(file=file, user=user)
-        keys = [PostFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE,
-                PostFields.TITLE,
+        keys = [PostFields.TITLE,
                 PostFields.ARTISTS_NAMES,
                 PostFields.ALBUM_NAME,
                 PostFields.ALBUM_ARTISTS_NAMES,
