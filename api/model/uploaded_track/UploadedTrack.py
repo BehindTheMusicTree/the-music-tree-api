@@ -30,7 +30,6 @@ if TYPE_CHECKING:
 
 class UploadedTrack(TrackablePlayCount):
     title = AppCharField(max_length=settings.UPLOADED_TRACK_TITLE_LEN_MAX)
-    track_file_fingerprint_must_be_unique = models.BooleanField(default=False)
     artists = PrivateManyToManyField(Artist, blank=True, related_name=ArtistFields.UPLOADED_TRACKS_RELATED_NAME)
     album: Album = PrivateForeignKey(Album,  # type: ignore
                                      on_delete=models.CASCADE,
