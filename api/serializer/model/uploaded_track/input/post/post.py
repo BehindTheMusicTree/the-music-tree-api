@@ -91,7 +91,7 @@ class UploadedTrackPostSerializer(UploadedTrackInputSerializer):
         self._handle_genre(user=user, input_data=input_data, file_metadata=file_metadata)
 
         input_data_clean = data_transformer.remove_none_or_empty_key_from_dict(input_data)
-        input_data_clean[Fields.TRACK_FILE_INTERNAL] = file
+        input_data_clean[Fields.FILE] = file
 
         return input_data_clean
 
@@ -112,7 +112,7 @@ class UploadedTrackPostSerializer(UploadedTrackInputSerializer):
                 PostFields.LANGUAGE]
         data_transformer.override_dict1_with_dict2_values_for_each_key_in_dict2(dict1=input_data, dict2=data, keys=keys)
 
-        input_data[Fields.TRACK_FILE_INTERNAL] = data[PostFields.TRACK_FILE_PUBLIC]
+        input_data[Fields.FILE] = data[PostFields.TRACK_FILE_PUBLIC]
 
         # If title is not provided, generate it from the file
         if input_data.get(PostFields.TITLE) in [None, '']:
