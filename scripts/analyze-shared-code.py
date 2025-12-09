@@ -166,7 +166,7 @@ def categorize_component(module_path: str) -> str:
 @click.command()
 @click.option(
     "--directory",
-    default="bodzify_api",
+    default="the_music_tree_api",
     help="Directory to analyze",
     type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
 )

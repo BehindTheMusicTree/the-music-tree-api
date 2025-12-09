@@ -139,8 +139,8 @@ def get_model_path(model: Type[models.Model]) -> str:
     module_path = model.__module__
 
     # Remove the app name from the beginning
-    if module_path.startswith('bodzify_api.'):
-        module_path = module_path[len('bodzify_api.'):]
+    if module_path.startswith('the_music_tree_api.'):
+        module_path = module_path[len('the_music_tree_api.'):]
 
     # Convert Python module path to directory path
     path_parts = module_path.split('.')
@@ -221,7 +221,7 @@ def generate_schemas():
     all_models = apps.get_models()
 
     # Filter models that are in your app
-    your_models = [model for model in all_models if model._meta.app_label.startswith('bodzify_api')]
+    your_models = [model for model in all_models if model._meta.app_label.startswith('the_music_tree_api')]
 
     # Count files in each directory
     dir_counts = count_files_in_directories(your_models)
@@ -274,6 +274,6 @@ def generate_schemas():
 
 if __name__ == '__main__':
     import django
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'bodzify_api.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'the_music_tree_api.settings')
     django.setup()
     generate_schemas()
