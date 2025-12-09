@@ -30,7 +30,7 @@ class TrackViewSet(AppModelViewSet[Track]):
     @action(detail=True, methods=['get'])
     def download(self, request, pk=None):
         track = cast(Track, Track.objects.get(uuid=pk))
-        file = cast(File, track.track_file.file)
+        file = cast(File, track.file)
         if not file:
             raise ValueError("File not found")
 

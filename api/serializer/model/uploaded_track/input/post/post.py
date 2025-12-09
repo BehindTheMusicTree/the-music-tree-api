@@ -110,7 +110,7 @@ class TrackPostSerializer(TrackInputSerializer):
                 PostFields.LANGUAGE]
         data_transformer.override_dict1_with_dict2_values_for_each_key_in_dict2(dict1=input_data, dict2=data, keys=keys)
 
-        input_data[Fields.FILE] = data[PostFields.TRACK_FILE_PUBLIC]
+        input_data[Fields.FILE] = file
 
         # If title is not provided, generate it from the file
         if input_data.get(PostFields.TITLE) in [None, '']:

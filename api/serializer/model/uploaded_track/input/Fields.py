@@ -1,10 +1,9 @@
 from api.model.album.Fields import Fields as AlbumFields
 from api.model.artist.Fields import Fields as ArtistFields
-from api.model.track.Fields import Fields as ModelFields
+from api.model.uploaded_track.Fields import Fields as ModelFields
 
 
 class Fields:
-    TRACK_FILE_INTERNAL = ModelFields.TRACK_FILE_INTERNAL
     TRACK_FILE_PUBLIC = "file"
     TITLE = ModelFields.TITLE
     FORCE_TITLE_GENERATION = 'force_title_generation'
