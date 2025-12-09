@@ -93,7 +93,6 @@ class UploadedTrackManager(StandardResourceManager['UploadedTrack']):
 
             self._add_to_genre_playlists(instance)
 
-        instance.update_file_metadata_from_uploaded_track_instance_values()
         return instance
 
     def create_instance_with_track_file(
@@ -107,8 +106,6 @@ class UploadedTrackManager(StandardResourceManager['UploadedTrack']):
             uploaded_track.save()
             if artists:
                 uploaded_track.artists.set(artists)
-
-        uploaded_track.update_file_metadata_from_uploaded_track_instance_values()
 
         return uploaded_track
 
@@ -134,7 +131,6 @@ class UploadedTrackManager(StandardResourceManager['UploadedTrack']):
             old_archived_state = old_instance.archived
 
             updated_instance: UploadedTrack = super().update_instance(old_instance, **kwargs)
-            updated_instance.update_file_metadata_from_uploaded_track_instance_values()
 
             if old_genre != updated_instance.genre:
                 self._update_genre_playlists(updated_instance, old_genre=old_genre)
