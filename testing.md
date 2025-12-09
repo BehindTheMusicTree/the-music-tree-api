@@ -65,7 +65,7 @@ End-to-end tests test complete user workflows and critical paths.
 
 **Examples:**
 - Full user workflows (upload → process → retrieve)
-- Critical system integrations (audio fingerprinting, Spotify integration)
+- Critical system integrations (Spotify integration)
 
 **Characteristics:**
 - Full system tests
@@ -218,14 +218,13 @@ Tests that verify MusicBrainz recording ID retrieval should **not fail** when th
 
 - MusicBrainz service availability
 - Network connectivity issues
-- Audio fingerprinting service availability
 - Temporary service outages
 - Rate limiting
 
 **Guidelines:**
 - Use `pytest.skip()` instead of `assert` when MusicBrainz recording lookup fails
 - Provide descriptive skip messages explaining why the lookup failed
-- Check both `musicbrainz_recording_missing_cause` and `fingerprint_missing_cause` to provide context
+- Check `musicbrainz_recording_missing_cause` to provide context
 - This ensures tests don't fail due to external service issues while still validating application logic
 
 **Example:**
@@ -239,12 +238,9 @@ def test_drown_7m21_mp3_then_ok(self):
         missing_cause = self.saved_object.track_file.musicbrainz_recording_missing_cause
         code_label = missing_cause.code.label if missing_cause else "Unknown"
         message = missing_cause.message if missing_cause and missing_cause.message else "No message"
-        fingerprint_missing_cause = self.saved_object.track_file.fingerprint_missing_cause
-        fingerprint_code_label = fingerprint_missing_cause.code.label if fingerprint_missing_cause else "None"
         pytest.skip(
             f"musicbrainz_recording is None. "
-            f"Missing cause: {code_label} - {message}. "
-            f"Fingerprint missing cause: {fingerprint_code_label}"
+            f"Missing cause: {code_label} - {message}."
         )
     assert recording
     assert recording.musicbrainz_id == "4a45b00b-273d-40ed-9ecd-42f387f59c22"
