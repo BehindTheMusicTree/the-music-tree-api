@@ -49,12 +49,12 @@ if TYPE_CHECKING:
 
 class UploadedTrack(TrackablePlayCount):
     title = AppCharField(max_length=settings.UPLOADED_TRACK_TITLE_LEN_MAX)
-    artists = PrivateManyToManyField(Artist, blank=True, related_name=ArtistFields.UPLOADED_TRACKS_RELATED_NAME)
+    artists = PrivateManyToManyField(Artist, blank=True, related_name=ArtistFields.TRACKS_RELATED_NAME)
     album: Album = PrivateForeignKey(Album,  # type: ignore
                                      on_delete=models.CASCADE,
                                      null=True,
                                      blank=True,
-                                     related_name=AlbumFields.UPLOADED_TRACKS_RELATED_NAME,)
+                                     related_name=AlbumFields.TRACKS_RELATED_NAME,)
     track_number = models.PositiveIntegerField(
         null=True,
         blank=True,
@@ -63,7 +63,7 @@ class UploadedTrack(TrackablePlayCount):
                               on_delete=models.DO_NOTHING,
                               null=True,
                               blank=True,
-                              related_name=CriteriaFields.UPLOADED_TRACKS_RELATED_NAME)
+                              related_name=CriteriaFields.TRACKS_RELATED_NAME)
     rating = models.IntegerField(
         null=True,
         blank=True,
@@ -71,7 +71,7 @@ class UploadedTrack(TrackablePlayCount):
     language = AppCharField(max_length=settings.LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
     archived = models.BooleanField(default=False)
     playlists = PrivateManyToManyField(
-        Playlist, through='UploadedTrackPlaylistRel', related_name=PlayListFields.UPLOADED_TRACKS_RELATED_NAME)
+        Playlist, through='UploadedTrackPlaylistRel', related_name=PlayListFields.TRACKS_RELATED_NAME)
     
     file: TemporaryUploadedFile | FieldFile = models.FileField(  # type: ignore
         upload_to=model_utils.get_user_lib_path,
