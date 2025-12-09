@@ -227,7 +227,6 @@ For detailed documentation on external service integrations, see:
 
 - **MusicBrainz Integration**: [MusicBrainz Integration documentation](api/utils/musicbrainz/README.md) - Audio fingerprinting and MusicBrainz metadata lookup
 - **Spotify Integration**: [Spotify Integration documentation](api/utils/spotify_api/README.md) - Spotify Web API integration
-- **Audio Metadata**: [Audio Metadata Handling documentation](api/utils/audio_file_metadata/README.md) - Audio file metadata reading and writing
 
 ### Code Style Reference
 
