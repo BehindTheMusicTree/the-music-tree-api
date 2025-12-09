@@ -3,7 +3,6 @@ from ..Fields import Fields as UploadedTrackInputFields
 
 class Fields:
     TRACK_FILE = UploadedTrackInputFields.TRACK_FILE_PUBLIC
-    TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = UploadedTrackInputFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
     TITLE = UploadedTrackInputFields.TITLE
     ARTISTS_NAMES = UploadedTrackInputFields.ARTISTS_NAMES
     ARTISTS_NAMES_MULTIPART = UploadedTrackInputFields.ARTISTS_NAMES_MULTIPART

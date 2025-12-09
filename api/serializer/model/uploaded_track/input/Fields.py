@@ -6,7 +6,6 @@ from api.model.uploaded_track.Fields import Fields as ModelFields
 class Fields:
     TRACK_FILE_INTERNAL = ModelFields.TRACK_FILE_INTERNAL
     TRACK_FILE_PUBLIC = ModelFields.TRACK_FILE_PUBLIC
-    TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = ModelFields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
     TITLE = ModelFields.TITLE
     FORCE_TITLE_GENERATION = 'force_title_generation'
     ARTISTS_NAMES = f'{ModelFields.ARTISTS}_{ArtistFields.NAME_PUBLIC}s'

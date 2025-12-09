@@ -3,7 +3,6 @@ from api.serializer.model.uploaded_track.input.Fields import Fields as Fields
 
 class Fields:
     TRACK_FILE_PUBLIC = Fields.TRACK_FILE_PUBLIC
-    TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = Fields.TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE
     TITLE = Fields.TITLE
     FORCE_TITLE_GENERATION = Fields.FORCE_TITLE_GENERATION
     ARTISTS_NAMES = Fields.ARTISTS_NAMES
