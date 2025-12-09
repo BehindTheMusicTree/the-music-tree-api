@@ -7,7 +7,7 @@ class Fields:
     UPDATED_ON = ModelFields.UPDATED_ON
     UUID = ModelFields.UUID
     RELATIVE_URL = ModelFields.RELATIVE_URL
-    FILE = ModelFields.TRACK_FILE_PUBLIC
+    FILE = ModelFields.FILE
     TITLE = ModelFields.TITLE
     ARTISTS = ModelFields.ARTISTS
     ALBUM = ModelFields.ALBUM
