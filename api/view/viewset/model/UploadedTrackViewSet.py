@@ -1,10 +1,6 @@
 import os
-from django.core.files.base import File
-from django.core.files.storage import default_storage
 from drf_spectacular.types import OpenApiTypes  # type: ignore
 from drf_spectacular.utils import OpenApiParameter, extend_schema  # type: ignore
-from rest_framework.decorators import action
-from typing import cast
 
 from api.filtering.set.track.Fields import Fields as FilterFields
 from api.model.track.Track import Track
@@ -27,39 +23,11 @@ class TrackViewSet(AppModelViewSet[Track]):
                          update_serializer_class=TrackPutSerializer,
                          **kwargs)
 
-    @action(detail=True, methods=['get'])
-    def download(self, request, pk=None):
-        track = cast(Track, Track.objects.get(uuid=pk))
-        file = cast(File, track.file)
-        if not file:
-            raise ValueError("File not found")
-
-        # Use Django's storage API to get the file path
-        file_path = default_storage.path(file.name)
-        if not os.path.exists(file_path):
-            raise ValueError("File path not found")
-
-        return self.get_file_response(file_path=file_path)
-
     @extend_schema(request=TrackPostSerializer, responses=TrackDetailedSerializer, description=("""
-        Create a track with metadata by uploading or a file or downloading it from another source:
+        Create a track with metadata by uploading a file:
             # Uploading a file:
                 - if the file has no metadata 'title', it is set with the file's name without the extension (with an 
                 random identifier if another track has the same filename);
-            # Downloading a file:
-                It is done by providing an URL and metadata (title, artist's name, album's name, album's artists' names,
-                genre's name, rating, releasedOn, language etc.).
-                    
-                The downloaded track's filename will be set as follow:
-                    - if the "artist_name" and "title" fields are provided, the filename will be set to 
-                    "artist_name - title.extension";
-                    - else if only the title is provided, the filename will be set to "title.extension";
-                    - else if the title and the artist name are set in the metadata of the track, the filename will be set 
-                    to "artist name - title.extension";
-                    - else if only the title is set in the metadata, the filename will be set to "title.extension";
-                    - else if the length filename of the downloaded track plus de length of the extension s smaller than 
-                    100, the filename will be set to "filename.extension";
-                    - else the filename will be set to "random string.extension".
             # File's metadata:
                 - some media players allow to edit tags (e.g the title, the artist's name, the rating etc.). In some cases, 
             the tag isn't store in the file's metadata but in the database of the player. In these cases, the tag won't 
