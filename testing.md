@@ -31,7 +31,6 @@ Unit tests test individual functions, classes, or modules in isolation with mock
 **Location:** `api/test/unit/`
 
 **Examples:**
-- `unit/utils/audiometa_adapter/` - Tests for audiometa adapter functions
 - `unit/utils/file_path_utils/` - Tests for file path utility functions
 - `unit/validator/` - Tests for validators
 
@@ -201,7 +200,7 @@ pytest api/test/e2e/
 
 Run specific test file:
 ```bash
-pytest api/test/unit/utils/audiometa_adapter/test_audiometa_adapter.py
+pytest api/test/unit/utils/file_path_utils/test_file_path_utils.py
 ```
 
 Run specific test:
