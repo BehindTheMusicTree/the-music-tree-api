@@ -89,6 +89,15 @@ Update app name to 'api'
   - Eliminated excessive I/O overhead when processing large tree imports (30,000+ nodes)
   - Fixed test hangs and significantly improved performance for large tree import operations
 
+### Removed
+
+- **Audio Fingerprinting**: Completely removed audio fingerprinting feature from the application
+  - Removed all fingerprinting-related models, serializers, and database fields
+  - Deleted audio fingerprinter service integration and related utilities
+  - Removed fingerprint validation and duplicate detection logic
+  - Cleaned up all related tests, documentation, and CI configurations
+  - Simplified track file processing to focus on metadata extraction only
+
 ### CI
 
 - **Test Configuration**: Filtered ResourceWarnings about unclosed files from Django's ORM in pytest configuration
