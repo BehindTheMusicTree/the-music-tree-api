@@ -11,8 +11,8 @@ from .Fields import Fields
 
 
 if TYPE_CHECKING:
-    from api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
-    from api.model.uploaded_track.UploadedTrack import UploadedTrack
+    from api.model.track_playlist_rel.TrackPlaylistRel import TrackPlaylistRel
+    from api.model.track.Track import Track
 
     from .children.criteria.CriteriaPlaylist import CriteriaPlaylist
     from .children.manual.ManualPlaylist import ManualPlaylist
@@ -23,7 +23,7 @@ class Playlist(UploadedTrackMixin, TrackablePlayCount):
     objects: PlaylistManager = PlaylistManager()
 
     if TYPE_CHECKING:
-        uploaded_track_playlist_rels: models.QuerySet['UploadedTrackPlaylistRel']
+        track_playlist_rels: models.QuerySet['TrackPlaylistRel']
         manual_playlist: 'ManualPlaylist | None'
         criteria_playlist: 'CriteriaPlaylist | None'
 
@@ -36,8 +36,8 @@ class Playlist(UploadedTrackMixin, TrackablePlayCount):
         return f'{self.uuid} | {self.name}'
 
     @property
-    def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
-        return getattr(self, Fields.UPLOADED_TRACKS_RELATED_NAME)
+    def uploaded_tracks(self) -> models.QuerySet['Track']:
+        return getattr(self, Fields.TRACKS_RELATED_NAME)
 
     @property
     def type_label(self) -> str:
@@ -53,9 +53,9 @@ class Playlist(UploadedTrackMixin, TrackablePlayCount):
             raise ValueError('Playlist has no type')
 
     @property
-    def uploaded_tracks_not_archived_dict_by_position(self) -> dict[int | None, 'UploadedTrack']:
+    def uploaded_tracks_not_archived_dict_by_position(self) -> dict[int | None, 'Track']:
         """
-        Returns a dictionary of UploadedTrack objects where dict[position] = uploaded_track.
+        Returns a dictionary of Track objects where dict[position] = track.
         Includes both non-archived tracks (with position) and archived tracks (position is None).
         Archived tracks (null positions) are sorted last.
         Returns empty dict if no tracks.
@@ -63,26 +63,26 @@ class Playlist(UploadedTrackMixin, TrackablePlayCount):
         return Playlist.get_ordered_relations_for_playlist(self)
 
     @classmethod
-    def get_ordered_relations_for_playlist(cls, playlist: 'Playlist') -> dict[int | None, 'UploadedTrack']:
+    def get_ordered_relations_for_playlist(cls, playlist: 'Playlist') -> dict[int | None, 'Track']:
         """
-        Returns a dictionary of UploadedTrack objects where dict[position] = uploaded_track.
+        Returns a dictionary of Track objects where dict[position] = track.
         Includes both non-archived tracks (with position) and archived tracks (position is None).
         Archived tracks (null positions) are sorted last.
         Returns empty dict if no tracks.
         """
-        from api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
-        relations = UploadedTrackPlaylistRel.objects.get_ordered_relations_for_playlist(playlist)
+        from api.model.track_playlist_rel.TrackPlaylistRel import TrackPlaylistRel
+        relations = TrackPlaylistRel.objects.get_ordered_relations_for_playlist(playlist)
 
         if not relations.exists():
             return {}
 
-        result: dict[int | None, 'UploadedTrack'] = {}
+        result: dict[int | None, 'Track'] = {}
         for relation in relations.filter(position__isnull=False):
-            relation = cast(UploadedTrackPlaylistRel, relation)
-            result[relation.position] = relation.uploaded_track
+            relation = cast(TrackPlaylistRel, relation)
+            result[relation.position] = relation.track
         for relation in relations.filter(position__isnull=True):
-            relation = cast(UploadedTrackPlaylistRel, relation)
-            result[len(result) + 1] = relation.uploaded_track
+            relation = cast(TrackPlaylistRel, relation)
+            result[len(result) + 1] = relation.track
 
         return result
 

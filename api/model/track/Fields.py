@@ -3,8 +3,6 @@ from api.model.trackable_play_count.Fields import Fields as TrackablePlayCountFi
 
 
 class Fields(PrivateUniqueResourceFields, TrackablePlayCountFields):
-    TRACK_FILE_INTERNAL = "track_file"
-    TRACK_FILE_FINGERPRINT_MUST_BE_UNIQUE = "track_file_fingerprint_must_be_unique"
     TITLE = "title"
     ARTISTS = "artists"
     ALBUM = "album"
@@ -12,7 +10,7 @@ class Fields(PrivateUniqueResourceFields, TrackablePlayCountFields):
     GENRE = "genre"
     RATING = "rating"
     PLAYLISTS = "playlists"
-    UPLOADED_TRACK_PLAYLIST_RELS = "uploaded_track_playlist_rels"
+    TRACK_PLAYLIST_RELS = "track_playlist_rels"
     LANGUAGE = "language"
     PLAYLISTS_PUBLIC = "playlists"
     ARCHIVED = 'archived'

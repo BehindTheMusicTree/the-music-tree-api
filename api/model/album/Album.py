@@ -12,13 +12,13 @@ from api.model.artist.Fields import Fields as ArtistFields
 from api.model.field.AppCharField import AppCharField
 from api.model.field.foreign_key.PrivateManyToManyField import PrivateManyToManyField
 from api.model.uploaded_track_mixin.UploadedTrackMixin import UploadedTrackMixin
-from api.model.uploaded_track.Fields import Fields as UploadedTrackFields
+from api.model.track.Fields import Fields as TrackFields
 
 from .Fields import Fields
 
 
 if TYPE_CHECKING:
-    from api.model.uploaded_track.UploadedTrack import UploadedTrack
+    from api.model.track.Track import Track
 
 
 class Album(UploadedTrackMixin):
@@ -33,14 +33,14 @@ class Album(UploadedTrackMixin):
         return self._name
 
     @property
-    def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
-        return getattr(self, Fields.UPLOADED_TRACKS_RELATED_NAME)
+    def uploaded_tracks(self) -> models.QuerySet['Track']:
+        return getattr(self, Fields.TRACKS_RELATED_NAME)
 
     @property
-    def uploaded_tracks_not_archived_sorted(self) -> models.QuerySet['UploadedTrack']:
+    def uploaded_tracks_not_archived_sorted(self) -> models.QuerySet['Track']:
         return self.uploaded_tracks_not_archived.annotate(
             null_position=Q(track_number__isnull=True)).order_by(
-            'null_position', UploadedTrackFields.TRACK_NUMBER, UploadedTrackFields.TITLE)
+            'null_position', TrackFields.TRACK_NUMBER, TrackFields.TITLE)
 
     class Meta:
         constraints = [models.CheckConstraint(condition=~models.Q(_name=""), name="album_non_empty_name")]
@@ -55,7 +55,7 @@ class Album(UploadedTrackMixin):
         else:
             string += " [No Artist]"
 
-        tracks: list[UploadedTrack] = list(self.uploaded_tracks_not_archived.all())
+        tracks: list[Track] = list(self.uploaded_tracks_not_archived.all())
         if tracks:
             track_details = []
             for track in tracks:

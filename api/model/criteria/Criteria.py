@@ -22,7 +22,7 @@ from .type.CriteriaType import CriteriaType
 
 if TYPE_CHECKING:
     from api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-    from api.model.uploaded_track.UploadedTrack import UploadedTrack
+    from api.model.track.Track import Track
 
     from .lineage_rel.CriteriaLineageRel import CriteriaLineageRel
 
@@ -56,8 +56,8 @@ class Criteria(UploadedTrackMixin):
         return self._name
 
     @property
-    def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
-        return getattr(self, Fields.UPLOADED_TRACKS_RELATED_NAME)
+    def uploaded_tracks(self) -> models.QuerySet['Track']:
+        return getattr(self, Fields.TRACKS_RELATED_NAME)
 
     @property
     def is_root(self) -> bool:

@@ -45,10 +45,7 @@ class UploadedTrackMixin(PrivateUniqueResource):
 
     @property
     def duration_in_sec(self) -> int:
-        return sum(
-            int(uploaded_track.track_file.duration_in_sec or 0) if uploaded_track.track_file else 0
-            for uploaded_track in self.uploaded_tracks_not_archived.all()
-        )
+        return 0
 
     @property
     def duration_str_in_hour_min_sec(self) -> str:

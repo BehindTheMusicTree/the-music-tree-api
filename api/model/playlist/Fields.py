@@ -3,11 +3,11 @@ from api.model.trackable_play_count.Fields import Fields as TrackablePlayCountFi
 
 
 class Fields(UploadedTrackMixinFields, TrackablePlayCountFields):
-    UPLOADED_TRACKS_RELATED_NAME = 'uploaded_tracks_of_playlist'
-    UPLOADED_TRACK_PLAYLIST_RELS_INTERNAL = 'uploaded_track_playlist_rels'
-    UPLOADED_TRACK_PLAYLIST_RELS_PUBLIC = 'uploaded_track_playlist_relations'
+    TRACKS_RELATED_NAME = 'tracks_of_playlist'
+    TRACK_PLAYLIST_RELS_INTERNAL = 'track_playlist_rels'
+    TRACK_PLAYLIST_RELS_PUBLIC = 'track_playlist_relations'
     TYPE_LABEL_INTERNAL = 'type_label'
     TYPE_LABEL_PUBLIC = 'type'
-    PLAYLIST_UPLOADED_TRACK_RELATIONS = 'uploaded_track_playlist_rels'
+    PLAYLIST_TRACK_RELATIONS = 'track_playlist_rels'
     MANUAL_PLAYLIST = 'manual_playlist'
     CRITERIA_PLAYLIST = 'criteria_playlist'

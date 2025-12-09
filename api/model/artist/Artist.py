@@ -12,7 +12,7 @@ from .Fields import Fields
 
 if TYPE_CHECKING:
     from api.model.album.Album import Album
-    from api.model.uploaded_track.UploadedTrack import UploadedTrack
+    from api.model.track.Track import Track
 
 
 class Artist(UploadedTrackMixin):
@@ -28,8 +28,8 @@ class Artist(UploadedTrackMixin):
     objects: ArtistManager = ArtistManager()
 
     @property
-    def uploaded_tracks(self) -> models.QuerySet['UploadedTrack']:
-        return getattr(self, Fields.UPLOADED_TRACKS_RELATED_NAME)
+    def uploaded_tracks(self) -> models.QuerySet['Track']:
+        return getattr(self, Fields.TRACKS_RELATED_NAME)
 
     class Meta:
         constraints = [models.CheckConstraint(condition=~models.Q(_name=""), name="artist_non_empty_name")]
