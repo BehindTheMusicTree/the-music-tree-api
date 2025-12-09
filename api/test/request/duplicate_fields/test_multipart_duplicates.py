@@ -2,7 +2,6 @@ from rest_framework import status
 
 from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from api.serializer.model.track.input.post.Fields import Fields as TrackFields
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.test.integration.view.track.TrackTestCase import Track
 
 
@@ -12,7 +11,7 @@ class TestMultipartDuplicateFields(Track):
         data = {
             TrackFields.TITLE: ['Jo', 'steeve']  # Multiple values will be converted to separate form fields
         }
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -45,6 +44,6 @@ class TestMultipartDuplicateFields(Track):
             TrackFields.TITLE: 'test',
             TrackFields.ARTISTS_NAMES_MULTIPART: ['artist1', 'artist2', 'artist3']
         }
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED

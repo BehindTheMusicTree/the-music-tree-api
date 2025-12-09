@@ -10,7 +10,6 @@ from api.model.musicbrainz_resource.children.recording.MbRecording import Musicb
 from api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from api.model.track.Track import Track
 from api.model.user.User import User
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.test.integration.view.user.UserTestCase import UserTestCase
 
 
@@ -115,8 +114,7 @@ class TestCase(UserTestCase):
             title=mb_recording_title,
             musicbrainz_artists=[])
         track = self.model_fixture_factory.create_track_with_file(
-            user=user, title='Drown',
-            test_track_filename=TrackTestFilename.RECORDING_JUAN_HANSEN_OOSTIL_DROWN_MASSANO_REMIX_7M21_MP3)
+            user=user, title='Drown')
 
         assert MusicbrainzRecording.objects.filter(title=mb_recording_title).exists()
 

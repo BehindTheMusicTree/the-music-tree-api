@@ -3,7 +3,6 @@ from rest_framework import status
 from api.model.criteria.children.genre.Genre import Genre
 from api.model.track.Track import Track
 from api.model.track.Fields import Fields as TrackFields
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.test.integration.view.criteria.GenreTestCase import GenreTestCase
 
 
@@ -17,13 +16,11 @@ class TestWithExistingTracks(GenreTestCase):
         # Create uploaded tracks with genres
         track1 = self.model_fixture_factory.create_track_with_file(
             title="Track 1",
-            test_track_filename=TrackTestFilename.DEFAULT_MP3,
             user=self.test_user1,
             **{TrackFields.GENRE: genre_rock}
         )
         track2 = self.model_fixture_factory.create_track_with_file(
             title="Track 2",
-            test_track_filename=TrackTestFilename.DEFAULT_MP3,
             user=self.test_user1,
             **{TrackFields.GENRE: genre_metal}
         )
@@ -65,13 +62,11 @@ class TestWithExistingTracks(GenreTestCase):
         # Create tracks for both users
         track1_user1 = self.model_fixture_factory.create_track_with_file(
             title="Track 1 User 1",
-            test_track_filename=TrackTestFilename.DEFAULT_MP3,
             user=self.test_user1,
             **{TrackFields.GENRE: genre_rock_user1}
         )
         track2_user2 = self.model_fixture_factory.create_track_with_file(
             title="Track 2 User 2",
-            test_track_filename=TrackTestFilename.DEFAULT_MP3,
             user=self.test_user2,
             **{TrackFields.GENRE: genre_rock_user2}
         )

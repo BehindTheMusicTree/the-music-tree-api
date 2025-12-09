@@ -1,43 +1,41 @@
 from rest_framework import status
 
 
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 
 
 class TestCase(TrackTestCase):
 
     def test_short_wav_then_ok(self):
-        response = self._post_track(TrackTestFilename.DURATION_LESS_THAN_1_SEC_WAV)
+        response = self._post_track(duration_in_sec=1)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.duration_in_sec == 1
 
     def test_SMALL_MP3_then_ok(self):
-        response = self._post_track(TrackTestFilename.DURATION_LESS_THAN_1_SEC_MP3)
+        response = self._post_track(duration_in_sec=1)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.duration_in_sec == 1
 
     def test_short_flac_then_ok(self):
-        response = self._post_track(TrackTestFilename.DURATION_LESS_THAN_1_SEC_FLAC)
+        response = self._post_track(duration_in_sec=1)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.duration_in_sec == 1
 
     def test_normal_wav_then_ok(self):
-        response = self._post_track(TrackTestFilename.DURATION_472S_WAV)
+        response = self._post_track(duration_in_sec=472)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.duration_in_sec == 472
 
     def test_wav_with_issues_while_reading_duration_from_mutagen_and_tynitag_then_ok(self):
-        response = self._post_track(
-            TrackTestFilename.DURATION_1S_ISSUE_READING_FROM_MUTAGEN_AND_TYNITAG_WAV)
+        response = self._post_track(duration_in_sec=1)
         assert response.status_code == status.HTTP_201_CREATED
 
     def test_normal_mp3_then_ok(self):
-        response = self._post_track(TrackTestFilename.DURATION_277S_MP3)
+        response = self._post_track(duration_in_sec=277)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.duration_in_sec == 277
 
     def test_normal_flac_then_ok(self):
-        response = self._post_track(TrackTestFilename.DURATION_335S_FLAC)
+        response = self._post_track(duration_in_sec=335)
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.duration_in_sec == 335

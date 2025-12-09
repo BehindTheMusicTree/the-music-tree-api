@@ -4,7 +4,6 @@ from api.model.track_playlist_rel.Fields import Fields as TrackPlaylistRelFields
 from api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from api.serializer.model.track.output.simple.simple_without_album import Fields as TrackOutputFields
 from api.serializer.model.playlist.base.output.detailed import Fields as PlaylistOutputFields
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.test.integration.view.playlist.base.PlaylistTestCase import PlaylistTestCase
 from api.utils import data_transformer
 
@@ -42,12 +41,12 @@ class TestCase(PlaylistTestCase):
         self.model_fixture_factory.create_track_with_file(
             title="celine",
             genre=genre,
-            test_track_filename=TrackTestFilename.DURATION_472S_WAV,
+            duration_in_sec=472,
             use_manager_for_genre_playlist_adding=True)
         self.model_fixture_factory.create_track_with_file(
             title="celine",
             genre=genre,
-            test_track_filename=TrackTestFilename.DURATION_277S_MP3,
+            duration_in_sec=277,
             use_manager_for_genre_playlist_adding=True)
 
         response = self._retrieve_playlist(genre_criteria_playlist.uuid)

@@ -1,5 +1,3 @@
-import os
-import shutil
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -35,7 +33,6 @@ from api.model.track.Fields import Fields as TrackFields
 from api.model.track.Track import Track
 from api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from api.model.user.User import User
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
 from api.model.spotify_resource.children.artist.SpotifyArtist import SpotifyArtist
 from api.model.spotify_resource.children.track.Fields import Fields as TrackFields
@@ -49,11 +46,9 @@ global_settings.DDF_FIELD_FIXTURES['django.db.models.fields.generated.GeneratedF
 
 class ModelFixtureFactory:
     default_test_user: 'User'
-    test_track_dir: Path
 
-    def __init__(self, default_test_user: 'User', test_track_dir: Path) -> None:
+    def __init__(self, default_test_user: 'User') -> None:
         self.default_test_user = default_test_user
-        self.test_track_dir = test_track_dir
 
     @staticmethod
     def create_user(username=None, email=None, password='password123', **kwargs) -> 'User':
@@ -110,42 +105,10 @@ class ModelFixtureFactory:
     def create_track_with_file(
         self,
         title: str | None = "test",
-        test_track_filename: TrackTestFilename | None = TrackTestFilename.DEFAULT_MP3,
         user: User | None = None,
-        use_manager_for_genre_playlist_adding: bool = False,
         **kwargs
     ) -> Track:
-        user = user or self.default_test_user
-
-        now = timezone.make_aware(datetime.now())
-        model_fields = {
-            TrackFields.CREATED_ON: kwargs.get(TrackFields.CREATED_ON, now),
-            TrackFields.UPDATED_ON: kwargs.get(TrackFields.UPDATED_ON, now),
-            TrackFields.USER: user,
-            TrackFields.TITLE: title,
-        }
-        model_fields.update(kwargs)
-
-        if not os.path.exists(user.lib_abs_path):
-            os.makedirs(user.lib_abs_path)
-
-        filename_str = test_track_filename.value if test_track_filename else None
-        file_path = self.test_track_dir / filename_str
-        track_file_path_in_lib = user.lib_abs_path / filename_str
-        try:
-            shutil.copy(file_path, track_file_path_in_lib)
-        except OSError as e:
-            if e.errno == 28:
-                stat = shutil.disk_usage(user.lib_abs_path)
-                raise OSError(
-                    f"No space left on device. Disk usage: {stat.used / (1024**3):.2f}GB used, "
-                    f"{stat.free / (1024**3):.2f}GB free out of {stat.total / (1024**3):.2f}GB total. "
-                    f"Please free up disk space to continue tests."
-                ) from e
-            raise
-
-        track = self._create_track(user=user, title=title, **kwargs)
-        return track
+        return self._create_track(user=user or self.default_test_user, title=title, **kwargs)
 
     def create_play(self, content: TrackablePlayCount, user: User | None = None, **kwargs) -> Play:
         from django.contrib.contenttypes.models import ContentType

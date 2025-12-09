@@ -1,7 +1,6 @@
 from rest_framework import status
 
 from api.serializer.model.artist.detailed import Fields as ArtistFields
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.test.integration.view.artist.ArtistTestCase import ArtistTestCase
 from api.utils import data_transformer
 
@@ -11,9 +10,9 @@ class TestCase(ArtistTestCase):
     def test_duration(self):
         artist = self.model_fixture_factory.create_artist(name="Sum 41")
         self.model_fixture_factory.create_track_with_file(
-            title="celine", test_track_filename=TrackTestFilename.DURATION_277S_MP3, artists=[artist])
+            title="celine", duration_in_sec=277, artists=[artist])
         self.model_fixture_factory.create_track_with_file(
-            title="tokyo", test_track_filename=TrackTestFilename.DURATION_472S_WAV, artists=[artist])
+            title="tokyo", duration_in_sec=472, artists=[artist])
 
         response = self._retrieve_artist(artist.uuid)
 

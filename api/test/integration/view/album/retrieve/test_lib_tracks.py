@@ -2,7 +2,6 @@ from rest_framework import status
 
 from api.serializer.model.album.detailed import Fields as RetrieveFields
 from api.serializer.model.track.output.simple.simple_without_album import Fields as TrackOutputFields
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.test.integration.view.album.AlbumTestCase import AlbumTestCase
 from api.utils.data_transformer import to_camel_case
 
@@ -57,9 +56,9 @@ class TestCase(AlbumTestCase):
     def test_duration(self):
         album = self.model_fixture_factory.create_album(name="Chuck")
         self.model_fixture_factory.create_track_with_file(
-            title='ciline', album=album, test_track_filename=TrackTestFilename.DURATION_277S_MP3)
+            title='ciline', album=album, duration_in_sec=277)
         self.model_fixture_factory.create_track_with_file(
-            title='tokyo', album=album, test_track_filename=TrackTestFilename.DURATION_472S_WAV)
+            title='tokyo', album=album, duration_in_sec=472)
 
         response = self._retrieve_album(album.uuid)
 

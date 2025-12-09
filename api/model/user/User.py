@@ -13,7 +13,6 @@ from api.model.base.BaseModel import BaseModel
 from api.model.field.AppCharField import AppCharField
 from api.model.utils.ConcatOp import ConcatOp
 from api.model.utils.ConditionalExpression import ConditionalExpression
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 
 from .Fields import Fields
 from .UserManager import UserManager
@@ -54,8 +53,8 @@ class User(AbstractUser, BaseModel):
         all_tracks_mixin, _ = AllTracksMixin.objects.get_or_create(user=self)
         return all_tracks_mixin
 
-    def does_track_filename_exist_in_lib(self, test_track_filename: TrackTestFilename):
-        return os.path.isfile(Path(self.lib_abs_path) / test_track_filename.value)
+    def does_track_filename_exist_in_lib(self, filename: str):
+        return os.path.isfile(Path(self.lib_abs_path) / filename)
 
     def delete(self, *args, **kwargs):
         if self.lib_abs_path.exists():

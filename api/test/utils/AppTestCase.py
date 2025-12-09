@@ -15,7 +15,6 @@ from api.model.user.spotify.SpotifyUser import SpotifyUser
 from api.model.uuid.Fields import Fields as UuidModelFields
 from api.serializer.model.track.input.post.Fields import Fields as TrackPostFields
 from api.test.utils.AppApiClient import AppApiClient
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.test.utils.ModelFixtureFactory import ModelFixtureFactory
 from api.utils import audio_file_metadata, data_transformer
 from api.view.error.ErrorResponseFields import ErrorResponseFields
@@ -32,8 +31,6 @@ class AppTestCase(TestCase, Generic[T]):
 
     api_client: AppApiClient
     saved_track_metadata_with_raw_rating: dict
-
-    TEST_FILES_BASE_DIR = Path(__file__).parent.parent / 'utils' / 'track' / 'files'
 
     def _login_as_user(self, user: User):
         self.api_client.force_authenticate(user=user)
@@ -140,19 +137,9 @@ class AppTestCase(TestCase, Generic[T]):
 
     # Defined here and not in TrackTestCase because other views needs sometimes to post a track for testing purposes
     # (testing metadata updates for example)
-    def _post_track(self, test_track_filename: TrackTestFilename = TrackTestFilename.DEFAULT_MP3,
-                    **kwargs) -> Union[JsonResponse, HttpResponse]:
-        file_abs_path = self.TEST_FILES_BASE_DIR / test_track_filename.value
-
-        with open(file_abs_path, "rb") as sample_file:
-            file_field_dict = {TrackPostFields.TRACK_FILE_PUBLIC: sample_file}
-            if kwargs:
-                kwargs = data_transformer.merge_two_dicts(file_field_dict, kwargs)
-            else:
-                kwargs = file_field_dict
-
-            return self.api_client.post(
-                path=reverse('uploaded-track-list'), data=kwargs, format='multipart', handle_response=self._set_results)
+    def _post_track(self, **kwargs) -> Union[JsonResponse, HttpResponse]:
+        return self.api_client.post(
+            path=reverse('uploaded-track-list'), data=kwargs, format='multipart', handle_response=self._set_results)
 
     # Defined here and not in TrackTestCase because other views needs sometimes to put a track for testing purposes
     # (testing Genre deletion for example)
@@ -191,7 +178,7 @@ class AppTestCase(TestCase, Generic[T]):
             email='spotify@test.com', is_test_user=True)
 
         self.model_fixture_factory = ModelFixtureFactory(
-            default_test_user=self.test_user1, test_track_dir=self.TEST_FILES_BASE_DIR,)
+            default_test_user=self.test_user1)
 
         super().setUp()
 
