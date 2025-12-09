@@ -44,7 +44,6 @@ class FieldValidationErrorCode(str, Enum):
     TRACK_FILE_TYPE_INVALID = 'track_file_type_invalid'
     TRACK_FILE_EXTENSION_INVALID = 'track_file_extension_invalid'
     TRACK_FILE_CORRUPTED = 'track_file_corrupted'
-    TRACK_FILE_FINGERPRINT_DUPLICATE = 'track_file_fingerprint_duplicate'
 
     # URL Validation
     URL_INVALID = 'url_invalid'
