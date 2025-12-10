@@ -30,7 +30,7 @@ from .view.viewset.SearchViewSet import SearchViewSet
 router = routers.DefaultRouter()
 router.register(r'users', BaseUserViewSet, basename='user')
 router.register(r'users/spotify', SpotifyUserViewSet, basename='spotify-user')
-router.register(r'library/track', TrackViewSet, basename='uploaded-track')
+router.register(r'library/track', TrackViewSet, basename='track')
 router.register(r'library/spotify', SpotifyLibTrackViewSet, basename='spotify-lib-track')
 router.register(r'spotify-artists', SpotifyArtistViewSet, basename='spotify-artist')
 router.register(r'artists', ArtistViewSet, basename='artist')
@@ -45,7 +45,7 @@ router.register(r'playlists', PlaylistViewSet, basename='playlist')
 router.register(r'manual-playlists', ManualPlaylistViewSet, basename='manual-playlist')
 router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
 router.register(r'tag-playlists', TagPlaylistViewSet, basename='tag-playlist')
-router.register(r'all-tracks', AllTracksViewSet, basename='all-uploaded-tracks')
+router.register(r'all-tracks', AllTracksViewSet, basename='all-tracks')
 router.register(r'search', SearchViewSet, basename='search')
 
 urlpatterns = [

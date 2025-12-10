@@ -50,7 +50,7 @@ class TestCase(NullableListBodyDataTestCase, TrackTestCase):
         malformed_put_json_field_name = "album_artists_names[]"
         data = {PostFields.ALBUM_NAME: "Best Of", malformed_put_json_field_name: ['muse']}
         response = self.api_client.put(
-            path=reverse('uploaded-track-detail', kwargs={'pk': track.uuid}),
+            path=reverse('track-detail', kwargs={'pk': track.uuid}),
             data=data, format='json', handle_response=self._set_results)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST

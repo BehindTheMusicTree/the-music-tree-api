@@ -15,22 +15,24 @@ class TrackTestCase(AppTestCase[Track]):
 
     def _post_track(self, **kwargs):
         return self.api_client.post(
-<<<<<<< HEAD
-            path=reverse('uploaded-track-list'), data=kwargs, format='multipart', handle_response=self._set_results)
-=======
-            path=reverse('uploaded-track-list'), data=kwargs, handle_response=self._set_results)
->>>>>>> 70465365c (refactor: remove library-only features)
+            << << << < HEAD
+            path=reverse('track-list'), data=kwargs, format='multipart', handle_response=self._set_results)
+
+
+== == == =
+path = reverse('track-list'), data = kwargs, handle_response = self._set_results)
+    >> >>>> > 70465365c(refactor: remove library-only features)
 
     def _post_track_without_file(self, **kwargs):
-        return self.api_client.post(
-            path=reverse('uploaded-track-list'), data=kwargs, handle_response=self._set_results)
+    return self.api_client.post(
+  path = reverse('track-list'), data = kwargs, handle_response = self._set_results)
 
-    def _delete_track(self, uuid):
-        return self.api_client.delete(path=reverse('uploaded-track-detail', kwargs={'pk': uuid}))
+   def _delete_track(self, uuid):
+   return self.api_client.delete(path=reverse('track-detail', kwargs={'pk': uuid}))
 
-    def _retrieve_track(self, uuid: UUID):
-        return self.api_client.get(path=reverse('uploaded-track-detail', kwargs={'pk': uuid}),
-                                   handle_response=self._set_results)
+   def _retrieve_track(self, uuid: UUID):
+   return self.api_client.get(path=reverse('track-detail', kwargs={'pk': uuid}),
+                     handle_response = self._set_results)
 
-    def _list_tracks(self, **kwargs):
-        return self.api_client.get(path=reverse('uploaded-track-list'), data=kwargs, handle_response=self._set_results)
+                      def _list_tracks(self, **kwargs):
+                      return self.api_client.get(path=reverse('track-list'), data=kwargs, handle_response=self._set_results)
