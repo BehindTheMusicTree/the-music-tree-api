@@ -8,15 +8,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Bodzify/the-music-tree-api.git"
+    "url": "git+https://github.com/BehindTheMusicTree/the-music-tree-api.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Bodzify/the-music-tree-api/issues"
+    "url": "https://github.com/BehindTheMusicTree/the-music-tree-api/issues"
   },
-  "homepage": "https://github.com/Bodzify/the-music-tree-api#readme",
+  "homepage": "https://github.com/BehindTheMusicTree/the-music-tree-api#readme",
   "devDependencies": {
     "git-worktree-scripts": "1.4.1"
   }
