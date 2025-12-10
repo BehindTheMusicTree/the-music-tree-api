@@ -13,10 +13,8 @@ from api.model.track.Track import Track
 from api.model.user.User import User
 from api.model.user.spotify.SpotifyUser import SpotifyUser
 from api.model.uuid.Fields import Fields as UuidModelFields
-from api.serializer.model.track.input.post.Fields import Fields as TrackPostFields
 from api.test.utils.AppApiClient import AppApiClient
 from api.test.utils.ModelFixtureFactory import ModelFixtureFactory
-from api.utils import audio_file_metadata, data_transformer
 from api.view.error.ErrorResponseFields import ErrorResponseFields
 from api.view.pagination.PaginatedResponseFields import PaginatedResponseFields
 

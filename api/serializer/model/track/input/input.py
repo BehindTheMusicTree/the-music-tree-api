@@ -66,6 +66,8 @@ class TrackInputSerializer(AppInputSerializer):
                                              field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
     def validate(self, data: dict,):
+        self._validate_album_fields_from_data(data)
+
         if Fields.LANGUAGE in data and data[Fields.LANGUAGE] == "":
             data[Fields.LANGUAGE] = None
         data_transformer.update_dict_converting_str_to_int_value_if_set(key=ModelFields.RATING, data=data)

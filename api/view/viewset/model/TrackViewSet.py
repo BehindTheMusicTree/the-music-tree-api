@@ -3,8 +3,7 @@ from drf_spectacular.utils import OpenApiParameter, extend_schema  # type: ignor
 
 from api.filtering.set.track.Fields import Fields as FilterFields
 from api.model.track.Track import Track
-from api.serializer.model.track.input.post.post import TrackPostSerializer
-from api.serializer.model.track.input.put.put import TrackPutSerializer
+from api.serializer.model.track.input.input import TrackInputSerializer
 from api.serializer.model.track.output.detailed import TrackDetailedSerializer
 
 from .AppModelViewSet import AppModelViewSet
@@ -17,12 +16,11 @@ class TrackViewSet(AppModelViewSet[Track]):
                          filterset_class=TrackFilterSet,
                          simple_serializer_class=TrackDetailedSerializer,
                          detailed_serializer_class=TrackDetailedSerializer,
-                         create_serializer_class=TrackPostSerializer,
-                         update_serializer_class=TrackPutSerializer,
+                         create_serializer_class=TrackInputSerializer,
+                         update_serializer_class=TrackInputSerializer,
                          **kwargs)
 
-
-    @extend_schema(request=TrackPostSerializer, responses=TrackDetailedSerializer, description=("""
+    @extend_schema(request=TrackInputSerializer, responses=TrackDetailedSerializer, description=("""
         Create a track with metadata.
         """))
     def create(self, request, *args, **kwargs):
@@ -40,7 +38,7 @@ class TrackViewSet(AppModelViewSet[Track]):
     def retrieve(self, *args, **kwargs):
         return self._handle_retrieve()
 
-    @extend_schema(request=TrackPutSerializer,
+    @extend_schema(request=TrackInputSerializer,
                    responses=TrackDetailedSerializer,
                    description=("""
             Updates a track:\n"
