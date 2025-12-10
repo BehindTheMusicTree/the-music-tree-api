@@ -1,6 +1,6 @@
 from rest_framework import status
 
-from api.serializer.model.track.input.put.Fields import Fields
+from api.serializer.model.track.input.Fields import Fields
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 
 

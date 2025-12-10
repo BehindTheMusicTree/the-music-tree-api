@@ -2,7 +2,7 @@ from rest_framework import status
 
 from api.model.track.Fields import Fields as TrackFields
 from api.model.track.Track import Track
-from api.serializer.model.track.input.put.Fields import Fields as PutFields
+from api.serializer.model.track.input.Fields import Fields as PutFields
 from api.test.utils.field.body_data.method.PutBodyDataTestCase import PutBodyDataTestCase
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 

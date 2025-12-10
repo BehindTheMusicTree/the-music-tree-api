@@ -2,7 +2,7 @@ from rest_framework import status
 
 from api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from api.model.track.Fields import Fields as TrackFields
-from api.serializer.model.track.input.put.Fields import Fields as PutFields
+from api.serializer.model.track.input.Fields import Fields as PutFields
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 
 

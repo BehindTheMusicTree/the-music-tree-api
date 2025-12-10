@@ -7,7 +7,7 @@ from django.db.models import QuerySet
 from api.model.track_playlist_rel.TrackPlaylistRel import TrackPlaylistRel
 from api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
-from api.serializer.model.track.input.put.Fields import Fields as PutFields
+from api.serializer.model.track.input.Fields import Fields as PutFields
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 
 

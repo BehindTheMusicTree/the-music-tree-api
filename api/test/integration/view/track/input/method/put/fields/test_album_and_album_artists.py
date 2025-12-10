@@ -4,7 +4,7 @@ from api.model.album.Album import Album
 from api.model.artist.Artist import Artist
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 from api.test.utils.field.body_data.method.PutBodyDataTestCase import PutBodyDataTestCase
-from api.serializer.model.track.input.put.Fields import Fields as PutFields
+from api.serializer.model.track.input.Fields import Fields as PutFields
 
 
 class TestCase(TrackTestCase, PutBodyDataTestCase):
