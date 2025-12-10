@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.utils import timezone
 
 from api.serializer.model.track.output.Fields import Fields as TrackFields
-from api.test.integration.view.track.TrackTestCase import Track
+from api.test.integration.view.track.TrackTestCase import TrackTestCase
 from api.utils import data_transformer
 from api.filtering.set.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
 
