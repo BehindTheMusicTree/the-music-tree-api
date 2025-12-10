@@ -151,6 +151,13 @@ Update app name to 'api'
 
 ### Documentation
 
+- **README**: Completed README.md following Django REST Framework conventions
+  - Removed duplicate setup steps that overlapped with CONTRIBUTING.md
+  - Added comprehensive Usage section with authentication, request/response formats, pagination, and error handling
+  - Completed API Endpoints section with organized endpoint tables for all resources
+  - Added Table of Contents for better navigation
+  - Provides complete API reference following DRF best practices
+
 - **Project Management**: Added `TODO.md` for tracking future work and improvements
   - Categorized by priority (high, medium, low)
   - Organized by features, testing, and infrastructure
