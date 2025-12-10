@@ -1,5 +1,3 @@
-import os
-import shutil
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -19,8 +17,8 @@ from api.model.criteria.children.genre.Genre import Genre
 from api.model.criteria.children.tag.Tag import Tag
 from api.model.criteria.Criteria import Criteria
 from api.model.criteria.Criteria import Fields as CriteriaFields
-from api.model.uploaded_track_playlist_rel.UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
-from api.model.uploaded_track_playlist_rel.Fields import Fields as UploadedTrackPlaylistRelFields
+from api.model.track_playlist_rel.TrackPlaylistRel import TrackPlaylistRel
+from api.model.track_playlist_rel.Fields import Fields as TrackPlaylistRelFields
 from api.model.musicbrainz_resource.children.artist.Fields import Fields as MusicbrainzArtistFields
 from api.model.musicbrainz_resource.children.artist.MbArtist import MbArtist
 from api.model.musicbrainz_resource.children.recording.MbRecording import Fields as MusicbrainzRecordingFields
@@ -31,13 +29,10 @@ from api.model.playlist.Playlist import Playlist
 from api.model.playlist.children.manual.Fields import Fields as ManualPlayListFields
 from api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from api.model.playlist.Fields import Fields as PlayListFields
-from api.model.uploaded_track.file.TrackFile import Fields as TrackFileFields
-from api.model.uploaded_track.file.TrackFile import TrackFile
-from api.model.uploaded_track.Fields import Fields as UploadedTrackFields
-from api.model.uploaded_track.UploadedTrack import UploadedTrack
+from api.model.track.Fields import Fields as TrackFields
+from api.model.track.Track import Track
 from api.model.trackable_play_count.TrackablePlayCount import TrackablePlayCount
 from api.model.user.User import User
-from api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from api.model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
 from api.model.spotify_resource.children.artist.SpotifyArtist import SpotifyArtist
 from api.model.spotify_resource.children.track.Fields import Fields as TrackFields
@@ -51,11 +46,9 @@ global_settings.DDF_FIELD_FIXTURES['django.db.models.fields.generated.GeneratedF
 
 class ModelFixtureFactory:
     default_test_user: 'User'
-    test_uploaded_track_dir: Path
 
-    def __init__(self, default_test_user: 'User', test_uploaded_track_dir: Path) -> None:
+    def __init__(self, default_test_user: 'User') -> None:
         self.default_test_user = default_test_user
-        self.test_uploaded_track_dir = test_uploaded_track_dir
 
     @staticmethod
     def create_user(username=None, email=None, password='password123', **kwargs) -> 'User':
@@ -84,92 +77,38 @@ class ModelFixtureFactory:
         model_fields.update(kwargs)
         return model_class.objects.create(**model_fields)
 
-    def _create_file(
-            self, user: User, uploaded_track: UploadedTrack, track_file_path_in_lib: Path | None, **kwargs) -> TrackFile:
-        model_fields = {
-            TrackFileFields.CREATED_ON: timezone.make_aware(datetime.now()),
-            TrackFileFields.UPDATED_ON: timezone.make_aware(datetime.now()),
-            TrackFileFields.USER: user,
-            TrackFileFields.UPLOADED_TRACK: uploaded_track,
-            TrackFileFields.FILE: str(track_file_path_in_lib)
-        }
-        model_fields.update(kwargs)
-        return G(TrackFile, **model_fields)
-
-    def _create_uploaded_track(self, user: User, title: str | None = None, **kwargs) -> UploadedTrack:
+    def _create_track(self, user: User, title: str | None = None, **kwargs) -> Track:
         now = timezone.make_aware(datetime.now())
         model_fields = {
-            UploadedTrackFields.CREATED_ON: kwargs.get(UploadedTrackFields.CREATED_ON, now),
-            UploadedTrackFields.UPDATED_ON: kwargs.get(UploadedTrackFields.UPDATED_ON, now),
-            UploadedTrackFields.USER: user,
-            UploadedTrackFields.TITLE: title or "Untitled",
+            TrackFields.CREATED_ON: kwargs.get(TrackFields.CREATED_ON, now),
+            TrackFields.UPDATED_ON: kwargs.get(TrackFields.UPDATED_ON, now),
+            TrackFields.USER: user,
+            TrackFields.TITLE: title or "Untitled",
         }
         model_fields.update(kwargs)
-        uploaded_track = G(UploadedTrack, **model_fields)
+        track = G(Track, **model_fields)
 
-        if kwargs.get(UploadedTrackFields.ARTISTS):
-            uploaded_track.artists.set(kwargs[UploadedTrackFields.ARTISTS])
+        if kwargs.get(TrackFields.ARTISTS):
+            track.artists.set(kwargs[TrackFields.ARTISTS])
 
-        return uploaded_track
+        return track
 
-    def create_uploaded_track_playlist_rel(
-            self, playlist: Playlist, uploaded_track: UploadedTrack, user: User | None = None,) -> UploadedTrackPlaylistRel:
+    def create_track_playlist_rel(
+            self, playlist: Playlist, track: Track, user: User | None = None,) -> TrackPlaylistRel:
         model_fields = {
-            UploadedTrackPlaylistRelFields.USER: user or self.default_test_user,
-            UploadedTrackPlaylistRelFields.PLAYLIST: playlist,
-            UploadedTrackPlaylistRelFields.UPLOADED_TRACK_INTERNAL: uploaded_track,
+            TrackPlaylistRelFields.USER: user or self.default_test_user,
+            TrackPlaylistRelFields.PLAYLIST: playlist,
+            TrackPlaylistRelFields.TRACK_INTERNAL: track,
         }
-        return G(UploadedTrackPlaylistRel, **model_fields)
+        return G(TrackPlaylistRel, **model_fields)
 
-    def create_uploaded_track_with_file(
+    def create_track_with_file(
         self,
         title: str | None = "test",
-        test_uploaded_track_filename: UploadedTrackTestFilename | None = UploadedTrackTestFilename.DEFAULT_MP3,
         user: User | None = None,
-        use_manager_for_genre_playlist_adding: bool = False,
         **kwargs
-    ) -> UploadedTrack:
-        user = user or self.default_test_user
-
-        now = timezone.make_aware(datetime.now())
-        model_fields = {
-            UploadedTrackFields.CREATED_ON: kwargs.get(UploadedTrackFields.CREATED_ON, now),
-            UploadedTrackFields.UPDATED_ON: kwargs.get(UploadedTrackFields.UPDATED_ON, now),
-            UploadedTrackFields.USER: user,
-            UploadedTrackFields.TITLE: title,
-        }
-        model_fields.update(kwargs)
-
-        if not os.path.exists(user.lib_abs_path):
-            os.makedirs(user.lib_abs_path)
-
-        filename_str = test_uploaded_track_filename.value if test_uploaded_track_filename else None
-        file_path = self.test_uploaded_track_dir / filename_str
-        track_file_path_in_lib = user.lib_abs_path / filename_str
-        try:
-            shutil.copy(file_path, track_file_path_in_lib)
-        except OSError as e:
-            if e.errno == 28:
-                stat = shutil.disk_usage(user.lib_abs_path)
-                raise OSError(
-                    f"No space left on device. Disk usage: {stat.used / (1024**3):.2f}GB used, "
-                    f"{stat.free / (1024**3):.2f}GB free out of {stat.total / (1024**3):.2f}GB total. "
-                    f"Please free up disk space to continue tests."
-                ) from e
-            raise
-
-        if use_manager_for_genre_playlist_adding:
-            with open(track_file_path_in_lib, 'rb') as f:
-                django_file = File(f, name=str(track_file_path_in_lib))
-                model_fields.update({UploadedTrackFields.TRACK_FILE_INTERNAL: django_file})
-                uploaded_track = UploadedTrack.objects.create(**model_fields)
-        else:
-            with transaction.atomic():
-                uploaded_track = self._create_uploaded_track(user=user, title=title, **kwargs)
-                self._create_file(user=user, uploaded_track=uploaded_track,
-                                  track_file_path_in_lib=track_file_path_in_lib)
-
-        return uploaded_track
+    ) -> Track:
+        return self._create_track(user=user or self.default_test_user, title=title, **kwargs)
 
     def create_play(self, content: TrackablePlayCount, user: User | None = None, **kwargs) -> Play:
         from django.contrib.contenttypes.models import ContentType

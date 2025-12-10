@@ -27,7 +27,7 @@ Integration tests test how multiple components work together, typically through 
 **Location:** `api/test/integration/`
 
 **Examples:**
-- `integration/view/uploaded_track/` - Tests for uploaded track API endpoints
+- `integration/view/track/` - Tests for uploaded track API endpoints
 
 **Characteristics:**
 - Use database

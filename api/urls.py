@@ -6,7 +6,7 @@ from rest_framework import routers
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from api.utils.AppStaticFileStates import StaticFileStates
-from api.view.viewset.model.AllUploadedTracksMixinViewSet import AllUploadedTracksViewSet
+from api.view.viewset.model.AllTracksMixinViewSet import AllTracksViewSet
 from api.view.spotify_auth import spotify_auth
 from api.view.viewset.model.SpotifyArtistViewSet import SpotifyArtistViewSet
 from api.view.viewset.model.user.SpotifyUserViewSet import SpotifyUserViewSet
@@ -45,7 +45,7 @@ router.register(r'playlists', PlaylistViewSet, basename='playlist')
 router.register(r'manual-playlists', ManualPlaylistViewSet, basename='manual-playlist')
 router.register(r'genre-playlists', GenrePlaylistViewSet, basename='genre-playlist')
 router.register(r'tag-playlists', TagPlaylistViewSet, basename='tag-playlist')
-router.register(r'all-tracks', AllUploadedTracksViewSet, basename='all-uploaded-tracks')
+router.register(r'all-tracks', AllTracksViewSet, basename='all-tracks')
 router.register(r'search', SearchViewSet, basename='search')
 
 urlpatterns = [

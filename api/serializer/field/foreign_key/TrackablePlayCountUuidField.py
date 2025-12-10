@@ -8,13 +8,13 @@ from rest_framework.request import Request
 from api.exception.validation.app.AppValidationException import AppValidationException
 from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from api.model.playlist.Playlist import Playlist
-from api.model.uploaded_track.UploadedTrack import UploadedTrack
+from api.model.track.Track import Track
 from api.serializer.field.foreign_key.PrivateUuidField import PrivateUuidField
 
 
 class TrackablePlayCountUuidField(PrivateUuidField):
     """
-    A field that validates a UUID refers to a trackable play count object (Playlist or UploadedTrack)
+    A field that validates a UUID refers to a trackable play count object (Playlist or Track)
     owned by the current user.
     """
 
@@ -48,7 +48,7 @@ class TrackablePlayCountUuidField(PrivateUuidField):
 
         content_object = (
             self._get_object_by_uuid(uuid_value, user, Playlist) or
-            self._get_object_by_uuid(uuid_value, user, UploadedTrack)
+            self._get_object_by_uuid(uuid_value, user, Track)
         )
 
         if not content_object:

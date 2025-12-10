@@ -9,12 +9,12 @@ from .Fields import Fields
 
 
 if TYPE_CHECKING:
-    from .UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
-    from api.model.uploaded_track.UploadedTrack import UploadedTrack
+    from .TrackPlaylistRel import TrackPlaylistRel
+    from api.model.track.Track import Track
     from api.model.playlist.Playlist import Playlist
 
 
-class UploadedTrackPlaylistRelManager(StandardResourceManager):
+class TrackPlaylistRelManager(StandardResourceManager):
 
     def _decrement_positions_of_following_tracks(self, playlist: 'Playlist', position: int):
         self.filter(
@@ -37,36 +37,36 @@ class UploadedTrackPlaylistRelManager(StandardResourceManager):
             Fields.POSITION)
 
         for i, relation in enumerate(tracks_positions_ordered_asc, 1):
-            relation: UploadedTrackPlaylistRel = relation  # for type hinting
+            relation: TrackPlaylistRel = relation  # for type hinting
             relation.position = i
             relation.save(update_fields=[Fields.POSITION])
 
-    def archive_instances_of_uploaded_track(self, uploaded_track: 'UploadedTrack'):
-        for uploaded_track_playlist_rel in uploaded_track.uploaded_track_playlist_rels.all():
-            uploaded_track_old_position = cast(
-                int, uploaded_track_playlist_rel.position)  # Is not None before archiving
-            uploaded_track_playlist_rel.position = None
-            uploaded_track_playlist_rel.save(update_fields=[Fields.POSITION])
+    def archive_instances_of_track(self, track: 'Track'):
+        for track_playlist_rel in track.track_playlist_rels.all():
+            track_old_position = cast(
+                int, track_playlist_rel.position)  # Is not None before archiving
+            track_playlist_rel.position = None
+            track_playlist_rel.save(update_fields=[Fields.POSITION])
 
             self._decrement_positions_of_following_tracks(
-                uploaded_track_playlist_rel.playlist, uploaded_track_old_position)
+                track_playlist_rel.playlist, track_old_position)
 
-    def unarchive_instances_of_uploaded_track(self, uploaded_track: 'UploadedTrack'):
-        for uploaded_track_playlist_rel in uploaded_track.uploaded_track_playlist_rels.all():
-            self._increment_positions_of_following_tracks(uploaded_track_playlist_rel.playlist, 1)
-            uploaded_track_playlist_rel.position = 1
-            uploaded_track_playlist_rel.save(update_fields=[Fields.POSITION])
+    def unarchive_instances_of_track(self, track: 'Track'):
+        for track_playlist_rel in track.track_playlist_rels.all():
+            self._increment_positions_of_following_tracks(track_playlist_rel.playlist, 1)
+            track_playlist_rel.position = 1
+            track_playlist_rel.save(update_fields=[Fields.POSITION])
 
-    def delete_instance(self, user: User, playlist: 'Playlist', uploaded_track: 'UploadedTrack'):
-        from .UploadedTrackPlaylistRel import UploadedTrackPlaylistRel
-        uploaded_track_playlist_rel: UploadedTrackPlaylistRel = self.get(
-            user=user, playlist=playlist, uploaded_track=uploaded_track)
-        if uploaded_track_playlist_rel.position is not None:  # if lib track not archived
-            self._decrement_positions_of_following_tracks(playlist, uploaded_track_playlist_rel.position)
-        uploaded_track_playlist_rel.delete()
+    def delete_instance(self, user: User, playlist: 'Playlist', track: 'Track'):
+        from .TrackPlaylistRel import TrackPlaylistRel
+        track_playlist_rel: TrackPlaylistRel = self.get(
+            user=user, playlist=playlist, track=track)
+        if track_playlist_rel.position is not None:  # if lib track not archived
+            self._decrement_positions_of_following_tracks(playlist, track_playlist_rel.position)
+        track_playlist_rel.delete()
 
     def move_tracks_to_playlist_beginning(
-            self, source_rels: QuerySet['UploadedTrackPlaylistRel'], target_playlist: 'Playlist') -> None:
+            self, source_rels: QuerySet['TrackPlaylistRel'], target_playlist: 'Playlist') -> None:
         from .Fields import Fields
 
         if not source_rels:
@@ -85,7 +85,7 @@ class UploadedTrackPlaylistRelManager(StandardResourceManager):
             relation.position = i
             relation.save(update_fields=[Fields.POSITION, 'playlist'])
 
-    def get_ordered_relations_for_playlist(self, playlist: 'Playlist') -> QuerySet['UploadedTrackPlaylistRel']:
+    def get_ordered_relations_for_playlist(self, playlist: 'Playlist') -> QuerySet['TrackPlaylistRel']:
         """
         Returns ordered relations for a playlist, with non-archived tracks first (sorted by position)
         followed by archived tracks (null positions).
@@ -93,7 +93,7 @@ class UploadedTrackPlaylistRelManager(StandardResourceManager):
         return self.filter(
             user=playlist.user,
             playlist=playlist
-        ).select_related('uploaded_track').order_by(
+        ).select_related('track').order_by(
             F(Fields.POSITION).desc(nulls_last=True),
             Fields.POSITION
         )

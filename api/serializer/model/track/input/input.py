@@ -19,7 +19,7 @@ from .Fields import Fields
 
 class TrackInputSerializer(AppInputSerializer):
     title = AppCharField(
-        max_length=settings.UPLOADED_TRACK_TITLE_LEN_MAX, required=False, allow_blank=False, allow_null=True)
+        max_length=settings.TRACK_TITLE_LEN_MAX, required=False, allow_blank=False, allow_null=True)
     force_title_generation = serializers.BooleanField(required=False)
     artists_names = ArtistsNamesField(max_length=settings.ARTISTS_NAMES_LEN_MAX, required=False, allow_null=True)
     album_name = AppCharField(max_length=settings.ALBUM_NAME_LEN_MAX, required=False, allow_blank=True, allow_null=True)
@@ -66,6 +66,8 @@ class TrackInputSerializer(AppInputSerializer):
                                              field_validation_error_code=FieldValidationErrorCode.DEPENDENCY_MISSING)
 
     def validate(self, data: dict,):
+        self._validate_album_fields_from_data(data)
+
         if Fields.LANGUAGE in data and data[Fields.LANGUAGE] == "":
             data[Fields.LANGUAGE] = None
         data_transformer.update_dict_converting_str_to_int_value_if_set(key=ModelFields.RATING, data=data)

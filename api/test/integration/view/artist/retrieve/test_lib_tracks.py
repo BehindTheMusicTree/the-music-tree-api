@@ -1,7 +1,6 @@
 from rest_framework import status
 
 from api.serializer.model.artist.detailed import Fields as ArtistFields
-from api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
 from api.test.integration.view.artist.ArtistTestCase import ArtistTestCase
 from api.utils import data_transformer
 
@@ -10,10 +9,10 @@ class TestCase(ArtistTestCase):
 
     def test_duration(self):
         artist = self.model_fixture_factory.create_artist(name="Sum 41")
-        self.model_fixture_factory.create_uploaded_track_with_file(
-            title="celine", test_uploaded_track_filename=UploadedTrackTestFilename.DURATION_277S_MP3, artists=[artist])
-        self.model_fixture_factory.create_uploaded_track_with_file(
-            title="tokyo", test_uploaded_track_filename=UploadedTrackTestFilename.DURATION_472S_WAV, artists=[artist])
+        self.model_fixture_factory.create_track_with_file(
+            title="celine", duration_in_sec=277, artists=[artist])
+        self.model_fixture_factory.create_track_with_file(
+            title="tokyo", duration_in_sec=472, artists=[artist])
 
         response = self._retrieve_artist(artist.uuid)
 
@@ -22,22 +21,22 @@ class TestCase(ArtistTestCase):
 
     def test_count(self):
         artist = self.model_fixture_factory.create_artist(name="Sum 41")
-        self.model_fixture_factory.create_uploaded_track_with_file(title="In Too Deep", artists=[artist])
-        self.model_fixture_factory.create_uploaded_track_with_file(title="Summer", artists=[artist])
+        self.model_fixture_factory.create_track_with_file(title="In Too Deep", artists=[artist])
+        self.model_fixture_factory.create_track_with_file(title="Summer", artists=[artist])
 
         response = self._retrieve_artist(artist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[data_transformer.to_camel_case(ArtistFields.UPLOADED_TRACKS_NOT_ARCHIVED_COUNT_PUBLIC)] == 2
+        assert self.result[data_transformer.to_camel_case(ArtistFields.TRACKS_NOT_ARCHIVED_COUNT_PUBLIC)] == 2
 
     def test_archived_count(self):
         artist = self.model_fixture_factory.create_artist(name="Sum 41")
-        self.model_fixture_factory.create_uploaded_track_with_file(title="In Too Deep", artists=[artist])
-        self.model_fixture_factory.create_uploaded_track_with_file(title="Summer", artists=[artist], archived=True)
-        self.model_fixture_factory.create_uploaded_track_with_file(title="Summer2", artists=[artist], archived=True)
-        self.model_fixture_factory.create_uploaded_track_with_file(title="Summer3", artists=[artist], archived=True)
+        self.model_fixture_factory.create_track_with_file(title="In Too Deep", artists=[artist])
+        self.model_fixture_factory.create_track_with_file(title="Summer", artists=[artist], archived=True)
+        self.model_fixture_factory.create_track_with_file(title="Summer2", artists=[artist], archived=True)
+        self.model_fixture_factory.create_track_with_file(title="Summer3", artists=[artist], archived=True)
 
         response = self._retrieve_artist(artist.uuid)
 
         assert response.status_code == status.HTTP_200_OK
-        assert self.result[data_transformer.to_camel_case(ArtistFields.UPLOADED_TRACKS_ARCHIVED_COUNT_PUBLIC)] == 3
+        assert self.result[data_transformer.to_camel_case(ArtistFields.TRACKS_ARCHIVED_COUNT_PUBLIC)] == 3

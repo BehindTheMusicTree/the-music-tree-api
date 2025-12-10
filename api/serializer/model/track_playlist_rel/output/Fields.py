@@ -5,3 +5,6 @@ class Fields:
     PLAYLIST = ModelFields.PLAYLIST
     TRACK_PUBLIC = ModelFields.TRACK_PUBLIC
     POSITION = ModelFields.POSITION
+
+
+

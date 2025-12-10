@@ -7,3 +7,6 @@ class Fields(PrivateUniqueResourceFilterFields):
     ALBUM_NAME = 'album_name'
     GENRE_NAME = 'genre_name'
     LANGUAGE = 'language'
+
+
+

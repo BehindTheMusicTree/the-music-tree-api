@@ -1,17 +1,41 @@
-# Bodzify API
+# TheMusicTreeAPI
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Python](https://img.shields.io/badge/python-3.14-blue.svg)](https://www.python.org/)
-[![Django](https://img.shields.io/badge/django-5.2-green.svg)](https://www.djangoproject.com/)
+[![Python](https://img.shields.io/badge/Python-3.12+-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Django REST Framework](https://img.shields.io/badge/Django_REST_Framework-092E20?style=flat-square&logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
+[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white)](https://github.com/features/actions)
 
-Bodzify API is an online platform similar to iTunes, designed for managing and interacting with music tracks. It offers a range of features to help you organize, tag, and rate your music, as well as create automatic hierarchical genre playlists.
+> 🔨 **Work in Progress** - Will be published open source soon! 🚀
+
+TheMusicTreeAPI is the API companion to [GrowTheMusicTree](https://github.com/BehindTheMusicTree/grow-the-music-tree), giving developers, researchers, and music platforms access to the full genre hierarchy, detailed metadata, and intelligent genre detection. Built with Django REST Framework and PostgreSQL, it enables personalized user profiling based on listening habits, delivers accurate track and artist classifications, and provides data-driven recommendations.
+
+Perfect for powering music discovery, streaming personalization, event recommendations, and listener analytics, TheMusicTreeAPI brings the intelligence of the genre tree to any app or service.
+
+For more information about the project's vision, goals, and technical approach, see [VISION.md](VISION.md).
 
 ## Features
 
-- **Upload Tracks**: Easily upload your music tracks to the platform.
-- **Tag Tracks**: Tag your tracks with metadata such as artist names, album titles, and more. This tagging process helps organize your music files.
-- **Rate Tracks**: Users can rate tracks, providing a way to highlight popular or preferred songs.
-- **Create Genre Hierarchies**: The most important feature of Bodzify API is the ability to create a hierarchy of music genres. For example, if a track is tagged as "techno," it will automatically be included in both the "techno" playlist and the broader "electronic music" playlist.
+### Genre Hierarchy Access
+- **Full Genre Tree**: Complete access to the hierarchical genre structure from GrowTheMusicTree
+- **Genre Metadata**: Detailed metadata for genres, subgenres, and microgenres
+- **Tree Navigation**: Query and explore the genre tree structure programmatically
+
+### Intelligent Classification
+- **Track Classification**: Accurate genre detection and classification for any track
+- **Artist Classification**: Genre-based artist categorization and profiling
+- **Intelligent Detection**: Classify tracks even outside mainstream genres
+
+### User Profiling & Recommendations
+- **Listening Habit Analysis**: Personalized user profiling based on listening patterns
+- **Data-Driven Recommendations**: Recommendations powered by genre intelligence
+- **Personalized Journeys**: Map user listening habits within the genre tree
+
+### API Access
+- **RESTful Endpoints**: Clean, intuitive API for developers and researchers
+- **Comprehensive Documentation**: Complete API documentation and developer guides
+- **Integration Ready**: Designed for easy integration into music platforms and services
 
 ## Getting Started
 
@@ -55,8 +79,12 @@ pip install -r requirements.txt
 
 If you prefer a different venv name or layout, adjust your local VS Code interpreter selection. The repository stores a workspace-relative default to keep experience consistent for new contributors.
 
-## MusicBrainz Integration
-The Bodzify API integrates with MusicBrainz through the AcoustID fingerprinting service to automatically identify audio tracks and retrieve metadata such as title, artist, and release date. Audio files are fingerprinted using Chromaprint and matched against the MusicBrainz database. For more details, see the [MusicBrainz Integration documentation](api/utils/musicbrainz/README.md).
+## Ecosystem
+
+TheMusicTreeAPI is part of the [BehindTheMusicTree](https://github.com/behindthemusictree) ecosystem, which centers around:
+
+- **[GrowTheMusicTree](https://github.com/BehindTheMusicTree/grow-the-music-tree)**: The definitive, interactive map of global music genres—a tree-shaped framework that organizes genres, subgenres, and microgenres. Built through crowd-sourced curation and expert input, it serves as the ultimate reference for understanding music genres.
+- **TheMusicTreeAPI**: This REST API that provides programmatic access to the genre hierarchy and intelligence, enabling developers to integrate genre classification and recommendations into their platforms.
 
 ## Usage
 TODO
@@ -71,6 +99,3 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
 ## License
 This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
 
-## Acknowledgements
-This project use acoustid to fingerprint the audio files in order to identify each track.
-Please visit [Acoustid Web Service](https://acoustid.org/webservice).

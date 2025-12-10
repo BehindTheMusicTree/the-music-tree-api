@@ -5,10 +5,10 @@ from api.model.album.Album import Album
 from api.model.artist.Artist import Artist
 from api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from api.model.playlist.children.manual.ManualPlaylist import ManualPlaylist
-from api.model.uploaded_track.UploadedTrack import UploadedTrack
+from api.model.track.Track import Track
 from api.serializer.model.album.minimum import Fields as AlbumFields
 from api.serializer.model.artist.minimum import Fields as ArtistFields
-from api.serializer.model.uploaded_track.output.detailed import Fields as UploadedTrackGetFields
+from api.serializer.model.track.output.detailed import Fields as TrackGetFields
 from api.serializer.model.playlist.children.criteria.output.simple import Fields as CriteriaPlayListFields
 from api.test.integration.view.search.SearchTestCase import SearchTestCase
 
@@ -18,14 +18,14 @@ class TestCase(SearchTestCase):
     def test_query_in_track_artist_and_album_then_results(self):
         sum41_artist = self.model_fixture_factory.create_artist(name="Sum 41")
         jailesum_album = self.model_fixture_factory.create_album(name="J'ai le Sum")
-        summerlove_track = self.model_fixture_factory.create_uploaded_track_with_file(title="Summer Love")
+        summerlove_track = self.model_fixture_factory.create_track_with_file(title="Summer Love")
 
         response = self._search(**{SearchFields.QUERY: "Sum"})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 3
-        title_key = UploadedTrackGetFields.TITLE
-        assert self.results[UploadedTrack.__name__][0][title_key] == summerlove_track.title
+        title_key = TrackGetFields.TITLE
+        assert self.results[Track.__name__][0][title_key] == summerlove_track.title
         assert self.results[Artist.__name__][0][ArtistFields.NAME] == sum41_artist.name
         assert self.results[Album.__name__][0][AlbumFields.NAME] == jailesum_album.name
 
@@ -74,15 +74,15 @@ class TestCase(SearchTestCase):
         assert self.results_overall_total == 1
         assert self.results[Album.__name__][0][AlbumFields.NAME] == album.name
 
-    def test_uploaded_track_then_results(self):
-        uploaded_track = self.model_fixture_factory.create_uploaded_track_with_file(title='track')
-        self.model_fixture_factory.create_uploaded_track_with_file(title='another one')
+    def test_track_then_results(self):
+        track = self.model_fixture_factory.create_track_with_file(title='track')
+        self.model_fixture_factory.create_track_with_file(title='another one')
 
         response = self._search(**{SearchFields.QUERY: "trA"})
 
         assert response.status_code == status.HTTP_200_OK
         assert self.results_overall_total == 1
-        assert self.results[UploadedTrack.__name__][0][UploadedTrackGetFields.TITLE] == uploaded_track.title
+        assert self.results[Track.__name__][0][TrackGetFields.TITLE] == track.title
 
     def test_artist_then_results(self):
         artist = self.model_fixture_factory.create_artist(name='artist')

@@ -40,7 +40,6 @@ class FieldValidationErrorCode(str, Enum):
     FILE_TOO_SMALL = 'file_too_small'
 
     # Audio File Validation
-    TRACK_FILE_DOWNLOAD_FAILED = 'track_file_download_failed'
     TRACK_FILE_TYPE_INVALID = 'track_file_type_invalid'
     TRACK_FILE_EXTENSION_INVALID = 'track_file_extension_invalid'
     TRACK_FILE_CORRUPTED = 'track_file_corrupted'

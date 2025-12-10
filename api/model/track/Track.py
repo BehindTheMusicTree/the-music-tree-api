@@ -1,3 +1,4 @@
+import datetime
 from typing import TYPE_CHECKING
 
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -27,7 +28,7 @@ if TYPE_CHECKING:
 
 
 class Track(TrackablePlayCount):
-    title = AppCharField(max_length=settings.UPLOADED_TRACK_TITLE_LEN_MAX)
+    title = AppCharField(max_length=settings.TRACK_TITLE_LEN_MAX)
     artists = PrivateManyToManyField(Artist, blank=True, related_name=ArtistFields.TRACKS_RELATED_NAME)
     album: Album = PrivateForeignKey(Album,  # type: ignore
                                      on_delete=models.CASCADE,
@@ -37,7 +38,7 @@ class Track(TrackablePlayCount):
     track_number = models.PositiveIntegerField(
         null=True,
         blank=True,
-        validators=[MinValueValidator(1), MaxValueValidator(settings.UPLOADED_TRACK_TRACK_NUMBER_MAX)])
+        validators=[MinValueValidator(1), MaxValueValidator(settings.TRACK_TRACK_NUMBER_MAX)])
     genre = PrivateForeignKey(Genre,
                               on_delete=models.DO_NOTHING,
                               null=True,
@@ -46,10 +47,13 @@ class Track(TrackablePlayCount):
     rating = models.IntegerField(
         null=True,
         blank=True,
-        validators=[MinValueValidator(0), MaxValueValidator(settings.UPLOADED_TRACK_RATING_VALUE_MAX)])
+        validators=[MinValueValidator(0), MaxValueValidator(settings.TRACK_RATING_VALUE_MAX)])
     language = AppCharField(max_length=settings.LANGUAGE_LEN_MAX, blank=True, default=None, null=True)
+    archived = models.BooleanField(default=False)
     playlists = PrivateManyToManyField(
         Playlist, through='TrackPlaylistRel', related_name=PlayListFields.TRACKS_RELATED_NAME)
+
+    duration_in_sec = models.PositiveIntegerField(null=True, blank=True)
 
     if TYPE_CHECKING:
         track_playlist_rels: models.QuerySet['TrackPlaylistRel']
@@ -66,6 +70,10 @@ class Track(TrackablePlayCount):
     @property
     def relative_url(self) -> str:
         return f"library/track/{self.uuid}/"
+
+    @property
+    def duration_str_in_hour_min_sec(self) -> str | None:
+        return str(datetime.timedelta(seconds=self.duration_in_sec)) if self.duration_in_sec else None
 
     def __str__(self):
         position_str = f"#{self.track_number}" if self.track_number else "#--"
@@ -89,11 +97,10 @@ class Track(TrackablePlayCount):
             artist.name for artist in artists) if self.artists.exists() else f"no {Fields.ARTISTS}"
         return f"{self.uuid} | '{self.title}' by {artists_str}"
 
-
     @property
     def playlists_with_positions(self) -> list[tuple[str, int]]:
         from api.model.track_playlist_rel.TrackPlaylistRel import Fields as TrackPlaylistRelFields
         from api.model.track_playlist_rel.TrackPlaylistRel import TrackPlaylistRel
         track_playlist_rels = TrackPlaylistRel.objects.filter(user=self.user, track=self)
         return list(track_playlist_rels.values_list(TrackPlaylistRelFields.PLAYLIST + '__uuid',
-                                                             TrackPlaylistRelFields.POSITION))
+                                                    TrackPlaylistRelFields.POSITION))

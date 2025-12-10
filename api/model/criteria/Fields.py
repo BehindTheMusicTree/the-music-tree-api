@@ -1,7 +1,7 @@
-from api.model.uploaded_track_mixin.Fields import Fields as UploadedTrackMixinFields
+from api.model.track_mixin.Fields import Fields as TrackMixinFields
 
 
-class Fields(UploadedTrackMixinFields):
+class Fields(TrackMixinFields):
     TRACKS_RELATED_NAME = 'tracks_of_criteria'
     ASCENDANTS = 'ascendants'
     ASCENDANTS_RELS = 'ascendants_rels'

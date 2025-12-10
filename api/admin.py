@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .model.album.Album import Album
-from .model.all_uploaded_tracks_mixin.AllUploadedTracksMixin import AllUploadedTracksMixin
+from .model.all_tracks_mixin.AllTracksMixin import AllTracksMixin
 from .model.artist.Artist import Artist
 from .model.criteria.Criteria import Criteria
 from .model.criteria.lineage_rel.CriteriaLineageRel import CriteriaLineageRel
@@ -15,8 +15,7 @@ from .model.musicbrainz_resource.children.recording.missing_cause.MbRecordingMis
 from .model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from .model.playlist.children.manual.ManualPlaylist import ManualPlaylist
 from .model.playlist.Playlist import Playlist
-from .model.uploaded_track.file.TrackFile import TrackFile
-from .model.uploaded_track.UploadedTrack import UploadedTrack
+from .model.track.Track import Track
 from .model.user.admin.UserAdmin import UserAdmin
 from .model.user.User import User
 from .model.spotify_resource.children.track.SpotifyLibTrack import SpotifyLibTrack
@@ -24,9 +23,8 @@ from .model.spotify_resource.children.artist.SpotifyArtist import SpotifyArtist
 
 
 admin.site.register(User, UserAdmin)
-admin.site.register(UploadedTrack)
-admin.site.register(TrackFile)
-admin.site.register(AllUploadedTracksMixin)
+admin.site.register(Track)
+admin.site.register(AllTracksMixin)
 admin.site.register(Artist)
 admin.site.register(Album)
 admin.site.register(Criteria)

@@ -85,7 +85,7 @@ class TestInputSerializerInheritance(AppTestCase):
 
         for importer, modname, ispkg in pkgutil.walk_packages(
             path=[str(serializer_package_path)],
-            prefix="api.serializer."
+            prefix="the_music_tree_api.serializer."
         ):
             if ispkg or modname.endswith(".Fields") or "test" in modname:
                 continue

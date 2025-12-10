@@ -12,7 +12,7 @@ class ForeignKeyField(AppField, PrimaryKeyRelatedField):
 
     Supports additional filters for validation:
         track = ForeignKeyField(
-            queryset=UploadedTrack.objects.all(),
+            queryset=Track.objects.all(),
             additional_filters={'user': request.user}
         )
     """

@@ -1,9 +1,8 @@
 from rest_framework import status
 
 from api.model.criteria.children.genre.Genre import Genre
-from api.model.uploaded_track.UploadedTrack import UploadedTrack
-from api.model.uploaded_track.Fields import Fields as UploadedTrackFields
-from api.test.utils.uploaded_track.UploadedTrackTestFilename import UploadedTrackTestFilename
+from api.model.track.Track import Track
+from api.model.track.Fields import Fields as TrackFields
 from api.test.integration.view.criteria.GenreTestCase import GenreTestCase
 
 
@@ -15,17 +14,15 @@ class TestWithExistingTracks(GenreTestCase):
         genre_metal = self.model_fixture_factory.create_genre(name="Metal", parent=genre_rock)
 
         # Create uploaded tracks with genres
-        track1 = self.model_fixture_factory.create_uploaded_track_with_file(
+        track1 = self.model_fixture_factory.create_track_with_file(
             title="Track 1",
-            test_uploaded_track_filename=UploadedTrackTestFilename.DEFAULT_MP3,
             user=self.test_user1,
-            **{UploadedTrackFields.GENRE: genre_rock}
+            **{TrackFields.GENRE: genre_rock}
         )
-        track2 = self.model_fixture_factory.create_uploaded_track_with_file(
+        track2 = self.model_fixture_factory.create_track_with_file(
             title="Track 2",
-            test_uploaded_track_filename=UploadedTrackTestFilename.DEFAULT_MP3,
             user=self.test_user1,
-            **{UploadedTrackFields.GENRE: genre_metal}
+            **{TrackFields.GENRE: genre_metal}
         )
 
         # Verify tracks have genres before loading reference tree
@@ -63,17 +60,15 @@ class TestWithExistingTracks(GenreTestCase):
         genre_rock_user2 = self.model_fixture_factory.create_genre(name="Rock", user=self.test_user2)
 
         # Create tracks for both users
-        track1_user1 = self.model_fixture_factory.create_uploaded_track_with_file(
+        track1_user1 = self.model_fixture_factory.create_track_with_file(
             title="Track 1 User 1",
-            test_uploaded_track_filename=UploadedTrackTestFilename.DEFAULT_MP3,
             user=self.test_user1,
-            **{UploadedTrackFields.GENRE: genre_rock_user1}
+            **{TrackFields.GENRE: genre_rock_user1}
         )
-        track2_user2 = self.model_fixture_factory.create_uploaded_track_with_file(
+        track2_user2 = self.model_fixture_factory.create_track_with_file(
             title="Track 2 User 2",
-            test_uploaded_track_filename=UploadedTrackTestFilename.DEFAULT_MP3,
             user=self.test_user2,
-            **{UploadedTrackFields.GENRE: genre_rock_user2}
+            **{TrackFields.GENRE: genre_rock_user2}
         )
 
         # Load reference tree as user1
@@ -106,4 +101,4 @@ class TestWithExistingTracks(GenreTestCase):
         assert response.status_code == status.HTTP_201_CREATED
 
         # Verify no tracks exist
-        assert UploadedTrack.objects.filter(user=self.test_user1).count() == 0
+        assert Track.objects.filter(user=self.test_user1).count() == 0

@@ -4,7 +4,7 @@ from rest_framework import status
 
 from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from api.model.playlist.Playlist import Playlist
-from api.model.uploaded_track.UploadedTrack import UploadedTrack
+from api.model.track.Track import Track
 from api.serializer.model.play.input.schema.PostFields import Fields
 from api.test.integration.view.play.PlayTestCase import PlayTestCase
 from api.utils.data_transformer import to_camel_case
@@ -55,9 +55,9 @@ class TestCase(PlayTestCase):
         assert self.saved_object.content.uuid == playlist_before_update.uuid
         assert self.saved_object.content.play_count == current_play_count + 1
 
-    def test_playlist_play_then_returns_uploaded_tracks(self) -> None:
+    def test_playlist_play_then_returns_tracks(self) -> None:
         criteria = self.model_fixture_factory.create_genre(name='criteria1')
-        uploaded_track = self.model_fixture_factory.create_uploaded_track_with_file(
+        track = self.model_fixture_factory.create_track_with_file(
             title="track", genre=criteria, use_manager_for_genre_playlist_adding=True)
 
         data = {to_camel_case(Fields.CONTENT): criteria.criteria_playlist.uuid}
@@ -65,18 +65,18 @@ class TestCase(PlayTestCase):
 
         assert response.status_code == status.HTTP_201_CREATED
         playlist: Playlist = self.saved_object.content  # type: ignore
-        assert playlist.uploaded_tracks.count() == 1
-        playlist_uploaded_track: UploadedTrack | None = playlist.uploaded_tracks.first()
-        assert playlist_uploaded_track
-        assert playlist_uploaded_track.uuid == uploaded_track.uuid
+        assert playlist.tracks.count() == 1
+        playlist_track: Track | None = playlist.tracks.first()
+        assert playlist_track
+        assert playlist_track.uuid == track.uuid
 
-    def test_uploaded_track_play(self) -> None:
+    def test_track_play(self) -> None:
         current_play_count = 455
-        uploaded_track = self.model_fixture_factory.create_uploaded_track_with_file(
+        track = self.model_fixture_factory.create_track_with_file(
             title='test', play_count=current_play_count)
 
-        response = self._post_play(**{to_camel_case(Fields.CONTENT): uploaded_track.uuid})
+        response = self._post_play(**{to_camel_case(Fields.CONTENT): track.uuid})
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert self.saved_object.content.uuid == uploaded_track.uuid
+        assert self.saved_object.content.uuid == track.uuid
         assert self.saved_object.content.play_count == current_play_count + 1
