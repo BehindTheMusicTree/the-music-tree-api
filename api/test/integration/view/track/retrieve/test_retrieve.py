@@ -3,7 +3,7 @@ from rest_framework import status
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 
 
-class TestCase(Track):
+class TestCase(TrackTestCase):
 
     def test_retrieve_then_ok(self):
         title = "We're All To Blame"

@@ -8,7 +8,7 @@ from api.utils import data_transformer
 from api.filtering.set.private_unique_resource.Fields import Fields as PrivateUniqueResourceFields
 
 
-class TestCase(Track):
+class TestCase(TrackTestCase):
 
     def test_language_and_genre_name_then_ok(self):
         genre = self.model_fixture_factory.create_genre(name="Rock")

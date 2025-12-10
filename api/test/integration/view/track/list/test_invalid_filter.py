@@ -4,7 +4,7 @@ from api.exception.validation.FieldValidationErrorCode import FieldValidationErr
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 
 
-class TestCase(Track):
+class TestCase(TrackTestCase):
 
     def test_filter_not_existing_then_400_bad_request(self):
         invalid_filter = "invalidFilter"
