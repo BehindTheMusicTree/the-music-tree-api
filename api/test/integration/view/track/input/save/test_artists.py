@@ -4,7 +4,7 @@ from rest_framework import status
 from api import settings
 from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from api.model.artist.Artist import Artist
-from api.serializer.model.track.input.post.Fields import Fields as PostFields
+from api.serializer.model.track.input.Fields import Fields as PostFields
 from api.test.utils.field.body_data.type.list.NullableListBodyDataTestCase import NullableListBodyDataTestCase
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 from api.utils.data_transformer import to_camel_case

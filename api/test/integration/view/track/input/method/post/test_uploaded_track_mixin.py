@@ -2,7 +2,7 @@ from typing import cast
 from rest_framework import status
 
 from api.model.track.Track import Track
-from api.serializer.model.track.input.post.Fields import Fields
+from api.serializer.model.track.input.Fields import Fields
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 
 

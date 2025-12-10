@@ -8,7 +8,7 @@ from api.exception.validation.FieldValidationErrorCode import FieldValidationErr
 from api.model.album.Album import Album
 from api.model.artist.Artist import Artist
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
-from api.serializer.model.track.input.post.Fields import Fields as PostFields
+from api.serializer.model.track.input.Fields import Fields as PostFields
 from api.utils.data_transformer import to_camel_case
 
 

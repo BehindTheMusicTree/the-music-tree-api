@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from api.serializer.model.track.input.post.Fields import Fields as PostFields
+from api.serializer.model.track.input.Fields import Fields as PostFields
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 
 

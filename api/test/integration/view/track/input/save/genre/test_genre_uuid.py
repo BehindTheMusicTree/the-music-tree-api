@@ -1,7 +1,7 @@
 from rest_framework import status
 
 from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
-from api.serializer.model.track.input.post.Fields import Fields as PostFields
+from api.serializer.model.track.input.Fields import Fields as PostFields
 from api.test.utils.field.body_data.type.ForeignKeyBodyDataTestCase import ForeignKeyBodyDataTestCase
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 
