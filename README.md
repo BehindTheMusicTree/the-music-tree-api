@@ -7,8 +7,6 @@
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
 [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white)](https://github.com/features/actions)
 
-> 🔨 **Work in Progress** - Will be published open source soon! 🚀
-
 TheMusicTreeAPI is the API companion to [GrowTheMusicTree](https://github.com/BehindTheMusicTree/grow-the-music-tree), giving developers, researchers, and music platforms access to the full genre hierarchy, detailed metadata, and intelligent genre detection. Built with Django REST Framework and PostgreSQL, it enables personalized user profiling based on listening habits, delivers accurate track and artist classifications, and provides data-driven recommendations.
 
 Perfect for powering music discovery, streaming personalization, event recommendations, and listener analytics, TheMusicTreeAPI brings the intelligence of the genre tree to any app or service.
@@ -47,35 +45,11 @@ For detailed setup and installation instructions, please see the [Contributing G
 - PostgreSQL database
 - See [CONTRIBUTING.md](CONTRIBUTING.md) for full setup instructions
 
-### Developer environment (recommended)
+### VS Code Setup
 
-To keep a consistent, reproducible development environment across contributors, we recommend creating a workspace-local virtual environment named `.venv` in the project root and pointing Visual Studio Code to use that interpreter.
+The repository workspace settings reference `${workspaceFolder}/.venv/bin/python` (instead of a machine-local absolute path) so VS Code will automatically pick the correct interpreter if your `.venv` is in the project root.
 
-1) Create a `.venv` in the project root:
-
-```bash
-python3 -m venv .venv
-```
-
-2) Activate the virtualenv:
-
-- macOS / Linux:
-	```bash
-	source .venv/bin/activate
-	```
-- Windows (PowerShell):
-	```powershell
-	.\.venv\Scripts\Activate.ps1
-	```
-
-3) Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-4) VS Code setup
-- The repository workspace settings now reference `${workspaceFolder}/.venv/bin/python` (instead of a machine-local absolute path) so VS Code will automatically pick the correct interpreter if your `.venv` is in the project root.
-- Alternatively, run the VS Code command `Python: Select Interpreter` and choose `.venv/bin/python`.
+Alternatively, run the VS Code command `Python: Select Interpreter` and choose `.venv/bin/python`.
 
 If you prefer a different venv name or layout, adjust your local VS Code interpreter selection. The repository stores a workspace-relative default to keep experience consistent for new contributors.
 
