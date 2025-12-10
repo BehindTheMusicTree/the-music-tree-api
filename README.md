@@ -7,13 +7,47 @@
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
 [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white)](https://github.com/features/actions)
 
-> 🔨 **Work in Progress** - Will be published open source soon! 🚀
-
 TheMusicTreeAPI is the API companion to [GrowTheMusicTree](https://github.com/BehindTheMusicTree/grow-the-music-tree), giving developers, researchers, and music platforms access to the full genre hierarchy, detailed metadata, and intelligent genre detection. Built with Django REST Framework and PostgreSQL, it enables personalized user profiling based on listening habits, delivers accurate track and artist classifications, and provides data-driven recommendations.
 
 Perfect for powering music discovery, streaming personalization, event recommendations, and listener analytics, TheMusicTreeAPI brings the intelligence of the genre tree to any app or service.
 
 For more information about the project's vision, goals, and technical approach, see [VISION.md](VISION.md).
+
+## Table of Contents
+
+- [Features](#features)
+  - [Genre Hierarchy Access](#genre-hierarchy-access)
+  - [Intelligent Classification](#intelligent-classification)
+  - [User Profiling & Recommendations](#user-profiling--recommendations)
+  - [API Access](#api-access)
+- [Getting Started](#getting-started)
+  - [VS Code Setup](#vs-code-setup)
+- [Ecosystem](#ecosystem)
+- [Usage](#usage)
+  - [Base URL](#base-url)
+  - [Authentication](#authentication)
+    - [Obtaining a Token](#obtaining-a-token)
+    - [Using the Token](#using-the-token)
+    - [Refreshing a Token](#refreshing-a-token)
+    - [Spotify Authentication](#spotify-authentication)
+  - [Request Format](#request-format)
+  - [Response Format](#response-format)
+  - [Pagination](#pagination)
+  - [Error Handling](#error-handling)
+  - [Example: Uploading a Track](#example-uploading-a-track)
+- [API Endpoints](#api-endpoints)
+  - [Authentication](#authentication-1)
+  - [Users](#users)
+  - [Library - Tracks](#library---tracks)
+  - [Artists](#artists)
+  - [Albums](#albums)
+  - [Genres & Tags](#genres--tags)
+  - [Playlists](#playlists)
+  - [Plays](#plays)
+  - [Search](#search)
+  - [API Documentation](#api-documentation)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
@@ -47,35 +81,11 @@ For detailed setup and installation instructions, please see the [Contributing G
 - PostgreSQL database
 - See [CONTRIBUTING.md](CONTRIBUTING.md) for full setup instructions
 
-### Developer environment (recommended)
+### VS Code Setup
 
-To keep a consistent, reproducible development environment across contributors, we recommend creating a workspace-local virtual environment named `.venv` in the project root and pointing Visual Studio Code to use that interpreter.
+The repository workspace settings reference `${workspaceFolder}/.venv/bin/python` (instead of a machine-local absolute path) so VS Code will automatically pick the correct interpreter if your `.venv` is in the project root.
 
-1) Create a `.venv` in the project root:
-
-```bash
-python3 -m venv .venv
-```
-
-2) Activate the virtualenv:
-
-- macOS / Linux:
-	```bash
-	source .venv/bin/activate
-	```
-- Windows (PowerShell):
-	```powershell
-	.\.venv\Scripts\Activate.ps1
-	```
-
-3) Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-4) VS Code setup
-- The repository workspace settings now reference `${workspaceFolder}/.venv/bin/python` (instead of a machine-local absolute path) so VS Code will automatically pick the correct interpreter if your `.venv` is in the project root.
-- Alternatively, run the VS Code command `Python: Select Interpreter` and choose `.venv/bin/python`.
+Alternatively, run the VS Code command `Python: Select Interpreter` and choose `.venv/bin/python`.
 
 If you prefer a different venv name or layout, adjust your local VS Code interpreter selection. The repository stores a workspace-relative default to keep experience consistent for new contributors.
 
@@ -87,10 +97,254 @@ TheMusicTreeAPI is part of the [BehindTheMusicTree](https://github.com/behindthe
 - **TheMusicTreeAPI**: This REST API that provides programmatic access to the genre hierarchy and intelligence, enabling developers to integrate genre classification and recommendations into their platforms.
 
 ## Usage
-TODO
+
+### Base URL
+
+All API endpoints are prefixed with the API version. The base URL format is:
+
+```
+/api/{version}/
+```
+
+For example: `/api/v0.2.0/`
+
+### Authentication
+
+The API uses JWT (JSON Web Tokens) for authentication. All endpoints require authentication unless otherwise specified.
+
+#### Obtaining a Token
+
+To authenticate, send a POST request to the token endpoint with your credentials:
+
+```bash
+POST /api/{version}/auth/token/
+Content-Type: application/json
+
+{
+  "username": "your_username",
+  "password": "your_password"
+}
+```
+
+**Response:**
+
+```json
+{
+  "access": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+}
+```
+
+#### Using the Token
+
+Include the access token in the `Authorization` header for all authenticated requests:
+
+```bash
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc...
+```
+
+#### Refreshing a Token
+
+When the access token expires, use the refresh token to obtain a new access token:
+
+```bash
+POST /api/{version}/auth/token/refresh/
+Content-Type: application/json
+
+{
+  "refresh": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+}
+```
+
+#### Spotify Authentication
+
+The API also supports Spotify OAuth authentication:
+
+```bash
+GET /api/{version}/auth/spotify/
+```
+
+This initiates the Spotify OAuth flow for users who want to connect their Spotify account.
+
+### Request Format
+
+The API accepts requests in multiple formats:
+
+- **JSON**: `Content-Type: application/json`
+- **Multipart Form Data**: `Content-Type: multipart/form-data` (for file uploads)
+- **Form URL Encoded**: `Content-Type: application/x-www-form-urlencoded`
+
+**Note:** For multipart requests with list fields, use the `[]` suffix (e.g., `artists_names[]`). JSON requests can use standard array notation.
+
+### Response Format
+
+All responses are returned in camelCase JSON format. The API uses standard HTTP status codes:
+
+- `200 OK` - Successful request
+- `201 Created` - Resource created successfully
+- `400 Bad Request` - Validation error or invalid input
+- `401 Unauthorized` - Authentication required or invalid token
+- `403 Forbidden` - Insufficient permissions
+- `404 Not Found` - Resource not found
+- `500 Internal Server Error` - Server error
+
+### Pagination
+
+List endpoints support pagination with the following query parameters:
+
+- `page` - Page number (default: 1)
+- `page_size` - Number of results per page (default: 30, max: 100)
+
+**Example:**
+
+```bash
+GET /api/{version}/library/track/?page=1&page_size=50
+```
+
+**Response:**
+
+```json
+{
+  "count": 150,
+  "next": "/api/{version}/library/track/?page=2&page_size=50",
+  "previous": null,
+  "results": [...]
+}
+```
+
+### Error Handling
+
+Errors are returned in a consistent format:
+
+```json
+{
+  "code": 2001,
+  "message": "Validation failed",
+  "details": {
+    "field_name": {
+      "message": "Field-specific error message",
+      "code": "error_code",
+      "details": {
+        "value": "invalid_value",
+        "requirement": "validation_requirement"
+      }
+    }
+  }
+}
+```
+
+Error codes are organized by category:
+- `1000-1999`: Authentication/Authorization errors
+- `2000-2999`: Validation errors
+- `3000-3999`: Resource errors
+- `4000-4999`: Business logic errors
+- `5000-5999`: External service errors
+- `9000-9999`: System/Internal errors
+
+### Example: Uploading a Track
+
+```bash
+POST /api/{version}/library/track/
+Authorization: Bearer {access_token}
+Content-Type: multipart/form-data
+
+file: @track.mp3
+title: "Song Title"
+artists_names[]: "Artist 1"
+artists_names[]: "Artist 2"
+genre: {genre_uuid}
+```
+
+The API will automatically:
+1. Extract audio metadata from the file
+2. Generate an audio fingerprint
+3. Look up the track in MusicBrainz via AcoustID
+4. Retrieve and store metadata (title, artist, album, etc.)
+5. Associate the track with the authenticated user
 
 ## API Endpoints
-TODO
+
+### Authentication
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/auth/token/` | POST | Obtain JWT access and refresh tokens |
+| `/auth/token/refresh/` | POST | Refresh an access token |
+| `/auth/spotify/` | GET | Initiate Spotify OAuth authentication |
+
+### Users
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/users/` | GET, POST | List or create users |
+| `/users/{uuid}/` | GET, PUT, PATCH, DELETE | Retrieve, update, or delete a user |
+| `/users/spotify/` | GET, POST | List or create Spotify users |
+
+### Library - Tracks
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/library/track/` | GET, POST | List or upload tracks |
+| `/library/track/{uuid}/` | GET, PUT, PATCH, DELETE | Retrieve, update, or delete a track |
+| `/library/spotify/` | GET, POST | List or sync Spotify library tracks |
+| `/all-tracks/` | GET | List all tracks (user's library + Spotify) |
+
+### Artists
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/artists/` | GET, POST | List or create artists |
+| `/artists/{uuid}/` | GET, PUT, PATCH, DELETE | Retrieve, update, or delete an artist |
+| `/spotify-artists/` | GET, POST | List or create Spotify artists |
+
+### Albums
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/albums/` | GET, POST | List or create albums |
+| `/albums/{uuid}/` | GET, PUT, PATCH, DELETE | Retrieve, update, or delete an album |
+
+### Genres & Tags
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/genres/` | GET, POST | List or create genres |
+| `/genres/{uuid}/` | GET, PUT, PATCH, DELETE | Retrieve, update, or delete a genre |
+| `/tags/` | GET, POST | List or create tags |
+| `/tags/{uuid}/` | GET, PUT, PATCH, DELETE | Retrieve, update, or delete a tag |
+
+### Playlists
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/playlists/` | GET, POST | List or create playlists |
+| `/playlists/{uuid}/` | GET, PUT, PATCH, DELETE | Retrieve, update, or delete a playlist |
+| `/manual-playlists/` | GET, POST | List or create manual playlists |
+| `/genre-playlists/` | GET, POST | List or create genre-based playlists |
+| `/tag-playlists/` | GET, POST | List or create tag-based playlists |
+
+### Plays
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/plays/` | GET, POST | List or record play events |
+| `/plays/{uuid}/` | GET, PUT, PATCH, DELETE | Retrieve, update, or delete a play event |
+
+### Search
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/search/` | GET | Multi-model search across tracks, artists, albums, genres, and tags |
+
+### API Documentation
+
+Interactive API documentation is available at:
+
+- **Swagger UI**: `/api/docs/`
+- **ReDoc**: `/api/schema/redoc/`
+- **OpenAPI Schema**: `/api/schema/`
+
+These endpoints provide comprehensive documentation of all available endpoints, request/response formats, and authentication requirements.
 
 ## Contributing
 
