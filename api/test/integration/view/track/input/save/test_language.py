@@ -4,7 +4,6 @@ from api import settings
 from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from api.serializer.model.track.input.put.Fields import Fields as PutFields
 from api.test.utils.field.body_data.type.NullableCharBodyDataTestCase import NullableCharBodyDataTestCase
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 
 
@@ -12,8 +11,7 @@ class TestCase(NullableCharBodyDataTestCase, TrackTestCase):
 
     def test_largest_then_ok(self):
         language = "a" * settings.LANGUAGE_LEN_MAX
-        response = self._post_track(
-            TrackTestFilename.METADATA_NONE_MP3, **{PutFields.LANGUAGE: language})
+        response = self._post_track(**{PutFields.LANGUAGE: language})
 
         assert True
         assert response.status_code == status.HTTP_201_CREATED
@@ -21,8 +19,7 @@ class TestCase(NullableCharBodyDataTestCase, TrackTestCase):
 
     def test_too_large_then_400_bad_request(self):
         language = "a" * (settings.LANGUAGE_LEN_MAX + 1)
-        response = self._post_track(
-            TrackTestFilename.METADATA_NONE_MP3, **{PutFields.LANGUAGE: language})
+        response = self._post_track(**{PutFields.LANGUAGE: language})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -31,14 +28,13 @@ class TestCase(NullableCharBodyDataTestCase, TrackTestCase):
         assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
     def test_empty_then_ok(self):
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **{PutFields.LANGUAGE: ""})
+        response = self._post_track(**{PutFields.LANGUAGE: ""})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.language == None
 
     def test_multi_value_then_400_bad_request(self):
-        response = self._post_track(
-            TrackTestFilename.METADATA_NONE_MP3, **{PutFields.LANGUAGE: ['a', 'b']})
+        response = self._post_track(**{PutFields.LANGUAGE: ['a', 'b']})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1

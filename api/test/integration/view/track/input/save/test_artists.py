@@ -6,7 +6,6 @@ from api.exception.validation.FieldValidationErrorCode import FieldValidationErr
 from api.model.artist.Artist import Artist
 from api.serializer.model.track.input.post.Fields import Fields as PostFields
 from api.test.utils.field.body_data.type.list.NullableListBodyDataTestCase import NullableListBodyDataTestCase
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 from api.utils.data_transformer import to_camel_case
 
@@ -16,7 +15,7 @@ class TestCase(NullableListBodyDataTestCase, TrackTestCase):
     def test_largest_then_ok(self) -> None:
         artist_name = "a" * settings.ARTIST_NAME_LEN_MAX
         data = {PostFields.ARTISTS_NAMES_MULTIPART: [artist_name]}
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all())
@@ -26,7 +25,7 @@ class TestCase(NullableListBodyDataTestCase, TrackTestCase):
     def test_one_too_large_then_400_bad_request(self):
         artist_name = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
         data = {PostFields.ARTISTS_NAMES_MULTIPART: [artist_name]}
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -38,7 +37,7 @@ class TestCase(NullableListBodyDataTestCase, TrackTestCase):
         artist_name = "a" * settings.ARTIST_NAME_LEN_MAX
         artist_name2 = "b"
         data = {PostFields.ARTISTS_NAMES_MULTIPART: [artist_name, artist_name2]}
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all())
@@ -48,7 +47,7 @@ class TestCase(NullableListBodyDataTestCase, TrackTestCase):
 
     def test_malformed_array_then_400_bad_request(self) -> None:
         malformed_post_multipart_field_name = "artists_names"
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **
+        response = self._post_track(**
                                     {malformed_post_multipart_field_name: ['muse']})
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
@@ -71,7 +70,7 @@ class TestCase(NullableListBodyDataTestCase, TrackTestCase):
 
     def test_comma_separated_then_only_one_value(self):
         data = {PostFields.ARTISTS_NAMES_MULTIPART: "Muse, Kopoe"}
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all())
@@ -80,7 +79,7 @@ class TestCase(NullableListBodyDataTestCase, TrackTestCase):
 
     def test_duplicate_values_then_400_bad_request(self) -> None:
         data = {PostFields.ARTISTS_NAMES_MULTIPART: ['Muse', 'Muse']}
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -89,8 +88,7 @@ class TestCase(NullableListBodyDataTestCase, TrackTestCase):
         assert error['code'] == FieldValidationErrorCode.LIST_VALUE_DUPLICATE
 
     def test_empty_then_ok(self):
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3,
-                                    **{PostFields.ARTISTS_NAMES_MULTIPART: []})
+        response = self._post_track(**{PostFields.ARTISTS_NAMES_MULTIPART: []})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.artists.count() == 0
@@ -98,7 +96,7 @@ class TestCase(NullableListBodyDataTestCase, TrackTestCase):
     def test_multiple_with_one_empty_then_400_bad_request(self) -> None:
         artist_name = "Muse"
         data = {PostFields.ARTISTS_NAMES_MULTIPART: [artist_name, ""]}
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -111,7 +109,7 @@ class TestCase(NullableListBodyDataTestCase, TrackTestCase):
         self.model_fixture_factory.create_artist(name=artist_name)
 
         data = {PostFields.ARTISTS_NAMES_MULTIPART: [artist_name]}
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all())
@@ -121,7 +119,7 @@ class TestCase(NullableListBodyDataTestCase, TrackTestCase):
     def test_one_not_existing_then_ok(self) -> None:
         artist_name = "hoho"
         data = {PostFields.ARTISTS_NAMES_MULTIPART: [artist_name]}
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all())
@@ -135,7 +133,7 @@ class TestCase(NullableListBodyDataTestCase, TrackTestCase):
         self.model_fixture_factory.create_artist(name=artist2_name)
 
         data = {PostFields.ARTISTS_NAMES_MULTIPART: [artist1_name, artist2_name]}
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all())
@@ -149,7 +147,7 @@ class TestCase(NullableListBodyDataTestCase, TrackTestCase):
         artist3_name = "NewArtist3"
 
         data = {PostFields.ARTISTS_NAMES_MULTIPART: [artist1_name, artist2_name, artist3_name]}
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all().order_by('name'))
@@ -165,7 +163,7 @@ class TestCase(NullableListBodyDataTestCase, TrackTestCase):
         new_artist2 = "NewArtist2"
 
         data = {PostFields.ARTISTS_NAMES_MULTIPART: [existing_artist, new_artist1, new_artist2]}
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         artists_list: list[Artist] = list(self.saved_object.artists.all().order_by('name'))
@@ -179,7 +177,7 @@ class TestCase(NullableListBodyDataTestCase, TrackTestCase):
         too_long_artist = "a" * (settings.ARTIST_NAME_LEN_MAX + 1)
 
         data = {PostFields.ARTISTS_NAMES_MULTIPART: [valid_artist, too_long_artist]}
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1

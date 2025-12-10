@@ -7,7 +7,6 @@ from rest_framework import status
 from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from api.model.album.Album import Album
 from api.model.artist.Artist import Artist
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 from api.serializer.model.track.input.post.Fields import Fields as PostFields
 from api.utils.data_transformer import to_camel_case
@@ -16,8 +15,7 @@ from api.utils.data_transformer import to_camel_case
 class TestCase(TrackTestCase):
     def test_album_provided_but_album_artists_not_then_201_created(self):
         data = {PostFields.ALBUM_NAME: "Koko"}
-        response = self._post_track(
-            title="Time", test_track_filename=TrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
+        response = self._post_track(title="Time", **data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album.name == "Koko"
@@ -25,8 +23,7 @@ class TestCase(TrackTestCase):
 
     def test_album_artists_provided_but_album_not_then_400_bad_request(self):
         data = {PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["Koko"]}
-        response = self._post_track(
-            title="time", test_track_filename=TrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
+        response = self._post_track(title="time", **data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         error = self.bad_request_result_field_errors[0]
@@ -35,8 +32,7 @@ class TestCase(TrackTestCase):
 
     def test_album_artists_provided_but_album_empty_then_400_bad_request(self):
         data = {PostFields.ALBUM_NAME: "", PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["Koko"]}
-        response = self._post_track(
-            test_track_filename=TrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         error = self.bad_request_result_field_errors[0]
@@ -49,8 +45,7 @@ class TestCase(TrackTestCase):
         album = self.model_fixture_factory.create_album(name="koko", album_artists=[album_artist1, album_artist2])
 
         data = {PostFields.ALBUM_NAME: album.name, PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: [album_artist1.name]}
-        response = self._post_track(
-            test_track_filename=TrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album == album
@@ -63,8 +58,7 @@ class TestCase(TrackTestCase):
         album = self.model_fixture_factory.create_album(name="koko")
 
         data = {PostFields.ALBUM_NAME: album.name, PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: []}
-        response = self._post_track(
-            test_track_filename=TrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album == album
@@ -74,8 +68,7 @@ class TestCase(TrackTestCase):
         album_artist_new = self.model_fixture_factory.create_artist(name="James")
 
         data = {PostFields.ALBUM_NAME: "koko", PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: [album_artist_new.name]}
-        response = self._post_track(
-            test_track_filename=TrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert Album.objects.filter(user=self.test_user1, name="koko").exists()
@@ -88,8 +81,7 @@ class TestCase(TrackTestCase):
         album = self.model_fixture_factory.create_album(name="Jojo", album_artists=[album_artist])
 
         data = {PostFields.ALBUM_NAME: album.name, PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: [album_artist.name]}
-        response = self._post_track(
-            test_track_filename=TrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album == album
@@ -102,8 +94,7 @@ class TestCase(TrackTestCase):
         album_new = self.model_fixture_factory.create_album(name="koko")
 
         data = {PostFields.ALBUM_NAME: album_new.name, PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["James"]}
-        response = self._post_track(
-            test_track_filename=TrackTestFilename.SIZE_SMALL_0_01MO_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert Artist.objects.filter(user=self.test_user1, name="James").exists()

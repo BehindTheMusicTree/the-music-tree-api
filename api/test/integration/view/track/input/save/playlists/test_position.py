@@ -2,7 +2,6 @@ from rest_framework import status
 
 from api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
 from api.serializer.model.track.input.post.Fields import Fields as PostFields
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 
 
@@ -10,8 +9,7 @@ class TestCase(TrackTestCase):
 
     def test_new_genre_then_first_position(self):
         genre_name = "Rock"
-        response = self._post_track(
-            TrackTestFilename.METADATA_NONE_MP3, **{PostFields.GENRE: genre_name})
+        response = self._post_track(**{PostFields.GENRE: genre_name})
 
         assert response.status_code == status.HTTP_201_CREATED
         genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(user=self.test_user1, criteria__name=genre_name)
@@ -25,8 +23,7 @@ class TestCase(TrackTestCase):
         track2 = self.model_fixture_factory.create_track_with_file(
             title="We're All To Blame", genre=genre, use_manager_for_genre_playlist_adding=True)
 
-        response = self._post_track(
-            TrackTestFilename.METADATA_NONE_MP3, **{PostFields.GENRE: genre_name})
+        response = self._post_track(**{PostFields.GENRE: genre_name})
 
         assert response.status_code == status.HTTP_201_CREATED
         genre_playlist: CriteriaPlaylist = CriteriaPlaylist.objects.get(criteria__name=genre_name)

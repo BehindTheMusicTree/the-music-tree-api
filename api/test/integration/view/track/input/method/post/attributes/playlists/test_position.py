@@ -1,6 +1,5 @@
 from rest_framework import status
 
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 
 
@@ -13,7 +12,7 @@ class TestCase(TrackTestCase):
         track_added_second = self.model_fixture_factory.create_track_with_file(
             title="We're All To lol", genre=genre, use_manager_for_genre_playlist_adding=True)
 
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3)
+        response = self._post_track()
 
         assert response.status_code == status.HTTP_201_CREATED
         playlist_tracks_by_positions = genre.criteria_playlist.tracks_not_archived_dict_by_position

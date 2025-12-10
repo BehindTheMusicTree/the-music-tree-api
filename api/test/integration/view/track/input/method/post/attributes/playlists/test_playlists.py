@@ -1,14 +1,13 @@
 from rest_framework import status
 
 from api.model.playlist.children.criteria.CriteriaPlaylist import CriteriaPlaylist
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 
 
 class TestCase(TrackTestCase):
 
     def test_no_genre_then_in_genreless_playlists(self):
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3)
+        response = self._post_track()
 
         assert response.status_code == status.HTTP_201_CREATED
         track_playlists = self.saved_object.playlists.all()

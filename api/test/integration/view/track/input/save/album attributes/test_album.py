@@ -4,7 +4,6 @@ from api import settings
 from api.exception.validation.FieldValidationErrorCode import FieldValidationErrorCode
 from api.serializer.model.track.input.post.Fields import Fields as PostFields
 from api.test.utils.field.body_data.type.NullableCharBodyDataTestCase import NullableCharBodyDataTestCase
-from api.test.utils.track.TrackTestFilename import TrackTestFilename
 from api.test.integration.view.track.TrackTestCase import TrackTestCase
 from api.utils.data_transformer import to_camel_case
 
@@ -14,7 +13,7 @@ class TestCase(TrackTestCase, NullableCharBodyDataTestCase):
     def test_largest_then_ok(self):
         album_name = "a" * settings.ALBUM_NAME_LEN_MAX
         data = {PostFields.ALBUM_NAME: album_name, PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["muse"]}
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
@@ -23,7 +22,7 @@ class TestCase(TrackTestCase, NullableCharBodyDataTestCase):
     def test_too_large_then_400_bad_request(self):
         album_name = "a" * (settings.ALBUM_NAME_LEN_MAX + 1)
         data = {PostFields.ALBUM_NAME: album_name, PostFields.ARTISTS_NAMES_MULTIPART: ["muse"]}
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1
@@ -32,7 +31,7 @@ class TestCase(TrackTestCase, NullableCharBodyDataTestCase):
         assert error['code'] == FieldValidationErrorCode.STRING_TOO_LONG
 
     def test_empty_then_ok(self):
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **{PostFields.ALBUM_NAME: ''})
+        response = self._post_track(**{PostFields.ALBUM_NAME: ''})
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album == None
@@ -42,8 +41,7 @@ class TestCase(TrackTestCase, NullableCharBodyDataTestCase):
         album = self.model_fixture_factory.create_album(name=album_name)
 
         data = {PostFields.ALBUM_NAME: album_name, PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: []}
-        response = self._post_track(
-            test_track_filename=TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
@@ -52,8 +50,7 @@ class TestCase(TrackTestCase, NullableCharBodyDataTestCase):
     def test_not_existing(self):
         album_name = "hoho"
         data = {PostFields.ALBUM_NAME: album_name, PostFields.ALBUM_ARTISTS_NAMES_MULTIPART: ["muse"]}
-        response = self._post_track(
-            test_track_filename=TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_201_CREATED
         assert self.saved_object.album
@@ -61,7 +58,7 @@ class TestCase(TrackTestCase, NullableCharBodyDataTestCase):
 
     def test_multi_value_then_400_bad_request(self):
         data = {PostFields.ALBUM_NAME: ['a', 'b'], PostFields.ARTISTS_NAMES_MULTIPART: ["muse"]}
-        response = self._post_track(TrackTestFilename.METADATA_NONE_MP3, **data)
+        response = self._post_track(**data)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert len(self.bad_request_result_field_errors) == 1

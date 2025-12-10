@@ -4,8 +4,6 @@ from django.urls import reverse
 
 from api.model.track.Track import Track
 from api.test.utils.AppTestCase import AppTestCase
-from api.serializer.model.track.input.post.Fields import Fields
-from api.utils import data_transformer
 
 
 class TrackTestCase(AppTestCase[Track]):
