@@ -12,3 +12,4 @@ class Fields:
     LANGUAGE = OutputFields.LANGUAGE
     PLAY_COUNT = OutputFields.PLAY_COUNT
 
+

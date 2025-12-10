@@ -8,3 +8,4 @@ class Fields(PrivateUniqueResourceFilterFields):
     GENRE_NAME = 'genre_name'
     LANGUAGE = 'language'
 
+

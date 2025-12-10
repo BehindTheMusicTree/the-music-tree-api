@@ -15,3 +15,4 @@ class TrackMinimumSerializer(serializers.ModelSerializer):
                   Fields.TITLE,
                   Fields.ARTISTS]
 
+

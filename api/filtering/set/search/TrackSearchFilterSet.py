@@ -9,3 +9,4 @@ class TrackSearchFilterSet(SearchFilterSet):
         model = Track
         search_fields = [TrackFields.TITLE]
 
+
