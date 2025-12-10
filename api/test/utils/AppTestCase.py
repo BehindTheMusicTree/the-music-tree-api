@@ -139,59 +139,51 @@ class AppTestCase(TestCase, Generic[T]):
     # (testing metadata updates for example)
     def _post_track(self, **kwargs) -> Union[JsonResponse, HttpResponse]:
         return self.api_client.post(
-            << << << < HEAD
             path=reverse('track-list'), data=kwargs, format='multipart', handle_response=self._set_results)
 
-
-== == == =
-path = reverse('track-list'), data = kwargs, handle_response = self._set_results)
-     >> >>>> > 70465365c(refactor: remove library-only features)
-
-     # Defined here and not in TrackTestCase because other views needs sometimes to put a track for testing purposes
-      # (testing Genre deletion for example)
-      def _put_track(self, uuid, **kwargs):
-     if self.is_from_track_test_case:
+    # Defined here and not in TrackTestCase because other views need sometimes to put a track for testing purposes
+    # (testing Genre deletion for example)
+    def _put_track(self, uuid, **kwargs):
+        if self.is_from_track_test_case:
             return self.api_client.put(
-       path = reverse('track-detail', kwargs={'pk': uuid}),
-          data = kwargs, handle_response = self._set_results)
-           else:
-           return self.api_client.put(
-           path = reverse('track-detail', kwargs={'pk': uuid}), data = kwargs)
+                path=reverse('track-detail', kwargs={'pk': uuid}), data=kwargs, handle_response=self._set_results)
+        else:
+            return self.api_client.put(
+                path=reverse('track-detail', kwargs={'pk': uuid}), data=kwargs)
 
-            def _post_track_being_logged_out(self):
-            self._logout()
-            return self.api_client.post(
-            path = reverse('track-list'), data = {}, handle_response = self._set_results)
+    def _post_track_being_logged_out(self):
+        self._logout()
+        return self.api_client.post(
+            path=reverse('track-list'), data={}, handle_response=self._set_results)
 
-            def setUp(self, methods_names_to_implement: list[str] | None = None) -> None:
+    def setUp(self, methods_names_to_implement: list[str] | None = None) -> None:
+        call_command('loaddata', 'app')
+        self.test_admin_user = User.objects.create_superuser(
+            username='test_admin', password='test_admin', email='test_admin@example.com', is_test_user=True)
 
-                call_command('loaddata', 'app')
-                self.test_admin_user = User.objects.create_superuser(
-            username = 'test_admin', password = 'test_admin', email = 'test_admin@example.com', is_test_user = True)
+        self.test_user1 = User.objects.create_instance(
+            username='pytest_user1', password='pytest_user1', email='pytest@user1.com', is_test_user=True)
 
-                self.test_user1 = User.objects.create_instance(
-            username = 'pytest_user1', password = 'pytest_user1', email = 'pytest@user1.com', is_test_user = True)
+        self.test_user2 = User.objects.create_instance(
+            username='pytest_user2', password='pytest_user2', email='pytest@user2.com', is_test_user=True)
 
-                self.test_user2 = User.objects.create_instance(
-            username = 'pytest_user2', password = 'pytest_user2', email = 'pytest@user2.com', is_test_user = True)
+        self.spotify_test_user_1: SpotifyUser = SpotifyUser.objects.create_instance(
+            username='spotify_test_user_1', password='spotify_test_user_1', spotify_id='spotify_test_user_1',
+            email='spotify@test.com', is_test_user=True)
 
-                self.spotify_test_user_1: SpotifyUser = SpotifyUser.objects.create_instance(
-            username = 'spotify_test_user_1', password = 'spotify_test_user_1', spotify_id = 'spotify_test_user_1',
-            email = 'spotify@test.com', is_test_user = True)
+        self.spotify_test_user_2: SpotifyUser = SpotifyUser.objects.create_instance(
+            username='spotify_test_user_2', password='spotify_test_user_2', spotify_id='spotify_test_user_2',
+            email='spotify@test.com', is_test_user=True)
 
-                self.spotify_test_user_2: SpotifyUser = SpotifyUser.objects.create_instance(
-            username = 'spotify_test_user_2', password = 'spotify_test_user_2', spotify_id = 'spotify_test_user_2',
-            email = 'spotify@test.com', is_test_user = True)
+        self.model_fixture_factory = ModelFixtureFactory(
+            default_test_user=self.test_user1)
 
-                self.model_fixture_factory = ModelFixtureFactory(
-            default_test_user = self.test_user1)
+        super().setUp()
 
-                super().setUp()
-
-                if methods_names_to_implement:
-                for method_name in methods_names_to_implement:
+        if methods_names_to_implement:
+            for method_name in methods_names_to_implement:
                 if not hasattr(self, method_name) or not callable(getattr(self, method_name)):
-                raise NotImplementedError(f"Subclasses must implement the '{method_name}' method")
+                    raise NotImplementedError(f"Subclasses must implement the '{method_name}' method")
 
-                self.api_client = AppApiClient(test_case=self)
-                self._login_as_test_user1()
+        self.api_client = AppApiClient(test_case=self)
+        self._login_as_test_user1()
