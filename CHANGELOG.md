@@ -89,6 +89,11 @@ Update app name to 'api'
   - Eliminated excessive I/O overhead when processing large tree imports (30,000+ nodes)
   - Fixed test hangs and significantly improved performance for large tree import operations
 
+- **Branch Protection Workflow**: Refactored to use generic validation function
+  - Unified validation logic for both main and develop branches
+  - Removed unused VALID_PREFIXES variable
+  - Improved maintainability with case-based configuration
+
 ### Removed
 
 - **Audio Fingerprinting**: Completely removed audio fingerprinting feature from the application
