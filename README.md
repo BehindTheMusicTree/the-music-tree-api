@@ -7,7 +7,7 @@
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
 [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white)](https://github.com/features/actions)
 
-TheMusicTreeAPI is the API companion to [GrowTheMusicTree](https://github.com/BehindTheMusicTree/grow-the-music-tree), giving developers, researchers, and music platforms access to the full genre hierarchy, detailed metadata, and intelligent genre detection. Built with Django REST Framework and PostgreSQL, it enables personalized user profiling based on listening habits, delivers accurate track and artist classifications, and provides data-driven recommendations.
+TheMusicTreeAPI is the API companion to [GrowTheMusicTree](https://github.com/BehindTheMusicTree/grow-the-music-tree-frontend), giving developers, researchers, and music platforms access to the full genre hierarchy, detailed metadata, and intelligent genre detection. Built with Django REST Framework and PostgreSQL, it enables personalized user profiling based on listening habits, delivers accurate track and artist classifications, and provides data-driven recommendations.
 
 Perfect for powering music discovery, streaming personalization, event recommendations, and listener analytics, TheMusicTreeAPI brings the intelligence of the genre tree to any app or service.
 
@@ -91,10 +91,11 @@ If you prefer a different venv name or layout, adjust your local VS Code interpr
 
 ## Ecosystem
 
-TheMusicTreeAPI is part of the [BehindTheMusicTree](https://github.com/behindthemusictree) ecosystem, which centers around:
+Built inside the **[BehindTheMusicTree](https://github.com/BehindTheMusicTree)** ecosystem.
 
-- **[GrowTheMusicTree](https://github.com/BehindTheMusicTree/grow-the-music-tree)**: The definitive, interactive map of global music genres—a tree-shaped framework that organizes genres, subgenres, and microgenres. Built through crowd-sourced curation and expert input, it serves as the ultimate reference for understanding music genres.
-- **TheMusicTreeAPI**: This REST API that provides programmatic access to the genre hierarchy and intelligence, enabling developers to integrate genre classification and recommendations into their platforms.
+Want the big picture? Explore the full project universe on **[themusictree.org](https://themusictree.org)**, and see where this API fits on **[TheMusicTreeAPI](https://themusictree.org/projects/the-music-tree-api)**.
+
+The portfolio website content lives in **[the-music-tree-frontend](https://github.com/BehindTheMusicTree/the-music-tree-frontend)**; this README focuses on building, testing, deploying, and contributing to this API. The web app for the genre tree is **[grow-the-music-tree-frontend](https://github.com/BehindTheMusicTree/grow-the-music-tree-frontend)**.
 
 ## Usage
 
