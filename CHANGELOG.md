@@ -60,6 +60,7 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### Added
 
+- **Dev tooling**: Added a `launch` Claude Code skill (`.claude/skills/launch/`) documenting how to start the local dev environment.
 - **Git Worktree Scripts**: Added npm `git-worktree-scripts` package (v1.4.0) for managing git worktrees
   - Includes `setup-worktree.sh` script for automated worktree setup with virtual environment and dependencies
   - Added `.git-worktree-copy` configuration for copying gitignored files to new worktrees
