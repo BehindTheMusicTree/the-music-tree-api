@@ -1,9 +1,3 @@
----
-description: 
-globs: 
-alwaysApply: true
----
-
 # Field Name Constants
 
 Never use string literals for field names. Instead, use constants defined in a `Fields.py` file located in the same directory as the model/serializer it describes.

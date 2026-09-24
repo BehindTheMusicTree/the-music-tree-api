@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 All contributors (including maintainers) should update `CHANGELOG.md` when creating PRs:
 
 1. **Add entries to the `[Unreleased]` section** - Add your changes under the appropriate category (Added, Changed, Improved, Deprecated, Removed, Fixed, Documentation, Performance, CI)
-2. **Follow the changelog format** - See examples below and `.cursor/rules/changelog-best-practices.mdc` for detailed guidelines
+2. **Follow the changelog format** - See examples below and `.claude/rules/changelog-best-practices.md` for detailed guidelines
 3. **Group related changes** - Similar changes should be grouped together
 4. **Be descriptive** - Write clear, user-focused descriptions of what changed
 5. **Mention tests when relevant** - Tests should be mentioned within the related feature or fix entry, not as standalone entries
@@ -60,6 +60,11 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### Added
 
+- **Agent rules**: Moved `.cursor/rules/*.mdc` and `.cursorrules` to `.claude/rules/*.md` so Claude Code loads them
+  natively (`globs` → `paths`). Dropped the duplicate `focused-tests` and `comments` rules (covered by
+  `divide-test-cases` and `no-useless-comments`).
+- **Knowledge graph**: Local `graphify` tooling (CLAUDE.md section, `.claude/settings.json` PreToolUse hooks,
+  post-commit/post-checkout git hooks). Output in `graphify-out/` is gitignored, dev-only.
 - **Git Worktree Scripts**: Added npm `git-worktree-scripts` package (v1.4.0) for managing git worktrees
   - Includes `setup-worktree.sh` script for automated worktree setup with virtual environment and dependencies
   - Added `.git-worktree-copy` configuration for copying gitignored files to new worktrees

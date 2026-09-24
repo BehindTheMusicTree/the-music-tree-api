@@ -1,8 +1,3 @@
----
-description: 
-globs: 
-alwaysApply: true
----
 # Git Flow Workflow
 
 This project follows **strict Git Flow**. All changes must follow the branching strategy.
