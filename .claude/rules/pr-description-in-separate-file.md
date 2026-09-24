@@ -1,8 +1,3 @@
----
-description: 
-globs: 
-alwaysApply: true
----
 # PR Description in Separate File
 
 When creating Pull Requests, always provide the PR description in a separate markdown file located in `.github/pr-descriptions/` directory, rather than writing it directly in the PR body. This directory is git-ignored to keep draft descriptions out of version control.

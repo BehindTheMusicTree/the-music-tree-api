@@ -1,8 +1,3 @@
----
-description: 
-globs: 
-alwaysApply: true
----
 # Use assert Instead of assertEqual
 
 In tests, use the `assert` statement instead of `assertEqual` for better readability and consistency.

@@ -1,8 +1,3 @@
----
-description: 
-globs: 
-alwaysApply: true
----
 # Divide Test Cases
 
 Large test cases that test multiple scenarios should be divided into multiple focused tests, each testing a single scenario.
@@ -87,4 +82,4 @@ def test_invalid_input_then_error(self):
 - Easier test maintenance
 - Better test readability
 - Faster test execution (can run specific scenarios)
-- Easier to debug failures 
+- Easier to debug failures

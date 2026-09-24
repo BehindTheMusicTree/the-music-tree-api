@@ -42,7 +42,7 @@ Follow these code quality standards when developing:
 
 All Python files must follow the project's naming conventions:
 
-- **One class per file** - Each file must contain exactly one class (see [One Class Per File](.cursor/rules/one-class-per-file.mdc))
+- **One class per file** - Each file must contain exactly one class (see [One Class Per File](.claude/rules/one-class-per-file.md))
 
 - **Regular classes** (Models, Managers, etc.):
   - Use **PascalCase** for file names
@@ -100,7 +100,7 @@ assert result["name"] == "Rock"  # Bad
 assert result["parent"] is None  # Bad
 ```
 
-See [Field Name Constants](.cursor/rules/field-name-constants.mdc) for detailed guidelines.
+See [Field Name Constants](.claude/rules/field-name-constants.md) for detailed guidelines.
 
 #### Private Fields
 
@@ -142,7 +142,7 @@ def get_genre(self, name: str) -> Genre:
     return Genre.objects.get(name=name)
 ```
 
-See [No Useless Comments](.cursor/rules/no-useless-comments.mdc) for detailed guidelines.
+See [No Useless Comments](.claude/rules/no-useless-comments.md) for detailed guidelines.
 
 ### Type Checking
 
@@ -169,7 +169,7 @@ def get_genres(user: User, name: str | None = None) -> list[Genre]:
 
 For detailed information about error handling architecture, patterns, and examples, see [Architecture documentation](docs/architecture.md#error-handling).
 
-See [Use Custom Validation Exception](.cursor/rules/use-custome-validation-exception.mdc) for detailed guidelines.
+See [Use Custom Validation Exception](.claude/rules/use-custome-validation-exception.md) for detailed guidelines.
 
 ## Architecture
 
@@ -230,15 +230,15 @@ For detailed documentation on external service integrations, see:
 
 ### Code Style Reference
 
-For quick reference on code style conventions, see [code-style.md](code-style.md). For testing guidelines, see [Testing Guidelines](testing.md). For detailed guidelines, refer to the Cursor rules in `.cursor/rules/`:
+For quick reference on code style conventions, see [code-style.md](code-style.md). For testing guidelines, see [Testing Guidelines](testing.md). For detailed guidelines, refer to the agent rules in `.claude/rules/`:
 
-- [One Class Per File](.cursor/rules/one-class-per-file.mdc)
-- [Field Name Constants](.cursor/rules/field-name-constants.mdc)
-- [No Useless Comments](.cursor/rules/no-useless-comments.mdc)
-- [Private Resource Filtering](.cursor/rules/private-resource-filtering.mdc)
-- [Use Custom Validation Exception](.cursor/rules/use-custome-validation-exception.mdc)
-- [Test Structure](.cursor/rules/test-structure.mdc)
-- [Test Naming Convention](.cursor/rules/test-naming-convention.mdc)
-- [Divide Test Cases](.cursor/rules/divide-test-cases.mdc)
-- [Use assert Instead of assertEqual](.cursor/rules/use-assert-not-assertequal.mdc)
+- [One Class Per File](.claude/rules/one-class-per-file.md)
+- [Field Name Constants](.claude/rules/field-name-constants.md)
+- [No Useless Comments](.claude/rules/no-useless-comments.md)
+- [Private Resource Filtering](.claude/rules/private-resource-filtering.md)
+- [Use Custom Validation Exception](.claude/rules/use-custome-validation-exception.md)
+- [Test Structure](.claude/rules/test-structure.md)
+- [Test Naming Convention](.claude/rules/test-naming-convention.md)
+- [Divide Test Cases](.claude/rules/divide-test-cases.md)
+- [Use assert Instead of assertEqual](.claude/rules/use-assert-not-assertequal.md)
 
