@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*"
+---
+
 # Test Structure
 
 Tests must follow the project's testing structure and conventions as specified in CONTRIBUTING.md.
@@ -42,7 +47,7 @@ def test_invalid_input_then_error(self):
     tree_data = [{"name": "", "children": []}]
     response = self._post_genres_tree_import(tree_data)
     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)  # Bad
-    
+
     # Test duplicate name - should be separate test
     tree_data = [{"name": "Rock", "children": []}, {"name": "Rock", "children": []}]
     response = self._post_genres_tree_import(tree_data)

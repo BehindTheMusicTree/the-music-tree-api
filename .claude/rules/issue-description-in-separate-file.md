@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*"
+---
+
 # Issue Description in Separate File
 
 When creating GitHub issues, always provide the issue description in a separate markdown file located in `.github/ISSUES/` directory, rather than writing it directly in the issue body.

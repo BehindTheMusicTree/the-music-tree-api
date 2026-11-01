@@ -1,0 +1,30 @@
+# Test Naming Convention
+
+This rule applies to pytest-style test functions. Test function names must follow the pattern: `test_{scenario}_then_{expected_result}`
+
+Components:
+- `scenario`: The scenario being tested, including the action and any relevant conditions (e.g., `import_empty_tree`, `create_genre_with_duplicate_name`, `update_genre_with_invalid_parent`)
+- `expected_result`: The expected outcome or error code
+
+Examples:
+- `test_import_empty_tree_then_400_bad_request`
+- `test_create_genre_with_duplicate_name_then_400_bad_request`
+- `test_update_genre_with_invalid_parent_then_400_bad_request`
+- `test_delete_genre_with_children_then_400_bad_request`
+
+Guidelines:
+1. Use descriptive names that explain the test's purpose without reading the code
+2. Include relevant conditions in the scenario part that make the test case unique
+3. For error cases, specify the expected HTTP status code
+4. Use underscores to separate words
+5. Keep the name concise but informative
+6. Avoid generic terms like "test", "check", "verify"
+7. Test class names should be descriptive and follow the pattern `Test{Feature}` (e.g., `TestGenreImport`)
+8. Tests are located in `api/test/`
+
+Bad examples:
+- `test_import` (too generic)
+- `test_import_tree` (missing conditions and expected result)
+- `test_import_with_children` (missing expected result)
+- `test_import_fails` (missing specific error condition)
+- `TestStuff` (too generic class name)

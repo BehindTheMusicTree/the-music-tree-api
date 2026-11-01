@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*"
+---
+
 # Pin Dependency Versions
 
 Always pin exact versions for all dependencies. Never use "latest", "*", or version ranges without upper bounds.
@@ -5,7 +10,7 @@ Always pin exact versions for all dependencies. Never use "latest", "*", or vers
 ## Package Managers
 
 ### npm/package.json
-- Use exact versions: `"package-name": "1.2.3"` 
+- Use exact versions: `"package-name": "1.2.3"`
 - Avoid: `"latest"`, `"*"`, `"^1.2.3"` (caret ranges), `"~1.2.3"` (tilde ranges)
 - Exception: Caret ranges (`^`) are acceptable for devDependencies if explicitly needed, but prefer exact versions
 

@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*"
+---
+
 # Changelog Best Practices
 
 All contributors must update `CHANGELOG.md` when creating PRs. Follow these guidelines to ensure consistent and useful changelog entries.

@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*"
+---
+
 # No Useless Comments
 
 Comments should only be added when they provide additional context or explain complex logic that cannot be understood from the code itself. Avoid comments that:
