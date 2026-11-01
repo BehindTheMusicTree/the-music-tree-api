@@ -23,7 +23,7 @@ required vars have no fallback and the app fails fast at startup if they're miss
 Copy the dev template to the real env file and fill in the values:
 
 ```bash
-cp env/dev/.env.dev_template env/.env
+test -e env/.env || cp env/dev/.env.dev_template env/.env
 ```
 
 Note: CONTRIBUTING.md refers to this file as `env/dev/.env.dev.template`, but the
@@ -42,17 +42,16 @@ Other vars used for local Docker DB / filesystem setup are already in the templa
 (`DB_PORT=5433`, `DB_CONTAINER_NAME`, `DB_BODZIFY_API_DB_NAME`, `DB_BODZIFY_API_USERNAME`,
 `DB_SUPERUSER_NAME`/`DB_SUPERUSER_PASSWORD`, `APP_IS_EXPOSED`, `DEBUG`, etc.).
 
-Generate a Django secret key and add it to `env/.env` as `DJANGO_SECRET_KEY`:
-
-```bash
-python scripts/generate-django-secret-key.py
-```
+Generate a Django secret key privately and write it directly to `env/.env` as
+`DJANGO_SECRET_KEY` without printing it or exposing it in tool output. Do not
+overwrite an existing key. The supplied `scripts/generate-django-secret-key.py`
+prints its result, so do not run it in an agent session.
 
 `AFP_*` vars (`AFP_CONTAINER_NAME`, `AFP_PORT`, `AFP_POST_ENDPOINT`) are only needed if
 you're exercising audio fingerprinting/upload flows against the AFP container — they are
 not read by `api/settings.py`, so the server boots without them.
 
-## 3. Python environment
+## 3. Python environment (first run)
 
 ```bash
 python -m venv .venv
@@ -60,32 +59,26 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## 4. Filesystem setup
+## 4. Filesystem and PostgreSQL
 
-```bash
-bash scripts/setup-filesystem.sh
-```
+Use an existing local PostgreSQL instance configured for this project. Inspect
+`env/.env` and the filesystem requirements in `scripts/setup-filesystem.sh`
+before setting up paths: that script removes existing static-file contents.
+The `scripts/run-db-container.sh` script removes the named container, may stop
+and remove other containers using the configured port, and prunes Docker images.
+Do not run either script without explicit authorization for those effects. Never
+remove unrelated containers or data as part of launching the service.
 
-Creates the static files, Django/Gunicorn log, media/library, and tmp-upload
-directories referenced by the env vars.
+Audio Fingerprinter can run separately from its own repository:
+https://github.com/BehindTheMusicTree/audio-fingerprinter
 
-## 5. Start the companion PostgreSQL container
+## 5. Initialize a new local database (first run only)
 
-```bash
-bash scripts/run-db-container.sh
-```
-
-Pulls and runs the Postgres container defined by `DB_IMAGE_REPO`/`DB_VERSION`,
-publishing it on `DB_PORT` (`5433` in the template, mapped to Postgres' `5432`
-inside the container). Requires Docker to be running.
-
-Note: CONTRIBUTING.md and DEVELOPMENT.md reference a `scripts/run-db-and-afp-containers.sh`
-that also starts the Audio Fingerprinter (AFP) container — that script does not currently
-exist in `scripts/`; only `scripts/run-db-container.sh` (DB only) is present. If you need
-the AFP companion service, run it separately from its own repo:
-https://github.com/BehindTheMusicTree/bodzify-audio-fingerprinter-flask
-
-## 6. Initialize the database (first run)
+Before running the following command, verify that the configured database is
+local and explicitly new or empty, and that its role is dedicated to this
+project. The script changes role privileges and loads fixtures that can replace
+existing records. If the database is not known to be empty, do not run it or
+load its fixtures; ask the user how to proceed.
 
 ```bash
 bash scripts/init-django-data.sh
@@ -95,15 +88,12 @@ This creates the DB role/database (`scripts/init-db-and-role.sh`), runs
 `makemigrations` + `migrate`, and loads fixtures from `api/fixtures/*.json`
 (starting with `app.json`).
 
-To wipe and redo this (destructive — prompts for confirmation, `-s` skips the prompt):
+The reinitialization script can wipe data; do not run it without an explicit request.
+
+## 6. Run the dev server
 
 ```bash
-bash scripts/reinit-django-data-USE-WITH-CAUTION.sh
-```
-
-## 7. Run the dev server
-
-```bash
+source .venv/bin/activate
 python manage.py runserver
 ```
 
@@ -111,7 +101,7 @@ python manage.py runserver
 Defaults to `http://127.0.0.1:8000`. This is Django's local dev server — the
 Gunicorn/`scripts/entrypoint.sh` path is only used inside the built Docker image.
 
-## 8. Verify it's running
+## 7. Verify it's running
 
 - `GET http://127.0.0.1:8000/api/docs/` — Swagger UI
 - `GET http://127.0.0.1:8000/api/schema/redoc/` — ReDoc
@@ -120,9 +110,9 @@ Gunicorn/`scripts/entrypoint.sh` path is only used inside the built Docker image
 
 ## Companion services summary
 
-- **PostgreSQL** (required to boot): Docker container via `scripts/run-db-container.sh`.
+- **PostgreSQL** (required to boot): a local instance configured for this project.
 - **Audio Fingerprinter / AFP** (only for fingerprinting/upload flows): separate repo
-  `bodzify-audio-fingerprinter-flask`, run independently — not started by any script
+  `audio-fingerprinter`, run independently — not started by any script
   currently in this repo.
 - **grow-the-music-tree-frontend**: the frontend consumer of this API; not required to
   run this API itself, but is the app that calls it.
