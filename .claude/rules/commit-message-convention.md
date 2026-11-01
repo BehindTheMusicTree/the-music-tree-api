@@ -1,8 +1,3 @@
----
-description: 
-globs: 
-alwaysApply: true
----
 # Commit Message Convention
 
 All commit messages must follow the Conventional Commits format: `<type>(<scope>): <summary>`

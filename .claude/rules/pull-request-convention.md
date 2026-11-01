@@ -1,8 +1,3 @@
----
-description: 
-globs: 
-alwaysApply: true
----
 # Pull Request Title Convention
 
 PR titles must follow the same format as commit messages: `<type>(<optional-scope>): <short imperative description>`

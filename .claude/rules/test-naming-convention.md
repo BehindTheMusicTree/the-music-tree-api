@@ -1,8 +1,3 @@
----
-description: 
-globs: 
-alwaysApply: true
----
 # Test Naming Convention
 
 This rule applies to pytest-style test functions. Test function names must follow the pattern: `test_{scenario}_then_{expected_result}`

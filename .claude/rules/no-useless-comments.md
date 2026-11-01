@@ -1,8 +1,3 @@
----
-description: 
-globs: 
-alwaysApply: true
----
 # No Useless Comments
 
 Comments should only be added when they provide additional context or explain complex logic that cannot be understood from the code itself. Avoid comments that:
@@ -22,4 +17,3 @@ Bad comments:
 - "Check root" (obvious from code)
 - "Get the genre" (redundant with method name)
 - "Loop through items" (obvious from code)
-- is_from_track_test_case: bool = False  # Indicates if the test case is from TrackTestCase (redundant)

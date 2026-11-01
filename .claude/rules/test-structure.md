@@ -1,8 +1,3 @@
----
-description: 
-globs: 
-alwaysApply: true
----
 # Test Structure
 
 Tests must follow the project's testing structure and conventions as specified in CONTRIBUTING.md.

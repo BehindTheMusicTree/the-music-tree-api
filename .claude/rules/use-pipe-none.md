@@ -1,8 +1,8 @@
 ---
-description: 
-globs: 
-alwaysApply: false
+paths:
+  - "**/*.py"
 ---
+
 # Use | None Instead of Optional
 
 Always use `| None` instead of `Optional` for type hints in Python.
@@ -55,4 +55,4 @@ def get_genre_data(self) -> Optional[dict[str, str]]:  # Bad
 - Better readability
 - Consistent type hinting style
 - Modern Python syntax
-- Reduced imports 
+- Reduced imports

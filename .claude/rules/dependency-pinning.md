@@ -29,8 +29,3 @@ All draft planning documents (PR descriptions, feature descriptions, issue descr
 - `.github/descriptions/`
 
 This directory is gitignored to keep internal planning documents out of version control.
-
-
-
-
-
