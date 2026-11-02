@@ -1,0 +1,116 @@
+{
+  "changelog-best-practices": {
+    "source": ".agents/rules/changelog-best-practices.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "commit-message-convention": {
+    "source": ".agents/rules/commit-message-convention.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "dependency-pinning": {
+    "source": ".agents/rules/dependency-pinning.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "divide-test-cases": {
+    "source": ".agents/rules/divide-test-cases.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "field-name-constants": {
+    "source": ".agents/rules/field-name-constants.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "git-flow-workflow": {
+    "source": ".agents/rules/git-flow-workflow.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "issue-description-in-separate-file": {
+    "source": ".agents/rules/issue-description-in-separate-file.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "issue-template-usage": {
+    "source": ".agents/rules/issue-template-usage.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "no-useless-comments": {
+    "source": ".agents/rules/no-useless-comments.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "one-class-per-file": {
+    "source": ".agents/rules/one-class-per-file.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "pr-description-in-separate-file": {
+    "source": ".agents/rules/pr-description-in-separate-file.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "pre-pr-checklist": {
+    "source": ".agents/rules/pre-pr-checklist.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "private-resource-filtering": {
+    "source": ".agents/rules/private-resource-filtering.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "pull-request-convention": {
+    "source": ".agents/rules/pull-request-convention.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "test-naming-convention": {
+    "source": ".agents/rules/test-naming-convention.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "test-structure": {
+    "source": ".agents/rules/test-structure.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "use-assert-not-assertequal": {
+    "source": ".agents/rules/use-assert-not-assertequal.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "use-custome-validation-exception": {
+    "source": ".agents/rules/use-custome-validation-exception.md",
+    "paths": [
+      "**/*"
+    ]
+  },
+  "use-pipe-none": {
+    "source": ".agents/rules/use-pipe-none.md",
+    "paths": [
+      "**/*.py"
+    ]
+  }
+}

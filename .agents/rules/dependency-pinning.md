@@ -1,0 +1,31 @@
+# Pin Dependency Versions
+
+Always pin exact versions for all dependencies. Never use "latest", "*", or version ranges without upper bounds.
+
+## Package Managers
+
+### npm/package.json
+- Use exact versions: `"package-name": "1.2.3"`
+- Avoid: `"latest"`, `"*"`, `"^1.2.3"` (caret ranges), `"~1.2.3"` (tilde ranges)
+- Exception: Caret ranges (`^`) are acceptable for devDependencies if explicitly needed, but prefer exact versions
+
+### Python/requirements.txt
+- Use exact versions: `package-name==1.2.3`
+- Avoid: `package-name>=1.2.3`, `package-name`, `package-name~=1.2.3`
+
+### pip/pyproject.toml
+- Use exact versions: `package-name = "==1.2.3"`
+- Avoid: version ranges or unpinned dependencies
+
+## Benefits
+- Ensures reproducible builds
+- Prevents unexpected breaking changes
+- Makes dependency updates explicit and reviewable
+- Improves security by controlling when updates are applied
+
+# Draft Documents Location
+
+All draft planning documents (PR descriptions, feature descriptions, issue descriptions) should be stored in:
+- `.github/descriptions/`
+
+This directory is gitignored to keep internal planning documents out of version control.

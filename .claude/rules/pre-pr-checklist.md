@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*"
+---
+
 # Pre-PR Checklist
 
 Before submitting a Pull Request, ensure all checks are completed. This checklist helps maintain code quality and consistency.

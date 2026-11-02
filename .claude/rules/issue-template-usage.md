@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*"
+---
+
 # Issue Template Usage
 
 When creating issues, always use the appropriate template from `.github/ISSUE_TEMPLATE/`.

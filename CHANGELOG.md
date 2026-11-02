@@ -60,6 +60,7 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 
 ### Added
 
+- **Dev tooling**: Added a shared `launch` skill for Claude Code and Codex, documenting safe local startup.
 - **Agent rules**: Moved `.cursor/rules/*.mdc` and `.cursorrules` to `.claude/rules/*.md` so Claude Code loads them
   natively (`globs` → `paths`). Dropped the duplicate `focused-tests` and `comments` rules (covered by
   `divide-test-cases` and `no-useless-comments`).

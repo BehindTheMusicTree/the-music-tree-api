@@ -1,3 +1,8 @@
+---
+paths:
+  - "**/*"
+---
+
 # Use AppValidationException Instead of DRF Validation
 
 Never raise DRF validation exceptions but use `AppValidationException` for consistent error handling across the application.
@@ -20,7 +25,7 @@ def validate_genre_name(self, name: str, user: User) -> None:
             message="Genre name cannot be empty",
             field_validation_error_code=FieldValidationErrorCode.BLANK
         )
-    
+
     if Genre.objects.filter(user=user, name=name).exists():
         raise AppValidationException(
             field_name=Fields.NAME,
@@ -41,7 +46,7 @@ def validate_genre(self, data: dict, user: User) -> None:
             "message": "Genre cannot be its own parent",
             "code": FieldValidationErrorCode.SELF_REFERENCE
         }
-    
+
     if errors:
         raise AppValidationException(
             field_name=",".join(errors.keys()),
