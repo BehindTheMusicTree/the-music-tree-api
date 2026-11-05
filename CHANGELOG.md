@@ -47,6 +47,8 @@ All contributors (including maintainers) should update `CHANGELOG.md` when creat
 - **Track Upload**: Fixed issue with handling large audio files exceeding size limits
   - Includes regression tests to prevent future occurrences
   - Improved error messages for better user feedback
+- Restored the canonical Apache 2.0 license text: a sentence in the "Work" definition had been altered, so GitHub did not recognize the license.
+- `package.json` declares `Apache-2.0` instead of `ISC`, matching the LICENSE file.
 
 ### CI
 
