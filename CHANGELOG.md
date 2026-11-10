@@ -161,6 +161,7 @@ Update app name to 'api'
   - Updated `django-polymorphic` from 3.1.0 to 4.1.0 to resolve pkg_resources deprecation warning and ensure Django 5.2 compatibility
   - **Audio Metadata**: Replace audio metadata management module with audiometa-python 0.8.0
   - Removed `mutagen` from direct dependencies. No longer needed as direct dependency since all audio operations now use `audiometa-python`
+- Removed the local pull request template; the organization-wide template from `BehindTheMusicTree/.github` applies.
 
 ### Documentation
 
