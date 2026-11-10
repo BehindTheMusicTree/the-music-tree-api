@@ -182,7 +182,6 @@ ci:
       - any-glob-to-any-file:
         - '.github/workflows/**'
         - '.github/ISSUE_TEMPLATE/**'
-        - '.github/pull_request_template.md'
 
 dependencies:
   - any:

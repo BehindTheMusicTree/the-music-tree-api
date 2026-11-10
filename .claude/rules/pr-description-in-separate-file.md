@@ -17,18 +17,15 @@ Create PR description files with descriptive names using kebab-case:
 
 ## File Structure
 
-Each PR description file should follow the structure from `.github/pull_request_template.md`:
+Each PR description file should follow the structure from the organization pull request template (`BehindTheMusicTree/.github`):
 
-- Description
-- Related Issue
-- Type of Change
-- Target Branch
-- Changes Made
-- Testing
-- Checklist
-- Breaking Changes (if applicable)
-- Screenshots (if applicable)
-- Additional Notes
+- Summary
+- Changes
+- Test plan
+- Screenshots
+- Risk
+- How to revert
+- Deployment notes
 
 ## Usage
 

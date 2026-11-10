@@ -620,7 +620,7 @@ When opening a Pull Request, a template will be automatically provided. Ensure y
 - ✅ Include testing instructions if applicable
 - ✅ Specify the target branch (`develop` for features, `main` for hotfixes)
 
-**Note:** The PR template (`.github/pull_request_template.md`) will guide you through the process and ensure all necessary information is included.
+**Note:** The organization pull request template (`BehindTheMusicTree/.github`) will guide you through the process and ensure all necessary information is included.
 
 ##### Breaking Changes
 
