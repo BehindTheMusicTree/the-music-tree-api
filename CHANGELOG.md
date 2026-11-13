@@ -5,59 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Changelog Best Practices
-
-### General Principles
-
-- Changelogs are for humans, not machines.
-- Include an entry for every version, with the latest first.
-- Group similar changes under: Added, Changed, Improved, Deprecated, Removed, Fixed, Documentation, Performance, CI.
-- **"Test" is NOT a valid changelog category** - tests should be mentioned within the related feature or fix entry, not as standalone entries.
-- Use an "Unreleased" section for upcoming changes.
-- Follow Semantic Versioning where possible.
-- Use ISO 8601 date format: YYYY-MM-DD.
-- Avoid dumping raw git logs; summarize notable changes clearly.
-
-### Guidelines for Contributors
-
-All contributors (including maintainers) should update `CHANGELOG.md` when creating PRs:
-
-1. **Add entries to the `[Unreleased]` section** - Add your changes under the appropriate category (Added, Changed, Improved, Deprecated, Removed, Fixed, Documentation, Performance, CI)
-2. **Follow the changelog format** - See examples below and `.claude/rules/changelog-best-practices.md` for detailed guidelines
-3. **Group related changes** - Similar changes should be grouped together
-4. **Be descriptive** - Write clear, user-focused descriptions of what changed
-5. **Mention tests when relevant** - Tests should be mentioned within the related feature or fix entry, not as standalone entries
-
-**Example:**
-
-```markdown
-## [Unreleased]
-
-### Added
-
-- **Track API**: Added batch upload endpoint for multiple tracks
-  - Includes comprehensive unit tests covering various file formats and error scenarios
-  - Supports parallel upload processing for improved performance
-
-- **Genre Hierarchy**: Added support for custom genre tree import via JSON
-  - Includes validation tests for tree structure and circular reference detection
-
-### Fixed
-
-- **Track Upload**: Fixed issue with handling large audio files exceeding size limits
-  - Includes regression tests to prevent future occurrences
-  - Improved error messages for better user feedback
-- Restored the canonical Apache 2.0 license text: a sentence in the "Work" definition had been altered, so GitHub did not recognize the license.
-- `package.json` declares `Apache-2.0` instead of `ISC`, matching the LICENSE file.
-
-### CI
-
-- **Branch Protection**: Added automated enforcement of Git Flow branching rules
-  - Blocks invalid PRs to main and develop branches
-```
-
-**Note:** During releases, maintainers will move entries from `[Unreleased]` to a versioned section (e.g., `## [0.2.8] - 2025-01-XX`).
-
 ## [Unreleased]
 
 ### Added
@@ -211,6 +158,7 @@ Update app name to 'api'
 - **License**: Added Apache License 2.0
 
 - **Code of Conduct**: Added Contributor Covenant 2.1
+- Removed the contributor guidelines and example entry from `CHANGELOG.md`: the example duplicated the `[Unreleased]` heading and led agents to write entries in the wrong place, and the conventions now live in the shared `create-pr` skill.
 
 ## [v0.2.0] - 2025-04-03
 
