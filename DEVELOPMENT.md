@@ -191,7 +191,7 @@ For API request format specifications, including multipart form data handling an
 When making changes to the codebase, ensure relevant documentation is updated:
 
 - **README.md**: Update when adding new features, changing behavior, or modifying installation/usage instructions
-- **CHANGELOG.md**: Always update when creating PRs (see [Changelog Best Practices](CHANGELOG.md#changelog-best-practices) for guidelines)
+- **CHANGELOG.md**: Always update when creating PRs (see `.agents/rules/changelog-best-practices.md`)
 - **DEVELOPMENT.md**: Update when changing development standards or adding new guidelines
 - **CONTRIBUTING.md**: Update when changing development workflow (primarily for maintainers; contributors may update in exceptional cases)
 - **code-style.md**: Update when changing code style conventions
