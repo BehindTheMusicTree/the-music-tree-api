@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Copies fixture files from `api/fixtures/*.json`
   - Integrated filesystem setup into `setup-worktree.sh` for automatic directory and log file creation
 
+### Changed
+
+- **Agent work files**: Ignore local plans and temporary files while tracking their directory rules.
+
 ### Fixed
 
 - **Error Handling**: Fixed Python 3.14 compatibility issues with exception attribute access
